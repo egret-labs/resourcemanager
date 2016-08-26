@@ -165,10 +165,8 @@ var RES;
             }
             for (var _i = 0, group_1 = group; _i < group_1.length; _i++) {
                 var key = group_1[_i];
-                var r = this.getResource(key);
-                if (r) {
-                    result.push(r);
-                }
+                var r = this.getResource(key, true);
+                result.push(r);
             }
             return result;
         };
