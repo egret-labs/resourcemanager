@@ -25,6 +25,7 @@
         "src/analyzer/FontAnalyzer.ts",
         "src/analyzer/SoundAnalyzer.ts",
         "src/analyzer/AnimationAnalyzer.ts",
+        "src/analyzer/XMLAnalyzer.ts",
         "src/Resource.ts",
         "src/i18n/zh_CN.ts",
         "libs/egret.d.ts"

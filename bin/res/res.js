@@ -2035,18 +2035,6 @@ var RES;
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-/// <reference path="core/ResourceItem.ts" />
-/// <reference path="core/ResourceConfig.ts" />
-/// <reference path="core/ResourceLoader.ts" />
-/// <reference path="events/ResourceEvent.ts" />
-/// <reference path="analyzer/BinAnalyzer.ts" />
-/// <reference path="analyzer/ImageAnalyzer.ts" />
-/// <reference path="analyzer/TextAnalyzer.ts" />
-/// <reference path="analyzer/JsonAnalyzer.ts" />
-/// <reference path="analyzer/SheetAnalyzer.ts" />
-/// <reference path="analyzer/FontAnalyzer.ts" />
-/// <reference path="analyzer/SoundAnalyzer.ts" />
-/// <reference path="analyzer/XMLAnalyzer.ts" />
 var RES;
 (function (RES) {
     /**
