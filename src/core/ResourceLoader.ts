@@ -164,7 +164,10 @@ module RES {
 				}
 				else if (host.isSupport(resItem)) {
 					host.execute(RES.ImageProcessor, resItem)
-						.then(() => this.onItemComplete(resItem as ResourceItem));
+						.then(res => {
+							(res as ResourceItem).loaded = true;
+							this.onItemComplete(res as ResourceItem);
+						})
 				}
 				else {
 					var analyzer: AnalyzerBase = this.resInstance.$getAnalyzerByType(resItem.type);

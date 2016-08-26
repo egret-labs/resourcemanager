@@ -735,7 +735,7 @@ declare module RES {
 declare module RES {
     interface ProcessHost {
         resourceConfig: ResourceConfig;
-        execute: (processor: Processor, resource: ResourceInfo) => PromiseLike<void>;
+        execute: (processor: Processor, resource: ResourceInfo) => PromiseLike<ResourceInfo>;
         save: (rexource: ResourceInfo, data: any) => void;
         get: (resource: ResourceInfo) => any;
         isSupport: (resource: ResourceInfo) => boolean;

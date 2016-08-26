@@ -540,28 +540,25 @@ var RES;
          */
         ResourceLoader.prototype.next = function () {
             var _this = this;
-            var _loop_1 = function() {
-                var resItem = this_1.getOneResourceItem();
+            while (this.loadingCount < this.thread) {
+                var resItem = this.getOneResourceItem();
                 if (!resItem)
-                    return "break";
-                this_1.loadingCount++;
+                    break;
+                this.loadingCount++;
                 if (resItem.loaded) {
-                    this_1.onItemComplete(resItem);
+                    this.onItemComplete(resItem);
                 }
                 else if (RES.host.isSupport(resItem)) {
                     RES.host.execute(RES.ImageProcessor, resItem)
-                        .then(function () { return _this.onItemComplete(resItem); });
+                        .then(function (res) {
+                        res.loaded = true;
+                        _this.onItemComplete(res);
+                    });
                 }
                 else {
-                    analyzer = this_1.resInstance.$getAnalyzerByType(resItem.type);
-                    analyzer.loadFile(resItem, this_1.onItemComplete, this_1);
+                    var analyzer = this.resInstance.$getAnalyzerByType(resItem.type);
+                    analyzer.loadFile(resItem, this.onItemComplete, this);
                 }
-            };
-            var this_1 = this;
-            var analyzer;
-            while (this.loadingCount < this.thread) {
-                var state_1 = _loop_1();
-                if (state_1 === "break") break;
             }
         };
         /**
@@ -2027,7 +2024,7 @@ var RES;
                 var onSuccess = function () {
                     var texture = loader.data;
                     host.save(resource, texture);
-                    reslove();
+                    reslove(resource);
                 };
                 var onError = function () {
                     reject();

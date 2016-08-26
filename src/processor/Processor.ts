@@ -4,7 +4,7 @@ module RES {
 
         resourceConfig: ResourceConfig;
 
-        execute: (processor: Processor, resource: ResourceInfo) => PromiseLike<void>;
+        execute: (processor: Processor, resource: ResourceInfo) => PromiseLike<ResourceInfo>;
 
         save: (rexource: ResourceInfo, data: any) => void;
 
@@ -32,7 +32,7 @@ module RES {
                 let onSuccess = () => {
                     let texture = loader.data;
                     host.save(resource, texture);
-                    reslove();
+                    reslove(resource);
                 }
 
                 let onError = () => {
