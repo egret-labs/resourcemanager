@@ -30,6 +30,9 @@
 
 module RES {
 
+
+
+
 	/**
 	 * @class RES.ResourceLoader
 	 * @classdesc
@@ -151,12 +154,17 @@ module RES {
 		 */
 		private next(): void {
 			while (this.loadingCount < this.thread) {
-				var resItem = this.getOneResourceItem();
+				let resItem = this.getOneResourceItem();
 				if (!resItem)
 					break;
 				this.loadingCount++;
+
 				if (resItem.loaded) {
 					this.onItemComplete(resItem);
+				}
+				else if (host.isSupport(resItem)) {
+					host.execute(RES.ImageProcessor, resItem)
+						.then(() => this.onItemComplete(resItem as ResourceItem));
 				}
 				else {
 					var analyzer: AnalyzerBase = this.resInstance.$getAnalyzerByType(resItem.type);

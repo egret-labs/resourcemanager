@@ -733,6 +733,21 @@ declare module RES {
     }
 }
 declare module RES {
+    interface ProcessHost {
+        resourceConfig: ResourceConfig;
+        execute: (processor: Processor, resource: ResourceInfo) => PromiseLike<void>;
+        save: (rexource: ResourceInfo, data: any) => void;
+        get: (resource: ResourceInfo) => any;
+        isSupport: (resource: ResourceInfo) => boolean;
+    }
+    interface Processor {
+        onLoadStart(host: ProcessHost, resource: ResourceInfo): PromiseLike<any>;
+        onRemoveStart(host: ProcessHost, resource: ResourceInfo): PromiseLike<any>;
+    }
+    var ImageProcessor: Processor;
+}
+declare module RES {
+    var host: ProcessHost;
     /**
      * @language en_US
      * Conduct mapping injection with class definition as the value.

@@ -29,6 +29,34 @@
 
 
 module RES {
+
+    var __tempCache = {};
+
+    export var host: ProcessHost = {
+
+
+
+        get resourceConfig() {
+            return RES['configInstance']
+        },
+
+        execute: (processor: Processor, resourceInfo: ResourceInfo) => {
+            return processor.onLoadStart(host, resourceInfo)
+        },
+        save(resource: ResourceInfo, data: any) {
+            __tempCache[resource.url] = data;
+        },
+
+
+        get(resource: ResourceInfo) {
+            return __tempCache[resource.url];
+        },
+
+        isSupport(resource: ResourceInfo) {
+            return resource.url.indexOf("png") >= 0 || resource.url.indexOf("jpg") >= 0;
+        }
+    }
+
     /**
      * @language en_US
      * Conduct mapping injection with class definition as the value.
@@ -734,7 +762,13 @@ module RES {
         public getRes(resKey: string): any {
             let {key, subkey} = this.parseResKey(resKey);
             let r = this.resConfig.getResource(key);
-            return this.$getResourceViaAnalyzer(r, subkey);
+            if (r && host.isSupport(r)) {
+                return host.get(r);
+            }
+            else {
+                return this.$getResourceViaAnalyzer(r, subkey);
+            }
+           
 
         }
 
@@ -835,7 +869,7 @@ module RES {
                 return true;
             }
             else {
-         
+
                 let item = this.resConfig.getResource(name);
                 if (item) {
                     (item as ResourceItem).loaded = false;
@@ -850,7 +884,7 @@ module RES {
                 }
 
 
-                
+
             }
         }
         private removeLoadedGroupsByItemName(name: string): void {

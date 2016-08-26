@@ -165,10 +165,8 @@ var RES;
             }
             for (var _i = 0, group_1 = group; _i < group_1.length; _i++) {
                 var key = group_1[_i];
-                var r = this.getResource(key);
-                if (r) {
-                    result.push(r);
-                }
+                var r = this.getResource(key, true);
+                result.push(r);
             }
             return result;
         };
@@ -541,18 +539,29 @@ var RES;
          * 加载下一项
          */
         ResourceLoader.prototype.next = function () {
-            while (this.loadingCount < this.thread) {
-                var resItem = this.getOneResourceItem();
+            var _this = this;
+            var _loop_1 = function() {
+                var resItem = this_1.getOneResourceItem();
                 if (!resItem)
-                    break;
-                this.loadingCount++;
+                    return "break";
+                this_1.loadingCount++;
                 if (resItem.loaded) {
-                    this.onItemComplete(resItem);
+                    this_1.onItemComplete(resItem);
+                }
+                else if (RES.host.isSupport(resItem)) {
+                    RES.host.execute(RES.ImageProcessor, resItem)
+                        .then(function () { return _this.onItemComplete(resItem); });
                 }
                 else {
-                    var analyzer = this.resInstance.$getAnalyzerByType(resItem.type);
-                    analyzer.loadFile(resItem, this.onItemComplete, this);
+                    analyzer = this_1.resInstance.$getAnalyzerByType(resItem.type);
+                    analyzer.loadFile(resItem, this_1.onItemComplete, this_1);
                 }
+            };
+            var this_1 = this;
+            var analyzer;
+            while (this.loadingCount < this.thread) {
+                var state_1 = _loop_1();
+                if (state_1 === "break") break;
             }
         };
         /**
@@ -2009,6 +2018,32 @@ var RES;
     }(RES.BinAnalyzer));
     RES.XMLAnalyzer = XMLAnalyzer;
 })(RES || (RES = {}));
+var RES;
+(function (RES) {
+    RES.ImageProcessor = {
+        onLoadStart: function (host, resource) {
+            var _this = this;
+            var executor = function (reslove, reject) {
+                var onSuccess = function () {
+                    var texture = loader.data;
+                    host.save(resource, texture);
+                    reslove();
+                };
+                var onError = function () {
+                    reject();
+                };
+                var loader = new egret.ImageLoader();
+                loader.addEventListener(egret.Event.COMPLETE, onSuccess, _this);
+                loader.addEventListener(egret.IOErrorEvent.IO_ERROR, onError, _this);
+                loader.load(resource.url);
+            };
+            return new Promise(executor);
+        },
+        onRemoveStart: function (host, resource) {
+            return Promise.resolve();
+        }
+    };
+})(RES || (RES = {}));
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //  Copyright (c) 2014-present, Egret Technology.
@@ -2037,20 +2072,26 @@ var RES;
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-/// <reference path="core/ResourceItem.ts" />
-/// <reference path="core/ResourceConfig.ts" />
-/// <reference path="core/ResourceLoader.ts" />
-/// <reference path="events/ResourceEvent.ts" />
-/// <reference path="analyzer/BinAnalyzer.ts" />
-/// <reference path="analyzer/ImageAnalyzer.ts" />
-/// <reference path="analyzer/TextAnalyzer.ts" />
-/// <reference path="analyzer/JsonAnalyzer.ts" />
-/// <reference path="analyzer/SheetAnalyzer.ts" />
-/// <reference path="analyzer/FontAnalyzer.ts" />
-/// <reference path="analyzer/SoundAnalyzer.ts" />
-/// <reference path="analyzer/XMLAnalyzer.ts" />
 var RES;
 (function (RES) {
+    var __tempCache = {};
+    RES.host = {
+        get resourceConfig() {
+            return RES['configInstance'];
+        },
+        execute: function (processor, resourceInfo) {
+            return processor.onLoadStart(RES.host, resourceInfo);
+        },
+        save: function (resource, data) {
+            __tempCache[resource.url] = data;
+        },
+        get: function (resource) {
+            return __tempCache[resource.url];
+        },
+        isSupport: function (resource) {
+            return resource.url.indexOf("png") >= 0 || resource.url.indexOf("jpg") >= 0;
+        }
+    };
     /**
      * @language en_US
      * Conduct mapping injection with class definition as the value.
@@ -2749,7 +2790,12 @@ var RES;
         Resource.prototype.getRes = function (resKey) {
             var _a = this.parseResKey(resKey), key = _a.key, subkey = _a.subkey;
             var r = this.resConfig.getResource(key);
-            return this.$getResourceViaAnalyzer(r, subkey);
+            if (r && RES.host.isSupport(r)) {
+                return RES.host.get(r);
+            }
+            else {
+                return this.$getResourceViaAnalyzer(r, subkey);
+            }
         };
         Resource.prototype.$getResourceViaAnalyzer = function (r, subkey) {
             if (!r)

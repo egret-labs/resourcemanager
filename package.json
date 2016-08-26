@@ -3,7 +3,8 @@
   "version": "3.9.0",
   "description": "",
   "scripts": {
-    "publish": "tsc && egret-cli libraries publish"
+    "publish": "tsc && egret-cli libraries publish",
+    "test":"egret-cli upgrade res-v4 test --x x && egret build test -e && egret run test"
   },
   "author": "wander",
   "license": "ISC",

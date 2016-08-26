@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "bg_jpg,texture_png,skeleton_json,texture_json,sheet_json",
+			"keys": "bg_jpg,texture_png,skeleton_json,texture_json",
 			"name": "preload"
 		}
 	],
@@ -35,12 +35,6 @@
 			"name": "texture_json",
 			"type": "json",
 			"url": "assets/armature/texture.json"
-		},
-		{
-			"name": "sheet_json",
-			"type": "sheet",
-			"url": "assets/sheet.json",
-			"subkeys": "egret_icon_png,bg_jpg"
 		}
 	]
 }

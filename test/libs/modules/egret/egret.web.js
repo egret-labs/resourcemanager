@@ -955,9 +955,8 @@ var egret;
                 request.open("GET", url, true);
                 request.responseType = "arraybuffer";
                 request.onload = function () {
-                    self._arrayBuffer = request.response;
                     WebAudioDecode.decodeArr.push({
-                        "buffer": self._arrayBuffer,
+                        "buffer": request.response,
                         "success": onAudioLoaded,
                         "fail": onAudioError,
                         "self": self,
@@ -3569,6 +3568,7 @@ var egret;
                 Html5Capatibility._canUseBlob = false;
                 var checkAudioType;
                 var audioType = Html5Capatibility._audioType;
+                var canUseWebAudio = window["AudioContext"] || window["webkitAudioContext"] || window["mozAudioContext"];
                 if (audioType == 1 || audioType == 2 || audioType == 3) {
                     checkAudioType = false;
                     Html5Capatibility.setAudioType(audioType);
@@ -3582,9 +3582,14 @@ var egret;
                     egret.Capabilities.$os = "Windows Phone";
                 }
                 else if (ua.indexOf("android") >= 0) {
-                    Html5Capatibility._System_OS = SystemOSType.ADNROID;
                     egret.Capabilities.$os = "Android";
                     Html5Capatibility._System_OS = SystemOSType.ADNROID;
+                    if (canUseWebAudio) {
+                        Html5Capatibility.setAudioType(AudioType.WEB_AUDIO);
+                    }
+                    else {
+                        Html5Capatibility.setAudioType(AudioType.HTML5_AUDIO);
+                    }
                     if (window.hasOwnProperty("QZAppExternal") && ua.indexOf("qzone") >= 0) {
                         Html5Capatibility.setAudioType(AudioType.QQ_AUDIO);
                         var bases = document.getElementsByTagName('base');
@@ -3621,10 +3626,6 @@ var egret;
                 var winURL = window["URL"] || window["webkitURL"];
                 if (!winURL) {
                     Html5Capatibility._canUseBlob = false;
-                }
-                var canUseWebAudio = window["AudioContext"] || window["webkitAudioContext"] || window["mozAudioContext"];
-                if (!canUseWebAudio && Html5Capatibility._audioType == AudioType.WEB_AUDIO) {
-                    Html5Capatibility.setAudioType(AudioType.HTML5_AUDIO);
                 }
                 egret.Sound = Html5Capatibility._AudioClass;
             };
@@ -3801,6 +3802,8 @@ var egret;
             else if (!egret.sys.screenAdapter) {
                 egret.sys.screenAdapter = new egret.sys.DefaultScreenAdapter();
             }
+            egret.sys.CanvasRenderBuffer = web.CanvasRenderBuffer;
+            egret.sys.hitTestBuffer = new web.CanvasRenderBuffer(3, 3);
             var list = document.querySelectorAll(".egret-player");
             var length = list.length;
             for (var i = 0; i < length; i++) {
@@ -3814,7 +3817,6 @@ var egret;
                     };
                 }
             }
-            egret.sys.hitTestBuffer = new web.CanvasRenderBuffer(3, 3);
         }
         /**
          * 设置渲染模式。"auto","webgl","canvas"
@@ -4577,7 +4579,7 @@ var egret;
             var offsetY = Math.round(bitmapData._offsetY);
             var bitmapWidth = bitmapData._bitmapWidth;
             var bitmapHeight = bitmapData._bitmapHeight;
-            sharedContext.drawImage(bitmapData._bitmapData, bitmapData._bitmapX + rect.x / egret.$TextureScaleFactor, bitmapData._bitmapY + rect.y / egret.$TextureScaleFactor, bitmapWidth * rect.width / w, bitmapHeight * rect.height / h, offsetX, offsetY, rect.width, rect.height);
+            sharedContext.drawImage(bitmapData._bitmapData.source, bitmapData._bitmapX + rect.x / egret.$TextureScaleFactor, bitmapData._bitmapY + rect.y / egret.$TextureScaleFactor, bitmapWidth * rect.width / w, bitmapHeight * rect.height / h, offsetX, offsetY, rect.width, rect.height);
             return surface;
         }
         /**
@@ -4615,7 +4617,7 @@ var egret;
             var width = this._bitmapWidth;
             var height = this._bitmapHeight;
             var scale = egret.$TextureScaleFactor;
-            context.drawImage(this._bitmapData, this._bitmapX, this._bitmapY, width, this._bitmapHeight, this._offsetX, this._offsetY, width * scale, height * scale);
+            context.drawImage(this._bitmapData.source, this._bitmapX, this._bitmapY, width, this._bitmapHeight, this._offsetX, this._offsetY, width * scale, height * scale);
             try {
                 var data = buffer.getPixel(1, 1);
             }
@@ -6745,8 +6747,7 @@ var egret;
                     else if (bitmapData.format == "pvr") {
                         bitmapData.webGLTexture = this.createTextureFromCompressedData(bitmapData.source.pvrtcData, bitmapData.width, bitmapData.height, bitmapData.source.mipmapsCount, bitmapData.source.format);
                     }
-                    //todo
-                    if (bitmapData.webGLTexture) {
+                    if (bitmapData.$deleteSource && bitmapData.webGLTexture) {
                         bitmapData.source = null;
                     }
                 }
@@ -8231,7 +8232,7 @@ var egret;
                 }
                 if (node.dirtyRender) {
                     var surface = this.canvasRenderBuffer.surface;
-                    this.canvasRenderer["renderText"](node, this.canvasRenderBuffer.context);
+                    this.canvasRenderer.renderText(node, this.canvasRenderBuffer.context);
                     // 拷贝canvas到texture
                     var texture = node.$texture;
                     if (!texture) {
@@ -8284,14 +8285,14 @@ var egret;
                 }
                 var surface = this.canvasRenderBuffer.surface;
                 if (forHitTest) {
-                    this.canvasRenderer["renderGraphics"](node, this.canvasRenderBuffer.context, true);
+                    this.canvasRenderer.renderGraphics(node, this.canvasRenderBuffer.context, true);
                     egret.WebGLUtils.deleteWebGLTexture(surface);
                     var texture = buffer.context.getWebGLTexture(surface);
                     buffer.context.drawTexture(texture, 0, 0, width, height, 0, 0, width, height, surface.width, surface.height);
                 }
                 else {
                     if (node.dirtyRender) {
-                        this.canvasRenderer["renderGraphics"](node, this.canvasRenderBuffer.context);
+                        this.canvasRenderer.renderGraphics(node, this.canvasRenderBuffer.context);
                         // 拷贝canvas到texture
                         var texture = node.$texture;
                         if (!texture) {

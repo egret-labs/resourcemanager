@@ -1,20 +1,19 @@
 {
   "groups": {
     "preload": [
+      "bg_jpg",
       "texture_png",
       "skeleton_json",
-      "texture_json",
-      "sheet_json"
+      "texture_json"
     ]
   },
   "alias": {
-    "bg_jpg": "assets/sheet.json#bg_jpg",
-    "egret_icon_png": "assets/sheet.json#egret_icon_png",
+    "bg_jpg": "assets/bg.jpg",
+    "egret_icon_png": "assets/egret_icon.png",
     "description_json": "config/description.json",
     "texture_png": "assets/armature/texture.png",
     "skeleton_json": "assets/armature/skeleton.json",
-    "texture_json": "assets/armature/texture.json",
-    "sheet_json": "assets/sheet.json"
+    "texture_json": "assets/armature/texture.json"
   },
   "resources": {
     "assets/bg.jpg": {
@@ -40,10 +39,6 @@
     "assets/armature/texture.json": {
       "type": "json",
       "url": "assets/armature/texture.json"
-    },
-    "assets/sheet.json": {
-      "type": "sheet",
-      "url": "assets/sheet.json"
     }
   }
 }
