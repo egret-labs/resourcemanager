@@ -1,0 +1,13 @@
+{
+  "name": "res",
+  "version": "3.9.0",
+  "description": "",
+  "scripts": {
+    "publish": "tsc"
+  },
+  "author": "wander",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^2.1.0-dev.20160814"
+  }
+}

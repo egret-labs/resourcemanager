@@ -1,0 +1,49 @@
+{
+  "groups": {
+    "preload": [
+      "texture_png",
+      "skeleton_json",
+      "texture_json",
+      "sheet_json"
+    ]
+  },
+  "alias": {
+    "bg_jpg": "assets/sheet.json#bg_jpg",
+    "egret_icon_png": "assets/sheet.json#egret_icon_png",
+    "description_json": "config/description.json",
+    "texture_png": "assets/armature/texture.png",
+    "skeleton_json": "assets/armature/skeleton.json",
+    "texture_json": "assets/armature/texture.json",
+    "sheet_json": "assets/sheet.json"
+  },
+  "resources": {
+    "assets/bg.jpg": {
+      "type": "image",
+      "url": "assets/bg.jpg"
+    },
+    "assets/egret_icon.png": {
+      "type": "image",
+      "url": "assets/egret_icon.png"
+    },
+    "config/description.json": {
+      "type": "json",
+      "url": "config/description.json"
+    },
+    "assets/armature/texture.png": {
+      "type": "image",
+      "url": "assets/armature/texture.png"
+    },
+    "assets/armature/skeleton.json": {
+      "type": "json",
+      "url": "assets/armature/skeleton.json"
+    },
+    "assets/armature/texture.json": {
+      "type": "json",
+      "url": "assets/armature/texture.json"
+    },
+    "assets/sheet.json": {
+      "type": "sheet",
+      "url": "assets/sheet.json"
+    }
+  }
+}

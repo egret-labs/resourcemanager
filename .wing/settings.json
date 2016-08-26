@@ -1,0 +1,4 @@
+// 使用当前设置覆盖默认和用户设置.
+{
+      "typescript.tsdk": "node_modules/typescript/lib"
+}

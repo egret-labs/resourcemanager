@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "outFile": "bin/res/res.js",
+        "declaration": true,
+        "noImplicitAny": false,
+        "sourceMap": false,
+        "stripInternal": true,
+        "allowUnreachableCode": true,
+        "experimentalDecorators": true,
+        "strictNullChecks": true
+    },
+    "files": [
+        "src/DEBUG.ts",
+        "src/core/ResourceItem.ts",
+        "src/core/ResourceConfig.ts",
+        "src/core/ResourceLoader.ts",
+        "src/events/ResourceEvent.ts",
+        "src/analyzer/AnalyzerBase.ts",
+        "src/analyzer/BinAnalyzer.ts",
+        "src/analyzer/ImageAnalyzer.ts",
+        "src/analyzer/TextAnalyzer.ts",
+        "src/analyzer/JsonAnalyzer.ts",
+        "src/analyzer/SheetAnalyzer.ts",
+        "src/analyzer/FontAnalyzer.ts",
+        "src/analyzer/SoundAnalyzer.ts",
+        "src/analyzer/AnimationAnalyzer.ts",
+        "src/Resource.ts",
+        "src/i18n/zh_CN.ts",
+        "libs/egret.d.ts"
+    ]
+}
