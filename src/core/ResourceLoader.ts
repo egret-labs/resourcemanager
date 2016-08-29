@@ -164,7 +164,7 @@ module RES {
 					})
 			}
 
-			let processor: Processor;
+			let processor: Processor | undefined;
 
 			while (this.loadingCount < this.thread) {
 				let resItem = this.getOneResourceItem();

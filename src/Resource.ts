@@ -46,7 +46,12 @@ module RES {
 
         unload(resource: ResourceInfo) {
             let processor = host.isSupport(resource);
-            return processor.onRemoveStart(host, resource);
+            if (processor) {
+                return processor.onRemoveStart(host, resource);
+            }
+            else {
+                return Promise.resolve();
+            }
         },
 
 
@@ -68,8 +73,15 @@ module RES {
 
         isSupport(resource: ResourceInfo) {
             let type = resource.type;
-            let processor = type == "image" ? RES.ImageProcessor : RES.JsonProcessor;
-            return processor;
+
+            let map = {
+                "image": ImageProcessor,
+                "json": JsonProcessor,
+                "text": TextProcessor,
+                "xml": XMLProcessor
+            }
+
+            return map[type];
         }
     }
 

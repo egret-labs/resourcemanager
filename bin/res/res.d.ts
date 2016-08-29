@@ -740,7 +740,6 @@ declare module RES {
         save: (rexource: ResourceInfo, data: any) => void;
         get: (resource: ResourceInfo) => any;
         remove: (resource: ResourceInfo) => void;
-        isSupport: (resource: ResourceInfo) => Processor;
     }
     interface Processor {
         onLoadStart(host: ProcessHost, resource: ResourceInfo): PromiseLike<any>;
@@ -749,6 +748,7 @@ declare module RES {
     var ImageProcessor: Processor;
     var TextProcessor: Processor;
     var JsonProcessor: Processor;
+    var XMLProcessor: Processor;
 }
 declare module RES {
     var host: ProcessHost;

@@ -2043,7 +2043,7 @@ var RES;
         },
         onRemoveStart: function (host, resource) {
             var texture = host.get(resource);
-            texture.webGLTexture.dispose();
+            // texture.webGLTexture.dispose();
             return Promise.resolve();
         }
     };
@@ -2073,13 +2073,26 @@ var RES;
     RES.JsonProcessor = {
         onLoadStart: function (host, resource) {
             return new Promise(function (reslove, reject) {
-                RES.host.load(RES.TextProcessor, resource).then(function (text) {
+                host.load(RES.TextProcessor, resource).then(function (text) {
                     var data = JSON.parse(text);
                     reslove(data);
                 });
             });
         },
         onRemoveStart: function (host, request) {
+            return Promise.resolve();
+        }
+    };
+    RES.XMLProcessor = {
+        onLoadStart: function (host, resource) {
+            return new Promise(function (reslove, reject) {
+                host.load(RES.TextProcessor, resource).then(function (text) {
+                    var xml = egret.XML.parse(text);
+                    reslove(xml);
+                });
+            });
+        },
+        onRemoveStart: function (host, resource) {
             return Promise.resolve();
         }
     };
@@ -2124,7 +2137,12 @@ var RES;
         },
         unload: function (resource) {
             var processor = RES.host.isSupport(resource);
-            return processor.onRemoveStart(RES.host, resource);
+            if (processor) {
+                return processor.onRemoveStart(RES.host, resource);
+            }
+            else {
+                return Promise.resolve();
+            }
         },
         save: function (resource, data) {
             __tempCache[resource.url] = data;
@@ -2137,8 +2155,13 @@ var RES;
         },
         isSupport: function (resource) {
             var type = resource.type;
-            var processor = type == "image" ? RES.ImageProcessor : RES.JsonProcessor;
-            return processor;
+            var map = {
+                "image": RES.ImageProcessor,
+                "json": RES.JsonProcessor,
+                "text": RES.TextProcessor,
+                "xml": RES.XMLProcessor
+            };
+            return map[type];
         }
     };
     /**

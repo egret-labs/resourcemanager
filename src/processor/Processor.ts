@@ -1,5 +1,6 @@
 module RES {
 
+
     export interface ProcessHost {
 
         resourceConfig: ResourceConfig;
@@ -14,7 +15,10 @@ module RES {
 
         remove: (resource: ResourceInfo) => void;
 
-        isSupport: (resource: ResourceInfo) => Processor;
+        /**
+         * @internal
+         */
+        isSupport: (resource: ResourceInfo) => Processor | undefined;
 
     }
 
@@ -96,7 +100,7 @@ module RES {
 
         onLoadStart(host, resource) {
             return new Promise((reslove, reject) => {
-                RES.host.load(TextProcessor, resource).then((text) => {
+                host.load(TextProcessor, resource).then((text) => {
                     let data = JSON.parse(text);
                     reslove(data);
                 })
@@ -109,5 +113,20 @@ module RES {
 
     }
 
+    export var XMLProcessor: Processor = {
 
+        onLoadStart(host, resource) {
+            return new Promise((reslove, reject) => {
+                host.load(TextProcessor, resource).then((text) => {
+                    var xml = egret.XML.parse(text);
+                    reslove(xml);
+                })
+            });
+
+        },
+
+        onRemoveStart(host, resource) {
+            return Promise.resolve();
+        }
+    }
 }
