@@ -153,6 +153,19 @@ module RES {
 		 * 加载下一项
 		 */
 		private next(): void {
+
+			let executeWithResItem = (r: ResourceItem) => {
+
+				let type = r.type;
+				let processor = type == "image" ?  RES.ImageProcessor : RES.JsonProcessor;
+				host.execute(processor, r)
+					.then(image => {
+						console.log (image)
+						r.loaded = true;
+						this.onItemComplete(r);
+					})
+			}
+
 			while (this.loadingCount < this.thread) {
 				let resItem = this.getOneResourceItem();
 				if (!resItem)
@@ -163,11 +176,7 @@ module RES {
 					this.onItemComplete(resItem);
 				}
 				else if (host.isSupport(resItem)) {
-					host.execute(RES.ImageProcessor, resItem)
-						.then(res => {
-							(res as ResourceItem).loaded = true;
-							this.onItemComplete(res as ResourceItem);
-						})
+					executeWithResItem(resItem);
 				}
 				else {
 					var analyzer: AnalyzerBase = this.resInstance.$getAnalyzerByType(resItem.type);

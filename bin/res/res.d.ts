@@ -735,7 +735,7 @@ declare module RES {
 declare module RES {
     interface ProcessHost {
         resourceConfig: ResourceConfig;
-        execute: (processor: Processor, resource: ResourceInfo) => PromiseLike<ResourceInfo>;
+        execute: (processor: Processor, resource: ResourceInfo) => PromiseLike<any>;
         save: (rexource: ResourceInfo, data: any) => void;
         get: (resource: ResourceInfo) => any;
         isSupport: (resource: ResourceInfo) => boolean;
@@ -745,6 +745,8 @@ declare module RES {
         onRemoveStart(host: ProcessHost, resource: ResourceInfo): PromiseLike<any>;
     }
     var ImageProcessor: Processor;
+    var TextProcessor: Processor;
+    var JsonProcessor: Processor;
 }
 declare module RES {
     var host: ProcessHost;

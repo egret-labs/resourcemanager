@@ -53,7 +53,10 @@ module RES {
         },
 
         isSupport(resource: ResourceInfo) {
-            return resource.url.indexOf("png") >= 0 || resource.url.indexOf("jpg") >= 0;
+            //todo
+            return resource.url.indexOf("png") >= 0
+                || resource.url.indexOf("jpg") >= 0
+                || resource.url.indexOf("json") >= 0
         }
     }
 
@@ -695,9 +698,7 @@ module RES {
          */
         private onGroupComp(event: ResourceEvent): void {
             if (event.groupName == Resource.GROUP_CONFIG) {
-                var resolver: AnalyzerBase = this.$getAnalyzerByType(configItem.type);
-                var data: any = resolver.getRes(configItem.url);
-                resolver.destroyRes(configItem.url);
+                let data = host.get(configItem);
                 this.resConfig.parseConfig(data, "resource");//todo
                 this.configComplete = true;
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
@@ -768,7 +769,7 @@ module RES {
             else {
                 return this.$getResourceViaAnalyzer(r, subkey);
             }
-           
+
 
         }
 

@@ -540,6 +540,16 @@ var RES;
          */
         ResourceLoader.prototype.next = function () {
             var _this = this;
+            var executeWithResItem = function (r) {
+                var type = r.type;
+                var processor = type == "image" ? RES.ImageProcessor : RES.JsonProcessor;
+                RES.host.execute(processor, r)
+                    .then(function (image) {
+                    console.log(image);
+                    r.loaded = true;
+                    _this.onItemComplete(r);
+                });
+            };
             while (this.loadingCount < this.thread) {
                 var resItem = this.getOneResourceItem();
                 if (!resItem)
@@ -549,11 +559,7 @@ var RES;
                     this.onItemComplete(resItem);
                 }
                 else if (RES.host.isSupport(resItem)) {
-                    RES.host.execute(RES.ImageProcessor, resItem)
-                        .then(function (res) {
-                        res.loaded = true;
-                        _this.onItemComplete(res);
-                    });
+                    executeWithResItem(resItem);
                 }
                 else {
                     var analyzer = this.resInstance.$getAnalyzerByType(resItem.type);
@@ -2024,7 +2030,7 @@ var RES;
                 var onSuccess = function () {
                     var texture = loader.data;
                     host.save(resource, texture);
-                    reslove(resource);
+                    reslove(texture);
                 };
                 var onError = function () {
                     reject();
@@ -2037,6 +2043,43 @@ var RES;
             return new Promise(executor);
         },
         onRemoveStart: function (host, resource) {
+            return Promise.resolve();
+        }
+    };
+    RES.TextProcessor = {
+        onLoadStart: function (host, resource) {
+            var _this = this;
+            return new Promise(function (reslove, reject) {
+                var onSuccess = function () {
+                    var text = request.response;
+                    reslove(text);
+                };
+                var onError = function () {
+                    reject();
+                };
+                var request = new egret.HttpRequest();
+                request.addEventListener(egret.Event.COMPLETE, onSuccess, _this);
+                request.addEventListener(egret.IOErrorEvent.IO_ERROR, onError, _this);
+                request.responseType = egret.HttpResponseType.TEXT;
+                request.open(resource.url, "get");
+                request.send();
+            });
+        },
+        onRemoveStart: function (host, resource) {
+            return Promise.resolve();
+        }
+    };
+    RES.JsonProcessor = {
+        onLoadStart: function (host, resource) {
+            return new Promise(function (reslove, reject) {
+                RES.host.execute(RES.TextProcessor, resource).then(function (text) {
+                    var data = JSON.parse(text);
+                    host.save(resource, data);
+                    reslove(data);
+                });
+            });
+        },
+        onRemoveStart: function (host, request) {
             return Promise.resolve();
         }
     };
@@ -2086,7 +2129,10 @@ var RES;
             return __tempCache[resource.url];
         },
         isSupport: function (resource) {
-            return resource.url.indexOf("png") >= 0 || resource.url.indexOf("jpg") >= 0;
+            //todo
+            return resource.url.indexOf("png") >= 0
+                || resource.url.indexOf("jpg") >= 0
+                || resource.url.indexOf("json") >= 0;
         }
     };
     /**
@@ -2723,9 +2769,8 @@ var RES;
          */
         Resource.prototype.onGroupComp = function (event) {
             if (event.groupName == Resource.GROUP_CONFIG) {
-                var resolver = this.$getAnalyzerByType(RES.configItem.type);
-                var data = resolver.getRes(RES.configItem.url);
-                resolver.destroyRes(RES.configItem.url);
+                var data = RES.host.get(RES.configItem);
+                // let data = RES.getRes(configItem.url)
                 this.resConfig.parseConfig(data, "resource"); //todo
                 this.configComplete = true;
                 RES.ResourceEvent.dispatchResourceEvent(this, RES.ResourceEvent.CONFIG_COMPLETE);
