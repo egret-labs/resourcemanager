@@ -4,13 +4,17 @@ module RES {
 
         resourceConfig: ResourceConfig;
 
-        execute: (processor: Processor, resource: ResourceInfo) => PromiseLike<any>;
+        load: (processor: Processor, resource: ResourceInfo) => PromiseLike<any>;
+
+        unload: (resource: ResourceInfo) => PromiseLike<any>
 
         save: (rexource: ResourceInfo, data: any) => void;
 
         get: (resource: ResourceInfo) => any;
 
-        isSupport: (resource: ResourceInfo) => boolean;
+        remove: (resource: ResourceInfo) => void;
+
+        isSupport: (resource: ResourceInfo) => Processor;
 
     }
 
@@ -31,7 +35,6 @@ module RES {
 
                 let onSuccess = () => {
                     let texture = loader.data;
-                    host.save(resource, texture);
                     reslove(texture);
                 }
 
@@ -50,6 +53,9 @@ module RES {
         },
 
         onRemoveStart(host, resource) {
+
+            let texture = host.get(resource);
+            // texture.webGLTexture.dispose();
             return Promise.resolve();
         }
 
@@ -90,9 +96,8 @@ module RES {
 
         onLoadStart(host, resource) {
             return new Promise((reslove, reject) => {
-                RES.host.execute(TextProcessor, resource).then((text) => {
+                RES.host.load(TextProcessor, resource).then((text) => {
                     let data = JSON.parse(text);
-                    host.save(resource,data);
                     reslove(data);
                 })
             })

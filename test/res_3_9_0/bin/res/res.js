@@ -540,16 +540,16 @@ var RES;
          */
         ResourceLoader.prototype.next = function () {
             var _this = this;
-            var executeWithResItem = function (r) {
-                var type = r.type;
-                var processor = type == "image" ? RES.ImageProcessor : RES.JsonProcessor;
-                RES.host.execute(processor, r)
-                    .then(function (image) {
-                    console.log(image);
+            var load = function (processor, r) {
+                RES.host.load(processor, r)
+                    .then(function (response) {
+                    console.log(response);
+                    RES.host.save(r, response);
                     r.loaded = true;
                     _this.onItemComplete(r);
                 });
             };
+            var processor;
             while (this.loadingCount < this.thread) {
                 var resItem = this.getOneResourceItem();
                 if (!resItem)
@@ -558,8 +558,8 @@ var RES;
                 if (resItem.loaded) {
                     this.onItemComplete(resItem);
                 }
-                else if (RES.host.isSupport(resItem)) {
-                    executeWithResItem(resItem);
+                else if (processor = RES.host.isSupport(resItem)) {
+                    load(processor, resItem);
                 }
                 else {
                     var analyzer = this.resInstance.$getAnalyzerByType(resItem.type);
@@ -2029,7 +2029,6 @@ var RES;
             var executor = function (reslove, reject) {
                 var onSuccess = function () {
                     var texture = loader.data;
-                    host.save(resource, texture);
                     reslove(texture);
                 };
                 var onError = function () {
@@ -2043,6 +2042,8 @@ var RES;
             return new Promise(executor);
         },
         onRemoveStart: function (host, resource) {
+            var texture = host.get(resource);
+            texture.webGLTexture.dispose();
             return Promise.resolve();
         }
     };
@@ -2072,9 +2073,8 @@ var RES;
     RES.JsonProcessor = {
         onLoadStart: function (host, resource) {
             return new Promise(function (reslove, reject) {
-                RES.host.execute(RES.TextProcessor, resource).then(function (text) {
+                RES.host.load(RES.TextProcessor, resource).then(function (text) {
                     var data = JSON.parse(text);
-                    host.save(resource, data);
                     reslove(data);
                 });
             });
@@ -2119,8 +2119,12 @@ var RES;
         get resourceConfig() {
             return RES['configInstance'];
         },
-        execute: function (processor, resourceInfo) {
+        load: function (processor, resourceInfo) {
             return processor.onLoadStart(RES.host, resourceInfo);
+        },
+        unload: function (resource) {
+            var processor = RES.host.isSupport(resource);
+            return processor.onRemoveStart(RES.host, resource);
         },
         save: function (resource, data) {
             __tempCache[resource.url] = data;
@@ -2128,11 +2132,13 @@ var RES;
         get: function (resource) {
             return __tempCache[resource.url];
         },
+        remove: function (resource) {
+            delete __tempCache[resource.url];
+        },
         isSupport: function (resource) {
-            //todo
-            return resource.url.indexOf("png") >= 0
-                || resource.url.indexOf("jpg") >= 0
-                || resource.url.indexOf("json") >= 0;
+            var type = resource.type;
+            var processor = type == "image" ? RES.ImageProcessor : RES.JsonProcessor;
+            return processor;
         }
     };
     /**
@@ -2624,7 +2630,6 @@ var RES;
              * 异步获取资源参数缓存字典
              */
             this.asyncDic = {};
-            this._loadedUrlTypes = {};
             this.init();
         }
         /**
@@ -2770,7 +2775,6 @@ var RES;
         Resource.prototype.onGroupComp = function (event) {
             if (event.groupName == Resource.GROUP_CONFIG) {
                 var data = RES.host.get(RES.configItem);
-                // let data = RES.getRes(configItem.url)
                 this.resConfig.parseConfig(data, "resource"); //todo
                 this.configComplete = true;
                 RES.ResourceEvent.dispatchResourceEvent(this, RES.ResourceEvent.CONFIG_COMPLETE);
@@ -2910,6 +2914,9 @@ var RES;
         Resource.prototype.destroyRes = function (name, force) {
             if (force === void 0) { force = true; }
             var group = this.resConfig.getGroup(name);
+            var remove = function (r) {
+                RES.host.unload(r).then(function () { return RES.host.remove(r); });
+            };
             if (group && group.length > 0) {
                 var index = this.loadedGroups.indexOf(name);
                 if (index != -1) {
@@ -2921,8 +2928,13 @@ var RES;
                     }
                     else {
                         item.loaded = false;
-                        var analyzer = this.$getAnalyzerByType(item.type);
-                        analyzer.destroyRes(item.url);
+                        if (RES.host.isSupport(item)) {
+                            remove(item);
+                        }
+                        else {
+                            var analyzer = this.$getAnalyzerByType(item.type);
+                            analyzer.destroyRes(item.url);
+                        }
                         this.removeLoadedGroupsByItemName(item.url);
                     }
                 }
@@ -2932,10 +2944,15 @@ var RES;
                 var item = this.resConfig.getResource(name);
                 if (item) {
                     item.loaded = false;
-                    analyzer = this.$getAnalyzerByType(item.type);
-                    var result = analyzer.destroyRes(name);
+                    if (RES.host.isSupport(item)) {
+                        RES.host.unload(item);
+                    }
+                    else {
+                        var analyzer = this.$getAnalyzerByType(item.type);
+                        analyzer.destroyRes(item.url);
+                    }
                     this.removeLoadedGroupsByItemName(item.url);
-                    return result;
+                    return true;
                 }
                 else {
                     console.warn("\u65E0\u6CD5\u5220\u9664\u6307\u5B9A\u7EC4:" + name);

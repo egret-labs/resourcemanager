@@ -40,9 +40,17 @@ module RES {
             return RES['configInstance']
         },
 
-        execute: (processor: Processor, resourceInfo: ResourceInfo) => {
+        load: (processor: Processor, resourceInfo: ResourceInfo) => {
             return processor.onLoadStart(host, resourceInfo)
         },
+
+        unload(resource: ResourceInfo) {
+            let processor = host.isSupport(resource);
+            return processor.onRemoveStart(host, resource);
+        },
+
+
+
         save(resource: ResourceInfo, data: any) {
             __tempCache[resource.url] = data;
         },
@@ -52,11 +60,16 @@ module RES {
             return __tempCache[resource.url];
         },
 
+        remove(resource: ResourceInfo) {
+            delete __tempCache[resource.url];
+        },
+
+
+
         isSupport(resource: ResourceInfo) {
-            //todo
-            return resource.url.indexOf("png") >= 0
-                || resource.url.indexOf("jpg") >= 0
-                || resource.url.indexOf("json") >= 0
+            let type = resource.type;
+            let processor = type == "image" ? RES.ImageProcessor : RES.JsonProcessor;
+            return processor;
         }
     }
 
@@ -812,7 +825,6 @@ module RES {
             }
         }
 
-        private _loadedUrlTypes = {};
         /**
          * 通过url获取资源
 		 * @method RES.getResByUrl
@@ -851,6 +863,11 @@ module RES {
          */
         public destroyRes(name: string, force: boolean = true): boolean {
             var group = this.resConfig.getGroup(name);
+
+            let remove = (r: ResourceInfo) => {
+                host.unload(r).then(() => host.remove(r));
+            }
+
             if (group && group.length > 0) {
                 var index: number = this.loadedGroups.indexOf(name);
                 if (index != -1) {
@@ -862,8 +879,13 @@ module RES {
                     }
                     else {
                         (item as ResourceItem).loaded = false;
-                        var analyzer: AnalyzerBase = this.$getAnalyzerByType(item.type);
-                        analyzer.destroyRes(item.url);
+                        if (host.isSupport(item)) {
+                            remove(item);
+                        }
+                        else {
+                            var analyzer: AnalyzerBase = this.$getAnalyzerByType(item.type);
+                            analyzer.destroyRes(item.url);
+                        }
                         this.removeLoadedGroupsByItemName(item.url);
                     }
                 }
@@ -874,10 +896,15 @@ module RES {
                 let item = this.resConfig.getResource(name);
                 if (item) {
                     (item as ResourceItem).loaded = false;
-                    analyzer = this.$getAnalyzerByType(item.type);
-                    let result = analyzer.destroyRes(name);
+                    if (host.isSupport(item)) {
+                        host.unload(item);
+                    }
+                    else {
+                        var analyzer: AnalyzerBase = this.$getAnalyzerByType(item.type);
+                        analyzer.destroyRes(item.url);
+                    }
                     this.removeLoadedGroupsByItemName(item.url);
-                    return result;
+                    return true;
                 }
                 else {
                     console.warn(`无法删除指定组:${name}`);

@@ -82,18 +82,23 @@ class Main extends egret.DisplayObjectContainer {
             RES.removeEventListener(RES.ResourceEvent.ITEM_LOAD_ERROR, this.onItemLoadError, this);
             this.createGameScene();
 
-            RES.createGroup("fuck", ["bg_jpg"]);
-            RES.loadGroup("fuck");
+            setTimeout(() => {
+                RES.destroyRes("preload");
+                // RES.createGroup("fuck1", ["bg_jpg"]);
+                // RES.loadGroup("fuck1")
+            }, 1000);
+
+            // RES.createGroup("fuck", ["bg_jpg"]);
+            // RES.loadGroup("fuck");
         }
         else if (event.groupName == "fuck") {
+
+
+            alert(111)
             this.createGameScene();
-            setTimeout(() => {
-                RES.destroyRes("fuck");
-                RES.createGroup("fuck1", ["bg_jpg"]);
-                RES.loadGroup("fuck1")
-            },1000);
+
         }
-        else if (event.groupName == "fuck1"){
+        else if (event.groupName == "fuck1") {
             this.sky.texture = RES.getRes("bg_jpg");
         }
     }
@@ -134,7 +139,7 @@ class Main extends egret.DisplayObjectContainer {
     }
 
     private textfield: egret.TextField;
-    private sky:egret.Bitmap;
+    private sky: egret.Bitmap;
 
     /**
      * 创建游戏场景

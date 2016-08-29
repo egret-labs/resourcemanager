@@ -735,10 +735,12 @@ declare module RES {
 declare module RES {
     interface ProcessHost {
         resourceConfig: ResourceConfig;
-        execute: (processor: Processor, resource: ResourceInfo) => PromiseLike<any>;
+        load: (processor: Processor, resource: ResourceInfo) => PromiseLike<any>;
+        unload: (resource: ResourceInfo) => PromiseLike<any>;
         save: (rexource: ResourceInfo, data: any) => void;
         get: (resource: ResourceInfo) => any;
-        isSupport: (resource: ResourceInfo) => boolean;
+        remove: (resource: ResourceInfo) => void;
+        isSupport: (resource: ResourceInfo) => Processor;
     }
     interface Processor {
         onLoadStart(host: ProcessHost, resource: ResourceInfo): PromiseLike<any>;
@@ -1279,7 +1281,6 @@ declare module RES {
          * @param thisObject {any}
          */
         getResAsync(key: string, compFunc: Function, thisObject: any): void;
-        private _loadedUrlTypes;
         /**
          * 通过url获取资源
          * @method RES.getResByUrl

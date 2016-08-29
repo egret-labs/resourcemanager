@@ -154,17 +154,17 @@ module RES {
 		 */
 		private next(): void {
 
-			let executeWithResItem = (r: ResourceItem) => {
-
-				let type = r.type;
-				let processor = type == "image" ?  RES.ImageProcessor : RES.JsonProcessor;
-				host.execute(processor, r)
-					.then(image => {
-						console.log (image)
+			let load = (processor: Processor, r: ResourceItem) => {
+				host.load(processor, r)
+					.then(response => {
+						console.log(response)
+						host.save(r, response);
 						r.loaded = true;
 						this.onItemComplete(r);
 					})
 			}
+
+			let processor: Processor;
 
 			while (this.loadingCount < this.thread) {
 				let resItem = this.getOneResourceItem();
@@ -175,8 +175,8 @@ module RES {
 				if (resItem.loaded) {
 					this.onItemComplete(resItem);
 				}
-				else if (host.isSupport(resItem)) {
-					executeWithResItem(resItem);
+				else if (processor = host.isSupport(resItem)) {
+					load(processor, resItem);
 				}
 				else {
 					var analyzer: AnalyzerBase = this.resInstance.$getAnalyzerByType(resItem.type);
