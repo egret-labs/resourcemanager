@@ -2068,7 +2068,7 @@ var RES;
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (reslove, reject) {
                         var onSuccess = function () {
-                            var texture = loader.data;
+                            var texture = loader['data'] ? loader['data'] : loader['response'];
                             reslove(texture);
                         };
                         var onError = function () {
@@ -2114,21 +2114,21 @@ var RES;
     };
     RES.TextProcessor = {
         onLoadStart: function (host, resource) {
-            var _this = this;
-            return new Promise(function (reslove, reject) {
-                var onSuccess = function () {
-                    var text = request.response;
-                    reslove(text);
-                };
-                var onError = function () {
-                    reject();
-                };
-                var request = new egret.HttpRequest();
-                request.addEventListener(egret.Event.COMPLETE, onSuccess, _this);
-                request.addEventListener(egret.IOErrorEvent.IO_ERROR, onError, _this);
-                request.responseType = egret.HttpResponseType.TEXT;
-                request.open(resource.url, "get");
-                request.send();
+            return __awaiter(this, void 0, void 0, function () {
+                var request, text;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            request = new egret.HttpRequest();
+                            request.responseType = egret.HttpResponseType.TEXT;
+                            request.open(resource.url, "get");
+                            request.send();
+                            return [4 /*yield*/, promisify(request)];
+                        case 1:
+                            text = _a.sent();
+                            return [2 /*return*/, text];
+                    }
+                });
             });
         },
         onRemoveStart: function (host, resource) {

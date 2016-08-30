@@ -1,11 +1,11 @@
 module RES {
 
 
-    async function promisify(loader: egret.ImageLoader): Promise<any> {
+    async function promisify(loader: egret.ImageLoader | egret.HttpRequest): Promise<any> {
 
         return new Promise((reslove, reject) => {
             let onSuccess = () => {
-                let texture = loader.data;
+                let texture = loader['data'] ? loader['data'] : loader['response'];
                 reslove(texture);
             }
 
@@ -76,28 +76,15 @@ module RES {
 
     export var TextProcessor: Processor = {
 
-        onLoadStart(host, resource) {
+        async onLoadStart(host, resource) {
 
-            return new Promise((reslove, reject) => {
+            var request: egret.HttpRequest = new egret.HttpRequest();
+            request.responseType = egret.HttpResponseType.TEXT;
+            request.open(resource.url, "get");
+            request.send();
+            let text = await promisify(request);
+            return text;
 
-
-                let onSuccess = () => {
-                    let text = request.response;
-                    reslove(text);
-                };
-
-                let onError = () => {
-                    reject();
-                }
-
-                var request: egret.HttpRequest = new egret.HttpRequest();
-                request.addEventListener(egret.Event.COMPLETE, onSuccess, this);
-                request.addEventListener(egret.IOErrorEvent.IO_ERROR, onError, this);
-                request.responseType = egret.HttpResponseType.TEXT;
-                request.open(resource.url, "get");
-                request.send();
-
-            })
         },
 
         onRemoveStart(host, resource) {
