@@ -80,8 +80,12 @@ class Main extends egret.DisplayObjectContainer {
 
             setTimeout(() => {
                 RES.destroyRes("preload");
-                RES.createGroup("tempGroup", ["sheet_json"]);
-                RES.loadGroup("tempGroup")
+                RES.getResAsync("sheet_json",()=>{
+                    let spritesheet:egret.SpriteSheet = RES.getRes("sheet_json");            
+                    this.sky.texture = spritesheet.getTexture("bg_jpg");
+                },this);
+                // RES.createGroup("tempGroup", ["sheet_json"]);
+                // RES.loadGroup("tempGroup")
             }, 1000);
         }
         else if (event.groupName == "tempGroup") {

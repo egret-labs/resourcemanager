@@ -828,9 +828,7 @@ module RES {
                 let item = this.resConfig.getResource(name);
                 if (item) {
                     (item as ResourceItem).loaded = false;
-                    if (host.isSupport(item)) {
-                        host.unload(item);
-                    }
+                    remove(item);
                     this.removeLoadedGroupsByItemName(item.url);
                     return true;
                 }
