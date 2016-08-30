@@ -76,30 +76,18 @@ class Main extends egret.DisplayObjectContainer {
     private onResourceLoadComplete(event: RES.ResourceEvent): void {
         if (event.groupName == "preload") {
             this.stage.removeChild(this.loadingView);
-            RES.removeEventListener(RES.ResourceEvent.GROUP_COMPLETE, this.onResourceLoadComplete, this);
-            RES.removeEventListener(RES.ResourceEvent.GROUP_LOAD_ERROR, this.onResourceLoadError, this);
-            RES.removeEventListener(RES.ResourceEvent.GROUP_PROGRESS, this.onResourceProgress, this);
-            RES.removeEventListener(RES.ResourceEvent.ITEM_LOAD_ERROR, this.onItemLoadError, this);
             this.createGameScene();
 
             setTimeout(() => {
                 RES.destroyRes("preload");
-                // RES.createGroup("fuck1", ["bg_jpg"]);
-                // RES.loadGroup("fuck1")
+                RES.createGroup("tempGroup", ["sheet_json"]);
+                RES.loadGroup("tempGroup")
             }, 1000);
-
-            // RES.createGroup("fuck", ["bg_jpg"]);
-            // RES.loadGroup("fuck");
         }
-        else if (event.groupName == "fuck") {
+        else if (event.groupName == "tempGroup") {
+            let spritesheet:egret.SpriteSheet = RES.getRes("sheet_json");            
+            this.sky.texture = spritesheet.getTexture("bg_jpg");
 
-
-            alert(111)
-            this.createGameScene();
-
-        }
-        else if (event.groupName == "fuck1") {
-            this.sky.texture = RES.getRes("bg_jpg");
         }
     }
 
