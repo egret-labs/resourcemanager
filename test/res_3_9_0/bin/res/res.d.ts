@@ -844,10 +844,6 @@ declare module RES {
      */
     function removeEventListener(type: string, listener: (event: egret.Event) => void, thisObject: any, useCapture?: boolean): void;
     /**
-    * @private
-    */
-    function $getVirtualUrl(item: ResourceItem): string;
-    /**
      * @language en_US
      * Get the actual URL of the resource file.<br/>
      * Because this method needs to be called to control the actual version of the URL have the original resource files were changed, so would like to get the specified resource file the actual URL.<br/>

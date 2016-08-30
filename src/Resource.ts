@@ -483,13 +483,6 @@ module RES {
     }
 
     /**
-    * @private
-    */
-    export function $getVirtualUrl(item: ResourceItem): string {
-        return item.url;
-    }
-
-    /**
      * @language en_US
      * Get the actual URL of the resource file.<br/>
      * Because this method needs to be called to control the actual version of the URL have the original resource files were changed, so would like to get the specified resource file the actual URL.<br/>
@@ -608,8 +601,12 @@ module RES {
 
         private startLoadConfig(): void {
             this.callLaterFlag = false;
-            var resItem: ResourceItem = configItem;
-            this.resLoader.loadGroup([resItem], Resource.GROUP_CONFIG, Number.MAX_VALUE);
+            host.load(configItem).then((data) => {
+                this.resConfig.parseConfig(data, "resource");//todo
+                this.configComplete = true;
+                ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
+                this.loadDelayGroups();
+            })
         }
         /**
          * 已经加载过组名列表
@@ -682,18 +679,8 @@ module RES {
          * 队列加载完成事件
          */
         private onGroupComp(event: ResourceEvent): void {
-            if (event.groupName == Resource.GROUP_CONFIG) {
-                let data = host.get(configItem);
-                this.resConfig.parseConfig(data, "resource");//todo
-                this.configComplete = true;
-                ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
-                this.loadDelayGroups();
-            }
-            else {
-                this.loadedGroups.push(event.groupName);
-                this.dispatchEvent(event);
-            }
-
+            this.loadedGroups.push(event.groupName);
+            this.dispatchEvent(event);
         }
         /**
          * 启动延迟的组加载
@@ -773,6 +760,7 @@ module RES {
                 return;
             }
             host.load(r).then((value) => {
+                RES.host.save(r, value);
                 compFunc.call(thisObject, value, r.url);
             });
         }
@@ -804,7 +792,9 @@ module RES {
             var group = this.resConfig.getGroup(name);
 
             let remove = (r: ResourceInfo) => {
-                host.unload(r).then(() => host.remove(r));
+
+                host.unload(r);
+                host.remove(r)
             }
 
             if (group && group.length > 0) {

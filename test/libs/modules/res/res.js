@@ -1675,13 +1675,6 @@ var RES;
     }
     RES.removeEventListener = removeEventListener;
     /**
-    * @private
-    */
-    function $getVirtualUrl(item) {
-        return item.url;
-    }
-    RES.$getVirtualUrl = $getVirtualUrl;
-    /**
      * @language en_US
      * Get the actual URL of the resource file.<br/>
      * Because this method needs to be called to control the actual version of the URL have the original resource files were changed, so would like to get the specified resource file the actual URL.<br/>
@@ -1782,9 +1775,14 @@ var RES;
             }
         };
         Resource.prototype.startLoadConfig = function () {
+            var _this = this;
             this.callLaterFlag = false;
-            var resItem = RES.configItem;
-            this.resLoader.loadGroup([resItem], Resource.GROUP_CONFIG, Number.MAX_VALUE);
+            RES.host.load(RES.configItem).then(function (data) {
+                _this.resConfig.parseConfig(data, "resource"); //todo
+                _this.configComplete = true;
+                RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_COMPLETE);
+                _this.loadDelayGroups();
+            });
         };
         /**
          * 检查某个资源组是否已经加载完成
@@ -1849,17 +1847,8 @@ var RES;
          * 队列加载完成事件
          */
         Resource.prototype.onGroupComp = function (event) {
-            if (event.groupName == Resource.GROUP_CONFIG) {
-                var data = RES.host.get(RES.configItem);
-                this.resConfig.parseConfig(data, "resource"); //todo
-                this.configComplete = true;
-                RES.ResourceEvent.dispatchResourceEvent(this, RES.ResourceEvent.CONFIG_COMPLETE);
-                this.loadDelayGroups();
-            }
-            else {
-                this.loadedGroups.push(event.groupName);
-                this.dispatchEvent(event);
-            }
+            this.loadedGroups.push(event.groupName);
+            this.dispatchEvent(event);
         };
         /**
          * 启动延迟的组加载
@@ -1933,6 +1922,7 @@ var RES;
                 return;
             }
             RES.host.load(r).then(function (value) {
+                RES.host.save(r, value);
                 compFunc.call(thisObject, value, r.url);
             });
         };
@@ -1963,7 +1953,8 @@ var RES;
             if (force === void 0) { force = true; }
             var group = this.resConfig.getGroup(name);
             var remove = function (r) {
-                RES.host.unload(r).then(function () { return RES.host.remove(r); });
+                RES.host.unload(r);
+                RES.host.remove(r);
             };
             if (group && group.length > 0) {
                 var index = this.loadedGroups.indexOf(name);
@@ -1986,9 +1977,7 @@ var RES;
                 var item = this.resConfig.getResource(name);
                 if (item) {
                     item.loaded = false;
-                    if (RES.host.isSupport(item)) {
-                        RES.host.unload(item);
-                    }
+                    remove(item);
                     this.removeLoadedGroupsByItemName(item.url);
                     return true;
                 }
