@@ -135,7 +135,7 @@ var eui;
             return watcher;
         };
         Binding.$bindProperties = function (host, templates, chainIndex, target, prop) {
-            if (templates.length == 1) {
+            if (templates.length == 1 && chainIndex.length == 1) {
                 return Binding.bindProperty(host, templates[0].split("."), target, prop);
             }
             var assign = function () {
@@ -18318,6 +18318,10 @@ var eui;
                     else if (node.nodeType === 1) {
                         var id = node.attributes["id"];
                         if (id) {
+                            var first = parseInt(id.slice(0, 1));
+                            if (!isNaN(first)) {
+                                egret.$warn(2023, id);
+                            }
                             if (id.indexOf(" ") > -1) {
                                 egret.$warn(2022, id);
                             }
@@ -20059,6 +20063,7 @@ var eui;
     locale_strings[2020] = "EXML parsing error {0}: for child nodes in w: Declarations, the includeIn and excludeFrom properties are not allowed to use \n {1}";
     locale_strings[2021] = "Compile errors in {0}, the attribute name: {1}, the attribute value: {2}.";
     locale_strings[2022] = "EXML parsing error: there can be no Spaces in the id `{0}`";
+    locale_strings[2023] = "EXML parsing error: the first character in id `{0}`,can not be a number";
     locale_strings[2101] = "EXML parsing warnning : fail to register the class property : {0},there is already a class with the same name in the global,please try to rename the class name for the exml. \n {1}";
     locale_strings[2102] = "EXML parsing warnning {0}: no child node can be found on the property code \n {1}";
     locale_strings[2103] = "EXML parsing warnning {0}: the same property '{1}' on the node is assigned multiple times \n {2}";
@@ -20125,6 +20130,7 @@ var eui;
     locale_strings[2020] = "EXML解析错误 {0}: 在w:Declarations内的子节点，不允许使用includeIn和excludeFrom属性\n{1}";
     locale_strings[2021] = "{0} 中存在编译错误，属性名 : {1}，属性值 : {2}";
     locale_strings[2022] = "EXML解析错误: id `{0}` 中不可以有空格";
+    locale_strings[2023] = "EXML解析错误: id `{0}` 中第一个字符不能是数字";
     //EXML警告信息
     locale_strings[2101] = "EXML解析警告: 在EXML根节点上声明的 class 属性: {0} 注册失败，所对应的类已经存在，请尝试重命名要注册的类名。\n{1}";
     locale_strings[2102] = "EXML解析警告 {0}: 在属性节点上找不到任何子节点\n{1}";

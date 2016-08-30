@@ -3,12 +3,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 var RES;
 (function (RES) {
     RES.checkNull = function (target, propertyKey, descriptor) {
@@ -812,86 +806,86 @@ var RES;
             egret.Event.release(event);
             return result;
         };
-        /**
-         * @language en_US
-         * Failure event for a load item.
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 一个加载项加载失败事件。
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        ResourceEvent.ITEM_LOAD_ERROR = "itemLoadError";
-        /**
-         * @language en_US
-         * Configure file to load and parse the completion event. Note: if a configuration file is loaded, it will not be thrown out, and if you want to handle the configuration loading failure, monitor the CONFIG_LOAD_ERROR event.
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 配置文件加载并解析完成事件。注意：若有配置文件加载失败，将不会抛出此事件，若要处理配置加载失败，请同时监听 CONFIG_LOAD_ERROR 事件。
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        ResourceEvent.CONFIG_COMPLETE = "configComplete";
-        /**
-         * @language en_US
-         * Configuration file failed to load.
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 配置文件加载失败事件。
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        ResourceEvent.CONFIG_LOAD_ERROR = "configLoadError";
-        /**
-         * @language en_US
-         * Delay load group resource loading progress event.
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 延迟加载组资源加载进度事件。
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        ResourceEvent.GROUP_PROGRESS = "groupProgress";
-        /**
-         * @language en_US
-         * Delay load group resource to complete event. Note: if you have a resource item loading failure, the event will not be thrown, if you want to handle the group load failure, please listen to the GROUP_LOAD_ERROR event.
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 延迟加载组资源加载完成事件。注意：若组内有资源项加载失败，将不会抛出此事件，若要处理组加载失败，请同时监听 GROUP_LOAD_ERROR 事件。
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        ResourceEvent.GROUP_COMPLETE = "groupComplete";
-        /**
-         * @language en_US
-         * Delayed load group resource failed event.
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 延迟加载组资源加载失败事件。
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        ResourceEvent.GROUP_LOAD_ERROR = "groupLoadError";
         return ResourceEvent;
     }(egret.Event));
+    /**
+     * @language en_US
+     * Failure event for a load item.
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    /**
+     * @language zh_CN
+     * 一个加载项加载失败事件。
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    ResourceEvent.ITEM_LOAD_ERROR = "itemLoadError";
+    /**
+     * @language en_US
+     * Configure file to load and parse the completion event. Note: if a configuration file is loaded, it will not be thrown out, and if you want to handle the configuration loading failure, monitor the CONFIG_LOAD_ERROR event.
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    /**
+     * @language zh_CN
+     * 配置文件加载并解析完成事件。注意：若有配置文件加载失败，将不会抛出此事件，若要处理配置加载失败，请同时监听 CONFIG_LOAD_ERROR 事件。
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    ResourceEvent.CONFIG_COMPLETE = "configComplete";
+    /**
+     * @language en_US
+     * Configuration file failed to load.
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    /**
+     * @language zh_CN
+     * 配置文件加载失败事件。
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    ResourceEvent.CONFIG_LOAD_ERROR = "configLoadError";
+    /**
+     * @language en_US
+     * Delay load group resource loading progress event.
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    /**
+     * @language zh_CN
+     * 延迟加载组资源加载进度事件。
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    ResourceEvent.GROUP_PROGRESS = "groupProgress";
+    /**
+     * @language en_US
+     * Delay load group resource to complete event. Note: if you have a resource item loading failure, the event will not be thrown, if you want to handle the group load failure, please listen to the GROUP_LOAD_ERROR event.
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    /**
+     * @language zh_CN
+     * 延迟加载组资源加载完成事件。注意：若组内有资源项加载失败，将不会抛出此事件，若要处理组加载失败，请同时监听 GROUP_LOAD_ERROR 事件。
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    ResourceEvent.GROUP_COMPLETE = "groupComplete";
+    /**
+     * @language en_US
+     * Delayed load group resource failed event.
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    /**
+     * @language zh_CN
+     * 延迟加载组资源加载失败事件。
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    ResourceEvent.GROUP_LOAD_ERROR = "groupLoadError";
     RES.ResourceEvent = ResourceEvent;
 })(RES || (RES = {}));
 //////////////////////////////////////////////////////////////////////////////////////
@@ -2021,6 +2015,51 @@ var RES;
     }(RES.BinAnalyzer));
     RES.XMLAnalyzer = XMLAnalyzer;
 })(RES || (RES = {}));
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments)).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (sent[0] === 1) throw sent[1]; return sent[1]; }, trys: [], stack: [] }, sent, f;
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (1) {
+            if (_.done) switch (op[0]) {
+                case 0: return { value: void 0, done: true };
+                case 1: case 6: throw op[1];
+                case 2: return { value: op[1], done: true };
+            }
+            try {
+                switch (f = 1, op[0]) {
+                    case 0: case 1: sent = op; break;
+                    case 4: return _.label++, { value: op[1], done: false };
+                    case 7: op = _.stack.pop(), _.trys.pop(); continue;
+                    default:
+                        var r = _.trys.length > 0 && _.trys[_.trys.length - 1];
+                        if (!r && (op[0] === 6 || op[0] === 2)) { _.done = 1; continue; }
+                        if (op[0] === 3 && (!r || (op[1] > r[0] && op[1] < r[3]))) { _.label = op[1]; break; }
+                        if (op[0] === 6 && _.label < r[1]) { _.label = r[1], sent = op; break; }
+                        if (r && _.label < r[2]) { _.label = r[2], _.stack.push(op); break; }
+                        if (r[2]) { _.stack.pop(); }
+                        _.trys.pop();
+                        continue;
+                }
+                op = body.call(thisArg, _);
+            }
+            catch (e) { op = [6, e]; }
+            finally { f = 0, sent = void 0; }
+        }
+    }
+    return {
+        next: function (v) { return step([0, v]); },
+        "throw": function (v) { return step([1, v]); },
+        "return": function (v) { return step([2, v]); }
+    };
+};
 var RES;
 (function (RES) {
     RES.ImageProcessor = {
@@ -2043,6 +2082,7 @@ var RES;
         },
         onRemoveStart: function (host, resource) {
             var texture = host.get(resource);
+            texture.$dispose();
             // texture.webGLTexture.dispose();
             return Promise.resolve();
         }
@@ -2072,10 +2112,16 @@ var RES;
     };
     RES.JsonProcessor = {
         onLoadStart: function (host, resource) {
-            return new Promise(function (reslove, reject) {
-                host.load(RES.TextProcessor, resource).then(function (text) {
-                    var data = JSON.parse(text);
-                    reslove(data);
+            return __awaiter(this, void 0, void 0, function () {
+                var text, data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, host.load(RES.TextProcessor, resource)];
+                        case 1:
+                            text = _a.sent();
+                            data = JSON.parse(text);
+                            return [2 /*return*/, data];
+                    }
                 });
             });
         },
@@ -2085,10 +2131,16 @@ var RES;
     };
     RES.XMLProcessor = {
         onLoadStart: function (host, resource) {
-            return new Promise(function (reslove, reject) {
-                host.load(RES.TextProcessor, resource).then(function (text) {
-                    var xml = egret.XML.parse(text);
-                    reslove(xml);
+            return __awaiter(this, void 0, void 0, function () {
+                var text, data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, host.load(RES.TextProcessor, resource)];
+                        case 1:
+                            text = _a.sent();
+                            data = egret.XML.parse(text);
+                            return [2 /*return*/, data];
+                    }
                 });
             });
         },
@@ -2125,6 +2177,12 @@ var RES;
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var RES;
 (function (RES) {
     var __tempCache = {};
@@ -3047,18 +3105,18 @@ var RES;
                 return url;
             }
         };
-        /**
-         * 配置文件组组名
-         */
-        Resource.GROUP_CONFIG = "RES__CONFIG";
-        __decorate([
-            RES.checkDecorator
-        ], Resource.prototype, "loadConfig", null);
-        __decorate([
-            RES.checkNull
-        ], Resource.prototype, "getRes", null);
         return Resource;
     }(egret.EventDispatcher));
+    /**
+     * 配置文件组组名
+     */
+    Resource.GROUP_CONFIG = "RES__CONFIG";
+    __decorate([
+        RES.checkDecorator
+    ], Resource.prototype, "loadConfig", null);
+    __decorate([
+        RES.checkNull
+    ], Resource.prototype, "getRes", null);
     RES.Resource = Resource;
     /**
      * Resource单例

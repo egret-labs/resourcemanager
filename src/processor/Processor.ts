@@ -59,7 +59,7 @@ module RES {
         onRemoveStart(host, resource) {
 
             let texture = host.get(resource);
-            // texture.webGLTexture.dispose();
+            texture.$dispose();
             return Promise.resolve();
         }
 
@@ -98,13 +98,10 @@ module RES {
 
     export var JsonProcessor: Processor = {
 
-        onLoadStart(host, resource) {
-            return new Promise((reslove, reject) => {
-                host.load(TextProcessor, resource).then((text) => {
-                    let data = JSON.parse(text);
-                    reslove(data);
-                })
-            })
+        async onLoadStart(host, resource) {
+            let text = await host.load(TextProcessor, resource);
+            let data = JSON.parse(text);
+            return data;
         },
 
         onRemoveStart(host, request) {
@@ -115,14 +112,10 @@ module RES {
 
     export var XMLProcessor: Processor = {
 
-        onLoadStart(host, resource) {
-            return new Promise((reslove, reject) => {
-                host.load(TextProcessor, resource).then((text) => {
-                    var xml = egret.XML.parse(text);
-                    reslove(xml);
-                })
-            });
-
+        async onLoadStart(host, resource) {
+            let text = await host.load(TextProcessor, resource);
+            let data = egret.XML.parse(text);
+            return data;
         },
 
         onRemoveStart(host, resource) {

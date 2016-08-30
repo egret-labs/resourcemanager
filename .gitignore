@@ -1,3 +1,4 @@
 node_modules
 test/bin-debug
 test/libs
+tsc_local

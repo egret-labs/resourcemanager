@@ -2259,6 +2259,19 @@ declare module egret {
 }
 declare module egret {
     /**
+     * @private
+     */
+    interface MapLike<T> {
+        [key: string]: T;
+        [key: number]: T;
+    }
+    /**
+     * @private
+     */
+    function createMap<T>(): MapLike<T>;
+}
+declare module egret {
+    /**
      * @language en_US
      * A BitmapData object contains an array of pixel data. This data can represent either a fully opaque bitmap or a
      * transparent bitmap that contains alpha channel data. Either type of BitmapData object is stored as a buffer of 32-bit
@@ -2359,6 +2372,11 @@ declare module egret {
         $deleteSource: boolean;
         constructor(source: any);
         $dispose(): void;
+        private static _displayList;
+        static $addDisplayObject(displayObject: DisplayObject, bitmapData: BitmapData | Texture): void;
+        static $removeDisplayObject(displayObject: DisplayObject, bitmapData: BitmapData | Texture): void;
+        static $invalidate(bitmapData: BitmapData | Texture): void;
+        static $dispose(bitmapData: BitmapData | Texture): void;
     }
 }
 declare module egret {
@@ -3451,19 +3469,6 @@ declare module egret {
     };
 }
 declare module egret {
-    /**
-     * @private
-     */
-    interface MapLike<T> {
-        [key: string]: T;
-        [key: number]: T;
-    }
-    /**
-     * @private
-     */
-    function createMap<T>(): MapLike<T>;
-}
-declare module egret {
     var $TextureScaleFactor: number;
     /**
      * @language en_US
@@ -3692,11 +3697,6 @@ declare module egret {
          * @platform Web,Native
          */
         dispose(): void;
-        private static _displayList;
-        static $addDisplayObject(displayObject: DisplayObject, bitmapData: BitmapData | Texture): void;
-        static $removeDisplayObject(displayObject: DisplayObject, bitmapData: BitmapData | Texture): void;
-        static $invalidate(bitmapData: BitmapData | Texture): void;
-        static $dispose(bitmapData: BitmapData | Texture): void;
     }
 }
 declare module egret {
@@ -9501,7 +9501,8 @@ declare module egret.sys {
     /**
      * 共享的用于碰撞检测的渲染缓冲
      */
-    var hitTestBuffer: sys.RenderBuffer;
+    var customHitTestBuffer: sys.RenderBuffer;
+    var canvasHitTestBuffer: sys.RenderBuffer;
     /**
      * @private
      * 渲染缓冲
@@ -9581,8 +9582,9 @@ declare module egret.sys {
          * 注意：若内存不足或创建缓冲区失败，将会抛出错误异常。
          * @param width 渲染缓冲的初始宽
          * @param height 渲染缓冲的初始高
+         * @param root 是否为舞台buffer
          */
-        new (width?: number, height?: number): RenderBuffer;
+        new (width?: number, height?: number, root?: boolean): RenderBuffer;
     };
     var CanvasRenderBuffer: {
         /**
