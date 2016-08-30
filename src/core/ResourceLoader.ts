@@ -178,10 +178,6 @@ module RES {
 				else if (processor = host.isSupport(resItem)) {
 					load(processor, resItem);
 				}
-				else {
-					var analyzer: AnalyzerBase = this.resInstance.$getAnalyzerByType(resItem.type);
-					analyzer.loadFile(resItem, this.onItemComplete, this);
-				}
 			}
 		}
 

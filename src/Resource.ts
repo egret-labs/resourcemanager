@@ -79,7 +79,7 @@ module RES {
                 "json": JsonProcessor,
                 "text": TextProcessor,
                 "xml": XMLProcessor,
-                "sheet":SheetProcessor
+                "sheet": SheetProcessor
             }
 
             return map[type];
@@ -547,22 +547,11 @@ module RES {
         private analyzerDic: any = {};
 
 
-        private analyzerClassMap: any = {};
-
         /**
          * @internal
          */
         $getAnalyzerByType(type: string): AnalyzerBase {
             var analyzer: AnalyzerBase = this.analyzerDic[type];
-            if (!analyzer) {
-                var clazz = this.analyzerClassMap[type];
-                if (!clazz) {
-                    if (DEBUG) {
-                        egret.$error(3203, type);
-                    }
-                }
-                analyzer = this.analyzerDic[type] = new clazz();
-            }
             return analyzer;
         }
 
@@ -592,7 +581,8 @@ module RES {
          * @param analyzerClass 自定义解析器的类定义
          */
         public registerAnalyzer(type: string, analyzerClass: any): void {
-            this.analyzerClassMap[type] = analyzerClass;
+            throw 'unimplement';
+
         }
 
         /**
@@ -603,15 +593,6 @@ module RES {
          * 初始化
          */
         private init(): void {
-            var analyzerClassMap = this.analyzerClassMap;
-            analyzerClassMap["bin"] = BinAnalyzer;
-            analyzerClassMap["image"] = ImageAnalyzer;
-            analyzerClassMap["text"] = TextAnalyzer;
-            analyzerClassMap["json"] = JsonAnalyzer;
-            analyzerClassMap["sheet"] = SheetAnalyzer;
-            analyzerClassMap["font"] = FontAnalyzer;
-            analyzerClassMap["sound"] = SoundAnalyzer;
-            analyzerClassMap["xml"] = XMLAnalyzer;
 
             this.resConfig = new ResourceConfig();
             this.resLoader = new ResourceLoader();
@@ -792,9 +773,6 @@ module RES {
             if (r && host.isSupport(r)) {
                 return host.get(r);
             }
-            else {
-                return this.$getResourceViaAnalyzer(r, subkey);
-            }
 
 
         }
@@ -911,10 +889,6 @@ module RES {
                     (item as ResourceItem).loaded = false;
                     if (host.isSupport(item)) {
                         host.unload(item);
-                    }
-                    else {
-                        var analyzer: AnalyzerBase = this.$getAnalyzerByType(item.type);
-                        analyzer.destroyRes(item.url);
                     }
                     this.removeLoadedGroupsByItemName(item.url);
                     return true;
