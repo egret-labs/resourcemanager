@@ -1006,11 +1006,6 @@ declare module RES {
          * @returns {any}
          */
         getRes(resKey: string): any;
-        private $getResourceViaAnalyzer(r, subkey?);
-        /**
-         * 异步获取资源参数缓存字典
-         */
-        private asyncDic;
         /**
          * 通过key异步获取资源
          * @method RES.getResAsync
@@ -1028,10 +1023,6 @@ declare module RES {
          * @param type {string}
          */
         getResByUrl(url: string, compFunc: Function, thisObject: any, type?: string): void;
-        /**
-         * 一个加载项加载完成
-         */
-        private onResourceItemComp(item);
         /**
          * 销毁单个资源文件或一组资源的缓存数据,返回是否删除成功。
          * @method RES.destroyRes

@@ -1750,10 +1750,6 @@ var RES;
              */
             this.loadedGroups = [];
             this.groupNameList = [];
-            /**
-             * 异步获取资源参数缓存字典
-             */
-            this.asyncDic = {};
             this.init();
         }
         /**
@@ -1793,7 +1789,6 @@ var RES;
         Resource.prototype.init = function () {
             this.resConfig = new RES.ResourceConfig();
             this.resLoader = new RES.ResourceLoader();
-            this.resLoader.callBack = this.onResourceItemComp;
             this.resLoader.resInstance = this;
             this.resLoader.addEventListener(RES.ResourceEvent.GROUP_COMPLETE, this.onGroupComp, this);
             this.resLoader.addEventListener(RES.ResourceEvent.GROUP_LOAD_ERROR, this.onGroupError, this);
@@ -1946,12 +1941,6 @@ var RES;
                 return RES.host.get(r);
             }
         };
-        Resource.prototype.$getResourceViaAnalyzer = function (r, subkey) {
-            if (!r)
-                return null;
-            var analyzer = this.$getAnalyzerByType(r.type);
-            return analyzer.getRes(r.url, subkey);
-        };
         /**
          * 通过key异步获取资源
          * @method RES.getResAsync
@@ -1968,14 +1957,9 @@ var RES;
                 egret.$callAsync(compFunc, thisObject, res, key);
                 return;
             }
-            var args = { compFunc: compFunc, thisObject: thisObject };
-            if (this.asyncDic[url]) {
-                this.asyncDic[url].push(args);
-            }
-            else {
-                this.asyncDic[url] = [args];
-                this.resLoader.loadItem(r);
-            }
+            RES.host.load(r).then(function (value) {
+                compFunc.call(thisObject, value, r.url);
+            });
         };
         /**
          * 通过url获取资源
@@ -1992,20 +1976,6 @@ var RES;
                 this.resConfig.addResourceData({ name: url, url: url });
             }
             this.getResAsync(url, compFunc, thisObject);
-        };
-        /**
-         * 一个加载项加载完成
-         */
-        Resource.prototype.onResourceItemComp = function (item) {
-            var argsList = this.asyncDic[item.url];
-            delete this.asyncDic[item.url];
-            var analyzer = this.$getAnalyzerByType(item.type);
-            var length = argsList.length;
-            for (var i = 0; i < length; i++) {
-                var args = argsList[i];
-                var res = analyzer.getRes(item.url);
-                args.compFunc.call(args.thisObject, res, item.url);
-            }
         };
         /**
          * 销毁单个资源文件或一组资源的缓存数据,返回是否删除成功。
@@ -2031,19 +2001,14 @@ var RES;
                     }
                     else {
                         item.loaded = false;
-                        if (RES.host.isSupport(item)) {
-                            remove(item);
-                        }
-                        else {
-                            var analyzer = this.$getAnalyzerByType(item.type);
-                            analyzer.destroyRes(item.url);
-                        }
+                        remove(item);
                         this.removeLoadedGroupsByItemName(item.url);
                     }
                 }
                 return true;
             }
             else {
+                "";
                 var item = this.resConfig.getResource(name);
                 if (item) {
                     item.loaded = false;

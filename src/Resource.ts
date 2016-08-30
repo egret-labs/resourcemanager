@@ -602,7 +602,6 @@ module RES {
 
             this.resConfig = new ResourceConfig();
             this.resLoader = new ResourceLoader();
-            this.resLoader.callBack = this.onResourceItemComp;
             this.resLoader.resInstance = this;
             this.resLoader.addEventListener(ResourceEvent.GROUP_COMPLETE, this.onGroupComp, this);
             this.resLoader.addEventListener(ResourceEvent.GROUP_LOAD_ERROR, this.onGroupError, this);
@@ -782,13 +781,7 @@ module RES {
 
 
         }
-
-        /**
-         * 异步获取资源参数缓存字典
-         */
-        private asyncDic: {
-            [index: string]: { compFunc: Function, thisObject: Function }[]
-        } = {};
+        
         /**
          * 通过key异步获取资源
          * @method RES.getResAsync
@@ -806,14 +799,9 @@ module RES {
                 egret.$callAsync(compFunc, thisObject, res, key);
                 return;
             }
-            var args = { compFunc, thisObject };
-            if (this.asyncDic[url]) {
-                this.asyncDic[url].push(args);
-            }
-            else {
-                this.asyncDic[url] = [args];
-                this.resLoader.loadItem(r as any as ResourceItem);
-            }
+            host.load(r).then((value) => {
+                compFunc.call(thisObject, value, r.url);
+            });
         }
 
         /**
@@ -831,20 +819,7 @@ module RES {
             }
             this.getResAsync(url, compFunc, thisObject);
         }
-        /**
-         * 一个加载项加载完成
-         */
-        private onResourceItemComp(item: ResourceItem): void {
-            var argsList: Array<any> = this.asyncDic[item.url];
-            delete this.asyncDic[item.url];
-            var analyzer: AnalyzerBase = this.$getAnalyzerByType(item.type);
-            var length: number = argsList.length;
-            for (var i: number = 0; i < length; i++) {
-                var args: any = argsList[i];
-                var res: any = analyzer.getRes(item.url);
-                args.compFunc.call(args.thisObject, res, item.url);
-            }
-        }
+
         /**
          * 销毁单个资源文件或一组资源的缓存数据,返回是否删除成功。
 		 * @method RES.destroyRes
