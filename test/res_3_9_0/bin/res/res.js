@@ -2062,28 +2062,53 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var RES;
 (function (RES) {
+    function promisify(loader) {
+        return __awaiter(this, void 0, void 0, function () {
+            _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (reslove, reject) {
+                        var onSuccess = function () {
+                            var texture = loader.data;
+                            reslove(texture);
+                        };
+                        var onError = function () {
+                            reject();
+                        };
+                        loader.addEventListener(egret.Event.COMPLETE, onSuccess, _this);
+                        loader.addEventListener(egret.IOErrorEvent.IO_ERROR, onError, _this);
+                    })];
+            });
+        });
+        var _this;
+    }
     RES.ImageProcessor = {
         onLoadStart: function (host, resource) {
-            var _this = this;
-            var executor = function (reslove, reject) {
-                var onSuccess = function () {
-                    var texture = loader.data;
-                    reslove(texture);
-                };
-                var onError = function () {
-                    reject();
-                };
-                var loader = new egret.ImageLoader();
-                loader.addEventListener(egret.Event.COMPLETE, onSuccess, _this);
-                loader.addEventListener(egret.IOErrorEvent.IO_ERROR, onError, _this);
-                loader.load(resource.url);
-            };
-            return new Promise(executor);
+            return __awaiter(this, void 0, void 0, function () {
+                var loader, bitmapData, texture;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            loader = new egret.ImageLoader();
+                            loader.load(resource.url);
+                            return [4 /*yield*/, promisify(loader)];
+                        case 1:
+                            bitmapData = _a.sent();
+                            texture = new egret.Texture();
+                            texture._setBitmapData(bitmapData);
+                            // var config: any = resItem.data;
+                            // if (config && config["scale9grid"]) {
+                            //     var str: string = config["scale9grid"];
+                            //     var list: Array<string> = str.split(",");
+                            //     texture["scale9Grid"] = new egret.Rectangle(parseInt(list[0]), parseInt(list[1]), parseInt(list[2]), parseInt(list[3]));
+                            // }
+                            return [2 /*return*/, texture];
+                    }
+                });
+            });
         },
         onRemoveStart: function (host, resource) {
             var texture = host.get(resource);
-            texture.$dispose();
-            // texture.webGLTexture.dispose();
+            texture.dispose();
             return Promise.resolve();
         }
     };

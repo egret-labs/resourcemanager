@@ -1,6 +1,23 @@
 module RES {
 
 
+    async function promisify(loader: egret.ImageLoader): Promise<any> {
+
+        return new Promise((reslove, reject) => {
+            let onSuccess = () => {
+                let texture = loader.data;
+                reslove(texture);
+            }
+
+            let onError = () => {
+                reject();
+            }
+            loader.addEventListener(egret.Event.COMPLETE, onSuccess, this);
+            loader.addEventListener(egret.IOErrorEvent.IO_ERROR, onError, this);
+        })
+    }
+
+
     export interface ProcessHost {
 
         resourceConfig: ResourceConfig;
@@ -33,33 +50,25 @@ module RES {
 
     export var ImageProcessor: Processor = {
 
-        onLoadStart(host, resource) {
-
-            let executor = (reslove, reject) => {
-
-                let onSuccess = () => {
-                    let texture = loader.data;
-                    reslove(texture);
-                }
-
-                let onError = () => {
-                    reject();
-                }
-
-
-                var loader = new egret.ImageLoader();
-                loader.addEventListener(egret.Event.COMPLETE, onSuccess, this);
-                loader.addEventListener(egret.IOErrorEvent.IO_ERROR, onError, this);
-                loader.load(resource.url);
-            }
-
-            return new Promise(executor);
+        async onLoadStart(host, resource) {
+            var loader = new egret.ImageLoader();
+            loader.load(resource.url);
+            var bitmapData = await promisify(loader);
+            var texture: egret.Texture = new egret.Texture();
+            texture._setBitmapData(bitmapData);
+            // var config: any = resItem.data;
+            // if (config && config["scale9grid"]) {
+            //     var str: string = config["scale9grid"];
+            //     var list: Array<string> = str.split(",");
+            //     texture["scale9Grid"] = new egret.Rectangle(parseInt(list[0]), parseInt(list[1]), parseInt(list[2]), parseInt(list[3]));
+            // }
+            return texture;
         },
 
         onRemoveStart(host, resource) {
 
             let texture = host.get(resource);
-            texture.$dispose();
+            texture.dispose();
             return Promise.resolve();
         }
 
