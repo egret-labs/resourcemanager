@@ -40,7 +40,13 @@ module RES {
             return RES['configInstance']
         },
 
-        load: (processor: Processor, resourceInfo: ResourceInfo) => {
+        load: (resourceInfo: ResourceInfo, processor: Processor | undefined) => {
+            if (!processor) {
+                processor = host.isSupport(resourceInfo);
+            }
+            if (!processor) {
+                throw 'error';
+            }
             return processor.onLoadStart(host, resourceInfo)
         },
 
@@ -777,12 +783,6 @@ module RES {
 
         }
 
-        private $getResourceViaAnalyzer(r: ResourceInfo | null, subkey?: string) {
-            if (!r) return null;
-            var analyzer: AnalyzerBase = this.$getAnalyzerByType(r.type);
-            return analyzer.getRes(r.url, subkey);
-        }
-
         /**
          * 异步获取资源参数缓存字典
          */
@@ -801,7 +801,7 @@ module RES {
             var {key, subkey} = this.parseResKey(key);
             let r = this.resConfig.getResource(key, true);
             let url = r.url;
-            var res: any = this.$getResourceViaAnalyzer(r);
+            let res = host.get(r);
             if (res) {
                 egret.$callAsync(compFunc, thisObject, res, key);
                 return;
@@ -870,19 +870,14 @@ module RES {
                     }
                     else {
                         (item as ResourceItem).loaded = false;
-                        if (host.isSupport(item)) {
-                            remove(item);
-                        }
-                        else {
-                            var analyzer: AnalyzerBase = this.$getAnalyzerByType(item.type);
-                            analyzer.destroyRes(item.url);
-                        }
+                        remove(item);
                         this.removeLoadedGroupsByItemName(item.url);
                     }
                 }
                 return true;
             }
             else {
+                ``
 
                 let item = this.resConfig.getResource(name);
                 if (item) {

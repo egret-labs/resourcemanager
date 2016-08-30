@@ -42,7 +42,7 @@ module RES {
 
         resourceConfig: ResourceConfig;
 
-        load: (processor: Processor, resource: ResourceInfo) => PromiseLike<any>;
+        load: (resource: ResourceInfo, processor?: Processor) => PromiseLike<any>;
 
         unload: (resource: ResourceInfo) => PromiseLike<any>
 
@@ -115,7 +115,7 @@ module RES {
     export var JsonProcessor: Processor = {
 
         async onLoadStart(host, resource) {
-            let text = await host.load(TextProcessor, resource);
+            let text = await host.load(resource, TextProcessor);
             let data = JSON.parse(text);
             return data;
         },
@@ -129,7 +129,7 @@ module RES {
     export var XMLProcessor: Processor = {
 
         async onLoadStart(host, resource) {
-            let text = await host.load(TextProcessor, resource);
+            let text = await host.load(resource, TextProcessor);
             let data = egret.XML.parse(text);
             return data;
         },
@@ -143,7 +143,7 @@ module RES {
 
         async onLoadStart(host, resource): Promise<any> {
 
-            let data = await host.load(JsonProcessor, resource);
+            let data = await host.load(resource, JsonProcessor);
             console.log(11);
             console.log(data);
             let imageUrl = getRelativePath(resource.url, data.file);
@@ -152,10 +152,10 @@ module RES {
             if (!r) {
                 throw 'error';
             }
-            var texture:egret.Texture = await host.load(ImageProcessor, r);
+            var texture: egret.Texture = await host.load(r);
 
 
-             var frames: any = data.frames;
+            var frames: any = data.frames;
             if (!frames) {
                 throw 'error';
             }
@@ -172,7 +172,7 @@ module RES {
                 //         this.addSubkey(subkey, name);
                 //     }
             }
-            console.log (spriteSheet)
+            console.log(spriteSheet)
             return spriteSheet;
 
 

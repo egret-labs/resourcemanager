@@ -154,10 +154,9 @@ module RES {
 		 */
 		private next(): void {
 
-			let load = (processor: Processor, r: ResourceItem) => {
-				host.load(processor, r)
+			let load = (r: ResourceItem) => {
+				host.load(r)
 					.then(response => {
-						console.log(response)
 						host.save(r, response);
 						r.loaded = true;
 						this.onItemComplete(r);
@@ -175,8 +174,8 @@ module RES {
 				if (resItem.loaded) {
 					this.onItemComplete(resItem);
 				}
-				else if (processor = host.isSupport(resItem)) {
-					load(processor, resItem);
+				else if (load(resItem)) {
+					;
 				}
 			}
 		}

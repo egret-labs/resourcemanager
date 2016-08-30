@@ -473,7 +473,7 @@ declare module RES {
     function getRelativePath(url: string, file: string): string;
     interface ProcessHost {
         resourceConfig: ResourceConfig;
-        load: (processor: Processor, resource: ResourceInfo) => PromiseLike<any>;
+        load: (resource: ResourceInfo, processor?: Processor) => PromiseLike<any>;
         unload: (resource: ResourceInfo) => PromiseLike<any>;
         save: (rexource: ResourceInfo, data: any) => void;
         get: (resource: ResourceInfo) => any;

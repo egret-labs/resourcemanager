@@ -534,10 +534,9 @@ var RES;
          */
         ResourceLoader.prototype.next = function () {
             var _this = this;
-            var load = function (processor, r) {
-                RES.host.load(processor, r)
+            var load = function (r) {
+                RES.host.load(r)
                     .then(function (response) {
-                    console.log(response);
                     RES.host.save(r, response);
                     r.loaded = true;
                     _this.onItemComplete(r);
@@ -552,8 +551,8 @@ var RES;
                 if (resItem.loaded) {
                     this.onItemComplete(resItem);
                 }
-                else if (processor = RES.host.isSupport(resItem)) {
-                    load(processor, resItem);
+                else if (load(resItem)) {
+                    ;
                 }
             }
         };
@@ -1115,7 +1114,7 @@ var RES;
                 var text, data;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, host.load(RES.TextProcessor, resource)];
+                        case 0: return [4 /*yield*/, host.load(resource, RES.TextProcessor)];
                         case 1:
                             text = _a.sent();
                             data = JSON.parse(text);
@@ -1134,7 +1133,7 @@ var RES;
                 var text, data;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, host.load(RES.TextProcessor, resource)];
+                        case 0: return [4 /*yield*/, host.load(resource, RES.TextProcessor)];
                         case 1:
                             text = _a.sent();
                             data = egret.XML.parse(text);
@@ -1153,7 +1152,7 @@ var RES;
                 var data, imageUrl, r, texture, frames, spriteSheet, subkey, config, texture;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, host.load(RES.JsonProcessor, resource)];
+                        case 0: return [4 /*yield*/, host.load(resource, RES.JsonProcessor)];
                         case 1:
                             data = _a.sent();
                             console.log(11);
@@ -1164,7 +1163,7 @@ var RES;
                             if (!r) {
                                 throw 'error';
                             }
-                            return [4 /*yield*/, host.load(RES.ImageProcessor, r)];
+                            return [4 /*yield*/, host.load(r)];
                         case 2:
                             texture = _a.sent();
                             frames = data.frames;
@@ -1228,7 +1227,13 @@ var RES;
         get resourceConfig() {
             return RES['configInstance'];
         },
-        load: function (processor, resourceInfo) {
+        load: function (resourceInfo, processor) {
+            if (!processor) {
+                processor = RES.host.isSupport(resourceInfo);
+            }
+            if (!processor) {
+                throw 'error';
+            }
             return processor.onLoadStart(RES.host, resourceInfo);
         },
         unload: function (resource) {
@@ -1958,7 +1963,7 @@ var RES;
             var _a = this.parseResKey(key), key = _a.key, subkey = _a.subkey;
             var r = this.resConfig.getResource(key, true);
             var url = r.url;
-            var res = this.$getResourceViaAnalyzer(r);
+            var res = RES.host.get(r);
             if (res) {
                 egret.$callAsync(compFunc, thisObject, res, key);
                 return;
