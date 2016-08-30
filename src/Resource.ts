@@ -499,19 +499,6 @@ module RES {
      * @version Egret 2.4
      * @platform Web,Native
      */
-    /**
-     * @language zh_CN
-     * 获取资源文件实际的URL地址。<br/>
-     * 由于版本控制实际已经对原来的资源文件的URL进行了改变，因此想获取指定资源文件实际的URL时需要调用此方法。<br/>
-     * 在开发调试阶段，这个方法会直接返回传入的参数值。
-     * @param url 游戏中使用的url
-     * @returns 实际加载的url
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    export function getVirtualUrl(url: string): string {
-        return instance.getVirtualUrl(url);
-    }
 
     /**
      * @language en_US
@@ -545,20 +532,6 @@ module RES {
         public constructor() {
             super();
             this.init();
-        }
-
-        /**
-         * 解析器字典
-         */
-        private analyzerDic: any = {};
-
-
-        /**
-         * @internal
-         */
-        $getAnalyzerByType(type: string): AnalyzerBase {
-            var analyzer: AnalyzerBase = this.analyzerDic[type];
-            return analyzer;
         }
 
         private parseResKey(key: string) {
@@ -781,7 +754,7 @@ module RES {
 
 
         }
-        
+
         /**
          * 通过key异步获取资源
          * @method RES.getResAsync
@@ -852,8 +825,6 @@ module RES {
                 return true;
             }
             else {
-                ``
-
                 let item = this.resConfig.getResource(name);
                 if (item) {
                     (item as ResourceItem).loaded = false;
@@ -927,17 +898,6 @@ module RES {
 
         public addResourceData(data: { name: string, type: string, url: string }): void {
             this.resConfig.addResourceData(data);
-        }
-
-        public getVirtualUrl(url: string): string {
-            var item = this.resConfig.getResource(url);
-            if (item) {
-                return item.url;
-            }
-            else {
-                console.warn("warn", "res", "1")
-                return url;
-            }
         }
     }
     /**

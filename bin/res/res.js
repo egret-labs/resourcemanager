@@ -1692,20 +1692,6 @@ var RES;
      * @platform Web,Native
      */
     /**
-     * @language zh_CN
-     * 获取资源文件实际的URL地址。<br/>
-     * 由于版本控制实际已经对原来的资源文件的URL进行了改变，因此想获取指定资源文件实际的URL时需要调用此方法。<br/>
-     * 在开发调试阶段，这个方法会直接返回传入的参数值。
-     * @param url 游戏中使用的url
-     * @returns 实际加载的url
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    function getVirtualUrl(url) {
-        return instance.getVirtualUrl(url);
-    }
-    RES.getVirtualUrl = getVirtualUrl;
-    /**
      * @language en_US
      * Adding a custom resource configuration.
      * @param data To add configuration.
@@ -1736,10 +1722,6 @@ var RES;
          */
         function Resource() {
             _super.call(this);
-            /**
-             * 解析器字典
-             */
-            this.analyzerDic = {};
             this.callLaterFlag = false;
             /**
              * 配置文件加载解析完成标志
@@ -1752,13 +1734,6 @@ var RES;
             this.groupNameList = [];
             this.init();
         }
-        /**
-         * @internal
-         */
-        Resource.prototype.$getAnalyzerByType = function (type) {
-            var analyzer = this.analyzerDic[type];
-            return analyzer;
-        };
         Resource.prototype.parseResKey = function (key) {
             key = this.resConfig.getKeyByAlias(key);
             var index = key.indexOf("#");
@@ -2008,7 +1983,6 @@ var RES;
                 return true;
             }
             else {
-                "";
                 var item = this.resConfig.getResource(name);
                 if (item) {
                     item.loaded = false;
@@ -2077,16 +2051,6 @@ var RES;
         };
         Resource.prototype.addResourceData = function (data) {
             this.resConfig.addResourceData(data);
-        };
-        Resource.prototype.getVirtualUrl = function (url) {
-            var item = this.resConfig.getResource(url);
-            if (item) {
-                return item.url;
-            }
-            else {
-                console.warn("warn", "res", "1");
-                return url;
-            }
         };
         return Resource;
     }(egret.EventDispatcher));

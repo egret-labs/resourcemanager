@@ -858,17 +858,6 @@ declare module RES {
      * @platform Web,Native
      */
     /**
-     * @language zh_CN
-     * 获取资源文件实际的URL地址。<br/>
-     * 由于版本控制实际已经对原来的资源文件的URL进行了改变，因此想获取指定资源文件实际的URL时需要调用此方法。<br/>
-     * 在开发调试阶段，这个方法会直接返回传入的参数值。
-     * @param url 游戏中使用的url
-     * @returns 实际加载的url
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    function getVirtualUrl(url: string): string;
-    /**
      * @language en_US
      * Adding a custom resource configuration.
      * @param data To add configuration.
@@ -897,10 +886,6 @@ declare module RES {
          * @private
          */
         constructor();
-        /**
-         * 解析器字典
-         */
-        private analyzerDic;
         private parseResKey(key);
         /**
          * 注册一个自定义文件类型解析器
@@ -1049,7 +1034,6 @@ declare module RES {
             type: string;
             url: string;
         }): void;
-        getVirtualUrl(url: string): string;
     }
     var configItem: any;
     /**
