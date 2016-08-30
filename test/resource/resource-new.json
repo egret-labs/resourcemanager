@@ -4,7 +4,8 @@
       "bg_jpg",
       "texture_png",
       "skeleton_json",
-      "texture_json"
+      "texture_json",
+      "sheet_json"
     ]
   },
   "alias": {
@@ -13,7 +14,8 @@
     "description_json": "config/description.json",
     "texture_png": "assets/armature/texture.png",
     "skeleton_json": "assets/armature/skeleton.json",
-    "texture_json": "assets/armature/texture.json"
+    "texture_json": "assets/armature/texture.json",
+    "sheet_json": "assets/sheet.json"
   },
   "resources": {
     "assets/bg.jpg": {
@@ -39,6 +41,10 @@
     "assets/armature/texture.json": {
       "type": "json",
       "url": "assets/armature/texture.json"
+    },
+    "assets/sheet.json": {
+      "type": "sheet",
+      "url": "assets/sheet.json"
     }
   }
 }

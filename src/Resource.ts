@@ -78,7 +78,8 @@ module RES {
                 "image": ImageProcessor,
                 "json": JsonProcessor,
                 "text": TextProcessor,
-                "xml": XMLProcessor
+                "xml": XMLProcessor,
+                "sheet":SheetProcessor
             }
 
             return map[type];

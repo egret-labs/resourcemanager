@@ -2081,6 +2081,23 @@ var RES;
         });
         var _this;
     }
+    function getRelativePath(url, file) {
+        url = url.split("\\").join("/");
+        var params = url.match(/#.*|\?.*/);
+        var paramUrl = "";
+        if (params) {
+            paramUrl = params[0];
+        }
+        var index = url.lastIndexOf("/");
+        if (index != -1) {
+            url = url.substring(0, index + 1) + file;
+        }
+        else {
+            url = file;
+        }
+        return url + paramUrl;
+    }
+    RES.getRelativePath = getRelativePath;
     RES.ImageProcessor = {
         onLoadStart: function (host, resource) {
             return __awaiter(this, void 0, void 0, function () {
@@ -2173,6 +2190,45 @@ var RES;
             return Promise.resolve();
         }
     };
+    RES.SheetProcessor = {
+        onLoadStart: function (host, resource) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data, imageUrl, r, texture, frames, spriteSheet, subkey, config, texture;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, host.load(RES.JsonProcessor, resource)];
+                        case 1:
+                            data = _a.sent();
+                            console.log(11);
+                            console.log(data);
+                            imageUrl = getRelativePath(resource.url, data.file);
+                            host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
+                            r = host.resourceConfig.getResource(imageUrl);
+                            if (!r) {
+                                throw 'error';
+                            }
+                            return [4 /*yield*/, host.load(RES.ImageProcessor, r)];
+                        case 2:
+                            texture = _a.sent();
+                            frames = data.frames;
+                            if (!frames) {
+                                throw 'error';
+                            }
+                            spriteSheet = new egret.SpriteSheet(texture);
+                            for (subkey in frames) {
+                                config = frames[subkey];
+                                texture = spriteSheet.createTexture(subkey, config.x, config.y, config.w, config.h, config.offX, config.offY, config.sourceW, config.sourceH);
+                            }
+                            console.log(spriteSheet);
+                            return [2 /*return*/, spriteSheet];
+                    }
+                });
+            });
+        },
+        onRemoveStart: function (host, resource) {
+            return Promise.resolve();
+        }
+    };
 })(RES || (RES = {}));
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -2242,7 +2298,8 @@ var RES;
                 "image": RES.ImageProcessor,
                 "json": RES.JsonProcessor,
                 "text": RES.TextProcessor,
-                "xml": RES.XMLProcessor
+                "xml": RES.XMLProcessor,
+                "sheet": RES.SheetProcessor
             };
             return map[type];
         }

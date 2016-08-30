@@ -18,6 +18,26 @@ module RES {
     }
 
 
+    export function getRelativePath(url: string, file: string): string {
+        url = url.split("\\").join("/");
+
+        var params = url.match(/#.*|\?.*/);
+        var paramUrl = "";
+        if (params) {
+            paramUrl = params[0];
+        }
+
+        var index: number = url.lastIndexOf("/");
+        if (index != -1) {
+            url = url.substring(0, index + 1) + file;
+        }
+        else {
+            url = file;
+        }
+        return url + paramUrl;
+    }
+
+
     export interface ProcessHost {
 
         resourceConfig: ResourceConfig;
@@ -117,5 +137,52 @@ module RES {
         onRemoveStart(host, resource) {
             return Promise.resolve();
         }
+    }
+
+    export var SheetProcessor: Processor = {
+
+        async onLoadStart(host, resource): Promise<any> {
+
+            let data = await host.load(JsonProcessor, resource);
+            console.log(11);
+            console.log(data);
+            let imageUrl = getRelativePath(resource.url, data.file);
+            host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
+            let r = host.resourceConfig.getResource(imageUrl);
+            if (!r) {
+                throw 'error';
+            }
+            var texture:egret.Texture = await host.load(ImageProcessor, r);
+
+
+             var frames: any = data.frames;
+            if (!frames) {
+                throw 'error';
+            }
+            var spriteSheet: egret.SpriteSheet = new egret.SpriteSheet(texture);
+            for (var subkey in frames) {
+                var config: any = frames[subkey];
+                var texture: egret.Texture = spriteSheet.createTexture(subkey, config.x, config.y, config.w, config.h, config.offX, config.offY, config.sourceW, config.sourceH);
+                // if (config["scale9grid"]) {
+                //     var str: string = config["scale9grid"];
+                //     var list: Array<string> = str.split(",");
+                //     texture["scale9Grid"] = new egret.Rectangle(parseInt(list[0]), parseInt(list[1]), parseInt(list[2]), parseInt(list[3]));
+                // }
+                //     if (name) {
+                //         this.addSubkey(subkey, name);
+                //     }
+            }
+            console.log (spriteSheet)
+            return spriteSheet;
+
+
+            return Promise.resolve();
+        },
+
+
+        onRemoveStart(host, resource): Promise<any> {
+            return Promise.resolve();
+        }
+
     }
 }

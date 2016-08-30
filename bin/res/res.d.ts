@@ -733,6 +733,7 @@ declare module RES {
     }
 }
 declare module RES {
+    function getRelativePath(url: string, file: string): string;
     interface ProcessHost {
         resourceConfig: ResourceConfig;
         load: (processor: Processor, resource: ResourceInfo) => PromiseLike<any>;
@@ -749,6 +750,7 @@ declare module RES {
     var TextProcessor: Processor;
     var JsonProcessor: Processor;
     var XMLProcessor: Processor;
+    var SheetProcessor: Processor;
 }
 declare module RES {
     var host: ProcessHost;
