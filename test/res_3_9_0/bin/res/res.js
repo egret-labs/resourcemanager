@@ -465,14 +465,6 @@ var RES;
              */
             this.priorityQueue = {};
             /**
-             * 延迟加载队列
-             */
-            this.lazyLoadList = new Array();
-            /**
-             * 资源解析库字典类
-             */
-            this.analyzerDic = {};
-            /**
              * 当前应该加载同优先级队列的第几列
              */
             this.queueIndex = 0;
@@ -520,16 +512,6 @@ var RES;
             this.next();
         };
         /**
-         * 加载一个文件
-         * @method RES.ResourceLoader#loadItem
-         * @param resItem {egret.ResourceItem} 要加载的项
-         */
-        ResourceLoader.prototype.loadItem = function (resItem) {
-            this.lazyLoadList.push(resItem);
-            resItem.groupName = "";
-            this.next();
-        };
-        /**
          * 加载下一项
          */
         ResourceLoader.prototype.next = function () {
@@ -567,12 +549,6 @@ var RES;
                 maxPriority = Math.max(maxPriority, p);
             }
             var queue = this.priorityQueue[maxPriority];
-            if (!queue || queue.length == 0) {
-                if (this.lazyLoadList.length == 0)
-                    return undefined;
-                //后请求的先加载，以便更快获取当前需要的资源
-                return this.lazyLoadList.pop();
-            }
             var length = queue.length;
             var list = [];
             for (var i = 0; i < length; i++) {
@@ -1428,30 +1404,6 @@ var RES;
     RES.hasRes = hasRes;
     /**
      * @language en_US
-     * parse a configuration file at run time，it will not clean the exist data.
-     * @param data Configuration file data, please refer to the resource.json configuration file format. JSON object can be introduced into the corresponding.
-     * @param folder Path prefix for load.
-     * @see #setMaxRetryTimes
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    /**
-     * @language zh_CN
-     * 运行时动态解析一个配置文件,此操作不会清空之前已存在的配置。
-     * @param data 配置文件数据，请参考 resource.json 的配置文件格式。传入对应的 json 对象即可。
-     * @param folder 加载项的路径前缀。
-     * @see #setMaxRetryTimes
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    function parseConfig(data, folder) {
-        if (folder === void 0) { folder = ""; }
-        //todo 不兼容
-        instance.parseConfig(data, folder);
-    }
-    RES.parseConfig = parseConfig;
-    /**
-     * @language en_US
      * The synchronization method for obtaining the cache has been loaded with the success of the resource.
      * <br>The type of resource and the corresponding return value types are as follows:
      * <br>RES.ResourceItem.TYPE_BIN : ArrayBuffer JavaScript primary object
@@ -1715,11 +1667,6 @@ var RES;
          */
         function Resource() {
             _super.call(this);
-            this.callLaterFlag = false;
-            /**
-             * 配置文件加载解析完成标志
-             */
-            this.configComplete = false;
             /**
              * 已经加载过组名列表
              */
@@ -1769,17 +1716,9 @@ var RES;
          * @param type {string}
          */
         Resource.prototype.loadConfig = function () {
-            if (!this.callLaterFlag) {
-                egret.callLater(this.startLoadConfig, this);
-                this.callLaterFlag = true;
-            }
-        };
-        Resource.prototype.startLoadConfig = function () {
             var _this = this;
-            this.callLaterFlag = false;
             RES.host.load(RES.configItem).then(function (data) {
                 _this.resConfig.parseConfig(data, "resource"); //todo
-                _this.configComplete = true;
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_COMPLETE);
                 _this.loadDelayGroups();
             });
@@ -1816,13 +1755,8 @@ var RES;
             }
             if (this.resLoader.isGroupInLoading(name))
                 return;
-            if (this.configComplete) {
-                var group = this.resConfig.getGroupByName(name);
-                this.resLoader.loadGroup(group, name, priority);
-            }
-            else {
-                this.groupNameList.push({ name: name, priority: priority });
-            }
+            var group = this.resConfig.getGroupByName(name);
+            this.resLoader.loadGroup(group, name, priority);
         };
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
@@ -1882,15 +1816,6 @@ var RES;
         Resource.prototype.hasRes = function (key) {
             var name = this.parseResKey(key).key;
             return this.resConfig.getResource(name) != null;
-        };
-        /**
-         * 运行时动态解析一个配置文件,
-         * @param data {any} 配置文件数据，请参考resource.json的配置文件格式。传入对应的json对象即可。
-         * @param folder {string} 加载项的路径前缀。
-         */
-        Resource.prototype.parseConfig = function (data, folder) {
-            console.warn("已经废弃的方法");
-            this.resConfig.parseConfig(data, folder);
         };
         /**
          * 通过key同步获取资源

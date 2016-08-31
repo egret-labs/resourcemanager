@@ -131,24 +131,7 @@ module RES {
 			this.numLoadedDic[groupName] = 0;
 			this.next();
 		}
-		/**
-		 * 延迟加载队列
-		 */
-		private lazyLoadList: Array<ResourceItem> = new Array<ResourceItem>();
-		/**
-		 * 加载一个文件
-		 * @method RES.ResourceLoader#loadItem
-		 * @param resItem {egret.ResourceItem} 要加载的项
-		 */
-		public loadItem(resItem: ResourceItem): void {
-			this.lazyLoadList.push(resItem);
-			resItem.groupName = "";
-			this.next();
-		}
-		/**
-		 * 资源解析库字典类
-		 */
-		private analyzerDic: any = {};
+
 		/**
 		 * 加载下一项
 		 */
@@ -195,13 +178,7 @@ module RES {
 				maxPriority = Math.max(maxPriority, <number><any>p);
 			}
 			var queue: Array<any> = this.priorityQueue[maxPriority];
-			if (!queue || queue.length == 0) {
-				if (this.lazyLoadList.length == 0)
-					return undefined;
-				//后请求的先加载，以便更快获取当前需要的资源
-				return this.lazyLoadList.pop();
-			}
-			var length: number = queue.length;
+			var length = queue.length;
 			var list: Array<ResourceItem> = [];
 			for (var i: number = 0; i < length; i++) {
 				if (this.queueIndex >= length)

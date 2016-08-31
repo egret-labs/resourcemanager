@@ -228,20 +228,6 @@ declare module RES {
          */
         loadGroup(list: Array<ResourceItem>, groupName: string, priority?: number): void;
         /**
-         * 延迟加载队列
-         */
-        private lazyLoadList;
-        /**
-         * 加载一个文件
-         * @method RES.ResourceLoader#loadItem
-         * @param resItem {egret.ResourceItem} 要加载的项
-         */
-        loadItem(resItem: ResourceItem): void;
-        /**
-         * 资源解析库字典类
-         */
-        private analyzerDic;
-        /**
          * 加载下一项
          */
         private next();
@@ -630,25 +616,6 @@ declare module RES {
     function hasRes(key: string): boolean;
     /**
      * @language en_US
-     * parse a configuration file at run time，it will not clean the exist data.
-     * @param data Configuration file data, please refer to the resource.json configuration file format. JSON object can be introduced into the corresponding.
-     * @param folder Path prefix for load.
-     * @see #setMaxRetryTimes
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    /**
-     * @language zh_CN
-     * 运行时动态解析一个配置文件,此操作不会清空之前已存在的配置。
-     * @param data 配置文件数据，请参考 resource.json 的配置文件格式。传入对应的 json 对象即可。
-     * @param folder 加载项的路径前缀。
-     * @see #setMaxRetryTimes
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    function parseConfig(data: any, folder?: string): void;
-    /**
-     * @language en_US
      * The synchronization method for obtaining the cache has been loaded with the success of the resource.
      * <br>The type of resource and the corresponding return value types are as follows:
      * <br>RES.ResourceItem.TYPE_BIN : ArrayBuffer JavaScript primary object
@@ -901,11 +868,6 @@ declare module RES {
          * 配置文件组组名
          */
         private static GROUP_CONFIG;
-        private callLaterFlag;
-        /**
-         * 配置文件加载解析完成标志
-         */
-        private configComplete;
         /**
          * 开始加载配置
          * @method RES.loadConfig
@@ -914,7 +876,6 @@ declare module RES {
          * @param type {string}
          */
         loadConfig(): void;
-        private startLoadConfig();
         /**
          * 已经加载过组名列表
          */
@@ -974,12 +935,6 @@ declare module RES {
          * @returns {boolean}
          */
         hasRes(key: string): boolean;
-        /**
-         * 运行时动态解析一个配置文件,
-         * @param data {any} 配置文件数据，请参考resource.json的配置文件格式。传入对应的json对象即可。
-         * @param folder {string} 加载项的路径前缀。
-         */
-        parseConfig(data: any, folder: string): void;
         /**
          * 通过key同步获取资源
          * @method RES.getRes

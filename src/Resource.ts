@@ -245,28 +245,7 @@ module RES {
     export function hasRes(key: string): boolean {
         return instance.hasRes(key);
     }
-    /**
-     * @language en_US
-     * parse a configuration file at run time，it will not clean the exist data.
-     * @param data Configuration file data, please refer to the resource.json configuration file format. JSON object can be introduced into the corresponding.
-     * @param folder Path prefix for load.
-     * @see #setMaxRetryTimes
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    /**
-     * @language zh_CN
-     * 运行时动态解析一个配置文件,此操作不会清空之前已存在的配置。
-     * @param data 配置文件数据，请参考 resource.json 的配置文件格式。传入对应的 json 对象即可。
-     * @param folder 加载项的路径前缀。
-     * @see #setMaxRetryTimes
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    export function parseConfig(data: any, folder: string = ""): void {
-        //todo 不兼容
-        instance.parseConfig(data, folder);
-    }
+
     /**
      * @language en_US
      * The synchronization method for obtaining the cache has been loaded with the success of the resource.
@@ -578,11 +557,6 @@ module RES {
          */
         private static GROUP_CONFIG: string = "RES__CONFIG";
 
-        private callLaterFlag: boolean = false;
-        /**
-         * 配置文件加载解析完成标志
-         */
-        private configComplete: boolean = false;
         /**
          * 开始加载配置
 		 * @method RES.loadConfig
@@ -593,21 +567,13 @@ module RES {
         @checkDecorator
         public loadConfig(): void {
 
-            if (!this.callLaterFlag) {
-                egret.callLater(this.startLoadConfig, this);
-                this.callLaterFlag = true;
-            }
-        }
-
-        private startLoadConfig(): void {
-            this.callLaterFlag = false;
             host.load(configItem).then((data) => {
                 this.resConfig.parseConfig(data, "resource");//todo
-                this.configComplete = true;
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
                 this.loadDelayGroups();
             })
         }
+
         /**
          * 已经加载过组名列表
          */
@@ -645,13 +611,8 @@ module RES {
             }
             if (this.resLoader.isGroupInLoading(name))
                 return;
-            if (this.configComplete) {
-                var group = this.resConfig.getGroupByName(name) as ResourceItem[]
-                this.resLoader.loadGroup(group, name, priority);
-            }
-            else {
-                this.groupNameList.push({ name: name, priority: priority });
-            }
+            var group = this.resConfig.getGroupByName(name) as ResourceItem[]
+            this.resLoader.loadGroup(group, name, priority);
         }
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
@@ -716,15 +677,7 @@ module RES {
             let name = this.parseResKey(key).key;
             return this.resConfig.getResource(name) != null;
         }
-        /**
-         * 运行时动态解析一个配置文件,
-         * @param data {any} 配置文件数据，请参考resource.json的配置文件格式。传入对应的json对象即可。
-         * @param folder {string} 加载项的路径前缀。
-         */
-        public parseConfig(data: any, folder: string): void {
-            console.warn("已经废弃的方法");
-            this.resConfig.parseConfig(data, folder);
-        }
+
         /**
          * 通过key同步获取资源
 		 * @method RES.getRes
