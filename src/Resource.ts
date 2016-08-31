@@ -553,11 +553,6 @@ module RES {
         }
 
         /**
-         * 配置文件组组名
-         */
-        private static GROUP_CONFIG: string = "RES__CONFIG";
-
-        /**
          * 开始加载配置
 		 * @method RES.loadConfig
 		 * @param url {string}
@@ -660,12 +655,7 @@ module RES {
          * 队列加载失败事件
          */
         private onGroupError(event: ResourceEvent): void {
-            if (event.groupName == Resource.GROUP_CONFIG) {
-                ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_LOAD_ERROR);
-            }
-            else {
                 this.dispatchEvent(event);
-            }
         }
         /**
          * 检查配置文件里是否含有指定的资源
