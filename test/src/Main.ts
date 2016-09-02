@@ -32,11 +32,6 @@
 class Main extends egret.DisplayObjectContainer {
 
 
-    /**
-     * 加载进度界面
-     * Process interface loading
-     */
-    private loadingView: LoadingUI;
 
     public constructor() {
 
@@ -47,8 +42,6 @@ class Main extends egret.DisplayObjectContainer {
     private onAddToStage(event: egret.Event) {
         //设置加载进度界面
         //Config to load process interface
-        this.loadingView = new LoadingUI();
-        this.stage.addChild(this.loadingView);
 
         //初始化Resource资源加载库
         //initiate Resource loading library
@@ -75,21 +68,20 @@ class Main extends egret.DisplayObjectContainer {
      */
     private onResourceLoadComplete(event: RES.ResourceEvent): void {
         if (event.groupName == "preload") {
-            this.stage.removeChild(this.loadingView);
             this.createGameScene();
 
             setTimeout(() => {
                 RES.destroyRes("preload");
-                RES.getResAsync("sheet_json",()=>{
-                    let spritesheet:egret.SpriteSheet = RES.getRes("sheet_json");            
+                RES.getResAsync("sheet_json", () => {
+                    let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
                     this.sky.texture = spritesheet.getTexture("bg_jpg");
-                },this);
+                }, this);
                 // RES.createGroup("tempGroup", ["sheet_json"]);
                 // RES.loadGroup("tempGroup")
             }, 1000);
         }
         else if (event.groupName == "tempGroup") {
-            let spritesheet:egret.SpriteSheet = RES.getRes("sheet_json");            
+            let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
             this.sky.texture = spritesheet.getTexture("bg_jpg");
 
         }
@@ -159,48 +151,5 @@ class Main extends egret.DisplayObjectContainer {
         var texture: egret.Texture = RES.getRes(name);
         result.texture = texture;
         return result;
-    }
-
-    /**
-     * 描述文件加载成功，开始播放动画
-     * Description file loading is successful, start to play the animation
-     */
-    private startAnimation(result: Array<any>): void {
-        console.log(result);
-        var self: any = this;
-
-        var parser = new egret.HtmlTextParser();
-        var textflowArr: Array<Array<egret.ITextElement>> = [];
-        for (var i: number = 0; i < result.length; i++) {
-            textflowArr.push(parser.parser(result[i]));
-        }
-
-        var textfield = self.textfield;
-        var count = -1;
-        var change: Function = function () {
-            count++;
-            if (count >= textflowArr.length) {
-                count = 0;
-            }
-            var lineArr = textflowArr[count];
-
-            self.changeDescription(textfield, lineArr);
-
-            var tw = egret.Tween.get(textfield);
-            tw.to({ "alpha": 1 }, 200);
-            tw.wait(2000);
-            tw.to({ "alpha": 0 }, 200);
-            tw.call(change, self);
-        };
-
-        change();
-    }
-
-    /**
-     * 切换描述内容
-     * Switch to described content
-     */
-    private changeDescription(textfield: egret.TextField, textFlow: Array<egret.ITextElement>): void {
-        textfield.textFlow = textFlow;
     }
 }
