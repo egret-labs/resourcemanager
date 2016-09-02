@@ -3,6 +3,29 @@ declare module RES {
     let checkDecorator: MethodDecorator;
 }
 declare module RES {
+    interface File {
+        url: string;
+        type: string;
+        crc32?: string;
+        size?: number;
+        name: string;
+        soundType?: string;
+    }
+    interface Dictionary {
+        [file: string]: File | Dictionary;
+    }
+    var data: Data;
+    function getResourceInfo(url: string): File;
+    function print(): void;
+    namespace Utils {
+        var data: Dictionary;
+        function addFile(filename: string, type?: string): void;
+        function getFile(filename: string): File;
+        function mkdir(dirpath: string): void;
+        function exists(dirpath: string): boolean;
+    }
+}
+declare module RES {
     /**
      * @language en_US
      * Resource term. One of the resources arrays in resource.json.
@@ -98,9 +121,7 @@ declare module RES {
         soundType?: string;
     }
     interface Data {
-        resources: {
-            [url: string]: ResourceInfo;
-        };
+        resources: Dictionary;
         groups: {
             [groupName: string]: string[];
         };
@@ -864,10 +885,6 @@ declare module RES {
          * 初始化
          */
         private init();
-        /**
-         * 配置文件组组名
-         */
-        private static GROUP_CONFIG;
         /**
          * 开始加载配置
          * @method RES.loadConfig

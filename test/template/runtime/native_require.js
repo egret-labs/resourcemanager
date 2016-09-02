@@ -10,7 +10,6 @@ var game_file_list = [
 	"libs/modules/res/res.js",
 	"libs/modules/eui/eui.js",
 	"libs/modules/dragonBones/dragonBones.js",
-	"bin-debug/LoadingUI.js",
 	"bin-debug/Main.js",
 	//----auto game_file_list end----
 ];

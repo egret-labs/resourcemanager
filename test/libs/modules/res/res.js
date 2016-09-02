@@ -35,6 +35,89 @@ var RES;
         };
     };
 })(RES || (RES = {}));
+var RES;
+(function (RES) {
+    var ResourceNodeType;
+    (function (ResourceNodeType) {
+        ResourceNodeType[ResourceNodeType["FILE"] = 0] = "FILE";
+        ResourceNodeType[ResourceNodeType["DICTIONARY"] = 1] = "DICTIONARY";
+    })(ResourceNodeType || (ResourceNodeType = {}));
+    function getResourceInfo(url) {
+        return Utils.getFile(url);
+    }
+    RES.getResourceInfo = getResourceInfo;
+    function print() {
+        console.log(RES.data);
+    }
+    RES.print = print;
+    var Utils;
+    (function (Utils) {
+        Utils.data = {};
+        function addFile(filename, type) {
+            if (!type)
+                type = "";
+            filename = normalize(filename);
+            var basefilename = basename(filename);
+            var folder = dirname(filename);
+            if (!exists(folder)) {
+                mkdir(folder);
+            }
+            var d = reslove(folder);
+            d[basefilename] = { url: filename, type: type };
+        }
+        Utils.addFile = addFile;
+        function getFile(filename) {
+            return reslove(filename);
+        }
+        Utils.getFile = getFile;
+        function basename(filename) {
+            return filename.substr(filename.lastIndexOf("/") + 1);
+        }
+        function normalize(filename) {
+            return filename.split("/").filter(function (d) { return !!d; }).join("/");
+        }
+        function dirname(path) {
+            return path.substr(0, path.lastIndexOf("/"));
+        }
+        function reslove(dirpath) {
+            dirpath = normalize(dirpath);
+            var list = dirpath.split("/");
+            var current = Utils.data;
+            for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
+                var f = list_1[_i];
+                current = current[f];
+            }
+            return current;
+        }
+        function mkdir(dirpath) {
+            dirpath = normalize(dirpath);
+            var list = dirpath.split("/");
+            var current = Utils.data;
+            for (var _i = 0, list_2 = list; _i < list_2.length; _i++) {
+                var f = list_2[_i];
+                if (!current[f]) {
+                    current[f] = {};
+                }
+                current = current[f];
+            }
+        }
+        Utils.mkdir = mkdir;
+        function exists(dirpath) {
+            dirpath = normalize(dirpath);
+            var list = dirpath.split("/");
+            var current = Utils.data;
+            for (var _i = 0, list_3 = list; _i < list_3.length; _i++) {
+                var f = list_3[_i];
+                if (!current[f]) {
+                    return false;
+                }
+                current = current[f];
+            }
+            return true;
+        }
+        Utils.exists = exists;
+    })(Utils = RES.Utils || (RES.Utils = {}));
+})(RES || (RES = {}));
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //  Copyright (c) 2014-present, Egret Technology.
@@ -226,7 +309,7 @@ var RES;
             if (!url) {
                 url = url_or_alias;
             }
-            var r = this.config.resources[url];
+            var r = RES.getResourceInfo(url);
             if (!r) {
                 if (shouldNotBeNull) {
                     throw "none resource url or alias : " + url_or_alias;
@@ -313,12 +396,12 @@ var RES;
          * @param folder {string} 加载项的路径前缀。
          */
         ResourceConfig.prototype.parseConfig = function (data, resourceRoot) {
-            var resources = data.resources;
-            for (var resourceKey in resources) {
-                var r = resources[resourceKey];
-                r.url = resourceRoot + "/" + r.url;
-                r.name = resourceKey;
-            }
+            // let resources = data.resources;
+            // for (let resourceKey in resources) {
+            //     let r = resources[resourceKey];
+            //     r.url = resourceRoot + "/" + r.url;
+            //     r.name = resourceKey;
+            // }
             this.config = data;
             // if (!data)
             //     return;
@@ -1800,12 +1883,7 @@ var RES;
          * 队列加载失败事件
          */
         Resource.prototype.onGroupError = function (event) {
-            if (event.groupName == Resource.GROUP_CONFIG) {
-                RES.ResourceEvent.dispatchResourceEvent(this, RES.ResourceEvent.CONFIG_LOAD_ERROR);
-            }
-            else {
-                this.dispatchEvent(event);
-            }
+            this.dispatchEvent(event);
         };
         /**
          * 检查配置文件里是否含有指定的资源
@@ -1968,10 +2046,6 @@ var RES;
         };
         return Resource;
     }(egret.EventDispatcher));
-    /**
-     * 配置文件组组名
-     */
-    Resource.GROUP_CONFIG = "RES__CONFIG";
     __decorate([
         RES.checkDecorator
     ], Resource.prototype, "loadConfig", null);

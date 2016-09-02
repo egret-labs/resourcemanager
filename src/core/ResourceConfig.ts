@@ -50,12 +50,7 @@ module RES {
 
     export interface Data {
 
-        resources: {
-
-            [url: string]: ResourceInfo
-        },
-
-
+        resources: Dictionary;
 
         groups: {
             [groupName: string]: string[]
@@ -194,7 +189,7 @@ module RES {
             if (!url) {
                 url = url_or_alias;
             }
-            let r = this.config.resources[url];
+            let r = getResourceInfo(url);
             if (!r) {
                 if (shouldNotBeNull) {
                     throw `none resource url or alias : ${url_or_alias}`;
@@ -292,12 +287,12 @@ module RES {
          */
         public parseConfig(data: Data, resourceRoot: string): void {
 
-            let resources = data.resources;
-            for (let resourceKey in resources) {
-                let r = resources[resourceKey];
-                r.url = resourceRoot + "/" + r.url;
-                r.name = resourceKey;
-            }
+            // let resources = data.resources;
+            // for (let resourceKey in resources) {
+            //     let r = resources[resourceKey];
+            //     r.url = resourceRoot + "/" + r.url;
+            //     r.name = resourceKey;
+            // }
             this.config = data;
             // if (!data)
             //     return;

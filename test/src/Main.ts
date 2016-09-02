@@ -113,12 +113,6 @@ class Main extends egret.DisplayObjectContainer {
      */
     private onResourceProgress(event: RES.ResourceEvent): void {
 
-        if (event.groupName == "preload") {
-            console.log(event.resItem.data);
-            this.loadingView.setProgress(event.itemsLoaded, event.itemsTotal);
-        }
-
-
 
     }
 

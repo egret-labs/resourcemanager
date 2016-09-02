@@ -12,6 +12,7 @@
     },
     "files": [
         "src/DEBUG.ts",
+        "src/core/FileSystem.ts",
         "src/core/ResourceItem.ts",
         "src/core/ResourceConfig.ts",
         "src/core/ResourceLoader.ts",
