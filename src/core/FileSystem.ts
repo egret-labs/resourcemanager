@@ -31,14 +31,14 @@ module RES {
     export var data: Data;
 
     export function getResourceInfo(url: string): File {
-        return Utils.getFile(url);
+        return FileSystem.getFile(url);
     }
 
     export function print() {
         console.log(data);
     }
 
-    export namespace Utils {
+    export namespace FileSystem {
 
 
         export var data: Dictionary = {};

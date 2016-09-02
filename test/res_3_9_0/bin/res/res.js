@@ -43,16 +43,16 @@ var RES;
         ResourceNodeType[ResourceNodeType["DICTIONARY"] = 1] = "DICTIONARY";
     })(ResourceNodeType || (ResourceNodeType = {}));
     function getResourceInfo(url) {
-        return Utils.getFile(url);
+        return FileSystem.getFile(url);
     }
     RES.getResourceInfo = getResourceInfo;
     function print() {
         console.log(RES.data);
     }
     RES.print = print;
-    var Utils;
-    (function (Utils) {
-        Utils.data = {};
+    var FileSystem;
+    (function (FileSystem) {
+        FileSystem.data = {};
         function addFile(filename, type) {
             if (!type)
                 type = "";
@@ -65,11 +65,11 @@ var RES;
             var d = reslove(folder);
             d[basefilename] = { url: filename, type: type };
         }
-        Utils.addFile = addFile;
+        FileSystem.addFile = addFile;
         function getFile(filename) {
             return reslove(filename);
         }
-        Utils.getFile = getFile;
+        FileSystem.getFile = getFile;
         function basename(filename) {
             return filename.substr(filename.lastIndexOf("/") + 1);
         }
@@ -82,7 +82,7 @@ var RES;
         function reslove(dirpath) {
             dirpath = normalize(dirpath);
             var list = dirpath.split("/");
-            var current = Utils.data;
+            var current = FileSystem.data;
             for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
                 var f = list_1[_i];
                 current = current[f];
@@ -92,7 +92,7 @@ var RES;
         function mkdir(dirpath) {
             dirpath = normalize(dirpath);
             var list = dirpath.split("/");
-            var current = Utils.data;
+            var current = FileSystem.data;
             for (var _i = 0, list_2 = list; _i < list_2.length; _i++) {
                 var f = list_2[_i];
                 if (!current[f]) {
@@ -101,11 +101,11 @@ var RES;
                 current = current[f];
             }
         }
-        Utils.mkdir = mkdir;
+        FileSystem.mkdir = mkdir;
         function exists(dirpath) {
             dirpath = normalize(dirpath);
             var list = dirpath.split("/");
-            var current = Utils.data;
+            var current = FileSystem.data;
             for (var _i = 0, list_3 = list; _i < list_3.length; _i++) {
                 var f = list_3[_i];
                 if (!current[f]) {
@@ -115,8 +115,8 @@ var RES;
             }
             return true;
         }
-        Utils.exists = exists;
-    })(Utils = RES.Utils || (RES.Utils = {}));
+        FileSystem.exists = exists;
+    })(FileSystem = RES.FileSystem || (RES.FileSystem = {}));
 })(RES || (RES = {}));
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -396,13 +396,8 @@ var RES;
          * @param folder {string} 加载项的路径前缀。
          */
         ResourceConfig.prototype.parseConfig = function (data, resourceRoot) {
-            // let resources = data.resources;
-            // for (let resourceKey in resources) {
-            //     let r = resources[resourceKey];
-            //     r.url = resourceRoot + "/" + r.url;
-            //     r.name = resourceKey;
-            // }
             this.config = data;
+            RES.FileSystem.data = data.resources;
             // if (!data)
             //     return;
             // var resources: Array<any> = data["resources"];
@@ -463,7 +458,7 @@ var RES;
             if (!data.type) {
                 data.type = this.__temp__get__type__via__url(data.url);
             }
-            this.config.resources[data.url] = data;
+            RES.FileSystem.addFile(data.url, data.type);
             if (data.name) {
                 this.config.alias[data.name] = data.url;
             }

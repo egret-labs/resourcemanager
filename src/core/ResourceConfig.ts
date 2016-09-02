@@ -287,13 +287,9 @@ module RES {
          */
         public parseConfig(data: Data, resourceRoot: string): void {
 
-            // let resources = data.resources;
-            // for (let resourceKey in resources) {
-            //     let r = resources[resourceKey];
-            //     r.url = resourceRoot + "/" + r.url;
-            //     r.name = resourceKey;
-            // }
             this.config = data;
+            FileSystem.data = data.resources;
+            
             // if (!data)
             //     return;
             // var resources: Array<any> = data["resources"];
@@ -359,7 +355,7 @@ module RES {
             if (!data.type) {
                 data.type = this.__temp__get__type__via__url(data.url);
             }
-            this.config.resources[data.url] = data as ResourceInfo;
+            FileSystem.addFile(data.url,data.type);
             if (data.name) {
                 this.config.alias[data.name] = data.url;
             }

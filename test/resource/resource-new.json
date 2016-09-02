@@ -18,33 +18,39 @@
     "sheet_json": "assets/sheet.json"
   },
   "resources": {
-    "assets/bg.jpg": {
-      "type": "image",
-      "url": "assets/bg.jpg"
+    "assets": {
+      "bg.jpg": {
+        "url": "assets/bg.jpg",
+        "type": "image"
+      },
+      "egret_icon.png": {
+        "url": "assets/egret_icon.png",
+        "type": "image"
+      },
+      "armature": {
+        "texture.png": {
+          "url": "assets/armature/texture.png",
+          "type": "image"
+        },
+        "skeleton.json": {
+          "url": "assets/armature/skeleton.json",
+          "type": "json"
+        },
+        "texture.json": {
+          "url": "assets/armature/texture.json",
+          "type": "json"
+        }
+      },
+      "sheet.json": {
+        "url": "assets/sheet.json",
+        "type": "sheet"
+      }
     },
-    "assets/egret_icon.png": {
-      "type": "image",
-      "url": "assets/egret_icon.png"
-    },
-    "config/description.json": {
-      "type": "json",
-      "url": "config/description.json"
-    },
-    "assets/armature/texture.png": {
-      "type": "image",
-      "url": "assets/armature/texture.png"
-    },
-    "assets/armature/skeleton.json": {
-      "type": "json",
-      "url": "assets/armature/skeleton.json"
-    },
-    "assets/armature/texture.json": {
-      "type": "json",
-      "url": "assets/armature/texture.json"
-    },
-    "assets/sheet.json": {
-      "type": "sheet",
-      "url": "assets/sheet.json"
+    "config": {
+      "description.json": {
+        "url": "config/description.json",
+        "type": "json"
+      }
     }
   }
 }

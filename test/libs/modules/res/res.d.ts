@@ -17,7 +17,7 @@ declare module RES {
     var data: Data;
     function getResourceInfo(url: string): File;
     function print(): void;
-    namespace Utils {
+    namespace FileSystem {
         var data: Dictionary;
         function addFile(filename: string, type?: string): void;
         function getFile(filename: string): File;
