@@ -72,7 +72,7 @@ module RES {
 
         async onLoadStart(host, resource) {
             var loader = new egret.ImageLoader();
-            loader.load(resource.url);
+            loader.load("resource/" + resource.url);
             var bitmapData = await promisify(loader);
             var texture: egret.Texture = new egret.Texture();
             texture._setBitmapData(bitmapData);
@@ -100,7 +100,7 @@ module RES {
 
             var request: egret.HttpRequest = new egret.HttpRequest();
             request.responseType = egret.HttpResponseType.TEXT;
-            request.open(resource.url, "get");
+            request.open("resource/" + resource.url, "get");
             request.send();
             let text = await promisify(request);
             return text;
@@ -144,8 +144,6 @@ module RES {
         async onLoadStart(host, resource): Promise<any> {
 
             let data = await host.load(resource, JsonProcessor);
-            console.log(11);
-            console.log(data);
             let imageUrl = getRelativePath(resource.url, data.file);
             host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
             let r = host.resourceConfig.getResource(imageUrl);

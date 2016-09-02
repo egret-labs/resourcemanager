@@ -27,7 +27,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
-@RES.mapConfig<"resource" | "resource_ios">("resource/resource-new.json", () => "resource")
+@RES.mapConfig<"resource" | "resource_ios">("resource-new.json", () => "resource")
 // @RES.mapConfig("resource/default2.res.json", "resource/")
 class Main extends egret.DisplayObjectContainer {
 

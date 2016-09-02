@@ -52,7 +52,7 @@ module RES {
                 mkdir(folder);
             }
             let d = reslove(folder);
-            d[basefilename] = { url: filename, type };
+            d[basefilename] = { url:filename, type };
         }
 
         export function getFile(filename: string): File {

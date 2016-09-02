@@ -1116,7 +1116,7 @@ var RES;
                     switch (_a.label) {
                         case 0:
                             loader = new egret.ImageLoader();
-                            loader.load(resource.url);
+                            loader.load("resource/" + resource.url);
                             return [4 /*yield*/, promisify(loader)];
                         case 1:
                             bitmapData = _a.sent();
@@ -1148,7 +1148,7 @@ var RES;
                         case 0:
                             request = new egret.HttpRequest();
                             request.responseType = egret.HttpResponseType.TEXT;
-                            request.open(resource.url, "get");
+                            request.open("resource/" + resource.url, "get");
                             request.send();
                             return [4 /*yield*/, promisify(request)];
                         case 1:
@@ -1209,8 +1209,6 @@ var RES;
                         case 0: return [4 /*yield*/, host.load(resource, RES.JsonProcessor)];
                         case 1:
                             data = _a.sent();
-                            console.log(11);
-                            console.log(data);
                             imageUrl = getRelativePath(resource.url, data.file);
                             host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
                             r = host.resourceConfig.getResource(imageUrl);
