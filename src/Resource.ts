@@ -309,7 +309,7 @@ module RES {
      * @platform Web,Native
      */
     export function getResAsync(key: string, compFunc: Function, thisObject: any): void {
-        instance.getResAsync(key, compFunc, thisObject);
+        instance.getResAsync.apply(instance,arguments);
     }
     /**
      * @language en_US

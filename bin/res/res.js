@@ -677,7 +677,6 @@ var RES;
                 }
             }
             else {
-                this.callBack.call(this.resInstance, resItem);
             }
             this.next();
         };

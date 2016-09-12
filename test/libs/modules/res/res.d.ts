@@ -206,11 +206,6 @@ declare module RES {
          */
         private loadingCount;
         /**
-         * 一项加载结束回调函数。无论加载成功或者出错都将执行回调函数。示例：callBack(resItem:ResourceItem):void;
-         * @member {Function} RES.ResourceLoader#callBack
-         */
-        callBack: Function;
-        /**
          * RES单例的引用
          * @member {any} RES.ResourceLoader#resInstance
          */
