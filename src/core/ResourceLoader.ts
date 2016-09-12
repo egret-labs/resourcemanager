@@ -87,10 +87,7 @@ module RES {
 		public maxRetryTimes = 3;
 		private failedList: Array<ResourceItem> = new Array<ResourceItem>();
 
-		/**
-		 * 优先级队列,key为priority，value为groupName列表
-		 */
-		private priorityQueue: any = {};
+		private queue: string[] = [];
 		/**
 		 * 检查指定的组是否正在加载中
 		 * @method RES.ResourceLoader#isGroupInLoading
@@ -117,10 +114,8 @@ module RES {
 				this.dispatchEvent(event);
 				return;
 			}
-			if (this.priorityQueue[priority])
-				this.priorityQueue[priority].push(groupName);
-			else
-				this.priorityQueue[priority] = [groupName];
+
+			this.queue.push(groupName);
 			this.itemListDic[groupName] = list;
 			var length: number = list.length;
 			for (var i: number = 0; i < length; i++) {
@@ -173,11 +168,7 @@ module RES {
 		private getOneResourceItem(): ResourceItem | undefined {
 			if (this.failedList.length > 0)
 				return this.failedList.shift();
-			var maxPriority: number = Number.NEGATIVE_INFINITY;
-			for (var p in this.priorityQueue) {
-				maxPriority = Math.max(maxPriority, <number><any>p);
-			}
-			var queue: Array<any> = this.priorityQueue[maxPriority];
+			var queue: Array<any> = this.queue;
 			var length = queue.length;
 			var list: Array<ResourceItem> = [];
 			for (var i: number = 0; i < length; i++) {
@@ -244,27 +235,19 @@ module RES {
 		 * 从优先级队列中移除指定的组名
 		 */
 		private removeGroupName(groupName: string): void {
-			for (var p in this.priorityQueue) {
-				var queue: Array<any> = this.priorityQueue[p];
-				var length: number = queue.length;
-				var index: number = 0;
-				var found: boolean = false;
-				var length: number = queue.length;
-				for (var i: number = 0; i < length; i++) {
-					var name: string = queue[i];
-					if (name == groupName) {
-						queue.splice(index, 1);
-						found = true;
-						break;
-					}
-					index++;
-				}
-				if (found) {
-					if (queue.length == 0) {
-						delete this.priorityQueue[p];
-					}
+			var queue = this.queue;
+			var length = queue.length;
+			var index = 0;
+			var found = false;
+			var length = queue.length;
+			for (var i = 0; i < length; i++) {
+				var name = queue[i];
+				if (name == groupName) {
+					queue.splice(index, 1);
+					found = true;
 					break;
 				}
+				index++;
 			}
 		}
 	}

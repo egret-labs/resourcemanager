@@ -229,10 +229,7 @@ declare module RES {
         private retryTimesDic;
         maxRetryTimes: number;
         private failedList;
-        /**
-         * 优先级队列,key为priority，value为groupName列表
-         */
-        private priorityQueue;
+        private queue;
         /**
          * 检查指定的组是否正在加载中
          * @method RES.ResourceLoader#isGroupInLoading

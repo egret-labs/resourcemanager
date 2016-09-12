@@ -538,10 +538,7 @@ var RES;
             this.retryTimesDic = {};
             this.maxRetryTimes = 3;
             this.failedList = new Array();
-            /**
-             * 优先级队列,key为priority，value为groupName列表
-             */
-            this.priorityQueue = {};
+            this.queue = [];
             /**
              * 当前应该加载同优先级队列的第几列
              */
@@ -575,10 +572,7 @@ var RES;
                 this.dispatchEvent(event);
                 return;
             }
-            if (this.priorityQueue[priority])
-                this.priorityQueue[priority].push(groupName);
-            else
-                this.priorityQueue[priority] = [groupName];
+            this.queue.push(groupName);
             this.itemListDic[groupName] = list;
             var length = list.length;
             for (var i = 0; i < length; i++) {
@@ -622,11 +616,7 @@ var RES;
         ResourceLoader.prototype.getOneResourceItem = function () {
             if (this.failedList.length > 0)
                 return this.failedList.shift();
-            var maxPriority = Number.NEGATIVE_INFINITY;
-            for (var p in this.priorityQueue) {
-                maxPriority = Math.max(maxPriority, p);
-            }
-            var queue = this.priorityQueue[maxPriority];
+            var queue = this.queue;
             var length = queue.length;
             var list = [];
             for (var i = 0; i < length; i++) {
@@ -692,27 +682,19 @@ var RES;
          * 从优先级队列中移除指定的组名
          */
         ResourceLoader.prototype.removeGroupName = function (groupName) {
-            for (var p in this.priorityQueue) {
-                var queue = this.priorityQueue[p];
-                var length = queue.length;
-                var index = 0;
-                var found = false;
-                var length = queue.length;
-                for (var i = 0; i < length; i++) {
-                    var name = queue[i];
-                    if (name == groupName) {
-                        queue.splice(index, 1);
-                        found = true;
-                        break;
-                    }
-                    index++;
-                }
-                if (found) {
-                    if (queue.length == 0) {
-                        delete this.priorityQueue[p];
-                    }
+            var queue = this.queue;
+            var length = queue.length;
+            var index = 0;
+            var found = false;
+            var length = queue.length;
+            for (var i = 0; i < length; i++) {
+                var name = queue[i];
+                if (name == groupName) {
+                    queue.splice(index, 1);
+                    found = true;
                     break;
                 }
+                index++;
             }
         };
         return ResourceLoader;
