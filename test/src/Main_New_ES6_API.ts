@@ -42,23 +42,11 @@ class Main_New_ES6_API extends egret.DisplayObjectContainer {
             .then(() => {
                 let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
                 this.sky.texture = spritesheet.getTexture("bg_jpg");
-            })
+            }).catch(()=>{
+                    let url = "todo : unknown url";
+                  console.warn(`Url ${url} has failed to load`);
+            });
     }
-
-
-
-
-    // /**
-    //  * preload资源组加载完成
-    //  * Preload resource group is loaded
-    //  */
-    // private onResourceLoadComplete(event: RES.ResourceEvent): void {
-    //     if (event.groupName == "tempGroup") {
-    //         let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
-    //         this.sky.texture = spritesheet.getTexture("bg_jpg");
-
-    //     }
-    // }
 
     private sky: egret.Bitmap;
 

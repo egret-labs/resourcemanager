@@ -15,40 +15,27 @@ class Main_New_ES7_API extends egret.DisplayObjectContainer {
     public constructor() {
 
         super();
-        this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
-    }
-
-    private async onAddToStage(event: egret.Event) {
-
-        let reportrer = {
-            onProgress: (current, total) => {
-                console.log(current, total);
-            }
-        }
-        await RES.loadConfig();
-        await RES.loadGroup("preload", 0, reportrer);
-        this.createGameScene();
-        await sleep(1000);
-        RES.destroyRes("preload");
-        await RES.getResAsync("sheet_json");
-        await sleep(1000);
-        let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
-        this.sky.texture = spritesheet.getTexture("bg_jpg");
+        this.once(egret.Event.ADDED_TO_STAGE, ()=>{}, this);
     }
 
 
 
+    // private async onAddToStage(event: egret.Event) {
 
-    // /**
-    //  * preload资源组加载完成
-    //  * Preload resource group is loaded
-    //  */
-    // private onResourceLoadComplete(event: RES.ResourceEvent): void {
-    //     if (event.groupName == "tempGroup") {
-    //         let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
-    //         this.sky.texture = spritesheet.getTexture("bg_jpg");
-
+    //     let reportrer = {
+    //         onProgress: (current, total) => {
+    //             console.log(current, total);
+    //         }
     //     }
+    //     await RES.loadConfig();
+    //     await RES.loadGroup("preload", 0, reportrer);
+    //     this.createGameScene();
+    //     await sleep(1000);
+    //     RES.destroyRes("preload");
+    //     await RES.getResAsync("sheet_json");
+    //     await sleep(1000);
+    //     let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
+    //     this.sky.texture = spritesheet.getTexture("bg_jpg");
     // }
 
     private sky: egret.Bitmap;

@@ -42,9 +42,9 @@ module RES {
 
         resourceConfig: ResourceConfig;
 
-        load: (resource: ResourceInfo, processor?: Processor) => PromiseLike<any>;
+        load: (resource: ResourceInfo, processor?: Processor) => Promise<any>;
 
-        unload: (resource: ResourceInfo) => PromiseLike<any>
+        unload: (resource: ResourceInfo) => Promise<any>
 
         save: (rexource: ResourceInfo, data: any) => void;
 
@@ -61,9 +61,9 @@ module RES {
 
     export interface Processor {
 
-        onLoadStart(host: ProcessHost, resource: ResourceInfo): PromiseLike<any>;
+        onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
 
-        onRemoveStart(host: ProcessHost, resource: ResourceInfo): PromiseLike<any>;
+        onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
 
 
     }

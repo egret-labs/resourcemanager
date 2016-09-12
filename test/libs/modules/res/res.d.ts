@@ -605,15 +605,15 @@ declare module RES {
     function getRelativePath(url: string, file: string): string;
     interface ProcessHost {
         resourceConfig: ResourceConfig;
-        load: (resource: ResourceInfo, processor?: Processor) => PromiseLike<any>;
-        unload: (resource: ResourceInfo) => PromiseLike<any>;
+        load: (resource: ResourceInfo, processor?: Processor) => Promise<any>;
+        unload: (resource: ResourceInfo) => Promise<any>;
         save: (rexource: ResourceInfo, data: any) => void;
         get: (resource: ResourceInfo) => any;
         remove: (resource: ResourceInfo) => void;
     }
     interface Processor {
-        onLoadStart(host: ProcessHost, resource: ResourceInfo): PromiseLike<any>;
-        onRemoveStart(host: ProcessHost, resource: ResourceInfo): PromiseLike<any>;
+        onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
+        onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
     }
     var ImageProcessor: Processor;
     var TextProcessor: Processor;
@@ -656,7 +656,7 @@ declare module RES {
      * @version Egret 2.4
      * @platform Web,Native
      */
-    function loadConfig(url?: string, resourceRoot?: string): PromiseLike<void>;
+    function loadConfig(url?: string, resourceRoot?: string): Promise<void>;
     /**
      * @language en_US
      * Load a set of resources according to the group name.
@@ -677,7 +677,7 @@ declare module RES {
      * @version Egret 2.4
      * @platform Web,Native
      */
-    function loadGroup(name: string, priority?: number, reporter?: PromiseTaskReporter): PromiseLike<void>;
+    function loadGroup(name: string, priority?: number, reporter?: PromiseTaskReporter): Promise<void>;
     /**
      * @language en_US
      * Check whether a resource group has been loaded.
@@ -1008,7 +1008,7 @@ declare module RES {
          * @param resourceRoot {string}
          * @param type {string}
          */
-        loadConfig(): PromiseLike<void>;
+        loadConfig(): Promise<void>;
         /**
          * 已经加载过组名列表
          */
@@ -1034,7 +1034,7 @@ declare module RES {
          * @param name {string}
          * @param priority {number}
          */
-        loadGroup(name: string, priority?: number, reporter?: PromiseTaskReporter): PromiseLike<void>;
+        loadGroup(name: string, priority?: number, reporter?: PromiseTaskReporter): Promise<void>;
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
          * 可以监听ResourceEvent.CONFIG_COMPLETE事件来确认配置加载完成。

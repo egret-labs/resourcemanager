@@ -128,7 +128,7 @@ module RES {
      * @version Egret 2.4
      * @platform Web,Native
      */
-    export function loadConfig(url?: string, resourceRoot?: string): PromiseLike<void> {
+    export function loadConfig(url?: string, resourceRoot?: string): Promise<void> {
 
         return instance.loadConfig();
     }
@@ -152,7 +152,7 @@ module RES {
      * @version Egret 2.4
      * @platform Web,Native
      */
-    export function loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): PromiseLike<void> {
+    export function loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<void> {
         return instance.loadGroup(name, priority, reporter);
     }
     /**
@@ -552,7 +552,7 @@ module RES {
 		 * @param type {string}
          */
         @checkDecorator
-        public loadConfig(): PromiseLike<void> {
+        public loadConfig(): Promise<void> {
 
             return new Promise<void>((reslove, reject) => {
                 host.load(configItem).then((data) => {
@@ -594,7 +594,7 @@ module RES {
 		 * @param name {string}
 		 * @param priority {number}
          */
-        public loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): PromiseLike<void> {
+        public loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<void> {
 
             return new Promise<void>((reslove, reject) => {
                 if (this.loadedGroups.indexOf(name) != -1) {
