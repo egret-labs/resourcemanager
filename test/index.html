@@ -20,6 +20,11 @@
         }
     </style>
 
+    <script>
+        //强制删除浏览器的 Promise ，以便测试 promise-polyfill 这种情况
+        window.Promise = undefined;
+    </script>
+
     <!--这个标签为通过egret提供的第三方库的方式生成的 javascript 文件。删除 modules_files 标签后，库文件加载列表将不会变化，请谨慎操作！-->
     <!--modules_files_start-->
 	<script egret="lib" src="libs/modules/egret/egret.js" src-release="libs/modules/egret/egret.min.js"></script>
@@ -62,6 +67,7 @@
          * "audioType": "" //使用的音频类型，0:默认，1:qq audio，2:web audio，3:audio
          * }
          **/
+
         egret.runEgret({renderMode:"webgl", audioType:0});
     </script>
 </body>

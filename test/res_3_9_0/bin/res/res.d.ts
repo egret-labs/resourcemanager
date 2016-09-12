@@ -1,3 +1,4 @@
+declare var __promise__line: string;
 declare module RES {
     let checkNull: MethodDecorator;
     let checkDecorator: MethodDecorator;

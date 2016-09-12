@@ -11,6 +11,7 @@
         "strictNullChecks": true
     },
     "files": [
+        "src/promise.ts",
         "src/DEBUG.ts",
         "src/core/FileSystem.ts",
         "src/core/ResourceItem.ts",
