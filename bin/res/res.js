@@ -1526,7 +1526,7 @@ var RES;
      * @platform Web,Native
      */
     function getResAsync(key, compFunc, thisObject) {
-        instance.getResAsync(key, compFunc, thisObject);
+        instance.getResAsync.apply(instance, arguments);
     }
     RES.getResAsync = getResAsync;
     /**

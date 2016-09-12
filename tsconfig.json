@@ -31,7 +31,6 @@
         "src/processor/Processor.ts",
         "src/Resource.ts",
         "src/i18n/zh_CN.ts",
-        "libs/egret.d.ts",
-        "typings/index.d.ts"
+        "libs/egret.d.ts"
     ]
 }

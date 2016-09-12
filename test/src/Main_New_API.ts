@@ -16,29 +16,36 @@ class Main_New_API extends egret.DisplayObjectContainer {
 
         let reportrer = {
 
-            onProgress:(current,total)=>{
-                console.log (current,total);
+            onProgress: (current, total) => {
+                console.log(current, total);
             }
 
         }
 
         RES.loadConfig()
-            .then(() => RES.loadGroup("preload",0,reportrer))
+            .then(() => RES.loadGroup("preload", 0, reportrer))
             .then(() => {
                 this.createGameScene();
+                return Promise.resolve();
+            })
+            .then(() => sleep(1000))
+            .then(() => {
+                RES.destroyRes("preload");
             });
+
+        //  setTimeout(() => {
+        //         
+        //         RES.getResAsync("sheet_json", () => {
+        //             let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
+        //             this.sky.texture = spritesheet.getTexture("bg_jpg");
+        //         }, this);
+        //         // RES.createGroup("tempGroup", ["sheet_json"]);
+        //         // RES.loadGroup("tempGroup")
+        //     }, 1000);
     }
 
 
-    //   setTimeout(() => {
-    //                 RES.destroyRes("preload");
-    //                 RES.getResAsync("sheet_json", () => {
-    //                     let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
-    //                     this.sky.texture = spritesheet.getTexture("bg_jpg");
-    //                 }, this);
-    //                 // RES.createGroup("tempGroup", ["sheet_json"]);
-    //                 // RES.loadGroup("tempGroup")
-    //             }, 1000);
+
 
     // /**
     //  * preload资源组加载完成
@@ -52,7 +59,6 @@ class Main_New_API extends egret.DisplayObjectContainer {
     //     }
     // }
 
-    private textfield: egret.TextField;
     private sky: egret.Bitmap;
 
     /**
@@ -82,4 +88,12 @@ class Main_New_API extends egret.DisplayObjectContainer {
         result.texture = texture;
         return result;
     }
+}
+
+
+function sleep(time): Promise<void> {
+    return new Promise<void>((reslove, reject) => {
+        setTimeout(reslove, time);
+    });
+
 }

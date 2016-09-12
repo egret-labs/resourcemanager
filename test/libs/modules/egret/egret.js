@@ -569,6 +569,7 @@ var egret;
          * @param bubbles Determines whether the Event object bubbles. Event listeners can access this information through
          * the inherited bubbles property.
          * @param data {any} data
+         * @param cancelable Determines whether the Event object can be canceled. The default values is false.
          * @version Egret 2.4
          * @platform Web,Native
          */
@@ -578,12 +579,13 @@ var egret;
          * @param type {string} 事件类型
          * @param bubbles {boolean} 确定 Event 对象是否参与事件流的冒泡阶段。默认值为 false。
          * @param data {any} 事件data
+         * @param cancelable {boolean} 确定是否可以取消 Event 对象。默认值为 false。
          * @version Egret 2.4
          * @platform Web,Native
          */
-        p.dispatchEventWith = function (type, bubbles, data) {
+        p.dispatchEventWith = function (type, bubbles, data, cancelable) {
             if (bubbles || this.hasEventListener(type)) {
-                var event = egret.Event.create(egret.Event, type, bubbles);
+                var event = egret.Event.create(egret.Event, type, bubbles, cancelable);
                 event.data = data;
                 var result = this.dispatchEvent(event);
                 egret.Event.release(event);
@@ -3912,7 +3914,7 @@ var egret;
         };
         Bitmap.$drawImage = function (node, image, bitmapX, bitmapY, bitmapWidth, bitmapHeight, offsetX, offsetY, textureWidth, textureHeight, destW, destH, sourceWidth, sourceHeight, scale9Grid, fillMode, smoothing) {
             console.warn('deprecated method : Bitmap.$drawImage,use egret.sys.BitmapNode.$drawImage instead of it');
-            egret.sys.BitmapNode.$updateTextureData.call(this, arguments);
+            egret.sys.BitmapNode.$updateTextureData(node, image, bitmapX, bitmapY, bitmapWidth, bitmapHeight, offsetX, offsetY, textureWidth, textureHeight, destW, destH, sourceWidth, sourceHeight, scale9Grid, fillMode, smoothing);
         };
         /**
          * @language en_US
@@ -6011,8 +6013,16 @@ var egret;
             endAngle = clampAngle(endAngle);
             var fillPath = this.fillPath;
             var strokePath = this.strokePath;
-            fillPath && fillPath.drawArc(x, y, radius, startAngle, endAngle, anticlockwise);
-            strokePath && strokePath.drawArc(x, y, radius, startAngle, endAngle, anticlockwise);
+            if (fillPath) {
+                fillPath.$lastX = this.lastX;
+                fillPath.$lastY = this.lastY;
+                fillPath.drawArc(x, y, radius, startAngle, endAngle, anticlockwise);
+            }
+            if (strokePath) {
+                strokePath.$lastX = this.lastX;
+                strokePath.$lastY = this.lastY;
+                strokePath.drawArc(x, y, radius, startAngle, endAngle, anticlockwise);
+            }
             if (anticlockwise) {
                 this.arcBounds(x, y, radius, endAngle, startAngle);
             }
@@ -6638,9 +6648,10 @@ var egret;
          */
         p._setBitmapData = function (value) {
             this._bitmapData = value;
-            var w = value.width * egret.$TextureScaleFactor;
-            var h = value.height * egret.$TextureScaleFactor;
-            this.$initData(0, 0, w, h, 0, 0, w, h, w, h);
+            var scale = egret.$TextureScaleFactor;
+            var w = value.width * scale;
+            var h = value.height * scale;
+            this.$initData(0, 0, w, h, 0, 0, w, h, value.width, value.height);
         };
         /**
          * @private
@@ -6666,8 +6677,8 @@ var egret;
             this._offsetY = offsetY;
             this._textureWidth = textureWidth;
             this._textureHeight = textureHeight;
-            this._sourceWidth = sourceWidth / scale;
-            this._sourceHeight = sourceHeight / scale;
+            this._sourceWidth = sourceWidth;
+            this._sourceHeight = sourceHeight;
             //todo
             egret.BitmapData.$invalidate(this);
         };
@@ -14800,6 +14811,7 @@ var egret;
                 }
                 var t2 = egret.getTimer();
                 var deltaTime = timeStamp - this.lastTimeStamp;
+                this.lastTimeStamp = timeStamp;
                 if (deltaTime >= this.frameDeltaTime) {
                     this.lastCount = this.frameInterval;
                 }
@@ -14813,7 +14825,6 @@ var egret;
                     }
                     this.lastCount += this.frameInterval;
                 }
-                this.lastTimeStamp = timeStamp;
                 this.render(true, this.costEnterFrame + t2 - t1);
                 var t3 = egret.getTimer();
                 this.broadcastEnterFrame();
@@ -15206,7 +15217,7 @@ var egret;
                 else if (fillMode == egret.BitmapFillMode.SCALE) {
                     var tsX = destW / textureWidth * scale;
                     var tsY = destH / textureHeight * scale;
-                    node.drawImage(bitmapX, bitmapY, bitmapWidth, bitmapHeight, offsetX * tsX, offsetY * tsY, tsX * bitmapWidth, tsY * bitmapHeight);
+                    node.drawImage(bitmapX, bitmapY, bitmapWidth, bitmapHeight, offsetX, offsetY, tsX * bitmapWidth, tsY * bitmapHeight);
                 }
                 else if (fillMode == egret.BitmapFillMode.CLIP) {
                     var displayW = Math.min(textureWidth, destW);
@@ -15892,6 +15903,16 @@ var egret;
                 this.$data = [];
                 this.commandPosition = 0;
                 this.dataPosition = 0;
+                /**
+                 * 当前移动到的坐标X
+                 * 注意：目前只有drawArc之前会被赋值
+                 */
+                this.$lastX = 0;
+                /**
+                 * 当前移动到的坐标Y
+                 * 注意：目前只有drawArc之前会被赋值
+                 */
+                this.$lastY = 0;
             }
             var d = __define,c=Path2D,p=c.prototype;
             /**
@@ -16105,7 +16126,9 @@ var egret;
                 }
                 var currentX = x + Math.cos(start) * radiusX;
                 var currentY = y + Math.sin(start) * radiusY;
-                this.moveTo(currentX, currentY);
+                if (this.$lastX != currentX || this.$lastY != currentY) {
+                    this.moveTo(currentX, currentY);
+                }
                 var u = Math.cos(start);
                 var v = Math.sin(start);
                 for (var i = 0; i < 4; i++) {
@@ -16462,6 +16485,25 @@ var egret;
             if (egret.Capabilities.runtimeType == egret.RuntimeType.NATIVE) {
                 var drawCalls = 0;
                 var filters = displayObject.$getFilters();
+                var hasBlendMode = (displayObject.$blendMode !== 0);
+                if (hasBlendMode) {
+                    var compositeOp = blendModes[displayObject.$blendMode];
+                    if (!compositeOp) {
+                        compositeOp = defaultCompositeOp;
+                    }
+                }
+                if (filters.length == 1 && filters[0].type == "colorTransform" && !displayObject.$children) {
+                    if (hasBlendMode) {
+                        context.globalCompositeOperation = compositeOp;
+                    }
+                    egret_native.Graphics.setGlobalShader(filters[0]);
+                    drawCalls += this.drawDisplayObject(displayObject, context, dirtyList, matrix, displayObject.$displayList, clipRegion, root);
+                    egret_native.Graphics.setGlobalShader(null);
+                    if (hasBlendMode) {
+                        context.globalCompositeOperation = defaultCompositeOp;
+                    }
+                    return drawCalls;
+                }
                 // 获取显示对象的链接矩阵
                 var displayMatrix = egret.Matrix.create();
                 displayMatrix.copyFrom(displayObject.$getConcatenatedMatrix());
@@ -16470,15 +16512,32 @@ var egret;
                 region = egret.sys.Region.create();
                 var bounds = displayObject.$getOriginalBounds();
                 region.updateRegion(bounds, displayMatrix);
-                var filter = filters[0]; // 这里暂时只处理了第一个filter！
-                egret_native.Graphics.setGlobalShader(filter);
-                // TODO 这里存在重复计算？
-                var offsetM = egret.Matrix.create().copyFrom(displayMatrix);
-                offsetM.translate(-region.minX, -region.minY);
-                drawCalls += this.drawDisplayObject(displayObject, context, dirtyList, offsetM, displayObject.$displayList, region, root);
+                // 为显示对象创建一个新的buffer
+                // todo 这里应该计算 region.x region.y
+                var displayBuffer = this.createRenderBuffer(region.width, region.height);
+                displayBuffer.context.setTransform(1, 0, 0, 1, -region.minX, -region.minY);
+                var offsetM = egret.Matrix.create().setTo(1, 0, 0, 1, -region.minX, -region.minY);
+                drawCalls += this.drawDisplayObject(displayObject, displayBuffer.context, dirtyList, offsetM, displayObject.$displayList, region, root);
                 egret.Matrix.release(offsetM);
+                //绘制结果到屏幕
+                if (drawCalls > 0) {
+                    if (hasBlendMode) {
+                        context.globalCompositeOperation = compositeOp;
+                    }
+                    drawCalls++;
+                    context.globalAlpha = 1;
+                    context.setTransform(1, 0, 0, 1, region.minX + matrix.tx, region.minY + matrix.ty);
+                    // 绘制结果的时候，应用滤镜
+                    egret_native.Graphics.setGlobalShader(filters[0]);
+                    context.drawImage(displayBuffer.surface, 0, 0, displayBuffer.width, displayBuffer.height, 0, 0, displayBuffer.width, displayBuffer.height);
+                    egret_native.Graphics.setGlobalShader(null);
+                    if (hasBlendMode) {
+                        context.globalCompositeOperation = defaultCompositeOp;
+                    }
+                }
+                renderBufferPool.push(displayBuffer);
+                egret.sys.Region.release(region);
                 egret.Matrix.release(displayMatrix);
-                egret_native.Graphics.setGlobalShader(null);
                 return drawCalls;
             }
             var drawCalls = 0;
@@ -20401,7 +20460,7 @@ var egret;
                 graphics.clear();
             }
             var values = this.$TextField;
-            if (values[33 /* background */] || values[31 /* border */] || lines.length > 0) {
+            if (values[33 /* background */] || values[31 /* border */] || (lines && lines.length > 0)) {
                 if (!graphics) {
                     graphics = this.graphicsNode = new egret.sys.GraphicsNode();
                     var groupNode = new egret.sys.GroupNode();
@@ -20423,7 +20482,7 @@ var egret;
                     strokePath.drawRect(0, 0, this.$getWidth() - 1, this.$getHeight() - 1);
                 }
                 //渲染下划线
-                if (lines.length > 0) {
+                if (lines && lines.length > 0) {
                     var textColor = values[2 /* textColor */];
                     var lastColor = -1;
                     var length = lines.length;
@@ -20546,6 +20605,7 @@ var egret;
                     this.inputUtils._updateProperties();
                 }
                 if (this.$isTyping) {
+                    this.fillBackground();
                     return;
                 }
             }
@@ -21316,7 +21376,9 @@ var egret;
             for (var i = startLine; i < lineArr.length; i++) {
                 var lineEle = lineArr[i];
                 if (lineH + lineEle.height >= y) {
-                    line = i + 1;
+                    if (lineH < y) {
+                        line = i + 1;
+                    }
                     break;
                 }
                 else {
@@ -21331,13 +21393,19 @@ var egret;
                 return null;
             }
             var lineElement = lineArr[line - 1];
+            var textFieldWidth = textfield.$TextField[3 /* textFieldWidth */];
+            if (isNaN(textFieldWidth)) {
+                textFieldWidth = textfield.textWidth;
+            }
+            var halign = TextFieldUtils.$getHalign(textfield);
+            x -= halign * (textFieldWidth - lineElement.width);
             var lineW = 0;
             for (i = 0; i < lineElement.elements.length; i++) {
                 var iwTE = lineElement.elements[i];
-                if (lineW + iwTE.width < x) {
+                if (lineW + iwTE.width <= x) {
                     lineW += iwTE.width;
                 }
-                else {
+                else if (lineW < x) {
                     return { "lineIndex": line - 1, "textElementIndex": i };
                 }
             }
