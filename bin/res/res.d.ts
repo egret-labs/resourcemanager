@@ -1,4 +1,8 @@
 declare var __promise__line: string;
+interface PromiseTaskReporter {
+    onProgress?: (current: number, total: number) => void;
+    onCancel?: () => void;
+}
 declare module RES {
     let checkNull: MethodDecorator;
     let checkDecorator: MethodDecorator;
@@ -529,7 +533,7 @@ declare module RES {
      * @version Egret 2.4
      * @platform Web,Native
      */
-    function loadConfig(url?: string, resourceRoot?: string): void;
+    function loadConfig(url?: string, resourceRoot?: string): PromiseLike<void>;
     /**
      * @language en_US
      * Load a set of resources according to the group name.
@@ -550,7 +554,7 @@ declare module RES {
      * @version Egret 2.4
      * @platform Web,Native
      */
-    function loadGroup(name: string, priority?: number): void;
+    function loadGroup(name: string, priority?: number, reporter?: PromiseTaskReporter): PromiseLike<void>;
     /**
      * @language en_US
      * Check whether a resource group has been loaded.
@@ -831,16 +835,6 @@ declare module RES {
     function removeEventListener(type: string, listener: (event: egret.Event) => void, thisObject: any, useCapture?: boolean): void;
     /**
      * @language en_US
-     * Get the actual URL of the resource file.<br/>
-     * Because this method needs to be called to control the actual version of the URL have the original resource files were changed, so would like to get the specified resource file the actual URL.<br/>
-     * In the development and debugging phase, this method will directly return value passed.
-     * @param url Url used in the game
-     * @returns Actual loaded url
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    /**
-     * @language en_US
      * Adding a custom resource configuration.
      * @param data To add configuration.
      * @version Egret 3.1.6
@@ -890,7 +884,7 @@ declare module RES {
          * @param resourceRoot {string}
          * @param type {string}
          */
-        loadConfig(): void;
+        loadConfig(): PromiseLike<void>;
         /**
          * 已经加载过组名列表
          */
@@ -916,7 +910,7 @@ declare module RES {
          * @param name {string}
          * @param priority {number}
          */
-        loadGroup(name: string, priority?: number): void;
+        loadGroup(name: string, priority?: number, reporter?: PromiseTaskReporter): PromiseLike<void>;
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
          * 可以监听ResourceEvent.CONFIG_COMPLETE事件来确认配置加载完成。

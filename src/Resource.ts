@@ -128,9 +128,9 @@ module RES {
      * @version Egret 2.4
      * @platform Web,Native
      */
-    export function loadConfig(url?: string, resourceRoot?: string): void {
+    export function loadConfig(url?: string, resourceRoot?: string): PromiseLike<void> {
 
-        instance.loadConfig();
+        return instance.loadConfig();
     }
     /**
      * @language en_US
@@ -152,8 +152,8 @@ module RES {
      * @version Egret 2.4
      * @platform Web,Native
      */
-    export function loadGroup(name: string, priority: number = 0): void {
-        instance.loadGroup(name, priority);
+    export function loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): PromiseLike<void> {
+        return instance.loadGroup(name, priority, reporter);
     }
     /**
      * @language en_US
@@ -461,16 +461,6 @@ module RES {
         instance.removeEventListener(type, listener, thisObject, useCapture);
     }
 
-    /**
-     * @language en_US
-     * Get the actual URL of the resource file.<br/>
-     * Because this method needs to be called to control the actual version of the URL have the original resource files were changed, so would like to get the specified resource file the actual URL.<br/>
-     * In the development and debugging phase, this method will directly return value passed.
-     * @param url Url used in the game
-     * @returns Actual loaded url
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
 
     /**
      * @language en_US
@@ -560,13 +550,16 @@ module RES {
 		 * @param type {string}
          */
         @checkDecorator
-        public loadConfig(): void {
+        public loadConfig(): PromiseLike<void> {
 
-            host.load(configItem).then((data) => {
-                this.resConfig.parseConfig(data, "resource");//todo
-                ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
-                this.loadDelayGroups();
-            })
+            return new Promise<void>((reslove, reject) => {
+                host.load(configItem).then((data) => {
+                    this.resConfig.parseConfig(data, "resource");//todo
+                    ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
+                    this.loadDelayGroups();
+                    reslove();
+                })
+            });
         }
 
         /**
@@ -599,15 +592,37 @@ module RES {
 		 * @param name {string}
 		 * @param priority {number}
          */
-        public loadGroup(name: string, priority: number = 0): void {
-            if (this.loadedGroups.indexOf(name) != -1) {
-                ResourceEvent.dispatchResourceEvent(this, ResourceEvent.GROUP_COMPLETE, name);
-                return;
-            }
-            if (this.resLoader.isGroupInLoading(name))
-                return;
-            var group = this.resConfig.getGroupByName(name) as ResourceItem[]
-            this.resLoader.loadGroup(group, name, priority);
+        public loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): PromiseLike<void> {
+
+            return new Promise<void>((reslove, reject) => {
+                if (this.loadedGroups.indexOf(name) != -1) {
+                    ResourceEvent.dispatchResourceEvent(this, ResourceEvent.GROUP_COMPLETE, name);
+                    reslove();
+                }
+                else if (this.resLoader.isGroupInLoading(name)) {
+                    reslove();
+                }
+                else {
+                    var group = this.resConfig.getGroupByName(name) as ResourceItem[];
+                    let p = (e: ResourceEvent) => {
+                        if (e.groupName == name) {
+                            if (reporter && reporter.onProgress) {
+                                reporter.onProgress(e.itemsLoaded, e.itemsTotal);
+                            }
+                        }
+
+                    }
+                    this.resLoader.once(ResourceEvent.GROUP_COMPLETE, () => {
+                        this.resLoader.removeEventListener(ResourceEvent.GROUP_PROGRESS, p, this);
+                        reslove();
+                    }, this);
+                    this.addEventListener(ResourceEvent.GROUP_PROGRESS, p, this);
+                    this.resLoader.loadGroup(group, name, priority);
+                }
+
+            })
+
+
         }
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
@@ -655,7 +670,7 @@ module RES {
          * 队列加载失败事件
          */
         private onGroupError(event: ResourceEvent): void {
-                this.dispatchEvent(event);
+            this.dispatchEvent(event);
         }
         /**
          * 检查配置文件里是否含有指定的资源

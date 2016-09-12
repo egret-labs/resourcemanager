@@ -1340,7 +1340,7 @@ var RES;
      * @platform Web,Native
      */
     function loadConfig(url, resourceRoot) {
-        instance.loadConfig();
+        return instance.loadConfig();
     }
     RES.loadConfig = loadConfig;
     /**
@@ -1363,9 +1363,9 @@ var RES;
      * @version Egret 2.4
      * @platform Web,Native
      */
-    function loadGroup(name, priority) {
+    function loadGroup(name, priority, reporter) {
         if (priority === void 0) { priority = 0; }
-        instance.loadGroup(name, priority);
+        return instance.loadGroup(name, priority, reporter);
     }
     RES.loadGroup = loadGroup;
     /**
@@ -1689,16 +1689,6 @@ var RES;
     RES.removeEventListener = removeEventListener;
     /**
      * @language en_US
-     * Get the actual URL of the resource file.<br/>
-     * Because this method needs to be called to control the actual version of the URL have the original resource files were changed, so would like to get the specified resource file the actual URL.<br/>
-     * In the development and debugging phase, this method will directly return value passed.
-     * @param url Url used in the game
-     * @returns Actual loaded url
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    /**
-     * @language en_US
      * Adding a custom resource configuration.
      * @param data To add configuration.
      * @version Egret 3.1.6
@@ -1778,10 +1768,13 @@ var RES;
          */
         Resource.prototype.loadConfig = function () {
             var _this = this;
-            RES.host.load(RES.configItem).then(function (data) {
-                _this.resConfig.parseConfig(data, "resource"); //todo
-                RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_COMPLETE);
-                _this.loadDelayGroups();
+            return new Promise(function (reslove, reject) {
+                RES.host.load(RES.configItem).then(function (data) {
+                    _this.resConfig.parseConfig(data, "resource"); //todo
+                    RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_COMPLETE);
+                    _this.loadDelayGroups();
+                    reslove();
+                });
             });
         };
         /**
@@ -1808,16 +1801,34 @@ var RES;
          * @param name {string}
          * @param priority {number}
          */
-        Resource.prototype.loadGroup = function (name, priority) {
+        Resource.prototype.loadGroup = function (name, priority, reporter) {
+            var _this = this;
             if (priority === void 0) { priority = 0; }
-            if (this.loadedGroups.indexOf(name) != -1) {
-                RES.ResourceEvent.dispatchResourceEvent(this, RES.ResourceEvent.GROUP_COMPLETE, name);
-                return;
-            }
-            if (this.resLoader.isGroupInLoading(name))
-                return;
-            var group = this.resConfig.getGroupByName(name);
-            this.resLoader.loadGroup(group, name, priority);
+            return new Promise(function (reslove, reject) {
+                if (_this.loadedGroups.indexOf(name) != -1) {
+                    RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.GROUP_COMPLETE, name);
+                    reslove();
+                }
+                else if (_this.resLoader.isGroupInLoading(name)) {
+                    reslove();
+                }
+                else {
+                    var group = _this.resConfig.getGroupByName(name);
+                    var p_1 = function (e) {
+                        if (e.groupName == name) {
+                            if (reporter && reporter.onProgress) {
+                                reporter.onProgress(e.itemsLoaded, e.itemsTotal);
+                            }
+                        }
+                    };
+                    _this.resLoader.once(RES.ResourceEvent.GROUP_COMPLETE, function () {
+                        _this.resLoader.removeEventListener(RES.ResourceEvent.GROUP_PROGRESS, p_1, _this);
+                        reslove();
+                    }, _this);
+                    _this.addEventListener(RES.ResourceEvent.GROUP_PROGRESS, p_1, _this);
+                    _this.resLoader.loadGroup(group, name, priority);
+                }
+            });
         };
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。

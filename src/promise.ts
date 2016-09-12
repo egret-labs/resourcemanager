@@ -8,3 +8,12 @@ typeof d.then?d.then(b,c):b(d)})};e.resolve=function(a){return a&&"object"===typ
 `;
 eval(__promise__line);
 delete __promise__line;
+
+
+interface PromiseTaskReporter {
+
+    onProgress?: (current:number, total:number) => void;
+
+    onCancel?: () => void;
+
+}
