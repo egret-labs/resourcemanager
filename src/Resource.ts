@@ -308,8 +308,10 @@ module RES {
      * @version Egret 2.4
      * @platform Web,Native
      */
-    export function getResAsync(key: string, compFunc: Function, thisObject: any): void {
-        instance.getResAsync.apply(instance,arguments);
+    export function getResAsync(key: string): Promise<any>
+    export function getResAsync(key: string, compFunc: Function, thisObject: any): void
+    export function getResAsync(key: string, compFunc?: Function, thisObject?: any): Promise<any> | void {
+        instance.getResAsync.apply(instance, arguments);
     }
     /**
      * @language en_US
@@ -707,20 +709,31 @@ module RES {
          * @param compFunc {Function} 回调函数。示例：compFunc(data,url):void。
          * @param thisObject {any}
          */
-        public getResAsync(key: string, compFunc: Function, thisObject: any): void {
+        public getResAsync(key: string): Promise<any>
+        public getResAsync(key: string, compFunc: Function, thisObject: any): void
+        public getResAsync(key: string, compFunc?: Function, thisObject?: any): void | Promise<any> {
 
-            var {key, subkey} = this.parseResKey(key);
-            let r = this.resConfig.getResource(key, true);
-            let url = r.url;
-            let res = host.get(r);
-            if (res) {
-                egret.$callAsync(compFunc, thisObject, res, key);
-                return;
+            if (compFunc) {
+                var {key, subkey} = this.parseResKey(key);
+                let r = this.resConfig.getResource(key, true);
+                let url = r.url;
+                let res = host.get(r);
+                if (res) {
+                    egret.$callAsync(compFunc, thisObject, res, key);
+                }
+                else {
+                    host.load(r).then((value) => {
+                        RES.host.save(r, value);
+                        compFunc.call(thisObject, value, r.url);
+                    });
+                }
             }
-            host.load(r).then((value) => {
-                RES.host.save(r, value);
-                compFunc.call(thisObject, value, r.url);
-            });
+            else{
+                return new Promise((reslove,reject)=> getResAsync(key,reslove,this));
+            }
+
+            
+
         }
 
         /**

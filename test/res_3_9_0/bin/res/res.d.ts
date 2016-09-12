@@ -820,6 +820,7 @@ declare module RES {
      * @version Egret 2.4
      * @platform Web,Native
      */
+    function getResAsync(key: string): Promise<any>;
     function getResAsync(key: string, compFunc: Function, thisObject: any): void;
     /**
      * @language en_US
@@ -1081,6 +1082,7 @@ declare module RES {
          * @param compFunc {Function} 回调函数。示例：compFunc(data,url):void。
          * @param thisObject {any}
          */
+        getResAsync(key: string): Promise<any>;
         getResAsync(key: string, compFunc: Function, thisObject: any): void;
         /**
          * 通过url获取资源

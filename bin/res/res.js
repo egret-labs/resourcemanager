@@ -1505,26 +1505,6 @@ var RES;
         return instance.getRes(key);
     }
     RES.getRes = getRes;
-    /**
-     * @language en_US
-     * Asynchronous mode to get the resources in the configuration. As long as the resources exist in the configuration file, you can get it in an asynchronous way.
-     * @param key A sbuKeys attribute or name property in a configuration file.
-     * @param compFunc Call back function. Example：compFunc(data,key):void.
-     * @param thisObject This pointer of call back function.
-     * @see #setMaxRetryTimes
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    /**
-     * @language zh_CN
-     * 异步方式获取配置里的资源。只要是配置文件里存在的资源，都可以通过异步方式获取。
-     * @param key 对应配置文件里的 name 属性或 sbuKeys 属性的一项。
-     * @param compFunc 回调函数。示例：compFunc(data,key):void。
-     * @param thisObject 回调函数的 this 引用。
-     * @see #setMaxRetryTimes
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
     function getResAsync(key, compFunc, thisObject) {
         instance.getResAsync.apply(instance, arguments);
     }
@@ -1896,26 +1876,26 @@ var RES;
                 return RES.host.get(r);
             }
         };
-        /**
-         * 通过key异步获取资源
-         * @method RES.getResAsync
-         * @param key {string}
-         * @param compFunc {Function} 回调函数。示例：compFunc(data,url):void。
-         * @param thisObject {any}
-         */
         Resource.prototype.getResAsync = function (key, compFunc, thisObject) {
-            var _a = this.parseResKey(key), key = _a.key, subkey = _a.subkey;
-            var r = this.resConfig.getResource(key, true);
-            var url = r.url;
-            var res = RES.host.get(r);
-            if (res) {
-                egret.$callAsync(compFunc, thisObject, res, key);
-                return;
+            var _this = this;
+            if (compFunc) {
+                var _a = this.parseResKey(key), key = _a.key, subkey = _a.subkey;
+                var r_1 = this.resConfig.getResource(key, true);
+                var url = r_1.url;
+                var res = RES.host.get(r_1);
+                if (res) {
+                    egret.$callAsync(compFunc, thisObject, res, key);
+                }
+                else {
+                    RES.host.load(r_1).then(function (value) {
+                        RES.host.save(r_1, value);
+                        compFunc.call(thisObject, value, r_1.url);
+                    });
+                }
             }
-            RES.host.load(r).then(function (value) {
-                RES.host.save(r, value);
-                compFunc.call(thisObject, value, r.url);
-            });
+            else {
+                return new Promise(function (reslove, reject) { return getResAsync(key, reslove, _this); });
+            }
         };
         /**
          * 通过url获取资源

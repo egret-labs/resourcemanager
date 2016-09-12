@@ -3,7 +3,13 @@
  */
 
 @RES.mapConfig<"resource" | "resource_ios">("resource-new.json", () => "resource")
-class Main_New_API extends egret.DisplayObjectContainer {
+class Main_New_ES6_API extends egret.DisplayObjectContainer {
+
+    static sleep(time): Promise<void> {
+        return new Promise<void>((reslove, reject) => {
+            setTimeout(reslove, time);
+        });
+    }
 
     public constructor() {
 
@@ -24,24 +30,19 @@ class Main_New_API extends egret.DisplayObjectContainer {
 
         RES.loadConfig()
             .then(() => RES.loadGroup("preload", 0, reportrer))
-            .then(() => {
-                this.createGameScene();
-                return Promise.resolve();
-            })
+            .then(() => this.createGameScene())
+            .then(() => sleep(1000))
+            .then(() => RES.destroyRes("preload"))
+            // .then(() => {
+            //     RES.createGroup("tempGroup", ["sheet_json"]);
+            //     return RES.loadGroup("tempGroup")
+            // })
+            .then(() => RES.getResAsync("sheet_json"))
             .then(() => sleep(1000))
             .then(() => {
-                RES.destroyRes("preload");
-            });
-
-        //  setTimeout(() => {
-        //         
-        //         RES.getResAsync("sheet_json", () => {
-        //             let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
-        //             this.sky.texture = spritesheet.getTexture("bg_jpg");
-        //         }, this);
-        //         // RES.createGroup("tempGroup", ["sheet_json"]);
-        //         // RES.loadGroup("tempGroup")
-        //     }, 1000);
+                let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
+                this.sky.texture = spritesheet.getTexture("bg_jpg");
+            })
     }
 
 
