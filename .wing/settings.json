@@ -1,4 +1,4 @@
 // 使用当前设置覆盖默认和用户设置.
 {
-      "typescript.tsdk": "tsc_local/local"
+      "typescript.tsdk": "./node_modules/typescript/lib"
 }
