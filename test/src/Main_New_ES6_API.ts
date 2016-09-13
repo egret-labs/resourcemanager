@@ -42,9 +42,8 @@ class Main_New_ES6_API extends egret.DisplayObjectContainer {
             .then(() => {
                 let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
                 this.sky.texture = spritesheet.getTexture("bg_jpg");
-            }).catch(()=>{
-                    let url = "todo : unknown url";
-                  console.warn(`Url ${url} has failed to load`);
+            }).catch((e) => {
+                console.warn(e);
             });
     }
 

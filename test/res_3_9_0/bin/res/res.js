@@ -1063,7 +1063,6 @@ var RES;
                 return [2 /*return*/, new Promise(function (reslove, reject) {
                         var onSuccess = function () {
                             var texture = loader['data'] ? loader['data'] : loader['response'];
-                            console.log("success", resource.url);
                             reslove(texture);
                         };
                         var onError = function () {
@@ -1106,7 +1105,6 @@ var RES;
                             return [4 /*yield*/, promisify(loader, resource)];
                         case 1:
                             bitmapData = _a.sent();
-                            console.log("what????", resource.url);
                             texture = new egret.Texture();
                             texture._setBitmapData(bitmapData);
                             // var config: any = resItem.data;
@@ -1214,7 +1212,6 @@ var RES;
                                 config = frames[subkey];
                                 texture = spriteSheet.createTexture(subkey, config.x, config.y, config.w, config.h, config.offX, config.offY, config.sourceW, config.sourceH);
                             }
-                            console.log(spriteSheet);
                             return [2 /*return*/, spriteSheet];
                     }
                 });
@@ -1750,13 +1747,10 @@ var RES;
          */
         Resource.prototype.loadConfig = function () {
             var _this = this;
-            return new Promise(function (reslove, reject) {
-                RES.host.load(RES.configItem).then(function (data) {
-                    _this.resConfig.parseConfig(data, "resource"); //todo
-                    RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_COMPLETE);
-                    _this.loadDelayGroups();
-                    reslove();
-                });
+            return RES.host.load(RES.configItem).then(function (data) {
+                _this.resConfig.parseConfig(data, "resource"); //todo
+                RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_COMPLETE);
+                _this.loadDelayGroups();
             });
         };
         /**

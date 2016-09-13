@@ -554,13 +554,10 @@ module RES {
         @checkDecorator
         public loadConfig(): Promise<void> {
 
-            return new Promise<void>((reslove, reject) => {
-                host.load(configItem).then((data) => {
-                    this.resConfig.parseConfig(data, "resource");//todo
-                    ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
-                    this.loadDelayGroups();
-                    reslove();
-                })
+            return host.load(configItem).then((data) => {
+                this.resConfig.parseConfig(data, "resource");//todo
+                ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
+                this.loadDelayGroups();
             });
         }
 
@@ -728,11 +725,11 @@ module RES {
                     });
                 }
             }
-            else{
-                return new Promise((reslove,reject)=> getResAsync(key,reslove,this));
+            else {
+                return new Promise((reslove, reject) => getResAsync(key, reslove, this));
             }
 
-            
+
 
         }
 
