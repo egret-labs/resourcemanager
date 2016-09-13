@@ -531,16 +531,14 @@ module RES {
         /**
          * 多文件队列加载器
          */
-        private resLoader: ResourceLoader;
+        private resLoader: PromiseQueue;
         /**
          * 初始化
          */
         private init(): void {
 
             this.resConfig = new ResourceConfig();
-            this.resLoader = new ResourceLoader();
-            this.resLoader.addEventListener(ResourceEvent.GROUP_COMPLETE, this.onGroupComp, this);
-            this.resLoader.addEventListener(ResourceEvent.GROUP_LOAD_ERROR, this.onGroupError, this);
+            this.resLoader = new PromiseQueue();
         }
 
         /**
@@ -556,14 +554,9 @@ module RES {
             return host.load(configItem).then((data) => {
                 this.resConfig.parseConfig(data, "resource");//todo
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
-                this.loadDelayGroups();
             });
         }
 
-        /**
-         * 已经加载过组名列表
-         */
-        private loadedGroups: Array<string> = [];
         /**
          * 检查某个资源组是否已经加载完成
 		 * @method RES.isGroupLoaded
@@ -571,7 +564,7 @@ module RES {
 		 * @returns {boolean}
          */
         public isGroupLoaded(name: string): boolean {
-            return this.loadedGroups.indexOf(name) != -1;
+            return false;//todo this.loadedGroups.indexOf(name) != -1;
         }
         /**
          * 根据组名获取组加载项列表
@@ -592,25 +585,8 @@ module RES {
          */
         public loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<void> {
 
-            if (this.loadedGroups.indexOf(name) != -1) {
-                ResourceEvent.dispatchResourceEvent(this, ResourceEvent.GROUP_COMPLETE, name);
-                return Promise.resolve<void>();
-            }
-            // else if (this.resLoader.isGroupInLoading(name)) {
-            //     return Promise.resolve<void>();
-            // }
-            else {
-                var resources = this.resConfig.getGroupByName(name) as ResourceItem[];
-                let p = (e: ResourceEvent) => {
-                    if (e.groupName == name) {
-                        if (reporter && reporter.onProgress) {
-                            reporter.onProgress(e.itemsLoaded, e.itemsTotal);
-                        }
-                    }
-                }
-                this.addEventListener(ResourceEvent.GROUP_PROGRESS, p, this);
-                return this.resLoader.loadGroup(resources, name, priority);
-            }
+            let resources = this.resConfig.getGroupByName(name);
+            return this.resLoader.loadGroup(resources, reporter);
 
 
         }
@@ -624,12 +600,6 @@ module RES {
          * @returns {boolean}
          */
         public createGroup(name: string, keys: Array<string>, override: boolean = false): boolean {
-            if (override) {
-                var index: number = this.loadedGroups.indexOf(name);
-                if (index != -1) {
-                    this.loadedGroups.splice(index, 1);
-                }
-            }
             return this.resConfig.createGroup(name, keys, override);
         }
         /**
@@ -639,29 +609,29 @@ module RES {
         /**
          * 队列加载完成事件
          */
-        private onGroupComp(event: ResourceEvent): void {
-            this.loadedGroups.push(event.groupName);
-            this.dispatchEvent(event);
-        }
+        // private onGroupComp(event: ResourceEvent): void {
+        //     this.loadedGroups.push(event.groupName);
+        //     this.dispatchEvent(event);
+        // }
         /**
          * 启动延迟的组加载
          */
-        private loadDelayGroups(): void {
-            var groupNameList: Array<any> = this.groupNameList;
-            this.groupNameList = [];
-            var length: number = groupNameList.length;
-            for (var i: number = 0; i < length; i++) {
-                var item: any = groupNameList[i];
-                this.loadGroup(item.name, item.priority);
-            }
+        // private loadDelayGroups(): void {
+        //     var groupNameList: Array<any> = this.groupNameList;
+        //     this.groupNameList = [];
+        //     var length: number = groupNameList.length;
+        //     for (var i: number = 0; i < length; i++) {
+        //         var item: any = groupNameList[i];
+        //         this.loadGroup(item.name, item.priority);
+        //     }
 
-        }
+        // }
         /**
          * 队列加载失败事件
          */
-        private onGroupError(event: ResourceEvent): void {
-            this.dispatchEvent(event);
-        }
+        // private onGroupError(event: ResourceEvent): void {
+        //     this.dispatchEvent(event);
+        // }
         /**
          * 检查配置文件里是否含有指定的资源
 		 * @method RES.hasRes
@@ -757,18 +727,8 @@ module RES {
             }
 
             if (group && group.length > 0) {
-                var index: number = this.loadedGroups.indexOf(name);
-                if (index != -1) {
-                    this.loadedGroups.splice(index, 1);
-                }
                 for (let item of group) {
-                    if (!force && this.isResInLoadedGroup(item)) {
-
-                    }
-                    else {
-                        remove(item);
-                        this.removeLoadedGroupsByItemName(item.url);
-                    }
+                    remove(item);
                 }
                 return true;
             }
@@ -776,7 +736,6 @@ module RES {
                 let item = this.resConfig.getResource(name);
                 if (item) {
                     remove(item);
-                    this.removeLoadedGroupsByItemName(item.url);
                     return true;
                 }
                 else {
@@ -788,38 +747,7 @@ module RES {
 
             }
         }
-        private removeLoadedGroupsByItemName(name: string): void {
-            var loadedGroups: Array<string> = this.loadedGroups;
-            var loadedGroupLength: number = loadedGroups.length;
-            for (var i: number = 0; i < loadedGroupLength; i++) {
-                var group: Array<any> = this.resConfig.getGroupByName(loadedGroups[i], true);
-                var length: number = group.length;
-                for (var j: number = 0; j < length; j++) {
-                    var item: any = group[j];
-                    if (item.name == name) {
-                        loadedGroups.splice(i, 1);
-                        i--;
-                        loadedGroupLength = loadedGroups.length;
-                        break;
-                    }
-                }
-            }
-        }
-        private isResInLoadedGroup(r: ResourceInfo): boolean {
-            var loadedGroups: Array<string> = this.loadedGroups;
-            var loadedGroupLength: number = loadedGroups.length;
-            for (var i: number = 0; i < loadedGroupLength; i++) {
-                var group: Array<any> = this.resConfig.getGroupByName(loadedGroups[i], true);
-                var length: number = group.length;
-                for (var j: number = 0; j < length; j++) {
-                    var item: any = group[j];
-                    if (item.url == r.url) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
+
         /**
          * 设置最大并发加载线程数量，默认值是2.
          * @method RES.setMaxLoadingThread

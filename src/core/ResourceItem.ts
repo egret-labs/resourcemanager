@@ -45,7 +45,7 @@ module RES {
 	export namespace ResourceItem {
 
 
-		export const TYPE_IMAGE:string = "image";
+		export const TYPE_IMAGE: string = "image";
 
 		export function convertToResItem(r: ResourceInfo): ResourceItem {
 
@@ -131,6 +131,6 @@ module RES {
 		 * @platform Web,Native
 		 */
 		data: ResourceInfo;
-		
+
 	}
 }

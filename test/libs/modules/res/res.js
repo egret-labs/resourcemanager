@@ -503,35 +503,27 @@ var RES;
      * @classdesc
      * @extends egret.EventDispatcher
      * @private
+     * @internal
      */
-    var ResourceLoader = (function (_super) {
-        __extends(ResourceLoader, _super);
-        /**
-         * 构造函数
-         * @method RES.ResourceLoader#constructor
-         */
-        function ResourceLoader() {
-            _super.call(this);
+    var PromiseQueue = (function () {
+        function PromiseQueue() {
         }
-        /**
-         * 开始加载一组文件
-         * @method RES.ResourceLoader#loadGroup
-         * @param list {egret.Array<ResourceItem>} 加载项列表
-         * @param groupName {string} 组名
-         * @param priority {number} 加载优先级
-         */
-        ResourceLoader.prototype.loadGroup = function (list, groupName, priority) {
-            if (priority === void 0) { priority = 0; }
+        PromiseQueue.prototype.loadGroup = function (list, reporter) {
+            var current = 0;
+            var total = list.length;
             var mapper = function (r) { return RES.host.load(r)
                 .then(function (response) {
                 RES.host.save(r, response);
-                r.loaded = true; //todo
+                current++;
+                if (reporter && reporter.onProgress) {
+                    reporter.onProgress(current, total);
+                }
             }); };
             return Promise.all(list.map(mapper));
         };
-        return ResourceLoader;
-    }(egret.EventDispatcher));
-    RES.ResourceLoader = ResourceLoader;
+        return PromiseQueue;
+    }());
+    RES.PromiseQueue = PromiseQueue;
 })(RES || (RES = {}));
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1527,10 +1519,6 @@ var RES;
          */
         function Resource() {
             _super.call(this);
-            /**
-             * 已经加载过组名列表
-             */
-            this.loadedGroups = [];
             this.groupNameList = [];
             this.init();
         }
@@ -1563,9 +1551,7 @@ var RES;
          */
         Resource.prototype.init = function () {
             this.resConfig = new RES.ResourceConfig();
-            this.resLoader = new RES.ResourceLoader();
-            this.resLoader.addEventListener(RES.ResourceEvent.GROUP_COMPLETE, this.onGroupComp, this);
-            this.resLoader.addEventListener(RES.ResourceEvent.GROUP_LOAD_ERROR, this.onGroupError, this);
+            this.resLoader = new RES.PromiseQueue();
         };
         /**
          * 开始加载配置
@@ -1579,7 +1565,6 @@ var RES;
             return RES.host.load(RES.configItem).then(function (data) {
                 _this.resConfig.parseConfig(data, "resource"); //todo
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_COMPLETE);
-                _this.loadDelayGroups();
             });
         };
         /**
@@ -1589,7 +1574,7 @@ var RES;
          * @returns {boolean}
          */
         Resource.prototype.isGroupLoaded = function (name) {
-            return this.loadedGroups.indexOf(name) != -1;
+            return false; //todo this.loadedGroups.indexOf(name) != -1;
         };
         /**
          * 根据组名获取组加载项列表
@@ -1608,22 +1593,8 @@ var RES;
          */
         Resource.prototype.loadGroup = function (name, priority, reporter) {
             if (priority === void 0) { priority = 0; }
-            if (this.loadedGroups.indexOf(name) != -1) {
-                RES.ResourceEvent.dispatchResourceEvent(this, RES.ResourceEvent.GROUP_COMPLETE, name);
-                return Promise.resolve();
-            }
-            else {
-                var resources = this.resConfig.getGroupByName(name);
-                var p = function (e) {
-                    if (e.groupName == name) {
-                        if (reporter && reporter.onProgress) {
-                            reporter.onProgress(e.itemsLoaded, e.itemsTotal);
-                        }
-                    }
-                };
-                this.addEventListener(RES.ResourceEvent.GROUP_PROGRESS, p, this);
-                return this.resLoader.loadGroup(resources, name, priority);
-            }
+            var resources = this.resConfig.getGroupByName(name);
+            return this.resLoader.loadGroup(resources, reporter);
         };
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
@@ -1636,39 +1607,33 @@ var RES;
          */
         Resource.prototype.createGroup = function (name, keys, override) {
             if (override === void 0) { override = false; }
-            if (override) {
-                var index = this.loadedGroups.indexOf(name);
-                if (index != -1) {
-                    this.loadedGroups.splice(index, 1);
-                }
-            }
             return this.resConfig.createGroup(name, keys, override);
         };
         /**
          * 队列加载完成事件
          */
-        Resource.prototype.onGroupComp = function (event) {
-            this.loadedGroups.push(event.groupName);
-            this.dispatchEvent(event);
-        };
+        // private onGroupComp(event: ResourceEvent): void {
+        //     this.loadedGroups.push(event.groupName);
+        //     this.dispatchEvent(event);
+        // }
         /**
          * 启动延迟的组加载
          */
-        Resource.prototype.loadDelayGroups = function () {
-            var groupNameList = this.groupNameList;
-            this.groupNameList = [];
-            var length = groupNameList.length;
-            for (var i = 0; i < length; i++) {
-                var item = groupNameList[i];
-                this.loadGroup(item.name, item.priority);
-            }
-        };
+        // private loadDelayGroups(): void {
+        //     var groupNameList: Array<any> = this.groupNameList;
+        //     this.groupNameList = [];
+        //     var length: number = groupNameList.length;
+        //     for (var i: number = 0; i < length; i++) {
+        //         var item: any = groupNameList[i];
+        //         this.loadGroup(item.name, item.priority);
+        //     }
+        // }
         /**
          * 队列加载失败事件
          */
-        Resource.prototype.onGroupError = function (event) {
-            this.dispatchEvent(event);
-        };
+        // private onGroupError(event: ResourceEvent): void {
+        //     this.dispatchEvent(event);
+        // }
         /**
          * 检查配置文件里是否含有指定的资源
          * @method RES.hasRes
@@ -1744,18 +1709,9 @@ var RES;
                 RES.host.remove(r);
             };
             if (group && group.length > 0) {
-                var index = this.loadedGroups.indexOf(name);
-                if (index != -1) {
-                    this.loadedGroups.splice(index, 1);
-                }
                 for (var _i = 0, group_2 = group; _i < group_2.length; _i++) {
                     var item = group_2[_i];
-                    if (!force && this.isResInLoadedGroup(item)) {
-                    }
-                    else {
-                        remove(item);
-                        this.removeLoadedGroupsByItemName(item.url);
-                    }
+                    remove(item);
                 }
                 return true;
             }
@@ -1763,7 +1719,6 @@ var RES;
                 var item = this.resConfig.getResource(name);
                 if (item) {
                     remove(item);
-                    this.removeLoadedGroupsByItemName(item.url);
                     return true;
                 }
                 else {
@@ -1771,38 +1726,6 @@ var RES;
                     return false;
                 }
             }
-        };
-        Resource.prototype.removeLoadedGroupsByItemName = function (name) {
-            var loadedGroups = this.loadedGroups;
-            var loadedGroupLength = loadedGroups.length;
-            for (var i = 0; i < loadedGroupLength; i++) {
-                var group = this.resConfig.getGroupByName(loadedGroups[i], true);
-                var length = group.length;
-                for (var j = 0; j < length; j++) {
-                    var item = group[j];
-                    if (item.name == name) {
-                        loadedGroups.splice(i, 1);
-                        i--;
-                        loadedGroupLength = loadedGroups.length;
-                        break;
-                    }
-                }
-            }
-        };
-        Resource.prototype.isResInLoadedGroup = function (r) {
-            var loadedGroups = this.loadedGroups;
-            var loadedGroupLength = loadedGroups.length;
-            for (var i = 0; i < loadedGroupLength; i++) {
-                var group = this.resConfig.getGroupByName(loadedGroups[i], true);
-                var length = group.length;
-                for (var j = 0; j < length; j++) {
-                    var item = group[j];
-                    if (item.url == r.url) {
-                        return true;
-                    }
-                }
-            }
-            return false;
         };
         /**
          * 设置最大并发加载线程数量，默认值是2.

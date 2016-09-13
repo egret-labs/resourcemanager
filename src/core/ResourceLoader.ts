@@ -38,28 +38,23 @@ module RES {
 	 * @classdesc
 	 * @extends egret.EventDispatcher
 	 * @private
+	 * @internal
 	 */
-	export class ResourceLoader extends egret.EventDispatcher {
-		/**
-		 * 构造函数
-		 * @method RES.ResourceLoader#constructor
-		 */
-		public constructor() {
-			super();
-		}
-		/**
-		 * 开始加载一组文件
-		 * @method RES.ResourceLoader#loadGroup
-		 * @param list {egret.Array<ResourceItem>} 加载项列表
-		 * @param groupName {string} 组名
-		 * @param priority {number} 加载优先级
-		 */
-		public loadGroup(list: Array<ResourceInfo>, groupName: string, priority: number = 0): Promise<any> {
+	export class PromiseQueue {
 
+		constructor() {
+		}
+
+		public loadGroup(list: Array<ResourceInfo>, reporter?: PromiseTaskReporter): Promise<any> {
+			let current = 0;
+			let total = list.length;
 			let mapper = (r) => host.load(r)
 				.then(response => {
 					host.save(r, response);
-					r.loaded = true;//todo
+					current++;
+					if (reporter && reporter.onProgress) {
+						reporter.onProgress(current, total);
+					}
 				})
 
 			return Promise.all(list.map(mapper));

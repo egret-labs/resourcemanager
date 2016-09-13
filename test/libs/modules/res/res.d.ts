@@ -299,27 +299,6 @@ declare module RES {
     }
 }
 declare module RES {
-    /**
-     * @class RES.ResourceLoader
-     * @classdesc
-     * @extends egret.EventDispatcher
-     * @private
-     */
-    class ResourceLoader extends egret.EventDispatcher {
-        /**
-         * 构造函数
-         * @method RES.ResourceLoader#constructor
-         */
-        constructor();
-        /**
-         * 开始加载一组文件
-         * @method RES.ResourceLoader#loadGroup
-         * @param list {egret.Array<ResourceItem>} 加载项列表
-         * @param groupName {string} 组名
-         * @param priority {number} 加载优先级
-         */
-        loadGroup(list: Array<ResourceInfo>, groupName: string, priority?: number): Promise<any>;
-    }
 }
 declare module RES {
     /**
@@ -936,10 +915,6 @@ declare module RES {
          */
         loadConfig(): Promise<void>;
         /**
-         * 已经加载过组名列表
-         */
-        private loadedGroups;
-        /**
          * 检查某个资源组是否已经加载完成
          * @method RES.isGroupLoaded
          * @param name {string}
@@ -978,15 +953,12 @@ declare module RES {
         /**
          * 队列加载完成事件
          */
-        private onGroupComp(event);
         /**
          * 启动延迟的组加载
          */
-        private loadDelayGroups();
         /**
          * 队列加载失败事件
          */
-        private onGroupError(event);
         /**
          * 检查配置文件里是否含有指定的资源
          * @method RES.hasRes
@@ -1027,8 +999,6 @@ declare module RES {
          * @returns {boolean}
          */
         destroyRes(name: string, force?: boolean): boolean;
-        private removeLoadedGroupsByItemName(name);
-        private isResInLoadedGroup(r);
         /**
          * 设置最大并发加载线程数量，默认值是2.
          * @method RES.setMaxLoadingThread
