@@ -20,8 +20,7 @@
     },
     {
       "name": "res",
-      "path": "res_3_9_0",
-      "version": "3.9.0"
+      "path": "../"
     },
     {
       "name": "eui"
