@@ -66,9 +66,7 @@ module RES {
 				name,
 				url: r.url,
 				type: r.type,
-				data: r,
-				groupName: "",
-				loaded: true
+				data: r
 			}
 
 			return result;
@@ -122,19 +120,6 @@ module RES {
 
 		/**
 		 * @language en_US
-		 * Name of the resource term group.
-		 * @version Egret 2.4
-		 * @platform Web,Native
-		 */
-		/**
-		 * @language zh_CN
-		 * 资源所属的组名。
-		 * @version Egret 2.4
-		 * @platform Web,Native
-		 */
-		groupName: string
-		/**
-		 * @language en_US
 		 * The raw data object to be referenced.
 		 * @version Egret 2.4
 		 * @platform Web,Native
@@ -146,9 +131,6 @@ module RES {
 		 * @platform Web,Native
 		 */
 		data: ResourceInfo;
-
-
-		loaded: boolean;
-
+		
 	}
 }

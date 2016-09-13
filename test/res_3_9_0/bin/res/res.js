@@ -183,9 +183,7 @@ var RES;
                 name: name,
                 url: r.url,
                 type: r.type,
-                data: r,
-                groupName: "",
-                loaded: true
+                data: r
             };
             return result;
         }
@@ -1755,7 +1753,6 @@ var RES;
                     if (!force && this.isResInLoadedGroup(item)) {
                     }
                     else {
-                        item.loaded = false;
                         remove(item);
                         this.removeLoadedGroupsByItemName(item.url);
                     }
@@ -1765,7 +1762,6 @@ var RES;
             else {
                 var item = this.resConfig.getResource(name);
                 if (item) {
-                    item.loaded = false;
                     remove(item);
                     this.removeLoadedGroupsByItemName(item.url);
                     return true;

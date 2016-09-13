@@ -766,7 +766,6 @@ module RES {
 
                     }
                     else {
-                        (item as ResourceItem).loaded = false;
                         remove(item);
                         this.removeLoadedGroupsByItemName(item.url);
                     }
@@ -776,7 +775,6 @@ module RES {
             else {
                 let item = this.resConfig.getResource(name);
                 if (item) {
-                    (item as ResourceItem).loaded = false;
                     remove(item);
                     this.removeLoadedGroupsByItemName(item.url);
                     return true;

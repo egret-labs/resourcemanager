@@ -217,19 +217,6 @@ declare module RES {
         type: string;
         /**
          * @language en_US
-         * Name of the resource term group.
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 资源所属的组名。
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        groupName: string;
-        /**
-         * @language en_US
          * The raw data object to be referenced.
          * @version Egret 2.4
          * @platform Web,Native
@@ -241,7 +228,6 @@ declare module RES {
          * @platform Web,Native
          */
         data: ResourceInfo;
-        loaded: boolean;
     }
 }
 declare module RES {
