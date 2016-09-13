@@ -1056,17 +1056,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var RES;
 (function (RES) {
-    function promisify(loader) {
+    function promisify(loader, resource) {
         return __awaiter(this, void 0, void 0, function () {
             _this = this;
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (reslove, reject) {
                         var onSuccess = function () {
                             var texture = loader['data'] ? loader['data'] : loader['response'];
+                            console.log("success", resource.url);
                             reslove(texture);
                         };
                         var onError = function () {
-                            reject();
+                            var e = { code: 1001, message: "\u6587\u4EF6\u52A0\u8F7D\u5931\u8D25:'" + resource.url + "'" };
+                            reject(e);
                         };
                         loader.addEventListener(egret.Event.COMPLETE, onSuccess, _this);
                         loader.addEventListener(egret.IOErrorEvent.IO_ERROR, onError, _this);
@@ -1101,9 +1103,10 @@ var RES;
                         case 0:
                             loader = new egret.ImageLoader();
                             loader.load("resource/" + resource.url);
-                            return [4 /*yield*/, promisify(loader)];
+                            return [4 /*yield*/, promisify(loader, resource)];
                         case 1:
                             bitmapData = _a.sent();
+                            console.log("what????", resource.url);
                             texture = new egret.Texture();
                             texture._setBitmapData(bitmapData);
                             // var config: any = resItem.data;
@@ -1134,7 +1137,7 @@ var RES;
                             request.responseType = egret.HttpResponseType.TEXT;
                             request.open("resource/" + resource.url, "get");
                             request.send();
-                            return [4 /*yield*/, promisify(request)];
+                            return [4 /*yield*/, promisify(request, resource)];
                         case 1:
                             text = _a.sent();
                             return [2 /*return*/, text];

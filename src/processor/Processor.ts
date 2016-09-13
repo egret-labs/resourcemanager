@@ -1,7 +1,7 @@
 module RES {
 
 
-    async function promisify(loader: egret.ImageLoader | egret.HttpRequest): Promise<any> {
+    async function promisify(loader: egret.ImageLoader | egret.HttpRequest, resource: ResourceInfo): Promise<any> {
 
         return new Promise((reslove, reject) => {
             let onSuccess = () => {
@@ -10,7 +10,8 @@ module RES {
             }
 
             let onError = () => {
-                reject();
+                let e = { code: 1001, message: `文件加载失败:'${resource.url}'` }
+                reject(e);
             }
             loader.addEventListener(egret.Event.COMPLETE, onSuccess, this);
             loader.addEventListener(egret.IOErrorEvent.IO_ERROR, onError, this);
@@ -73,7 +74,7 @@ module RES {
         async onLoadStart(host, resource) {
             var loader = new egret.ImageLoader();
             loader.load("resource/" + resource.url);
-            var bitmapData = await promisify(loader);
+            var bitmapData = await promisify(loader, resource);
             var texture: egret.Texture = new egret.Texture();
             texture._setBitmapData(bitmapData);
             // var config: any = resItem.data;
@@ -102,7 +103,7 @@ module RES {
             request.responseType = egret.HttpResponseType.TEXT;
             request.open("resource/" + resource.url, "get");
             request.send();
-            let text = await promisify(request);
+            let text = await promisify(request, resource);
             return text;
 
         },
@@ -170,7 +171,6 @@ module RES {
                 //         this.addSubkey(subkey, name);
                 //     }
             }
-            console.log(spriteSheet)
             return spriteSheet;
 
 
