@@ -26,9 +26,44 @@
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-
+type ResourceRootSelector<T> = T | (() => T)
 
 module RES {
+
+    /**
+   * @language en_US
+   * Definition profile.
+   * @param url Configuration file path (path resource.json).
+   * @param resourceRoot Resource path. All URL in the configuration is the relative value of the path. The ultimate URL is the value of the sum of the URL of the string and the resource in the configuration.
+   * @param type Configuration file format. Determine what parser to parse the configuration file. Default "json".
+   * @version Egret 3.1.5
+   * @platform Web,Native
+   */
+    /**
+     * @language zh_CN
+     * 定义配置文件。
+     * @param url 配置文件路径(resource.json的路径)。
+     * @param resourceRoot 资源根路径。配置中的所有url都是这个路径的相对值。最终url是这个字符串与配置里资源项的url相加的值。
+     * @param type 配置文件的格式。确定要用什么解析器来解析配置文件。默认"json"
+     * @version Egret 3.1.5
+     * @platform Web,Native
+     */
+    export function mapConfig<T>(url: string, selector: ResourceRootSelector<T>) {
+        return function (target) {
+            let resourceRoot: string;
+            let type: string = "json";
+            if (typeof selector == "string") {
+                resourceRoot = selector as any as string;
+            }
+            else {
+                resourceRoot = (selector as any as Function)();
+            }
+            if (resourceRoot.lastIndexOf("/") != 0) {
+                resourceRoot = resourceRoot + "/";
+            }
+            configItem = { url, resourceRoot, type, name: url };
+        }
+    };
 
 
     export interface ResourceInfo {
@@ -102,10 +137,10 @@ module RES {
                 return null;
             }
             for (var key of group) {
-                let r = this.getResource(key,true);
-                 result.push(r);
+                let r = this.getResource(key, true);
+                result.push(r);
                 // if (r) {
-                   
+
                 // }
             }
             return result;
@@ -289,7 +324,7 @@ module RES {
 
             this.config = data;
             FileSystem.data = data.resources;
-            
+
             // if (!data)
             //     return;
             // var resources: Array<any> = data["resources"];
@@ -355,7 +390,7 @@ module RES {
             if (!data.type) {
                 data.type = this.__temp__get__type__via__url(data.url);
             }
-            FileSystem.addFile(data.url,data.type);
+            FileSystem.addFile(data.url, data.type);
             if (data.name) {
                 this.config.alias[data.name] = data.url;
             }

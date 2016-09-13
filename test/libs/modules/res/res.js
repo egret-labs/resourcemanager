@@ -190,36 +190,44 @@ var RES;
         ResourceItem.convertToResItem = convertToResItem;
     })(ResourceItem = RES.ResourceItem || (RES.ResourceItem = {}));
 })(RES || (RES = {}));
-//////////////////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (c) 2014-present, Egret Technology.
-//  All rights reserved.
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of the Egret nor the
-//       names of its contributors may be used to endorse or promote products
-//       derived from this software without specific prior written permission.
-//
-//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
-//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-//////////////////////////////////////////////////////////////////////////////////////
 var RES;
 (function (RES) {
+    /**
+   * @language en_US
+   * Definition profile.
+   * @param url Configuration file path (path resource.json).
+   * @param resourceRoot Resource path. All URL in the configuration is the relative value of the path. The ultimate URL is the value of the sum of the URL of the string and the resource in the configuration.
+   * @param type Configuration file format. Determine what parser to parse the configuration file. Default "json".
+   * @version Egret 3.1.5
+   * @platform Web,Native
+   */
+    /**
+     * @language zh_CN
+     * 定义配置文件。
+     * @param url 配置文件路径(resource.json的路径)。
+     * @param resourceRoot 资源根路径。配置中的所有url都是这个路径的相对值。最终url是这个字符串与配置里资源项的url相加的值。
+     * @param type 配置文件的格式。确定要用什么解析器来解析配置文件。默认"json"
+     * @version Egret 3.1.5
+     * @platform Web,Native
+     */
+    function mapConfig(url, selector) {
+        return function (target) {
+            var resourceRoot;
+            var type = "json";
+            if (typeof selector == "string") {
+                resourceRoot = selector;
+            }
+            else {
+                resourceRoot = selector();
+            }
+            if (resourceRoot.lastIndexOf("/") != 0) {
+                resourceRoot = resourceRoot + "/";
+            }
+            RES.configItem = { url: url, resourceRoot: resourceRoot, type: type, name: url };
+        };
+    }
+    RES.mapConfig = mapConfig;
+    ;
     /**
      * @class RES.ResourceConfig
      * @classdesc
@@ -1762,42 +1770,6 @@ var RES;
      * Resource单例
      */
     var instance = new Resource();
-    /**
-     * @language en_US
-     * Definition profile.
-     * @param url Configuration file path (path resource.json).
-     * @param resourceRoot Resource path. All URL in the configuration is the relative value of the path. The ultimate URL is the value of the sum of the URL of the string and the resource in the configuration.
-     * @param type Configuration file format. Determine what parser to parse the configuration file. Default "json".
-     * @version Egret 3.1.5
-     * @platform Web,Native
-     */
-    /**
-     * @language zh_CN
-     * 定义配置文件。
-     * @param url 配置文件路径(resource.json的路径)。
-     * @param resourceRoot 资源根路径。配置中的所有url都是这个路径的相对值。最终url是这个字符串与配置里资源项的url相加的值。
-     * @param type 配置文件的格式。确定要用什么解析器来解析配置文件。默认"json"
-     * @version Egret 3.1.5
-     * @platform Web,Native
-     */
-    function mapConfig(url, selector) {
-        return function (target) {
-            var resourceRoot;
-            var type = "json";
-            if (typeof selector == "string") {
-                resourceRoot = selector;
-            }
-            else {
-                resourceRoot = selector();
-            }
-            if (resourceRoot.lastIndexOf("/") != 0) {
-                resourceRoot = resourceRoot + "/";
-            }
-            RES.configItem = { url: url, resourceRoot: resourceRoot, type: type, name: url };
-        };
-    }
-    RES.mapConfig = mapConfig;
-    ;
 })(RES || (RES = {}));
 var egret;
 (function (egret) {
