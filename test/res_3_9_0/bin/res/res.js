@@ -514,49 +514,7 @@ var RES;
          */
         function ResourceLoader() {
             _super.call(this);
-            /**
-             * 最大并发加载数
-             */
-            this.thread = 2;
-            /**
-             * 正在加载的线程计数
-             */
-            this.loadingCount = 0;
-            /**
-             * 当前组加载的项总个数,key为groupName
-             */
-            this.groupTotalDic = {};
-            /**
-             * 已经加载的项个数,key为groupName
-             */
-            this.numLoadedDic = {};
-            /**
-             * 正在加载的组列表,key为groupName
-             */
-            this.itemListDic = {};
-            /**
-             * 加载失败的组,key为groupName
-             */
-            this.groupErrorDic = {};
-            this.retryTimesDic = {};
-            this.maxRetryTimes = 3;
-            this.failedList = new Array();
-            this.queue = [];
-            /**
-             * 当前应该加载同优先级队列的第几列
-             */
-            this.queueIndex = 0;
         }
-        ;
-        /**
-         * 检查指定的组是否正在加载中
-         * @method RES.ResourceLoader#isGroupInLoading
-         * @param groupName {string}
-         * @returns {boolean}
-         */
-        ResourceLoader.prototype.isGroupInLoading = function (groupName) {
-            return this.itemListDic[groupName] !== undefined;
-        };
         /**
          * 开始加载一组文件
          * @method RES.ResourceLoader#loadGroup
@@ -566,138 +524,12 @@ var RES;
          */
         ResourceLoader.prototype.loadGroup = function (list, groupName, priority) {
             if (priority === void 0) { priority = 0; }
-            if (this.itemListDic[groupName] || !groupName)
-                return;
-            if (!list || list.length == 0) {
-                egret.$warn(3201, groupName);
-                var event = new RES.ResourceEvent(RES.ResourceEvent.GROUP_LOAD_ERROR);
-                event.groupName = groupName;
-                this.dispatchEvent(event);
-                return;
-            }
-            this.queue.push(groupName);
-            this.itemListDic[groupName] = list;
-            var length = list.length;
-            for (var i = 0; i < length; i++) {
-                var resItem = list[i];
-                resItem.groupName = groupName;
-            }
-            this.groupTotalDic[groupName] = list.length;
-            this.numLoadedDic[groupName] = 0;
-            this.next();
-        };
-        /**
-         * 加载下一项
-         */
-        ResourceLoader.prototype.next = function () {
-            var _this = this;
-            var load = function (r) {
-                RES.host.load(r)
-                    .then(function (response) {
-                    RES.host.save(r, response);
-                    r.loaded = true;
-                    _this.onItemComplete(r);
-                });
-            };
-            var processor;
-            while (this.loadingCount < this.thread) {
-                var resItem = this.getOneResourceItem();
-                if (!resItem)
-                    break;
-                this.loadingCount++;
-                if (resItem.loaded) {
-                    this.onItemComplete(resItem);
-                }
-                else if (load(resItem)) {
-                    ;
-                }
-            }
-        };
-        /**
-         * 获取下一个待加载项
-         */
-        ResourceLoader.prototype.getOneResourceItem = function () {
-            if (this.failedList.length > 0)
-                return this.failedList.shift();
-            var queue = this.queue;
-            var length = queue.length;
-            var list = [];
-            for (var i = 0; i < length; i++) {
-                if (this.queueIndex >= length)
-                    this.queueIndex = 0;
-                list = this.itemListDic[queue[this.queueIndex]];
-                if (list.length > 0)
-                    break;
-                this.queueIndex++;
-            }
-            if (list.length == 0)
-                return undefined;
-            return list.shift();
-        };
-        /**
-         * 加载结束
-         */
-        ResourceLoader.prototype.onItemComplete = function (resItem) {
-            this.loadingCount--;
-            var groupName = resItem.groupName;
-            if (!resItem.loaded) {
-                var times = this.retryTimesDic[resItem.name] || 1;
-                if (times > this.maxRetryTimes) {
-                    delete this.retryTimesDic[resItem.name];
-                    RES.ResourceEvent.dispatchResourceEvent(this.resInstance, RES.ResourceEvent.ITEM_LOAD_ERROR, groupName, resItem);
-                }
-                else {
-                    this.retryTimesDic[resItem.name] = times + 1;
-                    this.failedList.push(resItem);
-                    this.next();
-                    return;
-                }
-            }
-            if (groupName) {
-                this.numLoadedDic[groupName]++;
-                var itemsLoaded = this.numLoadedDic[groupName];
-                var itemsTotal = this.groupTotalDic[groupName];
-                if (!resItem.loaded) {
-                    this.groupErrorDic[groupName] = true;
-                }
-                RES.ResourceEvent.dispatchResourceEvent(this.resInstance, RES.ResourceEvent.GROUP_PROGRESS, groupName, resItem, itemsLoaded, itemsTotal);
-                if (itemsLoaded == itemsTotal) {
-                    var groupError = this.groupErrorDic[groupName];
-                    this.removeGroupName(groupName);
-                    delete this.groupTotalDic[groupName];
-                    delete this.numLoadedDic[groupName];
-                    delete this.itemListDic[groupName];
-                    delete this.groupErrorDic[groupName];
-                    if (groupError) {
-                        RES.ResourceEvent.dispatchResourceEvent(this, RES.ResourceEvent.GROUP_LOAD_ERROR, groupName);
-                    }
-                    else {
-                        RES.ResourceEvent.dispatchResourceEvent(this, RES.ResourceEvent.GROUP_COMPLETE, groupName);
-                    }
-                }
-            }
-            else {
-            }
-            this.next();
-        };
-        /**
-         * 从优先级队列中移除指定的组名
-         */
-        ResourceLoader.prototype.removeGroupName = function (groupName) {
-            var queue = this.queue;
-            var length = queue.length;
-            var index = 0;
-            var found = false;
-            var length = queue.length;
-            for (var i = 0; i < length; i++) {
-                var name = queue[i];
-                if (name == groupName) {
-                    queue.splice(index, 1);
-                    found = true;
-                    break;
-                }
-                index++;
-            }
+            var mapper = function (r) { return RES.host.load(r)
+                .then(function (response) {
+                RES.host.save(r, response);
+                r.loaded = true; //todo
+            }); };
+            return Promise.all(list.map(mapper));
         };
         return ResourceLoader;
     }(egret.EventDispatcher));
@@ -1734,7 +1566,6 @@ var RES;
         Resource.prototype.init = function () {
             this.resConfig = new RES.ResourceConfig();
             this.resLoader = new RES.ResourceLoader();
-            this.resLoader.resInstance = this;
             this.resLoader.addEventListener(RES.ResourceEvent.GROUP_COMPLETE, this.onGroupComp, this);
             this.resLoader.addEventListener(RES.ResourceEvent.GROUP_LOAD_ERROR, this.onGroupError, this);
         };
@@ -1778,33 +1609,23 @@ var RES;
          * @param priority {number}
          */
         Resource.prototype.loadGroup = function (name, priority, reporter) {
-            var _this = this;
             if (priority === void 0) { priority = 0; }
-            return new Promise(function (reslove, reject) {
-                if (_this.loadedGroups.indexOf(name) != -1) {
-                    RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.GROUP_COMPLETE, name);
-                    reslove();
-                }
-                else if (_this.resLoader.isGroupInLoading(name)) {
-                    reslove();
-                }
-                else {
-                    var group = _this.resConfig.getGroupByName(name);
-                    var p_1 = function (e) {
-                        if (e.groupName == name) {
-                            if (reporter && reporter.onProgress) {
-                                reporter.onProgress(e.itemsLoaded, e.itemsTotal);
-                            }
+            if (this.loadedGroups.indexOf(name) != -1) {
+                RES.ResourceEvent.dispatchResourceEvent(this, RES.ResourceEvent.GROUP_COMPLETE, name);
+                return Promise.resolve();
+            }
+            else {
+                var resources = this.resConfig.getGroupByName(name);
+                var p = function (e) {
+                    if (e.groupName == name) {
+                        if (reporter && reporter.onProgress) {
+                            reporter.onProgress(e.itemsLoaded, e.itemsTotal);
                         }
-                    };
-                    _this.resLoader.once(RES.ResourceEvent.GROUP_COMPLETE, function () {
-                        _this.resLoader.removeEventListener(RES.ResourceEvent.GROUP_PROGRESS, p_1, _this);
-                        reslove();
-                    }, _this);
-                    _this.addEventListener(RES.ResourceEvent.GROUP_PROGRESS, p_1, _this);
-                    _this.resLoader.loadGroup(group, name, priority);
-                }
-            });
+                    }
+                };
+                this.addEventListener(RES.ResourceEvent.GROUP_PROGRESS, p, this);
+                return this.resLoader.loadGroup(resources, name, priority);
+            }
         };
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
@@ -1996,7 +1817,7 @@ var RES;
             if (thread < 1) {
                 thread = 1;
             }
-            this.resLoader.thread = thread;
+            //todo
         };
         /**
          * 设置资源加载失败时的重试次数。
@@ -2004,7 +1825,7 @@ var RES;
          */
         Resource.prototype.setMaxRetryTimes = function (retry) {
             retry = Math.max(retry, 0);
-            this.resLoader.maxRetryTimes = retry;
+            //todo
         };
         Resource.prototype.addResourceData = function (data) {
             this.resConfig.addResourceData(data);

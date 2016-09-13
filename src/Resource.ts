@@ -539,7 +539,6 @@ module RES {
 
             this.resConfig = new ResourceConfig();
             this.resLoader = new ResourceLoader();
-            this.resLoader.resInstance = this;
             this.resLoader.addEventListener(ResourceEvent.GROUP_COMPLETE, this.onGroupComp, this);
             this.resLoader.addEventListener(ResourceEvent.GROUP_LOAD_ERROR, this.onGroupError, this);
         }
@@ -593,33 +592,25 @@ module RES {
          */
         public loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<void> {
 
-            return new Promise<void>((reslove, reject) => {
-                if (this.loadedGroups.indexOf(name) != -1) {
-                    ResourceEvent.dispatchResourceEvent(this, ResourceEvent.GROUP_COMPLETE, name);
-                    reslove();
-                }
-                else if (this.resLoader.isGroupInLoading(name)) {
-                    reslove();
-                }
-                else {
-                    var group = this.resConfig.getGroupByName(name) as ResourceItem[];
-                    let p = (e: ResourceEvent) => {
-                        if (e.groupName == name) {
-                            if (reporter && reporter.onProgress) {
-                                reporter.onProgress(e.itemsLoaded, e.itemsTotal);
-                            }
+            if (this.loadedGroups.indexOf(name) != -1) {
+                ResourceEvent.dispatchResourceEvent(this, ResourceEvent.GROUP_COMPLETE, name);
+                return Promise.resolve<void>();
+            }
+            // else if (this.resLoader.isGroupInLoading(name)) {
+            //     return Promise.resolve<void>();
+            // }
+            else {
+                var resources = this.resConfig.getGroupByName(name) as ResourceItem[];
+                let p = (e: ResourceEvent) => {
+                    if (e.groupName == name) {
+                        if (reporter && reporter.onProgress) {
+                            reporter.onProgress(e.itemsLoaded, e.itemsTotal);
                         }
-
                     }
-                    this.resLoader.once(ResourceEvent.GROUP_COMPLETE, () => {
-                        this.resLoader.removeEventListener(ResourceEvent.GROUP_PROGRESS, p, this);
-                        reslove();
-                    }, this);
-                    this.addEventListener(ResourceEvent.GROUP_PROGRESS, p, this);
-                    this.resLoader.loadGroup(group, name, priority);
                 }
-
-            })
+                this.addEventListener(ResourceEvent.GROUP_PROGRESS, p, this);
+                return this.resLoader.loadGroup(resources, name, priority);
+            }
 
 
         }
@@ -840,7 +831,7 @@ module RES {
             if (thread < 1) {
                 thread = 1;
             }
-            this.resLoader.thread = thread;
+            //todo
         }
 
         /**
@@ -849,7 +840,7 @@ module RES {
          */
         public setMaxRetryTimes(retry: number): void {
             retry = Math.max(retry, 0);
-            this.resLoader.maxRetryTimes = retry;
+            //todo
         }
 
         public addResourceData(data: { name: string, type: string, url: string }): void {

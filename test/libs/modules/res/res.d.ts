@@ -326,73 +326,13 @@ declare module RES {
          */
         constructor();
         /**
-         * 最大并发加载数
-         */
-        thread: number;
-        /**
-         * 正在加载的线程计数
-         */
-        private loadingCount;
-        /**
-         * RES单例的引用
-         * @member {any} RES.ResourceLoader#resInstance
-         */
-        resInstance: Resource;
-        /**
-         * 当前组加载的项总个数,key为groupName
-         */
-        private groupTotalDic;
-        /**
-         * 已经加载的项个数,key为groupName
-         */
-        private numLoadedDic;
-        /**
-         * 正在加载的组列表,key为groupName
-         */
-        private itemListDic;
-        /**
-         * 加载失败的组,key为groupName
-         */
-        private groupErrorDic;
-        private retryTimesDic;
-        maxRetryTimes: number;
-        private failedList;
-        private queue;
-        /**
-         * 检查指定的组是否正在加载中
-         * @method RES.ResourceLoader#isGroupInLoading
-         * @param groupName {string}
-         * @returns {boolean}
-         */
-        isGroupInLoading(groupName: string): boolean;
-        /**
          * 开始加载一组文件
          * @method RES.ResourceLoader#loadGroup
          * @param list {egret.Array<ResourceItem>} 加载项列表
          * @param groupName {string} 组名
          * @param priority {number} 加载优先级
          */
-        loadGroup(list: Array<ResourceItem>, groupName: string, priority?: number): void;
-        /**
-         * 加载下一项
-         */
-        private next();
-        /**
-         * 当前应该加载同优先级队列的第几列
-         */
-        private queueIndex;
-        /**
-         * 获取下一个待加载项
-         */
-        private getOneResourceItem();
-        /**
-         * 加载结束
-         */
-        private onItemComplete(resItem);
-        /**
-         * 从优先级队列中移除指定的组名
-         */
-        private removeGroupName(groupName);
+        loadGroup(list: Array<ResourceInfo>, groupName: string, priority?: number): Promise<any>;
     }
 }
 declare module RES {
