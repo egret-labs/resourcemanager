@@ -1038,5 +1038,3 @@ declare module RES {
     }
     var configItem: any;
 }
-declare module egret {
-}
