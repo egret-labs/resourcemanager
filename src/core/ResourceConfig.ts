@@ -198,6 +198,24 @@ module RES {
             return type;
         }
 
+         public parseResKey(key: string) {
+            key = this.getKeyByAlias(key);
+            let index = key.indexOf("#");
+            if (index >= 0) {
+                return {
+                    key: key.substr(0, index),
+                    subkey: key.substr(index + 1)
+                }
+            }
+            else {
+                return {
+                    key,
+                    subkey: ""
+                }
+            }
+
+        }
+
 
         public getKeyByAlias(aliasName: string) {
             if (this.config.alias[aliasName]) {

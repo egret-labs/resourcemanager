@@ -44,6 +44,8 @@ class Main_New_ES6_API extends egret.DisplayObjectContainer {
                 this.sky.texture = spritesheet.getTexture("bg_jpg");
             }).catch((e) => {
                 console.warn(e);
+                console.log (e.stack)
+                // throw e;
             });
     }
 

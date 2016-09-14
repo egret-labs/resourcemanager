@@ -30,67 +30,7 @@
 
 module RES {
 
-    var __tempCache = {};
 
-    export var host: ProcessHost = {
-
-
-
-        get resourceConfig() {
-            return RES['configInstance']
-        },
-
-        load: (resourceInfo: ResourceInfo, processor: Processor | undefined) => {
-            if (!processor) {
-                processor = host.isSupport(resourceInfo);
-            }
-            if (!processor) {
-                throw 'error';
-            }
-            return processor.onLoadStart(host, resourceInfo)
-        },
-
-        unload(resource: ResourceInfo) {
-            let processor = host.isSupport(resource);
-            if (processor) {
-                return processor.onRemoveStart(host, resource);
-            }
-            else {
-                return Promise.resolve();
-            }
-        },
-
-
-
-        save(resource: ResourceInfo, data: any) {
-            __tempCache[resource.url] = data;
-        },
-
-
-        get(resource: ResourceInfo) {
-            return __tempCache[resource.url];
-        },
-
-        remove(resource: ResourceInfo) {
-            delete __tempCache[resource.url];
-        },
-
-
-
-        isSupport(resource: ResourceInfo) {
-            let type = resource.type;
-
-            let map = {
-                "image": ImageProcessor,
-                "json": JsonProcessor,
-                "text": TextProcessor,
-                "xml": XMLProcessor,
-                "sheet": SheetProcessor
-            }
-
-            return map[type];
-        }
-    }
 
     /**
      * @language en_US
@@ -498,26 +438,6 @@ module RES {
             this.init();
         }
 
-        private parseResKey(key: string) {
-            key = this.resConfig.getKeyByAlias(key);
-            let index = key.indexOf("#");
-            if (index >= 0) {
-                return {
-                    key: key.substr(0, index),
-                    subkey: key.substr(index + 1)
-                }
-            }
-            else {
-                return {
-                    key,
-                    subkey: ""
-                }
-            }
-
-        }
-
-
-
         /**
          * 注册一个自定义文件类型解析器
          * @param type 文件类型字符串，例如：bin,text,image,json等。
@@ -531,14 +451,12 @@ module RES {
         /**
          * 多文件队列加载器
          */
-        private resLoader: PromiseQueue;
+        private queue: PromiseQueue;
         /**
          * 初始化
          */
         private init(): void {
-
-            this.resConfig = new ResourceConfig();
-            this.resLoader = new PromiseQueue();
+            this.queue = new PromiseQueue();
         }
 
         /**
@@ -550,11 +468,12 @@ module RES {
          */
         @checkDecorator
         public loadConfig(): Promise<void> {
-
-            return host.load(configItem).then((data) => {
-                this.resConfig.parseConfig(data, "resource");//todo
+            return manager.init().then(data => {
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
-            });
+            }, error => {
+                ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_LOAD_ERROR);
+                return Promise.reject({ code: 1002 });
+            })
         }
 
         /**
@@ -573,7 +492,7 @@ module RES {
 		 * @returns {Array<egret.ResourceItem>}
          */
         public getGroupByName(name: string): Array<ResourceInfo> {
-            return this.resConfig.getGroupByName(name);
+            return manager.config.getGroupByName(name);
         }
 
         private groupNameList: Array<any> = [];
@@ -585,8 +504,8 @@ module RES {
          */
         public loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<void> {
 
-            let resources = this.resConfig.getGroupByName(name);
-            return this.resLoader.loadGroup(resources, reporter);
+            let resources = manager.config.getGroupByName(name);
+            return this.queue.loadGroup(resources, reporter);
 
 
         }
@@ -600,12 +519,9 @@ module RES {
          * @returns {boolean}
          */
         public createGroup(name: string, keys: Array<string>, override: boolean = false): boolean {
-            return this.resConfig.createGroup(name, keys, override);
+            return manager.config.createGroup(name, keys, override);
         }
-        /**
-         * res配置数据
-         */
-        private resConfig: ResourceConfig;
+
         /**
          * 队列加载完成事件
          */
@@ -639,8 +555,8 @@ module RES {
 		 * @returns {boolean}
          */
         public hasRes(key: string): boolean {
-            let name = this.parseResKey(key).key;
-            return this.resConfig.getResource(name) != null;
+            let name = manager.config.parseResKey(key).key;
+            return manager.config.getResource(name) != null;
         }
 
         /**
@@ -651,8 +567,8 @@ module RES {
          */
         @checkNull
         public getRes(resKey: string): any {
-            let {key, subkey} = this.parseResKey(resKey);
-            let r = this.resConfig.getResource(key);
+            let {key, subkey} = manager.config.parseResKey(resKey);
+            let r = manager.config.getResource(key);
             if (r && host.isSupport(r)) {
                 return host.get(r);
             }
@@ -672,8 +588,8 @@ module RES {
         public getResAsync(key: string, compFunc?: Function, thisObject?: any): void | Promise<any> {
 
             if (compFunc) {
-                var {key, subkey} = this.parseResKey(key);
-                let r = this.resConfig.getResource(key, true);
+                var {key, subkey} = manager.config.parseResKey(key);
+                let r = manager.config.getResource(key, true);
                 let url = r.url;
                 let res = host.get(r);
                 if (res) {
@@ -703,9 +619,9 @@ module RES {
 		 * @param type {string}
          */
         public getResByUrl(url: string, compFunc: Function, thisObject: any, type: string = ""): void {
-            let r = this.resConfig.getResource(url);
+            let r = manager.config.getResource(url);
             if (!r) {
-                this.resConfig.addResourceData({ name: url, url: url });
+                manager.config.addResourceData({ name: url, url: url });
             }
             this.getResAsync(url, compFunc, thisObject);
         }
@@ -718,7 +634,7 @@ module RES {
 		 * @returns {boolean}
          */
         public destroyRes(name: string, force: boolean = true): boolean {
-            var group = this.resConfig.getGroup(name);
+            var group = manager.config.getGroup(name);
 
             let remove = (r: ResourceInfo) => {
 
@@ -733,7 +649,7 @@ module RES {
                 return true;
             }
             else {
-                let item = this.resConfig.getResource(name);
+                let item = manager.config.getResource(name);
                 if (item) {
                     remove(item);
                     return true;
@@ -770,7 +686,7 @@ module RES {
         }
 
         public addResourceData(data: { name: string, type: string, url: string }): void {
-            this.resConfig.addResourceData(data);
+            manager.config.addResourceData(data);
         }
     }
     /**

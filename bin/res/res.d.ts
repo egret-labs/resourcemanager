@@ -278,6 +278,10 @@ declare module RES {
         resourceRoot: string;
         constructor();
         __temp__get__type__via__url(url_or_alias: string): string;
+        parseResKey(key: string): {
+            key: string;
+            subkey: string;
+        };
         getKeyByAlias(aliasName: string): string;
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
@@ -319,6 +323,33 @@ declare module RES {
     }
 }
 declare module RES {
+}
+declare module RES {
+    var host: ProcessHost;
+    namespace manager {
+        var config: ResourceConfig;
+        function init(): Promise<void>;
+    }
+}
+declare module RES {
+    function getRelativePath(url: string, file: string): string;
+    interface ProcessHost {
+        resourceConfig: ResourceConfig;
+        load: (resource: ResourceInfo, processor?: Processor) => Promise<any>;
+        unload: (resource: ResourceInfo) => Promise<any>;
+        save: (rexource: ResourceInfo, data: any) => void;
+        get: (resource: ResourceInfo) => any;
+        remove: (resource: ResourceInfo) => void;
+    }
+    interface Processor {
+        onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
+        onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
+    }
+    var ImageProcessor: Processor;
+    var TextProcessor: Processor;
+    var JsonProcessor: Processor;
+    var XMLProcessor: Processor;
+    var SheetProcessor: Processor;
 }
 declare module RES {
     /**
@@ -488,66 +519,6 @@ declare module RES {
     }
 }
 declare module RES {
-    /**
-     * @classic
-     * @private
-     */
-    class AnalyzerBase extends egret.HashObject {
-        constructor();
-        private resourceConfig;
-        /**
-         * 添加一个二级键名到配置列表。
-         * @method RES.ResourceConfig#addSubkey
-         * @param subkey {string} 要添加的二级键名
-         * @param name {string} 二级键名所属的资源name属性
-         */
-        addSubkey(subkey: string, name: string): void;
-        /**
-         * 加载一个资源文件
-         * @param resItem 加载项信息
-         * @param compFunc 加载完成回调函数,示例:compFunc(resItem:ResourceItem):void;
-         * @param thisObject 加载完成回调函数的this引用
-         */
-        loadFile(resItem: ResourceItem, compFunc: Function, thisObject: any): void;
-        /**
-         * 同步方式获取解析完成的数据
-         * @param name 对应配置文件里的name属性。
-         */
-        getRes(name: string, subkey?: string): any;
-        /**
-         * 销毁某个资源文件的二进制数据,返回是否删除成功。
-         * @param name 配置文件中加载项的name属性
-         */
-        destroyRes(name: string): boolean;
-        /**
-         * 读取一个字符串里第一个点之前的内容。
-         * @param name {string} 要读取的字符串
-         */
-        static getStringPrefix(name: string): string;
-    }
-}
-declare module RES {
-    function getRelativePath(url: string, file: string): string;
-    interface ProcessHost {
-        resourceConfig: ResourceConfig;
-        load: (resource: ResourceInfo, processor?: Processor) => Promise<any>;
-        unload: (resource: ResourceInfo) => Promise<any>;
-        save: (rexource: ResourceInfo, data: any) => void;
-        get: (resource: ResourceInfo) => any;
-        remove: (resource: ResourceInfo) => void;
-    }
-    interface Processor {
-        onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
-        onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
-    }
-    var ImageProcessor: Processor;
-    var TextProcessor: Processor;
-    var JsonProcessor: Processor;
-    var XMLProcessor: Processor;
-    var SheetProcessor: Processor;
-}
-declare module RES {
-    var host: ProcessHost;
     /**
      * @language en_US
      * Conduct mapping injection with class definition as the value.
@@ -911,7 +882,6 @@ declare module RES {
          * @private
          */
         constructor();
-        private parseResKey(key);
         /**
          * 注册一个自定义文件类型解析器
          * @param type 文件类型字符串，例如：bin,text,image,json等。
@@ -921,7 +891,7 @@ declare module RES {
         /**
          * 多文件队列加载器
          */
-        private resLoader;
+        private queue;
         /**
          * 初始化
          */
@@ -966,10 +936,6 @@ declare module RES {
          * @returns {boolean}
          */
         createGroup(name: string, keys: Array<string>, override?: boolean): boolean;
-        /**
-         * res配置数据
-         */
-        private resConfig;
         /**
          * 队列加载完成事件
          */

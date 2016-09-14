@@ -1,7 +1,47 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments)).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (sent[0] === 1) throw sent[1]; return sent[1]; }, trys: [], stack: [] }, sent, f;
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (1) {
+            if (_.done) switch (op[0]) {
+                case 0: return { value: void 0, done: true };
+                case 1: case 6: throw op[1];
+                case 2: return { value: op[1], done: true };
+            }
+            try {
+                switch (f = 1, op[0]) {
+                    case 0: case 1: sent = op; break;
+                    case 4: return _.label++, { value: op[1], done: false };
+                    case 7: op = _.stack.pop(), _.trys.pop(); continue;
+                    default:
+                        var r = _.trys.length > 0 && _.trys[_.trys.length - 1];
+                        if (!r && (op[0] === 6 || op[0] === 2)) { _.done = 1; continue; }
+                        if (op[0] === 3 && (!r || (op[1] > r[0] && op[1] < r[3]))) { _.label = op[1]; break; }
+                        if (op[0] === 6 && _.label < r[1]) { _.label = r[1], sent = op; break; }
+                        if (r && _.label < r[2]) { _.label = r[2], _.stack.push(op); break; }
+                        if (r[2]) { _.stack.pop(); }
+                        _.trys.pop();
+                        continue;
+                }
+                op = body.call(thisArg, _);
+            }
+            catch (e) { op = [6, e]; }
+            finally { f = 0, sent = void 0; }
+        }
+    }
+    return {
+        next: function (v) { return step([0, v]); },
+        "throw": function (v) { return step([1, v]); },
+        "return": function (v) { return step([2, v]); }
+    };
 };
 var __promise__line = "\n(function(t){function z(){for(var a=0;a<g.length;a++)g[a][0](g[a][1]);g=[];m=!1}function n(a,b){g.push([a,b]);m||(m=!0,A(z,0))}function B(a,b){function c(a){p(b,a)}function h(a){k(b,a)}try{a(c,h)}catch(d){h(d)}}function u(a){var b=a.owner,c=b.state_,b=b.data_,h=a[c];a=a.then;if(\"function\"===typeof h){c=l;try{b=h(b)}catch(d){k(a,d)}}v(a,b)||(c===l&&p(a,b),c===q&&k(a,b))}function v(a,b){var c;try{if(a===b)throw new TypeError(\"A promises callback cannot return that same promise.\");if(b&&(\"function\"===\ntypeof b||\"object\"===typeof b)){var h=b.then;if(\"function\"===typeof h)return h.call(b,function(d){c||(c=!0,b!==d?p(a,d):w(a,d))},function(b){c||(c=!0,k(a,b))}),!0}}catch(d){return c||k(a,d),!0}return!1}function p(a,b){a!==b&&v(a,b)||w(a,b)}function w(a,b){a.state_===r&&(a.state_=x,a.data_=b,n(C,a))}function k(a,b){a.state_===r&&(a.state_=x,a.data_=b,n(D,a))}function y(a){var b=a.then_;a.then_=void 0;for(a=0;a<b.length;a++)u(b[a])}function C(a){a.state_=l;y(a)}function D(a){a.state_=q;y(a)}function e(a){if(\"function\"!==\ntypeof a)throw new TypeError(\"Promise constructor takes a function argument\");if(!1===this instanceof e)throw new TypeError(\"Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.\");this.then_=[];B(a,this)}var f=t.Promise,s=f&&\"resolve\"in f&&\"reject\"in f&&\"all\"in f&&\"race\"in f&&function(){var a;new f(function(b){a=b});return\"function\"===typeof a}();\"undefined\"!==typeof exports&&exports?(exports.Promise=s?f:e,exports.Polyfill=e):\"function\"==\ntypeof define&&define.amd?define(function(){return s?f:e}):s||(t.Promise=e);var r=\"pending\",x=\"sealed\",l=\"fulfilled\",q=\"rejected\",E=function(){},A=\"undefined\"!==typeof setImmediate?setImmediate:setTimeout,g=[],m;e.prototype={constructor:e,state_:r,then_:null,data_:void 0,then:function(a,b){var c={owner:this,then:new this.constructor(E),fulfilled:a,rejected:b};this.state_===l||this.state_===q?n(u,c):this.then_.push(c);return c.then},\"catch\":function(a){return this.then(null,a)}};e.all=function(a){if(\"[object Array]\"!==\nObject.prototype.toString.call(a))throw new TypeError(\"You must pass an array to Promise.all().\");return new this(function(b,c){function h(a){e++;return function(c){d[a]=c;--e||b(d)}}for(var d=[],e=0,f=0,g;f<a.length;f++)(g=a[f])&&\"function\"===typeof g.then?g.then(h(f),c):d[f]=g;e||b(d)})};e.race=function(a){if(\"[object Array]\"!==Object.prototype.toString.call(a))throw new TypeError(\"You must pass an array to Promise.race().\");return new this(function(b,c){for(var e=0,d;e<a.length;e++)(d=a[e])&&\"function\"===\ntypeof d.then?d.then(b,c):b(d)})};e.resolve=function(a){return a&&\"object\"===typeof a&&a.constructor===this?a:new this(function(b){b(a)})};e.reject=function(a){return new this(function(b,c){c(a)})}})(\"undefined\"!=typeof window?window:\"undefined\"!=typeof global?global:\"undefined\"!=typeof self?self:this);\n";
 eval(__promise__line);
@@ -305,6 +345,22 @@ var RES;
             }
             return type;
         };
+        ResourceConfig.prototype.parseResKey = function (key) {
+            key = this.getKeyByAlias(key);
+            var index = key.indexOf("#");
+            if (index >= 0) {
+                return {
+                    key: key.substr(0, index),
+                    subkey: key.substr(index + 1)
+                };
+            }
+            else {
+                return {
+                    key: key,
+                    subkey: ""
+                };
+            }
+        };
         ResourceConfig.prototype.getKeyByAlias = function (aliasName) {
             if (this.config.alias[aliasName]) {
                 return this.config.alias[aliasName];
@@ -533,6 +589,231 @@ var RES;
     }());
     RES.PromiseQueue = PromiseQueue;
 })(RES || (RES = {}));
+var RES;
+(function (RES) {
+    var __tempCache = {};
+    RES.host = {
+        get resourceConfig() {
+            return RES['configInstance'];
+        },
+        load: function (resourceInfo, processor) {
+            if (!processor) {
+                processor = RES.host.isSupport(resourceInfo);
+            }
+            if (!processor) {
+                throw 'error';
+            }
+            return processor.onLoadStart(RES.host, resourceInfo);
+        },
+        unload: function (resource) {
+            var processor = RES.host.isSupport(resource);
+            if (processor) {
+                return processor.onRemoveStart(RES.host, resource);
+            }
+            else {
+                return Promise.resolve();
+            }
+        },
+        save: function (resource, data) {
+            __tempCache[resource.url] = data;
+        },
+        get: function (resource) {
+            return __tempCache[resource.url];
+        },
+        remove: function (resource) {
+            delete __tempCache[resource.url];
+        },
+        isSupport: function (resource) {
+            var type = resource.type;
+            var map = {
+                "image": RES.ImageProcessor,
+                "json": RES.JsonProcessor,
+                "text": RES.TextProcessor,
+                "xml": RES.XMLProcessor,
+                "sheet": RES.SheetProcessor
+            };
+            return map[type];
+        }
+    };
+    var manager;
+    (function (manager) {
+        manager.config = new RES.ResourceConfig();
+        function init() {
+            return RES.host.load(RES.configItem).then(function (data) {
+                manager.config.parseConfig(data, "resource");
+            });
+        }
+        manager.init = init;
+    })(manager = RES.manager || (RES.manager = {}));
+})(RES || (RES = {}));
+var RES;
+(function (RES) {
+    function promisify(loader, resource) {
+        return __awaiter(this, void 0, void 0, function () {
+            _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (reslove, reject) {
+                        var onSuccess = function () {
+                            var texture = loader['data'] ? loader['data'] : loader['response'];
+                            reslove(texture);
+                        };
+                        var onError = function () {
+                            var e = { code: 1001, message: "\u6587\u4EF6\u52A0\u8F7D\u5931\u8D25:'" + resource.url + "'" };
+                            reject(e);
+                        };
+                        loader.addEventListener(egret.Event.COMPLETE, onSuccess, _this);
+                        loader.addEventListener(egret.IOErrorEvent.IO_ERROR, onError, _this);
+                    })];
+            });
+        });
+        var _this;
+    }
+    function getRelativePath(url, file) {
+        url = url.split("\\").join("/");
+        var params = url.match(/#.*|\?.*/);
+        var paramUrl = "";
+        if (params) {
+            paramUrl = params[0];
+        }
+        var index = url.lastIndexOf("/");
+        if (index != -1) {
+            url = url.substring(0, index + 1) + file;
+        }
+        else {
+            url = file;
+        }
+        return url + paramUrl;
+    }
+    RES.getRelativePath = getRelativePath;
+    RES.ImageProcessor = {
+        onLoadStart: function (host, resource) {
+            return __awaiter(this, void 0, void 0, function () {
+                var loader, bitmapData, texture;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            loader = new egret.ImageLoader();
+                            loader.load("resource/" + resource.url);
+                            return [4 /*yield*/, promisify(loader, resource)];
+                        case 1:
+                            bitmapData = _a.sent();
+                            texture = new egret.Texture();
+                            texture._setBitmapData(bitmapData);
+                            // var config: any = resItem.data;
+                            // if (config && config["scale9grid"]) {
+                            //     var str: string = config["scale9grid"];
+                            //     var list: Array<string> = str.split(",");
+                            //     texture["scale9Grid"] = new egret.Rectangle(parseInt(list[0]), parseInt(list[1]), parseInt(list[2]), parseInt(list[3]));
+                            // }
+                            return [2 /*return*/, texture];
+                    }
+                });
+            });
+        },
+        onRemoveStart: function (host, resource) {
+            var texture = host.get(resource);
+            texture.dispose();
+            return Promise.resolve();
+        }
+    };
+    RES.TextProcessor = {
+        onLoadStart: function (host, resource) {
+            return __awaiter(this, void 0, void 0, function () {
+                var request, text;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            request = new egret.HttpRequest();
+                            request.responseType = egret.HttpResponseType.TEXT;
+                            request.open("resource/" + resource.url, "get");
+                            request.send();
+                            return [4 /*yield*/, promisify(request, resource)];
+                        case 1:
+                            text = _a.sent();
+                            return [2 /*return*/, text];
+                    }
+                });
+            });
+        },
+        onRemoveStart: function (host, resource) {
+            return Promise.resolve();
+        }
+    };
+    RES.JsonProcessor = {
+        onLoadStart: function (host, resource) {
+            return __awaiter(this, void 0, void 0, function () {
+                var text, data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, host.load(resource, RES.TextProcessor)];
+                        case 1:
+                            text = _a.sent();
+                            data = JSON.parse(text);
+                            return [2 /*return*/, data];
+                    }
+                });
+            });
+        },
+        onRemoveStart: function (host, request) {
+            return Promise.resolve();
+        }
+    };
+    RES.XMLProcessor = {
+        onLoadStart: function (host, resource) {
+            return __awaiter(this, void 0, void 0, function () {
+                var text, data;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, host.load(resource, RES.TextProcessor)];
+                        case 1:
+                            text = _a.sent();
+                            data = egret.XML.parse(text);
+                            return [2 /*return*/, data];
+                    }
+                });
+            });
+        },
+        onRemoveStart: function (host, resource) {
+            return Promise.resolve();
+        }
+    };
+    RES.SheetProcessor = {
+        onLoadStart: function (host, resource) {
+            return __awaiter(this, void 0, void 0, function () {
+                var data, imageUrl, r, texture, frames, spriteSheet, subkey, config, texture;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, host.load(resource, RES.JsonProcessor)];
+                        case 1:
+                            data = _a.sent();
+                            imageUrl = getRelativePath(resource.url, data.file);
+                            host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
+                            r = host.resourceConfig.getResource(imageUrl);
+                            if (!r) {
+                                throw 'error';
+                            }
+                            return [4 /*yield*/, host.load(r)];
+                        case 2:
+                            texture = _a.sent();
+                            frames = data.frames;
+                            if (!frames) {
+                                throw 'error';
+                            }
+                            spriteSheet = new egret.SpriteSheet(texture);
+                            for (subkey in frames) {
+                                config = frames[subkey];
+                                texture = spriteSheet.createTexture(subkey, config.x, config.y, config.w, config.h, config.offX, config.offY, config.sourceW, config.sourceH);
+                            }
+                            return [2 /*return*/, spriteSheet];
+                    }
+                });
+            });
+        },
+        onRemoveStart: function (host, resource) {
+            return Promise.resolve();
+        }
+    };
+})(RES || (RES = {}));
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //  Copyright (c) 2014-present, Egret Technology.
@@ -561,6 +842,11 @@ var RES;
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var RES;
 (function (RES) {
     /**
@@ -779,307 +1065,6 @@ var RES;
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-var RES;
-(function (RES) {
-    /**
-     * @classic
-     * @private
-     */
-    var AnalyzerBase = (function (_super) {
-        __extends(AnalyzerBase, _super);
-        function AnalyzerBase() {
-            _super.call(this);
-            this.resourceConfig = (RES["configInstance"]);
-        }
-        /**
-         * 添加一个二级键名到配置列表。
-         * @method RES.ResourceConfig#addSubkey
-         * @param subkey {string} 要添加的二级键名
-         * @param name {string} 二级键名所属的资源name属性
-         */
-        AnalyzerBase.prototype.addSubkey = function (subkey, name) {
-            this.resourceConfig.addSubkey(subkey, name);
-        };
-        /**
-         * 加载一个资源文件
-         * @param resItem 加载项信息
-         * @param compFunc 加载完成回调函数,示例:compFunc(resItem:ResourceItem):void;
-         * @param thisObject 加载完成回调函数的this引用
-         */
-        AnalyzerBase.prototype.loadFile = function (resItem, compFunc, thisObject) {
-        };
-        /**
-         * 同步方式获取解析完成的数据
-         * @param name 对应配置文件里的name属性。
-         */
-        AnalyzerBase.prototype.getRes = function (name, subkey) {
-        };
-        /**
-         * 销毁某个资源文件的二进制数据,返回是否删除成功。
-         * @param name 配置文件中加载项的name属性
-         */
-        AnalyzerBase.prototype.destroyRes = function (name) {
-            return false;
-        };
-        /**
-         * 读取一个字符串里第一个点之前的内容。
-         * @param name {string} 要读取的字符串
-         */
-        AnalyzerBase.getStringPrefix = function (name) {
-            if (!name) {
-                return "";
-            }
-            var index = name.indexOf(".");
-            if (index != -1) {
-                return name.substring(0, index);
-            }
-            return "";
-        };
-        return AnalyzerBase;
-    }(egret.HashObject));
-    RES.AnalyzerBase = AnalyzerBase;
-})(RES || (RES = {}));
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments)).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (sent[0] === 1) throw sent[1]; return sent[1]; }, trys: [], stack: [] }, sent, f;
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (1) {
-            if (_.done) switch (op[0]) {
-                case 0: return { value: void 0, done: true };
-                case 1: case 6: throw op[1];
-                case 2: return { value: op[1], done: true };
-            }
-            try {
-                switch (f = 1, op[0]) {
-                    case 0: case 1: sent = op; break;
-                    case 4: return _.label++, { value: op[1], done: false };
-                    case 7: op = _.stack.pop(), _.trys.pop(); continue;
-                    default:
-                        var r = _.trys.length > 0 && _.trys[_.trys.length - 1];
-                        if (!r && (op[0] === 6 || op[0] === 2)) { _.done = 1; continue; }
-                        if (op[0] === 3 && (!r || (op[1] > r[0] && op[1] < r[3]))) { _.label = op[1]; break; }
-                        if (op[0] === 6 && _.label < r[1]) { _.label = r[1], sent = op; break; }
-                        if (r && _.label < r[2]) { _.label = r[2], _.stack.push(op); break; }
-                        if (r[2]) { _.stack.pop(); }
-                        _.trys.pop();
-                        continue;
-                }
-                op = body.call(thisArg, _);
-            }
-            catch (e) { op = [6, e]; }
-            finally { f = 0, sent = void 0; }
-        }
-    }
-    return {
-        next: function (v) { return step([0, v]); },
-        "throw": function (v) { return step([1, v]); },
-        "return": function (v) { return step([2, v]); }
-    };
-};
-var RES;
-(function (RES) {
-    function promisify(loader, resource) {
-        return __awaiter(this, void 0, void 0, function () {
-            _this = this;
-            return __generator(this, function (_a) {
-                return [2 /*return*/, new Promise(function (reslove, reject) {
-                        var onSuccess = function () {
-                            var texture = loader['data'] ? loader['data'] : loader['response'];
-                            reslove(texture);
-                        };
-                        var onError = function () {
-                            var e = { code: 1001, message: "\u6587\u4EF6\u52A0\u8F7D\u5931\u8D25:'" + resource.url + "'" };
-                            reject(e);
-                        };
-                        loader.addEventListener(egret.Event.COMPLETE, onSuccess, _this);
-                        loader.addEventListener(egret.IOErrorEvent.IO_ERROR, onError, _this);
-                    })];
-            });
-        });
-        var _this;
-    }
-    function getRelativePath(url, file) {
-        url = url.split("\\").join("/");
-        var params = url.match(/#.*|\?.*/);
-        var paramUrl = "";
-        if (params) {
-            paramUrl = params[0];
-        }
-        var index = url.lastIndexOf("/");
-        if (index != -1) {
-            url = url.substring(0, index + 1) + file;
-        }
-        else {
-            url = file;
-        }
-        return url + paramUrl;
-    }
-    RES.getRelativePath = getRelativePath;
-    RES.ImageProcessor = {
-        onLoadStart: function (host, resource) {
-            return __awaiter(this, void 0, void 0, function () {
-                var loader, bitmapData, texture;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            loader = new egret.ImageLoader();
-                            loader.load("resource/" + resource.url);
-                            return [4 /*yield*/, promisify(loader, resource)];
-                        case 1:
-                            bitmapData = _a.sent();
-                            texture = new egret.Texture();
-                            texture._setBitmapData(bitmapData);
-                            // var config: any = resItem.data;
-                            // if (config && config["scale9grid"]) {
-                            //     var str: string = config["scale9grid"];
-                            //     var list: Array<string> = str.split(",");
-                            //     texture["scale9Grid"] = new egret.Rectangle(parseInt(list[0]), parseInt(list[1]), parseInt(list[2]), parseInt(list[3]));
-                            // }
-                            return [2 /*return*/, texture];
-                    }
-                });
-            });
-        },
-        onRemoveStart: function (host, resource) {
-            var texture = host.get(resource);
-            texture.dispose();
-            return Promise.resolve();
-        }
-    };
-    RES.TextProcessor = {
-        onLoadStart: function (host, resource) {
-            return __awaiter(this, void 0, void 0, function () {
-                var request, text;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            request = new egret.HttpRequest();
-                            request.responseType = egret.HttpResponseType.TEXT;
-                            request.open("resource/" + resource.url, "get");
-                            request.send();
-                            return [4 /*yield*/, promisify(request, resource)];
-                        case 1:
-                            text = _a.sent();
-                            return [2 /*return*/, text];
-                    }
-                });
-            });
-        },
-        onRemoveStart: function (host, resource) {
-            return Promise.resolve();
-        }
-    };
-    RES.JsonProcessor = {
-        onLoadStart: function (host, resource) {
-            return __awaiter(this, void 0, void 0, function () {
-                var text, data;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, host.load(resource, RES.TextProcessor)];
-                        case 1:
-                            text = _a.sent();
-                            data = JSON.parse(text);
-                            return [2 /*return*/, data];
-                    }
-                });
-            });
-        },
-        onRemoveStart: function (host, request) {
-            return Promise.resolve();
-        }
-    };
-    RES.XMLProcessor = {
-        onLoadStart: function (host, resource) {
-            return __awaiter(this, void 0, void 0, function () {
-                var text, data;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, host.load(resource, RES.TextProcessor)];
-                        case 1:
-                            text = _a.sent();
-                            data = egret.XML.parse(text);
-                            return [2 /*return*/, data];
-                    }
-                });
-            });
-        },
-        onRemoveStart: function (host, resource) {
-            return Promise.resolve();
-        }
-    };
-    RES.SheetProcessor = {
-        onLoadStart: function (host, resource) {
-            return __awaiter(this, void 0, void 0, function () {
-                var data, imageUrl, r, texture, frames, spriteSheet, subkey, config, texture;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, host.load(resource, RES.JsonProcessor)];
-                        case 1:
-                            data = _a.sent();
-                            imageUrl = getRelativePath(resource.url, data.file);
-                            host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
-                            r = host.resourceConfig.getResource(imageUrl);
-                            if (!r) {
-                                throw 'error';
-                            }
-                            return [4 /*yield*/, host.load(r)];
-                        case 2:
-                            texture = _a.sent();
-                            frames = data.frames;
-                            if (!frames) {
-                                throw 'error';
-                            }
-                            spriteSheet = new egret.SpriteSheet(texture);
-                            for (subkey in frames) {
-                                config = frames[subkey];
-                                texture = spriteSheet.createTexture(subkey, config.x, config.y, config.w, config.h, config.offX, config.offY, config.sourceW, config.sourceH);
-                            }
-                            return [2 /*return*/, spriteSheet];
-                    }
-                });
-            });
-        },
-        onRemoveStart: function (host, resource) {
-            return Promise.resolve();
-        }
-    };
-})(RES || (RES = {}));
-//////////////////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (c) 2014-present, Egret Technology.
-//  All rights reserved.
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of the Egret nor the
-//       names of its contributors may be used to endorse or promote products
-//       derived from this software without specific prior written permission.
-//
-//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
-//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-//////////////////////////////////////////////////////////////////////////////////////
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1088,50 +1073,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var RES;
 (function (RES) {
-    var __tempCache = {};
-    RES.host = {
-        get resourceConfig() {
-            return RES['configInstance'];
-        },
-        load: function (resourceInfo, processor) {
-            if (!processor) {
-                processor = RES.host.isSupport(resourceInfo);
-            }
-            if (!processor) {
-                throw 'error';
-            }
-            return processor.onLoadStart(RES.host, resourceInfo);
-        },
-        unload: function (resource) {
-            var processor = RES.host.isSupport(resource);
-            if (processor) {
-                return processor.onRemoveStart(RES.host, resource);
-            }
-            else {
-                return Promise.resolve();
-            }
-        },
-        save: function (resource, data) {
-            __tempCache[resource.url] = data;
-        },
-        get: function (resource) {
-            return __tempCache[resource.url];
-        },
-        remove: function (resource) {
-            delete __tempCache[resource.url];
-        },
-        isSupport: function (resource) {
-            var type = resource.type;
-            var map = {
-                "image": RES.ImageProcessor,
-                "json": RES.JsonProcessor,
-                "text": RES.TextProcessor,
-                "xml": RES.XMLProcessor,
-                "sheet": RES.SheetProcessor
-            };
-            return map[type];
-        }
-    };
     /**
      * @language en_US
      * Conduct mapping injection with class definition as the value.
@@ -1530,22 +1471,6 @@ var RES;
             this.groupNameList = [];
             this.init();
         }
-        Resource.prototype.parseResKey = function (key) {
-            key = this.resConfig.getKeyByAlias(key);
-            var index = key.indexOf("#");
-            if (index >= 0) {
-                return {
-                    key: key.substr(0, index),
-                    subkey: key.substr(index + 1)
-                };
-            }
-            else {
-                return {
-                    key: key,
-                    subkey: ""
-                };
-            }
-        };
         /**
          * 注册一个自定义文件类型解析器
          * @param type 文件类型字符串，例如：bin,text,image,json等。
@@ -1558,8 +1483,7 @@ var RES;
          * 初始化
          */
         Resource.prototype.init = function () {
-            this.resConfig = new RES.ResourceConfig();
-            this.resLoader = new RES.PromiseQueue();
+            this.queue = new RES.PromiseQueue();
         };
         /**
          * 开始加载配置
@@ -1570,9 +1494,11 @@ var RES;
          */
         Resource.prototype.loadConfig = function () {
             var _this = this;
-            return RES.host.load(RES.configItem).then(function (data) {
-                _this.resConfig.parseConfig(data, "resource"); //todo
+            return RES.manager.init().then(function (data) {
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_COMPLETE);
+            }, function (error) {
+                RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_LOAD_ERROR);
+                return Promise.reject({ code: 1002 });
             });
         };
         /**
@@ -1591,7 +1517,7 @@ var RES;
          * @returns {Array<egret.ResourceItem>}
          */
         Resource.prototype.getGroupByName = function (name) {
-            return this.resConfig.getGroupByName(name);
+            return RES.manager.config.getGroupByName(name);
         };
         /**
          * 根据组名加载一组资源
@@ -1601,8 +1527,8 @@ var RES;
          */
         Resource.prototype.loadGroup = function (name, priority, reporter) {
             if (priority === void 0) { priority = 0; }
-            var resources = this.resConfig.getGroupByName(name);
-            return this.resLoader.loadGroup(resources, reporter);
+            var resources = RES.manager.config.getGroupByName(name);
+            return this.queue.loadGroup(resources, reporter);
         };
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
@@ -1615,7 +1541,7 @@ var RES;
          */
         Resource.prototype.createGroup = function (name, keys, override) {
             if (override === void 0) { override = false; }
-            return this.resConfig.createGroup(name, keys, override);
+            return RES.manager.config.createGroup(name, keys, override);
         };
         /**
          * 队列加载完成事件
@@ -1649,8 +1575,8 @@ var RES;
          * @returns {boolean}
          */
         Resource.prototype.hasRes = function (key) {
-            var name = this.parseResKey(key).key;
-            return this.resConfig.getResource(name) != null;
+            var name = RES.manager.config.parseResKey(key).key;
+            return RES.manager.config.getResource(name) != null;
         };
         /**
          * 通过key同步获取资源
@@ -1659,8 +1585,8 @@ var RES;
          * @returns {any}
          */
         Resource.prototype.getRes = function (resKey) {
-            var _a = this.parseResKey(resKey), key = _a.key, subkey = _a.subkey;
-            var r = this.resConfig.getResource(key);
+            var _a = RES.manager.config.parseResKey(resKey), key = _a.key, subkey = _a.subkey;
+            var r = RES.manager.config.getResource(key);
             if (r && RES.host.isSupport(r)) {
                 return RES.host.get(r);
             }
@@ -1668,8 +1594,8 @@ var RES;
         Resource.prototype.getResAsync = function (key, compFunc, thisObject) {
             var _this = this;
             if (compFunc) {
-                var _a = this.parseResKey(key), key = _a.key, subkey = _a.subkey;
-                var r_1 = this.resConfig.getResource(key, true);
+                var _a = RES.manager.config.parseResKey(key), key = _a.key, subkey = _a.subkey;
+                var r_1 = RES.manager.config.getResource(key, true);
                 var url = r_1.url;
                 var res = RES.host.get(r_1);
                 if (res) {
@@ -1696,9 +1622,9 @@ var RES;
          */
         Resource.prototype.getResByUrl = function (url, compFunc, thisObject, type) {
             if (type === void 0) { type = ""; }
-            var r = this.resConfig.getResource(url);
+            var r = RES.manager.config.getResource(url);
             if (!r) {
-                this.resConfig.addResourceData({ name: url, url: url });
+                RES.manager.config.addResourceData({ name: url, url: url });
             }
             this.getResAsync(url, compFunc, thisObject);
         };
@@ -1711,7 +1637,7 @@ var RES;
          */
         Resource.prototype.destroyRes = function (name, force) {
             if (force === void 0) { force = true; }
-            var group = this.resConfig.getGroup(name);
+            var group = RES.manager.config.getGroup(name);
             var remove = function (r) {
                 RES.host.unload(r);
                 RES.host.remove(r);
@@ -1724,7 +1650,7 @@ var RES;
                 return true;
             }
             else {
-                var item = this.resConfig.getResource(name);
+                var item = RES.manager.config.getResource(name);
                 if (item) {
                     remove(item);
                     return true;
@@ -1755,7 +1681,7 @@ var RES;
             //todo
         };
         Resource.prototype.addResourceData = function (data) {
-            this.resConfig.addResourceData(data);
+            RES.manager.config.addResourceData(data);
         };
         return Resource;
     }(egret.EventDispatcher));

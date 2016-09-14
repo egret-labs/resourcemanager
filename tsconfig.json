@@ -17,8 +17,10 @@
         "src/core/ResourceItem.ts",
         "src/core/ResourceConfig.ts",
         "src/core/ResourceLoader.ts",
+        "src/core/ResourceManager.ts",
+        "src/processor/Processor.ts",
         "src/shim/ResourceEvent.ts",
-        "src/analyzer/AnalyzerBase.ts",
+        //"src/analyzer/AnalyzerBase.ts",
         // "src/analyzer/BinAnalyzer.ts",
         // "src/analyzer/ImageAnalyzer.ts",
         // "src/analyzer/TextAnalyzer.ts",
@@ -28,7 +30,6 @@
         // "src/analyzer/SoundAnalyzer.ts",
         // "src/analyzer/AnimationAnalyzer.ts",
         // "src/analyzer/XMLAnalyzer.ts",
-        "src/processor/Processor.ts",
         "src/shim/Resource.ts",
         "libs/egret.d.ts"
     ]
