@@ -65,10 +65,16 @@ module RES {
 
         export var config = new ResourceConfig();
 
-        export function init():Promise<void>{
+        var queue = new PromiseQueue();
+
+        export function init(): Promise<void> {
             return host.load(configItem).then((data) => {
                 config.parseConfig(data, "resource");
-            }).catch(e => Promise.reject({code:1002}));
+            }).catch(e => Promise.reject({ code: 1002 }));
+        }
+
+        export function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<void> {
+            return queue.loadGroup(resources, reporter);
         }
 
 

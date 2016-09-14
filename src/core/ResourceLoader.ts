@@ -45,7 +45,10 @@ module RES {
 		constructor() {
 		}
 
-		public loadGroup(list: Array<ResourceInfo>, reporter?: PromiseTaskReporter): Promise<any> {
+		public loadGroup(list: ResourceInfo | ResourceInfo[], reporter?: PromiseTaskReporter): Promise<any> {
+			if (!(list instanceof Array)) {
+				list = [list];
+			}
 			let current = 0;
 			let total = list.length;
 			let mapper = (r) => host.load(r)

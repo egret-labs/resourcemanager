@@ -51,7 +51,7 @@ module RES {
      * @includeExample extension/resource/Resource.ts
      */
     export function registerAnalyzer(type: string, analyzerClass: any) {
-        instance.registerAnalyzer(type, analyzerClass);
+        throw 'unimplement';
     }
 
     /**
@@ -69,7 +69,6 @@ module RES {
      * @platform Web,Native
      */
     export function loadConfig(url?: string, resourceRoot?: string): Promise<void> {
-
         return instance.loadConfig();
     }
     /**
@@ -435,28 +434,6 @@ module RES {
          */
         public constructor() {
             super();
-            this.init();
-        }
-
-        /**
-         * 注册一个自定义文件类型解析器
-         * @param type 文件类型字符串，例如：bin,text,image,json等。
-         * @param analyzerClass 自定义解析器的类定义
-         */
-        public registerAnalyzer(type: string, analyzerClass: any): void {
-            throw 'unimplement';
-
-        }
-
-        /**
-         * 多文件队列加载器
-         */
-        private queue: PromiseQueue;
-        /**
-         * 初始化
-         */
-        private init(): void {
-            this.queue = new PromiseQueue();
         }
 
         /**
@@ -494,7 +471,6 @@ module RES {
             return manager.config.getGroupByName(name);
         }
 
-        private groupNameList: Array<any> = [];
         /**
          * 根据组名加载一组资源
 		 * @method RES.loadGroup
@@ -504,9 +480,7 @@ module RES {
         public loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<void> {
 
             let resources = manager.config.getGroupByName(name);
-            return this.queue.loadGroup(resources, reporter);
-
-
+            return manager.load(resources, reporter);
         }
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
@@ -521,32 +495,6 @@ module RES {
             return manager.config.createGroup(name, keys, override);
         }
 
-        /**
-         * 队列加载完成事件
-         */
-        // private onGroupComp(event: ResourceEvent): void {
-        //     this.loadedGroups.push(event.groupName);
-        //     this.dispatchEvent(event);
-        // }
-        /**
-         * 启动延迟的组加载
-         */
-        // private loadDelayGroups(): void {
-        //     var groupNameList: Array<any> = this.groupNameList;
-        //     this.groupNameList = [];
-        //     var length: number = groupNameList.length;
-        //     for (var i: number = 0; i < length; i++) {
-        //         var item: any = groupNameList[i];
-        //         this.loadGroup(item.name, item.priority);
-        //     }
-
-        // }
-        /**
-         * 队列加载失败事件
-         */
-        // private onGroupError(event: ResourceEvent): void {
-        //     this.dispatchEvent(event);
-        // }
         /**
          * 检查配置文件里是否含有指定的资源
 		 * @method RES.hasRes
@@ -571,8 +519,6 @@ module RES {
             if (r && host.isSupport(r)) {
                 return host.get(r);
             }
-
-
         }
 
         /**
@@ -584,29 +530,15 @@ module RES {
          */
         public getResAsync(key: string): Promise<any>
         public getResAsync(key: string, compFunc: Function, thisObject: any): void
-        public getResAsync(key: string, compFunc?: Function, thisObject?: any): void | Promise<any> {
+        public getResAsync(key: string, compFunc?: Function, thisObject?: any): Promise<void> | void {
 
-            if (compFunc) {
-                var {key, subkey} = manager.config.parseResKey(key);
-                let r = manager.config.getResource(key, true);
-                let url = r.url;
-                let res = host.get(r);
-                if (res) {
-                    egret.$callAsync(compFunc, thisObject, res, key);
+            var {key, subkey} = manager.config.parseResKey(key);
+            let r = manager.config.getResource(key, true);
+            return manager.load(r).then(value => {
+                if (compFunc) {
+                    compFunc.call(thisObject, value, r.url);
                 }
-                else {
-                    host.load(r).then((value) => {
-                        RES.host.save(r, value);
-                        compFunc.call(thisObject, value, r.url);
-                    });
-                }
-            }
-            else {
-                return new Promise((reslove, reject) => getResAsync(key, reslove, this));
-            }
-
-
-
+            })
         }
 
         /**
@@ -617,12 +549,12 @@ module RES {
 		 * @param thisObject {any}
 		 * @param type {string}
          */
-        public getResByUrl(url: string, compFunc: Function, thisObject: any, type: string = ""): void {
+        public getResByUrl(url: string, compFunc: Function, thisObject: any, type: string = ""): Promise<void> | void {
             let r = manager.config.getResource(url);
             if (!r) {
                 manager.config.addResourceData({ name: url, url: url });
             }
-            this.getResAsync(url, compFunc, thisObject);
+            return this.getResAsync(url, compFunc, thisObject);
         }
 
         /**
