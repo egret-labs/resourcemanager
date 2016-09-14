@@ -2,7 +2,7 @@
  * 新版 RES API
  */
 
-@RES.mapConfig<"resource" | "resource_ios">("resource-new1111.1json", () => "resource")
+@RES.mapConfig<"resource" | "resource_ios">("resource-new.json", () => "resource")
 class Main_New_ES6_API extends egret.DisplayObjectContainer {
 
     static sleep(time): Promise<void> {

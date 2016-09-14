@@ -68,7 +68,7 @@ module RES {
         export function init():Promise<void>{
             return host.load(configItem).then((data) => {
                 config.parseConfig(data, "resource");
-            });
+            }).catch(e => Promise.reject({code:1002}));
         }
 
 

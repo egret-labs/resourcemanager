@@ -2,7 +2,7 @@
  * 旧版 RES API
  */
 
-@RES.mapConfig<"resource" | "resource_ios">("resource-new.json", () => "resource")
+@RES.mapConfig<"resource" | "resource_ios">("resource-new111.json", () => "resource")
 class Main_Old_API extends egret.DisplayObjectContainer {
 
     public constructor() {
@@ -18,7 +18,12 @@ class Main_Old_API extends egret.DisplayObjectContainer {
         //初始化Resource资源加载库
         //initiate Resource loading library
         RES.addEventListener(RES.ResourceEvent.CONFIG_COMPLETE, this.onConfigComplete, this);
+        RES.addEventListener(RES.ResourceEvent.CONFIG_LOAD_ERROR, this.onConfigError, this);
         RES.loadConfig();
+    }
+
+    private onConfigError(e) {
+        console.log(e);
     }
 
     /**
@@ -26,6 +31,7 @@ class Main_Old_API extends egret.DisplayObjectContainer {
      * configuration file loading is completed, start to pre-load the preload resource group
      */
     private onConfigComplete(event: RES.ResourceEvent): void {
+        alert(111)
         RES.removeEventListener(RES.ResourceEvent.CONFIG_COMPLETE, this.onConfigComplete, this);
         RES.addEventListener(RES.ResourceEvent.GROUP_COMPLETE, this.onResourceLoadComplete, this);
         RES.addEventListener(RES.ResourceEvent.GROUP_LOAD_ERROR, this.onResourceLoadError, this);

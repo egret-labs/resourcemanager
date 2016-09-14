@@ -472,7 +472,6 @@ module RES {
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
             }, error => {
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_LOAD_ERROR);
-                return Promise.reject({ code: 1002 });
             })
         }
 

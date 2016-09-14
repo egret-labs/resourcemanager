@@ -641,7 +641,7 @@ var RES;
         function init() {
             return RES.host.load(RES.configItem).then(function (data) {
                 manager.config.parseConfig(data, "resource");
-            });
+            }).catch(function (e) { return Promise.reject({ code: 1002 }); });
         }
         manager.init = init;
     })(manager = RES.manager || (RES.manager = {}));
@@ -1498,7 +1498,6 @@ var RES;
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_COMPLETE);
             }, function (error) {
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_LOAD_ERROR);
-                return Promise.reject({ code: 1002 });
             });
         };
         /**
