@@ -74,7 +74,7 @@ module RES {
         }
 
         export function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<void> {
-            return queue.loadGroup(resources, reporter);
+            return queue.load(resources, reporter);
         }
 
 

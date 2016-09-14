@@ -573,6 +573,9 @@ var RES;
         function PromiseQueue() {
         }
         PromiseQueue.prototype.loadGroup = function (list, reporter) {
+            if (!(list instanceof Array)) {
+                list = [list];
+            }
             var current = 0;
             var total = list.length;
             var mapper = function (r) { return RES.host.load(r)
@@ -638,12 +641,17 @@ var RES;
     var manager;
     (function (manager) {
         manager.config = new RES.ResourceConfig();
+        var queue = new RES.PromiseQueue();
         function init() {
             return RES.host.load(RES.configItem).then(function (data) {
                 manager.config.parseConfig(data, "resource");
             }).catch(function (e) { return Promise.reject({ code: 1002 }); });
         }
         manager.init = init;
+        function load(resources, reporter) {
+            return queue.loadGroup(resources, reporter);
+        }
+        manager.load = load;
     })(manager = RES.manager || (RES.manager = {}));
 })(RES || (RES = {}));
 var RES;
@@ -1092,7 +1100,7 @@ var RES;
      * @includeExample extension/resource/Resource.ts
      */
     function registerAnalyzer(type, analyzerClass) {
-        instance.registerAnalyzer(type, analyzerClass);
+        throw 'unimplement';
     }
     RES.registerAnalyzer = registerAnalyzer;
     /**
@@ -1468,23 +1476,7 @@ var RES;
          */
         function Resource() {
             _super.call(this);
-            this.groupNameList = [];
-            this.init();
         }
-        /**
-         * 注册一个自定义文件类型解析器
-         * @param type 文件类型字符串，例如：bin,text,image,json等。
-         * @param analyzerClass 自定义解析器的类定义
-         */
-        Resource.prototype.registerAnalyzer = function (type, analyzerClass) {
-            throw 'unimplement';
-        };
-        /**
-         * 初始化
-         */
-        Resource.prototype.init = function () {
-            this.queue = new RES.PromiseQueue();
-        };
         /**
          * 开始加载配置
          * @method RES.loadConfig
@@ -1527,7 +1519,7 @@ var RES;
         Resource.prototype.loadGroup = function (name, priority, reporter) {
             if (priority === void 0) { priority = 0; }
             var resources = RES.manager.config.getGroupByName(name);
-            return this.queue.loadGroup(resources, reporter);
+            return RES.manager.load(resources, reporter);
         };
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
@@ -1542,31 +1534,6 @@ var RES;
             if (override === void 0) { override = false; }
             return RES.manager.config.createGroup(name, keys, override);
         };
-        /**
-         * 队列加载完成事件
-         */
-        // private onGroupComp(event: ResourceEvent): void {
-        //     this.loadedGroups.push(event.groupName);
-        //     this.dispatchEvent(event);
-        // }
-        /**
-         * 启动延迟的组加载
-         */
-        // private loadDelayGroups(): void {
-        //     var groupNameList: Array<any> = this.groupNameList;
-        //     this.groupNameList = [];
-        //     var length: number = groupNameList.length;
-        //     for (var i: number = 0; i < length; i++) {
-        //         var item: any = groupNameList[i];
-        //         this.loadGroup(item.name, item.priority);
-        //     }
-        // }
-        /**
-         * 队列加载失败事件
-         */
-        // private onGroupError(event: ResourceEvent): void {
-        //     this.dispatchEvent(event);
-        // }
         /**
          * 检查配置文件里是否含有指定的资源
          * @method RES.hasRes
@@ -1591,25 +1558,13 @@ var RES;
             }
         };
         Resource.prototype.getResAsync = function (key, compFunc, thisObject) {
-            var _this = this;
-            if (compFunc) {
-                var _a = RES.manager.config.parseResKey(key), key = _a.key, subkey = _a.subkey;
-                var r_1 = RES.manager.config.getResource(key, true);
-                var url = r_1.url;
-                var res = RES.host.get(r_1);
-                if (res) {
-                    egret.$callAsync(compFunc, thisObject, res, key);
+            var _a = RES.manager.config.parseResKey(key), key = _a.key, subkey = _a.subkey;
+            var r = RES.manager.config.getResource(key, true);
+            return RES.manager.load(r).then(function (value) {
+                if (compFunc) {
+                    compFunc.call(thisObject, value, r.url);
                 }
-                else {
-                    RES.host.load(r_1).then(function (value) {
-                        RES.host.save(r_1, value);
-                        compFunc.call(thisObject, value, r_1.url);
-                    });
-                }
-            }
-            else {
-                return new Promise(function (reslove, reject) { return getResAsync(key, reslove, _this); });
-            }
+            });
         };
         /**
          * 通过url获取资源
@@ -1625,7 +1580,7 @@ var RES;
             if (!r) {
                 RES.manager.config.addResourceData({ name: url, url: url });
             }
-            this.getResAsync(url, compFunc, thisObject);
+            return this.getResAsync(url, compFunc, thisObject);
         };
         /**
          * 销毁单个资源文件或一组资源的缓存数据,返回是否删除成功。

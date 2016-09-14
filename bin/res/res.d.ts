@@ -329,6 +329,7 @@ declare module RES {
     namespace manager {
         var config: ResourceConfig;
         function init(): Promise<void>;
+        function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<void>;
     }
 }
 declare module RES {
@@ -883,20 +884,6 @@ declare module RES {
          */
         constructor();
         /**
-         * 注册一个自定义文件类型解析器
-         * @param type 文件类型字符串，例如：bin,text,image,json等。
-         * @param analyzerClass 自定义解析器的类定义
-         */
-        registerAnalyzer(type: string, analyzerClass: any): void;
-        /**
-         * 多文件队列加载器
-         */
-        private queue;
-        /**
-         * 初始化
-         */
-        private init();
-        /**
          * 开始加载配置
          * @method RES.loadConfig
          * @param url {string}
@@ -918,7 +905,6 @@ declare module RES {
          * @returns {Array<egret.ResourceItem>}
          */
         getGroupByName(name: string): Array<ResourceInfo>;
-        private groupNameList;
         /**
          * 根据组名加载一组资源
          * @method RES.loadGroup
@@ -936,15 +922,6 @@ declare module RES {
          * @returns {boolean}
          */
         createGroup(name: string, keys: Array<string>, override?: boolean): boolean;
-        /**
-         * 队列加载完成事件
-         */
-        /**
-         * 启动延迟的组加载
-         */
-        /**
-         * 队列加载失败事件
-         */
         /**
          * 检查配置文件里是否含有指定的资源
          * @method RES.hasRes
@@ -976,7 +953,7 @@ declare module RES {
          * @param thisObject {any}
          * @param type {string}
          */
-        getResByUrl(url: string, compFunc: Function, thisObject: any, type?: string): void;
+        getResByUrl(url: string, compFunc: Function, thisObject: any, type?: string): Promise<void> | void;
         /**
          * 销毁单个资源文件或一组资源的缓存数据,返回是否删除成功。
          * @method RES.destroyRes

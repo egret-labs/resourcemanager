@@ -45,7 +45,7 @@ module RES {
 		constructor() {
 		}
 
-		public loadGroup(list: ResourceInfo | ResourceInfo[], reporter?: PromiseTaskReporter): Promise<any> {
+		public load(list: ResourceInfo | ResourceInfo[], reporter?: PromiseTaskReporter): Promise<any> {
 			if (!(list instanceof Array)) {
 				list = [list];
 			}
