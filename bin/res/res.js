@@ -89,10 +89,6 @@ var RES;
         return FileSystem.getFile(url);
     }
     RES.getResourceInfo = getResourceInfo;
-    function print() {
-        console.log(RES.data);
-    }
-    RES.print = print;
     var FileSystem;
     (function (FileSystem) {
         FileSystem.data = {};
@@ -526,6 +522,20 @@ var RES;
 var RES;
 (function (RES) {
     var __tempCache = {};
+    function profile() {
+        console.log(RES.FileSystem.data);
+        console.log(__tempCache);
+        //todo 
+        var totalImageSize = 0;
+        for (var key in __tempCache) {
+            var img = __tempCache[key];
+            if (img instanceof egret.Texture) {
+                totalImageSize += img._bitmapWidth * img._bitmapHeight * 4;
+            }
+        }
+        console.log("gpu size : " + (totalImageSize / 1024).toFixed(3) + "kb");
+    }
+    RES.profile = profile;
     RES.host = {
         get resourceConfig() {
             return manager.config;
@@ -543,6 +553,7 @@ var RES;
                 if (cache) {
                     RES.host.save(r, data);
                 }
+                return data;
             });
         },
         unload: function (r, cache) {
@@ -550,10 +561,11 @@ var RES;
             var processor = RES.host.isSupport(r);
             if (processor) {
                 return processor.onRemoveStart(RES.host, r)
-                    .then(function () {
+                    .then(function (result) {
                     if (cache) {
                         RES.host.remove(r);
                     }
+                    return result;
                 });
             }
             else {

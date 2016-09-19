@@ -149,7 +149,6 @@ declare module RES {
     }
     var data: Data;
     function getResourceInfo(url: string): File;
-    function print(): void;
     namespace FileSystem {
         var data: Dictionary;
         function addFile(filename: string, type?: string): void;
@@ -253,6 +252,7 @@ declare module RES {
 declare module RES {
 }
 declare module RES {
+    function profile(): void;
     var host: ProcessHost;
     namespace manager {
         var config: ResourceConfig;

@@ -2,6 +2,20 @@ module RES {
 
     const __tempCache = {};
 
+    export function profile() {
+        console.log(FileSystem.data);
+        console.log(__tempCache);
+        //todo 
+        let totalImageSize = 0;
+        for (var key in __tempCache) {
+            let img = __tempCache[key]
+            if (img instanceof egret.Texture) {
+                totalImageSize += img._bitmapWidth * img._bitmapHeight * 4;
+            }
+        }
+        console.log("gpu size : " + (totalImageSize / 1024).toFixed(3) + "kb");
+    }
+
     export var host: ProcessHost = {
 
         get resourceConfig() {
@@ -20,6 +34,7 @@ module RES {
                     if (cache) {
                         host.save(r, data);
                     }
+                    return data;
                 }
                 )
         },
@@ -28,10 +43,11 @@ module RES {
             let processor = host.isSupport(r);
             if (processor) {
                 return processor.onRemoveStart(host, r)
-                    .then(() => {
+                    .then(result => {
                         if (cache) {
                             host.remove(r);
                         }
+                        return result;
                     }
                     )
             }

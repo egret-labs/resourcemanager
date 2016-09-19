@@ -34,10 +34,6 @@ module RES {
         return FileSystem.getFile(url);
     }
 
-    export function print() {
-        console.log(data);
-    }
-
     export namespace FileSystem {
 
 

@@ -2,7 +2,7 @@
  * 旧版 RES API
  */
 
-@RES.mapConfig<"resource" | "resource_ios">("resource-new111.json", () => "resource")
+@RES.mapConfig<"resource" | "resource_ios">("resource-new.json", () => "resource")
 class Main_Old_API extends egret.DisplayObjectContainer {
 
     public constructor() {
