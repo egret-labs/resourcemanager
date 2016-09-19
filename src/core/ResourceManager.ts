@@ -5,7 +5,7 @@ module RES {
     export var host: ProcessHost = {
 
         get resourceConfig() {
-            return RES['configInstance']
+            return manager.config;
         },
 
         load: (resourceInfo: ResourceInfo, processor: Processor | undefined) => {
