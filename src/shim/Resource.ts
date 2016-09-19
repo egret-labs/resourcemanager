@@ -570,7 +570,7 @@ module RES {
             let remove = (r: ResourceInfo) => {
 
                 host.unload(r);
-                host.remove(r)
+                // host.remove(r)
             }
 
             if (group && group.length > 0) {

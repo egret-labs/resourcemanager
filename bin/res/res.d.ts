@@ -259,9 +259,6 @@ declare module RES {
         function init(): Promise<void>;
         function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<void>;
     }
-}
-declare module RES {
-    function getRelativePath(url: string, file: string): string;
     interface ProcessHost {
         resourceConfig: ResourceConfig;
         load: (resource: ResourceInfo, processor?: Processor) => Promise<any>;
@@ -274,6 +271,9 @@ declare module RES {
         onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
         onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
     }
+}
+declare module RES {
+    function getRelativePath(url: string, file: string): string;
     var ImageProcessor: Processor;
     var TextProcessor: Processor;
     var JsonProcessor: Processor;

@@ -8,20 +8,32 @@ module RES {
             return manager.config;
         },
 
-        load: (resourceInfo: ResourceInfo, processor: Processor | undefined) => {
+        load: (r: ResourceInfo, processor: Processor | undefined, cache: boolean = true) => {
             if (!processor) {
-                processor = host.isSupport(resourceInfo);
+                processor = host.isSupport(r);
             }
             if (!processor) {
                 throw 'error';
             }
-            return processor.onLoadStart(host, resourceInfo)
+            return processor.onLoadStart(host, r)
+                .then(data => {
+                    if (cache) {
+                        host.save(r, data);
+                    }
+                }
+                )
         },
 
-        unload(resource: ResourceInfo) {
-            let processor = host.isSupport(resource);
+        unload(r: ResourceInfo, cache: boolean = true) {
+            let processor = host.isSupport(r);
             if (processor) {
-                return processor.onRemoveStart(host, resource);
+                return processor.onRemoveStart(host, r)
+                    .then(() => {
+                        if (cache) {
+                            host.remove(r);
+                        }
+                    }
+                    )
             }
             else {
                 return Promise.resolve();
@@ -76,6 +88,37 @@ module RES {
         export function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<void> {
             return queue.load(resources, reporter);
         }
+
+
+    }
+
+
+    export interface ProcessHost {
+
+        resourceConfig: ResourceConfig;
+
+        load: (resource: ResourceInfo, processor?: Processor) => Promise<any>;
+
+        unload: (resource: ResourceInfo) => Promise<any>
+
+        save: (rexource: ResourceInfo, data: any) => void;
+
+        get: (resource: ResourceInfo) => any;
+
+        remove: (resource: ResourceInfo) => void;
+
+        /**
+         * @internal
+         */
+        isSupport: (resource: ResourceInfo) => Processor | undefined;
+
+    }
+
+    export interface Processor {
+
+        onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
+
+        onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
 
 
     }

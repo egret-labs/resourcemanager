@@ -511,7 +511,7 @@ var RES;
             var total = list.length;
             var mapper = function (r) { return RES.host.load(r)
                 .then(function (response) {
-                RES.host.save(r, response);
+                // host.save(r, response);
                 current++;
                 if (reporter && reporter.onProgress) {
                     reporter.onProgress(current, total);
@@ -530,19 +530,31 @@ var RES;
         get resourceConfig() {
             return manager.config;
         },
-        load: function (resourceInfo, processor) {
+        load: function (r, processor, cache) {
+            if (cache === void 0) { cache = true; }
             if (!processor) {
-                processor = RES.host.isSupport(resourceInfo);
+                processor = RES.host.isSupport(r);
             }
             if (!processor) {
                 throw 'error';
             }
-            return processor.onLoadStart(RES.host, resourceInfo);
+            return processor.onLoadStart(RES.host, r)
+                .then(function (data) {
+                if (cache) {
+                    RES.host.save(r, data);
+                }
+            });
         },
-        unload: function (resource) {
-            var processor = RES.host.isSupport(resource);
+        unload: function (r, cache) {
+            if (cache === void 0) { cache = true; }
+            var processor = RES.host.isSupport(r);
             if (processor) {
-                return processor.onRemoveStart(RES.host, resource);
+                return processor.onRemoveStart(RES.host, r)
+                    .then(function () {
+                    if (cache) {
+                        RES.host.remove(r);
+                    }
+                });
             }
             else {
                 return Promise.resolve();
@@ -1594,7 +1606,7 @@ var RES;
             var group = RES.manager.config.getGroup(name);
             var remove = function (r) {
                 RES.host.unload(r);
-                RES.host.remove(r);
+                // host.remove(r)
             };
             if (group && group.length > 0) {
                 for (var _i = 0, group_2 = group; _i < group_2.length; _i++) {

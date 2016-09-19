@@ -28,7 +28,7 @@ module RES {
             paramUrl = params[0];
         }
 
-        var index: number = url.lastIndexOf("/");
+        var index = url.lastIndexOf("/");
         if (index != -1) {
             url = url.substring(0, index + 1) + file;
         }
@@ -37,45 +37,13 @@ module RES {
         }
         return url + paramUrl;
     }
-
-
-    export interface ProcessHost {
-
-        resourceConfig: ResourceConfig;
-
-        load: (resource: ResourceInfo, processor?: Processor) => Promise<any>;
-
-        unload: (resource: ResourceInfo) => Promise<any>
-
-        save: (rexource: ResourceInfo, data: any) => void;
-
-        get: (resource: ResourceInfo) => any;
-
-        remove: (resource: ResourceInfo) => void;
-
-        /**
-         * @internal
-         */
-        isSupport: (resource: ResourceInfo) => Processor | undefined;
-
-    }
-
-    export interface Processor {
-
-        onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
-
-        onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
-
-
-    }
-
     export var ImageProcessor: Processor = {
 
         async onLoadStart(host, resource) {
             var loader = new egret.ImageLoader();
             loader.load("resource/" + resource.url);
             var bitmapData = await promisify(loader, resource);
-            var texture: egret.Texture = new egret.Texture();
+            var texture = new egret.Texture();
             texture._setBitmapData(bitmapData);
             // var config: any = resItem.data;
             // if (config && config["scale9grid"]) {
@@ -158,10 +126,10 @@ module RES {
             if (!frames) {
                 throw 'error';
             }
-            var spriteSheet: egret.SpriteSheet = new egret.SpriteSheet(texture);
+            var spriteSheet = new egret.SpriteSheet(texture);
             for (var subkey in frames) {
                 var config: any = frames[subkey];
-                var texture: egret.Texture = spriteSheet.createTexture(subkey, config.x, config.y, config.w, config.h, config.offX, config.offY, config.sourceW, config.sourceH);
+                var texture = spriteSheet.createTexture(subkey, config.x, config.y, config.w, config.h, config.offX, config.offY, config.sourceW, config.sourceH);
                 // if (config["scale9grid"]) {
                 //     var str: string = config["scale9grid"];
                 //     var list: Array<string> = str.split(",");
