@@ -27,9 +27,6 @@ module RES {
         FILE, DICTIONARY
     }
 
-
-    export var data: Data;
-
     export function getResourceInfo(url: string): File {
         return FileSystem.getFile(url);
     }

@@ -7,41 +7,42 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (sent[0] === 1) throw sent[1]; return sent[1]; }, trys: [], stack: [] }, sent, f;
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t;
+    return { next: verb(0), "throw": verb(1), "return": verb(2) };
+    function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (1) {
-            if (_.done) switch (op[0]) {
-                case 0: return { value: void 0, done: true };
-                case 1: case 6: throw op[1];
-                case 2: return { value: op[1], done: true };
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
             }
-            try {
-                switch (f = 1, op[0]) {
-                    case 0: case 1: sent = op; break;
-                    case 4: return _.label++, { value: op[1], done: false };
-                    case 7: op = _.stack.pop(), _.trys.pop(); continue;
-                    default:
-                        var r = _.trys.length > 0 && _.trys[_.trys.length - 1];
-                        if (!r && (op[0] === 6 || op[0] === 2)) { _.done = 1; continue; }
-                        if (op[0] === 3 && (!r || (op[1] > r[0] && op[1] < r[3]))) { _.label = op[1]; break; }
-                        if (op[0] === 6 && _.label < r[1]) { _.label = r[1], sent = op; break; }
-                        if (r && _.label < r[2]) { _.label = r[2], _.stack.push(op); break; }
-                        if (r[2]) { _.stack.pop(); }
-                        _.trys.pop();
-                        continue;
-                }
-                op = body.call(thisArg, _);
-            }
-            catch (e) { op = [6, e]; }
-            finally { f = 0, sent = void 0; }
-        }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
-    return {
-        next: function (v) { return step([0, v]); },
-        "throw": function (v) { return step([1, v]); },
-        "return": function (v) { return step([2, v]); }
-    };
+};
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var __promise__line = "\n(function(t){function z(){for(var a=0;a<g.length;a++)g[a][0](g[a][1]);g=[];m=!1}function n(a,b){g.push([a,b]);m||(m=!0,A(z,0))}function B(a,b){function c(a){p(b,a)}function h(a){k(b,a)}try{a(c,h)}catch(d){h(d)}}function u(a){var b=a.owner,c=b.state_,b=b.data_,h=a[c];a=a.then;if(\"function\"===typeof h){c=l;try{b=h(b)}catch(d){k(a,d)}}v(a,b)||(c===l&&p(a,b),c===q&&k(a,b))}function v(a,b){var c;try{if(a===b)throw new TypeError(\"A promises callback cannot return that same promise.\");if(b&&(\"function\"===\ntypeof b||\"object\"===typeof b)){var h=b.then;if(\"function\"===typeof h)return h.call(b,function(d){c||(c=!0,b!==d?p(a,d):w(a,d))},function(b){c||(c=!0,k(a,b))}),!0}}catch(d){return c||k(a,d),!0}return!1}function p(a,b){a!==b&&v(a,b)||w(a,b)}function w(a,b){a.state_===r&&(a.state_=x,a.data_=b,n(C,a))}function k(a,b){a.state_===r&&(a.state_=x,a.data_=b,n(D,a))}function y(a){var b=a.then_;a.then_=void 0;for(a=0;a<b.length;a++)u(b[a])}function C(a){a.state_=l;y(a)}function D(a){a.state_=q;y(a)}function e(a){if(\"function\"!==\ntypeof a)throw new TypeError(\"Promise constructor takes a function argument\");if(!1===this instanceof e)throw new TypeError(\"Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.\");this.then_=[];B(a,this)}var f=t.Promise,s=f&&\"resolve\"in f&&\"reject\"in f&&\"all\"in f&&\"race\"in f&&function(){var a;new f(function(b){a=b});return\"function\"===typeof a}();\"undefined\"!==typeof exports&&exports?(exports.Promise=s?f:e,exports.Polyfill=e):\"function\"==\ntypeof define&&define.amd?define(function(){return s?f:e}):s||(t.Promise=e);var r=\"pending\",x=\"sealed\",l=\"fulfilled\",q=\"rejected\",E=function(){},A=\"undefined\"!==typeof setImmediate?setImmediate:setTimeout,g=[],m;e.prototype={constructor:e,state_:r,then_:null,data_:void 0,then:function(a,b){var c={owner:this,then:new this.constructor(E),fulfilled:a,rejected:b};this.state_===l||this.state_===q?n(u,c):this.then_.push(c);return c.then},\"catch\":function(a){return this.then(null,a)}};e.all=function(a){if(\"[object Array]\"!==\nObject.prototype.toString.call(a))throw new TypeError(\"You must pass an array to Promise.all().\");return new this(function(b,c){function h(a){e++;return function(c){d[a]=c;--e||b(d)}}for(var d=[],e=0,f=0,g;f<a.length;f++)(g=a[f])&&\"function\"===typeof g.then?g.then(h(f),c):d[f]=g;e||b(d)})};e.race=function(a){if(\"[object Array]\"!==Object.prototype.toString.call(a))throw new TypeError(\"You must pass an array to Promise.race().\");return new this(function(b,c){for(var e=0,d;e<a.length;e++)(d=a[e])&&\"function\"===\ntypeof d.then?d.then(b,c):b(d)})};e.resolve=function(a){return a&&\"object\"===typeof a&&a.constructor===this?a:new this(function(b){b(a)})};e.reject=function(a){return new this(function(b,c){c(a)})}})(\"undefined\"!=typeof window?window:\"undefined\"!=typeof global?global:\"undefined\"!=typeof self?self:this);\n";
 eval(__promise__line);
@@ -805,11 +806,6 @@ var RES;
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var RES;
 (function (RES) {
     /**
@@ -1097,12 +1093,6 @@ var RES;
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 var RES;
 (function (RES) {
     /**
