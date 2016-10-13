@@ -1,100 +1,54 @@
 /**
- * 旧版 RES API
+ * 新版 RES API
  */
 
 @RES.mapConfig<"resource" | "resource_ios">("resource-new.json", () => "resource")
 class Main extends egret.DisplayObjectContainer {
 
+    static sleep(time): Promise<void> {
+        return new Promise<void>((reslove, reject) => {
+            setTimeout(reslove, time);
+        });
+    }
+
     public constructor() {
 
         super();
-        this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
+        this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
     }
 
     private onAddToStage(event: egret.Event) {
-        //设置加载进度界面
-        //Config to load process interface
 
-        //初始化Resource资源加载库
-        //initiate Resource loading library
-        RES.addEventListener(RES.ResourceEvent.CONFIG_COMPLETE, this.onConfigComplete, this);
-        RES.addEventListener(RES.ResourceEvent.CONFIG_LOAD_ERROR, this.onConfigError, this);
-        RES.loadConfig();
-    }
 
-    private onConfigError(e) {
-        console.log(e);
-    }
+        let reportrer = {
 
-    /**
-     * 配置文件加载完成,开始预加载preload资源组。
-     * configuration file loading is completed, start to pre-load the preload resource group
-     */
-    private onConfigComplete(event: RES.ResourceEvent): void {
-        alert(111)
-        RES.removeEventListener(RES.ResourceEvent.CONFIG_COMPLETE, this.onConfigComplete, this);
-        RES.addEventListener(RES.ResourceEvent.GROUP_COMPLETE, this.onResourceLoadComplete, this);
-        RES.addEventListener(RES.ResourceEvent.GROUP_LOAD_ERROR, this.onResourceLoadError, this);
-        RES.addEventListener(RES.ResourceEvent.GROUP_PROGRESS, this.onResourceProgress, this);
-        RES.addEventListener(RES.ResourceEvent.ITEM_LOAD_ERROR, this.onItemLoadError, this);
-        RES.loadGroup("preload");
-    }
-
-    /**
-     * preload资源组加载完成
-     * Preload resource group is loaded
-     */
-    private onResourceLoadComplete(event: RES.ResourceEvent): void {
-        if (event.groupName == "preload") {
-            this.createGameScene();
-
-            setTimeout(() => {
-                RES.destroyRes("preload");
-                RES.getResAsync("sheet_json", () => {
-                    let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
-                    this.sky.texture = spritesheet.getTexture("bg_jpg");
-                }, this);
-                // RES.createGroup("tempGroup", ["sheet_json"]);
-                // RES.loadGroup("tempGroup")
-            }, 1000);
-        }
-        else if (event.groupName == "tempGroup") {
-            let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
-            this.sky.texture = spritesheet.getTexture("bg_jpg");
+            onProgress: (current, total) => {
+                console.log(current, total);
+            }
 
         }
+
+        RES.loadConfig()
+            .then(() => RES.loadGroup("preload", 0, reportrer))
+            .then(() => this.createGameScene())
+            .then(() => sleep(1000))
+            .then(() => RES.destroyRes("preload"))
+            // .then(() => {
+            //     RES.createGroup("tempGroup", ["sheet_json"]);
+            //     return RES.loadGroup("tempGroup")
+            // })
+            .then(() => RES.getResAsync("sheet_json"))
+            .then(() => sleep(1000))
+            .then(() => {
+                let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
+                this.sky.texture = spritesheet.getTexture("bg_jpg");
+            }).catch((e) => {
+                console.warn(e);
+                console.log (e.stack)
+                // throw e;
+            });
     }
 
-    /**
-     * 资源组加载出错
-     *  The resource group loading failed
-     */
-    private onItemLoadError(event: RES.ResourceEvent): void {
-        console.warn("Url:" + event.resItem.url + " has failed to load");
-    }
-
-    /**
-     * 资源组加载出错
-     *  The resource group loading failed
-     */
-    private onResourceLoadError(event: RES.ResourceEvent): void {
-        //TODO
-        console.warn("Group:" + event.groupName + " has failed to load");
-        //忽略加载失败的项目
-        //Ignore the loading failed projects
-        this.onResourceLoadComplete(event);
-    }
-
-    /**
-     * preload资源组加载进度
-     * Loading process of preload resource group
-     */
-    private onResourceProgress(event: RES.ResourceEvent): void {
-
-
-    }
-
-    private textfield: egret.TextField;
     private sky: egret.Bitmap;
 
     /**
@@ -104,8 +58,8 @@ class Main extends egret.DisplayObjectContainer {
     private createGameScene(): void {
         var sky: egret.Bitmap = this.createBitmapByName("bg_jpg");
         this.addChild(sky);
-        var stageW: number = this.stage.stageWidth;
-        var stageH: number = this.stage.stageHeight;
+        var stageW = this.stage.stageWidth;
+        var stageH = this.stage.stageHeight;
         sky.width = stageW;
         sky.height = stageH;
         this.sky = sky;
@@ -124,4 +78,12 @@ class Main extends egret.DisplayObjectContainer {
         result.texture = texture;
         return result;
     }
+}
+
+
+function sleep(time): Promise<void> {
+    return new Promise<void>((reslove, reject) => {
+        setTimeout(reslove, time);
+    });
+
 }
