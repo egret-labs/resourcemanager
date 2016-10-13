@@ -10,9 +10,7 @@ var game_file_list = [
 	"libs/modules/res/res.js",
 	"libs/modules/eui/eui.js",
 	"libs/modules/dragonBones/dragonBones.js",
-	"bin-debug/Main_New_ES6_API.js",
-	"bin-debug/Main_New_ES7_API.js",
-	"bin-debug/Main_Old_API.js",
+	"bin-debug/Main.js",
 	//----auto game_file_list end----
 ];
 
@@ -40,7 +38,7 @@ egret_native.egretStart = function () {
     var option = {
         //以下为自动修改，请勿修改
         //----auto option start----
-		entryClassName: "Main_New_ES6_API",
+		entryClassName: "Main",
 		frameRate: 30,
 		scaleMode: "showAll",
 		contentWidth: 640,
