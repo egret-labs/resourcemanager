@@ -31,7 +31,6 @@ class Main extends egret.DisplayObjectContainer {
      * configuration file loading is completed, start to pre-load the preload resource group
      */
     private onConfigComplete(event: RES.ResourceEvent): void {
-        alert(111)
         RES.removeEventListener(RES.ResourceEvent.CONFIG_COMPLETE, this.onConfigComplete, this);
         RES.addEventListener(RES.ResourceEvent.GROUP_COMPLETE, this.onResourceLoadComplete, this);
         RES.addEventListener(RES.ResourceEvent.GROUP_LOAD_ERROR, this.onResourceLoadError, this);

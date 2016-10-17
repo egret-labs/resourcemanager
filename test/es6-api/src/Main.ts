@@ -20,7 +20,7 @@ class Main extends egret.DisplayObjectContainer {
                 console.log(current, total);
             }
         }
-
+        
         RES.loadConfig()
             .then(() => RES.loadGroup("preload", 0, reportrer))
             .then(() => this.createGameScene())
