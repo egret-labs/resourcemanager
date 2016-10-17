@@ -149,7 +149,7 @@ var RES;
     function mapConfig(url, selector) {
         return function (target) {
             var resourceRoot;
-            var type = "json";
+            var type = "script";
             if (typeof selector == "string") {
                 resourceRoot = selector;
             }
@@ -557,7 +557,8 @@ var RES;
                 "json": RES.JsonProcessor,
                 "text": RES.TextProcessor,
                 "xml": RES.XMLProcessor,
-                "sheet": RES.SheetProcessor
+                "sheet": RES.SheetProcessor,
+                "script": RES.ScriptProcessor
             };
             return map[type];
         }
@@ -701,6 +702,27 @@ var RES;
                             text = _a.sent();
                             data = egret.XML.parse(text);
                             return [2 /*return*/, data];
+                    }
+                });
+            });
+        },
+        onRemoveStart: function (host, resource) {
+            return Promise.resolve();
+        }
+    };
+    RES.ScriptProcessor = {
+        onLoadStart: function (host, resource) {
+            return __awaiter(this, void 0, void 0, function () {
+                var text, f, result;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, host.load(resource, RES.TextProcessor)];
+                        case 1:
+                            text = _a.sent();
+                            f = new Function('return ' + text);
+                            result = f();
+                            console.log(result, '111');
+                            return [2 /*return*/, result];
                     }
                 });
             });
@@ -1056,7 +1078,7 @@ var RES;
         descriptor.value = function () {
             if (!RES['configItem']) {
                 var url = "config.resjs";
-                RES['configItem'] = { url: url, resourceRoot: "resource", type: "json", name: url };
+                RES['configItem'] = { url: url, resourceRoot: "resource", type: "script", name: url };
                 console.warn("RES.loadConfig() 不再接受参数，请使用 RES.mapConfig 注解");
             }
             return method.apply(this);

@@ -273,6 +273,7 @@ declare module RES {
     var TextProcessor: Processor;
     var JsonProcessor: Processor;
     var XMLProcessor: Processor;
+    var ScriptProcessor: Processor;
     var SheetProcessor: Processor;
 }
 declare module RES {

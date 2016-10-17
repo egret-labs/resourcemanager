@@ -81,7 +81,8 @@ module RES {
                 "json": JsonProcessor,
                 "text": TextProcessor,
                 "xml": XMLProcessor,
-                "sheet": SheetProcessor
+                "sheet": SheetProcessor,
+                "script":ScriptProcessor
             }
 
             return map[type];

@@ -108,6 +108,22 @@ module RES {
         }
     }
 
+    export var ScriptProcessor: Processor = {
+
+        async onLoadStart(host, resource) {
+            let text = await host.load(resource, TextProcessor);
+            let f = new Function('return ' + text);
+            let result = f();
+            console.log (result,'111')
+            return result;
+        },
+
+        onRemoveStart(host, resource) {
+            return Promise.resolve();
+        }
+
+    }
+
     export var SheetProcessor: Processor = {
 
         async onLoadStart(host, resource): Promise<any> {
