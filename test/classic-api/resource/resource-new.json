@@ -1,21 +1,12 @@
 {
   "groups": {
     "preload": [
-      "bg_jpg",
-      "texture_png",
-      "skeleton_json",
-      "texture_json",
-      "sheet_json"
+      "bg_jpg"
+
     ]
   },
   "alias": {
-    "bg_jpg": "assets/bg.jpg",
-    "egret_icon_png": "assets/egret_icon.png",
-    "description_json": "config/description.json",
-    "texture_png": "assets/armature/texture.png",
-    "skeleton_json": "assets/armature/skeleton.json",
-    "texture_json": "assets/armature/texture.json",
-    "sheet_json": "assets/sheet.json"
+    "bg_jpg": "assets/bg.jpg"
   },
   "resources": {
     "": {
