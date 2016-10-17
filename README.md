@@ -6,7 +6,8 @@
 * 友好的资源加载 API
 * 版本控制支持
 * 针对不同平台发布不同的资源
-* 90% 兼容旧版 API 
+* 更容易开发者进行扩展的结构
+* 80% 兼容旧版 API 
 
 ## 当前状态 - Public Beta 1
 
@@ -27,6 +28,7 @@
 
 * 在命令行中执行 ``` npm install egret-cli -g ``` 安装命令行工具
 > ```egret-cli```是白鹭引擎测试性的命令行工具，在未来版本中，```egret-cli```会被集成进 ```egret```命令行中，无需重复下载安装
-* 在 egret 项目文件夹中执行 ```egret-cli resource upgrade```，升级老项目
+* 在 egret 项目文件夹中执行 ```egret-cli resource upgrade```，升级老项目的资源配置文件( default.res.json )
+* 在 ```egretProperties.json``` 中，删除 ```module/res``` 字段，添加 ```module/resourcemanager```字段，并将 bin/resourcemanager 文件夹拷贝至项目中
 * 当游戏资源发生变化后，执行```egret-cli resource build```，更新资源配置
 > 在即将到来的下个版本，这一步会自动执行
