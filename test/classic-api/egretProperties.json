@@ -19,7 +19,7 @@
       "name": "tween"
     },
     {
-      "name": "res",
+      "name": "resourcemanager",
       "path": "../../"
     },
     {

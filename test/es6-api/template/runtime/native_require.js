@@ -7,7 +7,7 @@ var game_file_list = [
 	"libs/modules/game/game.js",
 	"libs/modules/game/game.native.js",
 	"libs/modules/tween/tween.js",
-	"libs/modules/res/res.js",
+	"libs/modules/resourcemanager/resourcemanager.js",
 	"libs/modules/eui/eui.js",
 	"libs/modules/dragonBones/dragonBones.js",
 	"bin-debug/Main.js",

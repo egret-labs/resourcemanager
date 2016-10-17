@@ -1,9 +1,9 @@
 {
-  "name": "res",
+  "name": "resourcemanager",
   "version": "3.9.0",
   "description": "",
   "scripts": {
-    "publish": "tsc",
+    "publish": "tsc && uglifyjs bin/resourcemanager/resourcemanager.js > bin/resourcemanager/resourcemanager.min.js ",
     "test":"egret-cli upgrade res-v4 test --x x && egret build test -e && egret run test"
   },
   "author": "wander",

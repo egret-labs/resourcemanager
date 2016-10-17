@@ -19,8 +19,8 @@
       "name": "tween"
     },
     {
-      "name": "res",
-      "path": "../"
+      "name": "resourcemanager",
+      "path": "../../"
     },
     {
       "name": "eui"
