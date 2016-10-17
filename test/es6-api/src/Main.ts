@@ -20,7 +20,7 @@ class Main extends egret.DisplayObjectContainer {
                 console.log(current, total);
             }
         }
-        
+
         RES.loadConfig()
             .then(() => RES.loadGroup("preload", 0, reportrer))
             .then(() => this.createGameScene())
@@ -30,11 +30,10 @@ class Main extends egret.DisplayObjectContainer {
             //     RES.createGroup("tempGroup", ["sheet_json"]);
             //     return RES.loadGroup("tempGroup")
             // })
-            .then(() => RES.getResAsync("sheet_json"))
             .then(() => sleep(1000))
+             .then(() => RES.loadGroup("preload", 0, reportrer))
             .then(() => {
-                let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
-                this.sky.texture = spritesheet.getTexture("bg_jpg");
+                this.sky.texture = RES.getRes("assets/bg.jpg")
             }).catch((e) => {
                 console.warn(e);
                 console.log (e.stack)
@@ -48,7 +47,7 @@ class Main extends egret.DisplayObjectContainer {
      * Create a game scene
      */
     private createGameScene(): void {
-        var sky: egret.Bitmap = createBitmapByName("bg_jpg");
+        var sky: egret.Bitmap = createBitmapByName("assets/bg.jpg");
         this.addChild(sky);
         var stageW = this.stage.stageWidth;
         var stageH = this.stage.stageHeight;
