@@ -2,7 +2,6 @@
  * 旧版 RES API
  */
 
-@RES.mapConfig<"resource" | "resource_ios">("resource-new.json", () => "resource")
 class Main extends egret.DisplayObjectContainer {
 
     public constructor() {

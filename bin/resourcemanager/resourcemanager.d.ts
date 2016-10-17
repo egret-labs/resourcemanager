@@ -132,10 +132,6 @@ declare class Promise<T> implements PromiseLike<T> {
     static race<T>(promises: (T | PromiseLike<T>)[]): Promise<T>;
 }
 declare module RES {
-    let checkNull: MethodDecorator;
-    let checkDecorator: MethodDecorator;
-}
-declare module RES {
     interface File {
         url: string;
         type: string;
@@ -517,6 +513,10 @@ declare module RES {
          */
         data: ResourceInfo;
     }
+}
+declare module RES {
+    let checkNull: MethodDecorator;
+    let checkDecorator: MethodDecorator;
 }
 declare module RES {
     /**

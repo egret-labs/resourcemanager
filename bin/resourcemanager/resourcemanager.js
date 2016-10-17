@@ -49,38 +49,6 @@ eval(__promise__line);
 delete __promise__line;
 var RES;
 (function (RES) {
-    RES.checkNull = function (target, propertyKey, descriptor) {
-        var method = descriptor.value;
-        descriptor.value = function () {
-            var arg = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                arg[_i - 0] = arguments[_i];
-            }
-            if (!arg[0]) {
-                console.warn("\u65B9\u6CD5" + propertyKey + "\u7684\u53C2\u6570\u4E0D\u80FD\u4E3Anull");
-                return null;
-            }
-            else {
-                return method.apply(this, arg);
-            }
-        };
-    };
-    RES.checkDecorator = function (target, propertyKey, descriptor) {
-        var method = descriptor.value;
-        descriptor.value = function (url, resourceRoot) {
-            if (resourceRoot) {
-                console.warn("已经废弃 resourceRoot"); //todo
-            }
-            if (url) {
-                console.warn("已经废弃 url");
-            }
-            console.assert(RES.configItem, "需要为文档类添加 RES.mapConfig 注解");
-            return method.apply(this);
-        };
-    };
-})(RES || (RES = {}));
-var RES;
-(function (RES) {
     var ResourceNodeType;
     (function (ResourceNodeType) {
         ResourceNodeType[ResourceNodeType["FILE"] = 0] = "FILE";
@@ -1064,6 +1032,36 @@ var RES;
         }
         ResourceItem.convertToResItem = convertToResItem;
     })(ResourceItem = RES.ResourceItem || (RES.ResourceItem = {}));
+})(RES || (RES = {}));
+var RES;
+(function (RES) {
+    RES.checkNull = function (target, propertyKey, descriptor) {
+        var method = descriptor.value;
+        descriptor.value = function () {
+            var arg = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                arg[_i - 0] = arguments[_i];
+            }
+            if (!arg[0]) {
+                console.warn("\u65B9\u6CD5" + propertyKey + "\u7684\u53C2\u6570\u4E0D\u80FD\u4E3Anull");
+                return null;
+            }
+            else {
+                return method.apply(this, arg);
+            }
+        };
+    };
+    RES.checkDecorator = function (target, propertyKey, descriptor) {
+        var method = descriptor.value;
+        descriptor.value = function () {
+            if (!RES['configItem']) {
+                var url = "config.resjs";
+                RES['configItem'] = { url: url, resourceRoot: "resource", type: "json", name: url };
+                console.warn("RES.loadConfig() 不再接受参数，请使用 RES.mapConfig 注解");
+            }
+            return method.apply(this);
+        };
+    };
 })(RES || (RES = {}));
 //////////////////////////////////////////////////////////////////////////////////////
 //

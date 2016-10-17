@@ -3,8 +3,8 @@
   "version": "3.9.0",
   "description": "",
   "scripts": {
-    "publish": "tsc && uglifyjs bin/resourcemanager/resourcemanager.js > bin/resourcemanager/resourcemanager.min.js ",
-    "test":"egret-cli upgrade res-v4 test --x x && egret build test -e && egret run test"
+    "publish": "tsc",
+    "test":"egret build test/es6-api -e && egret run test/es6-api"
   },
   "author": "wander",
   "license": "ISC",

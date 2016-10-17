@@ -12,7 +12,6 @@
     },
     "files": [
         "src/promise.ts",
-        "src/DEBUG.ts",
         "src/core/FileSystem.ts",
         "src/core/ResourceConfig.ts",
         "src/core/ResourceLoader.ts",
@@ -30,6 +29,7 @@
         // "src/analyzer/AnimationAnalyzer.ts",
         // "src/analyzer/XMLAnalyzer.ts",
         "src/shim/ResourceItem.ts",
+        "src/DEBUG.ts",
         "src/shim/Resource.ts",
         "libs/egret.d.ts"
     ]

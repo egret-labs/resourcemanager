@@ -8,7 +8,7 @@ module RES {
                 return null;
             }
             else {
-                return method.apply(this,arg);
+                return method.apply(this, arg);
             }
 
         }
@@ -16,15 +16,13 @@ module RES {
 
     export let checkDecorator: MethodDecorator = (target, propertyKey, descriptor) => {
         const method = descriptor.value;
-        descriptor.value = function (url?: string, resourceRoot?: string) {
+        descriptor.value = function () {
+            if (!RES['configItem']) {
+                let url = "config.resjs";
+                RES['configItem'] = { url, resourceRoot: "resource", type: "json", name: url };
+                console.warn("RES.loadConfig() 不再接受参数，请使用 RES.mapConfig 注解")
+            }
 
-            if (resourceRoot) {
-                console.warn("已经废弃 resourceRoot");//todo
-            }
-            if (url) {
-                console.warn("已经废弃 url");
-            }
-            console.assert(RES.configItem, "需要为文档类添加 RES.mapConfig 注解")
             return method.apply(this);
         }
 
