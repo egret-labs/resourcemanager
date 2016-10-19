@@ -4,11 +4,12 @@
         "outFile": "bin/resourcemanager/resourcemanager.js",
         "declaration": true,
         "noImplicitAny": false,
-        "sourceMap": false,
         "stripInternal": true,
         "allowUnreachableCode": true,
         "experimentalDecorators": true,
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "sourceMap": true,
+        "sourceRoot": "http://localhost:3005"
     },
     "files": [
         "src/promise.ts",

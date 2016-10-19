@@ -49,7 +49,7 @@ module RES {
 
 		export function convertToResItem(r: ResourceInfo): ResourceItem {
 
-			let name;
+			let name:string = "";
 			let config: ResourceConfig = RES["configInstance"];
 			if (!config.config) {
 				name = r.url;

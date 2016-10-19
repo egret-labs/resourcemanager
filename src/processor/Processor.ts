@@ -1,6 +1,4 @@
 module RES {
-
-
     async function promisify(loader: egret.ImageLoader | egret.HttpRequest, resource: ResourceInfo): Promise<any> {
 
         return new Promise((reslove, reject) => {

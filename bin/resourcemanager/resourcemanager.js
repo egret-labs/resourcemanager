@@ -1,7 +1,7 @@
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
         function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments)).next());
     });
@@ -583,7 +583,7 @@ var RES;
 (function (RES) {
     function promisify(loader, resource) {
         return __awaiter(this, void 0, void 0, function () {
-            _this = this;
+            var _this = this;
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (reslove, reject) {
                         var onSuccess = function () {
@@ -599,7 +599,6 @@ var RES;
                     })];
             });
         });
-        var _this;
     }
     function getRelativePath(url, file) {
         url = url.split("\\").join("/");
@@ -835,7 +834,7 @@ var RES;
         function ResourceEvent(type, bubbles, cancelable) {
             if (bubbles === void 0) { bubbles = false; }
             if (cancelable === void 0) { cancelable = false; }
-            _super.call(this, type, bubbles, cancelable);
+            var _this = _super.call(this, type, bubbles, cancelable) || this;
             /**
              * @language en_US
              * File number that has been loaded.
@@ -848,7 +847,7 @@ var RES;
              * @version Egret 2.4
              * @platform Web,Native
              */
-            this.itemsLoaded = 0;
+            _this.itemsLoaded = 0;
             /**
              * @language en_US
              * Total file number to load.
@@ -861,7 +860,7 @@ var RES;
              * @version Egret 2.4
              * @platform Web,Native
              */
-            this.itemsTotal = 0;
+            _this.itemsTotal = 0;
             /**
              * @language en_US
              * Resource group name.
@@ -874,7 +873,8 @@ var RES;
              * @version Egret 2.4
              * @platform Web,Native
              */
-            this.groupName = "";
+            _this.groupName = "";
+            return _this;
         }
         /**
          * 使用指定的EventDispatcher对象来抛出事件对象。抛出的对象将会缓存在对象池上，供下次循环复用。
@@ -1032,7 +1032,7 @@ var RES;
     (function (ResourceItem) {
         ResourceItem.TYPE_IMAGE = "image";
         function convertToResItem(r) {
-            var name;
+            var name = "";
             var config = RES["configInstance"];
             if (!config.config) {
                 name = r.url;
@@ -1509,7 +1509,7 @@ var RES;
          * @private
          */
         function Resource() {
-            _super.call(this);
+            return _super.call(this) || this;
         }
         /**
          * 开始加载配置
@@ -1685,3 +1685,4 @@ var RES;
      */
     var instance = new Resource();
 })(RES || (RES = {}));
+//# sourceMappingURL=resourcemanager.js.map

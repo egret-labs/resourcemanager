@@ -4,11 +4,11 @@
   "description": "",
   "scripts": {
     "publish": "tsc",
-    "test":"egret build test/es6-api -e && egret run test/es6-api"
+    "test": "egret build test/es6-api -e && egret run test/es6-api"
   },
   "author": "wander",
   "license": "ISC",
   "devDependencies": {
-    "typescript": "^2.1.0-dev.20160814"
+    "typescript": "^2.1.0-dev.20161019"
   }
 }
