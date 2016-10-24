@@ -106,14 +106,15 @@ module RES {
         }
     }
 
-    export var ScriptProcessor: Processor = {
+    export var CommonJSProcessor: Processor = {
 
         async onLoadStart(host, resource) {
             let text = await host.load(resource, TextProcessor);
-            let f = new Function('return ' + text);
-            let result = f();
-            console.log (result,'111')
-            return result;
+            let f = new Function('require','exports',text);
+            var require = function(){};
+            var exports = {};
+            f(require,exports);
+            return exports;
         },
 
         onRemoveStart(host, resource) {

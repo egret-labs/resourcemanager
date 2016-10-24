@@ -253,6 +253,7 @@ declare module RES {
         var config: ResourceConfig;
         function init(): Promise<void>;
         function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<void>;
+        function destory(): void;
     }
     interface ProcessHost {
         resourceConfig: ResourceConfig;
@@ -273,7 +274,7 @@ declare module RES {
     var TextProcessor: Processor;
     var JsonProcessor: Processor;
     var XMLProcessor: Processor;
-    var ScriptProcessor: Processor;
+    var CommonJSProcessor: Processor;
     var SheetProcessor: Processor;
 }
 declare module RES {

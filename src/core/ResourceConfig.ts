@@ -51,7 +51,7 @@ module RES {
     export function mapConfig<T>(url: string, selector: ResourceRootSelector<T>) {
         return function (target) {
             let resourceRoot: string;
-            let type: string = "script";
+            let type: string = "commonjs";
             if (typeof selector == "string") {
                 resourceRoot = selector as any as string;
             }

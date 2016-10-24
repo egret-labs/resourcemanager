@@ -19,7 +19,7 @@ module RES {
         descriptor.value = function () {
             if (!RES['configItem']) {
                 let url = "config.resjs";
-                RES['configItem'] = { url, resourceRoot: "resource", type: "script", name: url };
+                RES['configItem'] = { url, resourceRoot: "resource", type: "commonjs", name: url };
                 console.warn("RES.loadConfig() 不再接受参数，请使用 RES.mapConfig 注解")
             }
 

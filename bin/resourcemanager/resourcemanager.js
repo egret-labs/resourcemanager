@@ -149,7 +149,7 @@ var RES;
     function mapConfig(url, selector) {
         return function (target) {
             var resourceRoot;
-            var type = "script";
+            var type = "commonjs";
             if (typeof selector == "string") {
                 resourceRoot = selector;
             }
@@ -558,7 +558,7 @@ var RES;
                 "text": RES.TextProcessor,
                 "xml": RES.XMLProcessor,
                 "sheet": RES.SheetProcessor,
-                "script": RES.ScriptProcessor
+                "commonjs": RES.CommonJSProcessor
             };
             return map[type];
         }
@@ -577,6 +577,10 @@ var RES;
             return queue.load(resources, reporter);
         }
         manager.load = load;
+        function destory() {
+            //todo 销毁整个 ResourceManager上下文全部内容
+        }
+        manager.destory = destory;
     })(manager = RES.manager || (RES.manager = {}));
 })(RES || (RES = {}));
 var RES;
@@ -709,19 +713,20 @@ var RES;
             return Promise.resolve();
         }
     };
-    RES.ScriptProcessor = {
+    RES.CommonJSProcessor = {
         onLoadStart: function (host, resource) {
             return __awaiter(this, void 0, void 0, function () {
-                var text, f, result;
+                var text, f, require, exports;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, host.load(resource, RES.TextProcessor)];
                         case 1:
                             text = _a.sent();
-                            f = new Function('return ' + text);
-                            result = f();
-                            console.log(result, '111');
-                            return [2 /*return*/, result];
+                            f = new Function('require', 'exports', text);
+                            require = function () { };
+                            exports = {};
+                            f(require, exports);
+                            return [2 /*return*/, exports];
                     }
                 });
             });
@@ -1078,7 +1083,7 @@ var RES;
         descriptor.value = function () {
             if (!RES['configItem']) {
                 var url = "config.resjs";
-                RES['configItem'] = { url: url, resourceRoot: "resource", type: "script", name: url };
+                RES['configItem'] = { url: url, resourceRoot: "resource", type: "commonjs", name: url };
                 console.warn("RES.loadConfig() 不再接受参数，请使用 RES.mapConfig 注解");
             }
             return method.apply(this);

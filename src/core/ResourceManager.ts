@@ -82,7 +82,7 @@ module RES {
                 "text": TextProcessor,
                 "xml": XMLProcessor,
                 "sheet": SheetProcessor,
-                "script":ScriptProcessor
+                "commonjs": CommonJSProcessor
             }
 
             return map[type];
@@ -104,6 +104,10 @@ module RES {
 
         export function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<void> {
             return queue.load(resources, reporter);
+        }
+
+        export function destory() {
+            //todo 销毁整个 ResourceManager上下文全部内容
         }
 
 
