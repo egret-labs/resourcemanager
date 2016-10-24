@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "publish": "tsc",
-    "test": "egret build test/es6-api -e && egret run test/es6-api"
+    "test": "egret build test/es6-api -e && egret-cli resource build test/es6-api && egret run test/es6-api"
   },
   "author": "wander",
   "license": "ISC",
