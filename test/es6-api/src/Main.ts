@@ -2,7 +2,7 @@
  * 新版 RES API
  */
 
-@RES.mapConfig<"resource" | "resource_ios">("resource-new.json", () => "resource")
+@RES.mapConfig<"resource" | "resource_ios">("config.resjs", () => "resource")
 class Main extends egret.DisplayObjectContainer {
 
     private sky: egret.Bitmap;

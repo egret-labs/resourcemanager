@@ -1,0 +1,25 @@
+{"groups":{"preload":["bg_jpg"]},
+"filter":function (p){ 
+
+var ext = p.substr(p.lastIndexOf(".") + 1)
+console.log (ext);
+switch (ext){
+
+case "json":
+return "json";
+case "png":
+case "jpg":
+return "image"
+
+} },
+"alias":{"bg_jpg":"assets/bg.jpg"},
+"resources":{"assets":{"bg.jpg":{"url":"assets/bg.jpg",
+"type":"image"},
+"egret_icon.png":{"url":"assets/egret_icon.png",
+"type":"image"},
+"armature":{"skeleton.json":{"url":"assets/armature/skeleton.json",
+"type":"json"},
+"texture.json":{"url":"assets/armature/texture.json",
+"type":"json"},
+"texture.png":{"url":"assets/armature/texture.png",
+"type":"image"}}}}}
