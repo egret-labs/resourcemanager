@@ -180,6 +180,10 @@ declare module RES {
         size?: number;
         name: string;
         soundType?: string;
+        /**
+         * 是否被资源管理器进行管理，默认值为 false
+         */
+        extra?: boolean;
     }
     interface Data {
         resources: Dictionary;

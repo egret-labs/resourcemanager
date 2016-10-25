@@ -44,13 +44,13 @@ module RES {
 
 		constructor() {
 		}
+		public load(list: ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo[]>;
+		public load(list: ResourceInfo, reporter?: PromiseTaskReporter): Promise<ResourceInfo>;
+		public load(list: ResourceInfo | ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]>;
+		public load(list: ResourceInfo | ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]> {
 
-		public load(list: ResourceInfo | ResourceInfo[], reporter?: PromiseTaskReporter): Promise<any> {
-			if (!(list instanceof Array)) {
-				list = [list];
-			}
 			let current = 0;
-			let total = list.length;
+			let total = 1;
 			let mapper = (r) => host.load(r)
 				.then(response => {
 					// host.save(r, response);
@@ -58,9 +58,19 @@ module RES {
 					if (reporter && reporter.onProgress) {
 						reporter.onProgress(current, total);
 					}
+					return response;
 				})
+			if ((list instanceof Array)) {
+				total = list.length;
+				return Promise.all(list.map(mapper));
+			}
+			else {
+				return mapper(list);
+			}
 
-			return Promise.all(list.map(mapper));
+
+
+
 		}
 	}
 }

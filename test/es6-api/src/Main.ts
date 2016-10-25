@@ -31,12 +31,14 @@ class Main extends egret.DisplayObjectContainer {
             //     return RES.loadGroup("tempGroup")
             // })
             .then(() => sleep(1000))
-             .then(() => RES.loadGroup("preload", 0, reportrer))
+            .then(() => RES.loadGroup("preload", 0, reportrer))
             .then(() => {
                 this.sky.texture = RES.getRes("assets/bg.jpg")
+            }).then(() => {
+                RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
             }).catch((e) => {
                 console.warn(e);
-                console.log (e.stack)
+                console.log(e.stack)
                 // throw e;
             });
     }

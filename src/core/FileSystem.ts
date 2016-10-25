@@ -45,7 +45,7 @@ module RES {
                 mkdir(folder);
             }
             let d = reslove(folder);
-            d[basefilename] = { url:filename, type };
+            d[basefilename] = { url: filename, type };
         }
 
         export function getFile(filename: string): File {
@@ -69,7 +69,12 @@ module RES {
             let list = dirpath.split("/");
             let current: File | Dictionary = data;
             for (let f of list) {
-                current = current[f];
+                if (current) {
+                    current = current[f];
+                }
+                else {
+                    return current;
+                }
             }
             return current;
         }

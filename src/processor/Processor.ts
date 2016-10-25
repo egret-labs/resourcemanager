@@ -39,7 +39,8 @@ module RES {
 
         async onLoadStart(host, resource) {
             var loader = new egret.ImageLoader();
-            loader.load("resource/" + resource.url);
+            let prefix = resource.extra ? "" : "resource/";
+            loader.load(prefix + resource.url);
             var bitmapData = await promisify(loader, resource);
             var texture = new egret.Texture();
             texture._setBitmapData(bitmapData);
@@ -67,7 +68,8 @@ module RES {
 
             var request: egret.HttpRequest = new egret.HttpRequest();
             request.responseType = egret.HttpResponseType.TEXT;
-            request.open("resource/" + resource.url, "get");
+            let prefix = resource.extra ? "" : "resource/";
+            request.open(prefix + resource.url, "get");
             request.send();
             let text = await promisify(request, resource);
             return text;

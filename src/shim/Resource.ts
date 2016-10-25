@@ -552,8 +552,16 @@ module RES {
         public getResByUrl(url: string, compFunc: Function, thisObject: any, type: string = ""): Promise<void> | void {
             let r = manager.config.getResource(url);
             if (!r) {
-                manager.config.addResourceData({ name: url, url: url });
+                let type = manager.config.__temp__get__type__via__url(url);
+                // manager.config.addResourceData({ name: url, url: url });
+                r = { name: url, url, type,extra:true };
             }
+
+            manager.load(r).then(value => {
+                if (compFunc && r) {
+                    compFunc.call(thisObject, value, r.url);
+                }
+            })
             return this.getResAsync(url, compFunc, thisObject);
         }
 

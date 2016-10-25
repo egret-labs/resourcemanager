@@ -102,7 +102,7 @@ module RES {
             }).catch(e => Promise.reject({ code: 1002 }));
         }
 
-        export function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<void> {
+        export function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<ResourceInfo[] | ResourceInfo> {
             return queue.load(resources, reporter);
         }
 

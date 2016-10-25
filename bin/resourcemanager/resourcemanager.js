@@ -93,7 +93,12 @@ var RES;
             var current = FileSystem.data;
             for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
                 var f = list_1[_i];
-                current = current[f];
+                if (current) {
+                    current = current[f];
+                }
+                else {
+                    return current;
+                }
             }
             return current;
         }
@@ -469,11 +474,8 @@ var RES;
         function PromiseQueue() {
         }
         PromiseQueue.prototype.load = function (list, reporter) {
-            if (!(list instanceof Array)) {
-                list = [list];
-            }
             var current = 0;
-            var total = list.length;
+            var total = 1;
             var mapper = function (r) { return RES.host.load(r)
                 .then(function (response) {
                 // host.save(r, response);
@@ -481,8 +483,15 @@ var RES;
                 if (reporter && reporter.onProgress) {
                     reporter.onProgress(current, total);
                 }
+                return response;
             }); };
-            return Promise.all(list.map(mapper));
+            if ((list instanceof Array)) {
+                total = list.length;
+                return Promise.all(list.map(mapper));
+            }
+            else {
+                return mapper(list);
+            }
         };
         return PromiseQueue;
     }());
@@ -624,12 +633,13 @@ var RES;
     RES.ImageProcessor = {
         onLoadStart: function (host, resource) {
             return __awaiter(this, void 0, void 0, function () {
-                var loader, bitmapData, texture;
+                var loader, prefix, bitmapData, texture;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             loader = new egret.ImageLoader();
-                            loader.load("resource/" + resource.url);
+                            prefix = resource.extra ? "" : "resource/";
+                            loader.load(prefix + resource.url);
                             return [4 /*yield*/, promisify(loader, resource)];
                         case 1:
                             bitmapData = _a.sent();
@@ -655,13 +665,14 @@ var RES;
     RES.TextProcessor = {
         onLoadStart: function (host, resource) {
             return __awaiter(this, void 0, void 0, function () {
-                var request, text;
+                var request, prefix, text;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             request = new egret.HttpRequest();
                             request.responseType = egret.HttpResponseType.TEXT;
-                            request.open("resource/" + resource.url, "get");
+                            prefix = resource.extra ? "" : "resource/";
+                            request.open(prefix + resource.url, "get");
                             request.send();
                             return [4 /*yield*/, promisify(request, resource)];
                         case 1:
@@ -1617,8 +1628,15 @@ var RES;
             if (type === void 0) { type = ""; }
             var r = RES.manager.config.getResource(url);
             if (!r) {
-                RES.manager.config.addResourceData({ name: url, url: url });
+                var type_1 = RES.manager.config.__temp__get__type__via__url(url);
+                // manager.config.addResourceData({ name: url, url: url });
+                r = { name: url, url: url, type: type_1, extra: true };
             }
+            RES.manager.load(r).then(function (value) {
+                if (compFunc && r) {
+                    compFunc.call(thisObject, value, r.url);
+                }
+            });
             return this.getResAsync(url, compFunc, thisObject);
         };
         /**
