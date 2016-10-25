@@ -477,7 +477,7 @@ module RES {
 		 * @param name {string}
 		 * @param priority {number}
          */
-        public loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<void> {
+        public loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<any> {
 
             let resources = manager.config.getGroupByName(name);
             return manager.load(resources, reporter);
@@ -549,20 +549,21 @@ module RES {
 		 * @param thisObject {any}
 		 * @param type {string}
          */
-        public getResByUrl(url: string, compFunc: Function, thisObject: any, type: string = ""): Promise<void> | void {
+        public getResByUrl(url: string, compFunc: Function, thisObject: any, type: string = ""): Promise<any> | void {
             let r = manager.config.getResource(url);
             if (!r) {
-                let type = manager.config.__temp__get__type__via__url(url);
+                if (!type) {
+                    type = manager.config.__temp__get__type__via__url(url);
+                }
                 // manager.config.addResourceData({ name: url, url: url });
-                r = { name: url, url, type,extra:true };
+                r = { name: url, url, type, extra: true };
             }
-
-            manager.load(r).then(value => {
+            return manager.load(r).then(value => {
                 if (compFunc && r) {
                     compFunc.call(thisObject, value, r.url);
                 }
+                return value;
             })
-            return this.getResAsync(url, compFunc, thisObject);
         }
 
         /**

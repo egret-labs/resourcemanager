@@ -256,7 +256,7 @@ declare module RES {
     namespace manager {
         var config: ResourceConfig;
         function init(): Promise<void>;
-        function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<void>;
+        function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<ResourceInfo[] | ResourceInfo>;
         function destory(): void;
     }
     interface ProcessHost {
@@ -463,6 +463,7 @@ declare module RES {
      */
     namespace ResourceItem {
         const TYPE_IMAGE: string;
+        const TYPE_TEXT: string;
         function convertToResItem(r: ResourceInfo): ResourceItem;
     }
     interface ResourceItem extends ResourceInfo {
@@ -916,7 +917,7 @@ declare module RES {
          * @param name {string}
          * @param priority {number}
          */
-        loadGroup(name: string, priority?: number, reporter?: PromiseTaskReporter): Promise<void>;
+        loadGroup(name: string, priority?: number, reporter?: PromiseTaskReporter): Promise<any>;
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
          * 可以监听ResourceEvent.CONFIG_COMPLETE事件来确认配置加载完成。
@@ -958,7 +959,7 @@ declare module RES {
          * @param thisObject {any}
          * @param type {string}
          */
-        getResByUrl(url: string, compFunc: Function, thisObject: any, type?: string): Promise<void> | void;
+        getResByUrl(url: string, compFunc: Function, thisObject: any, type?: string): Promise<any> | void;
         /**
          * 销毁单个资源文件或一组资源的缓存数据,返回是否删除成功。
          * @method RES.destroyRes

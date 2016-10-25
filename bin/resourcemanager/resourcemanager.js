@@ -1047,6 +1047,7 @@ var RES;
     var ResourceItem;
     (function (ResourceItem) {
         ResourceItem.TYPE_IMAGE = "image";
+        ResourceItem.TYPE_TEXT = "text";
         function convertToResItem(r) {
             var name = "";
             var config = RES["configInstance"];
@@ -1628,16 +1629,18 @@ var RES;
             if (type === void 0) { type = ""; }
             var r = RES.manager.config.getResource(url);
             if (!r) {
-                var type_1 = RES.manager.config.__temp__get__type__via__url(url);
+                if (!type) {
+                    type = RES.manager.config.__temp__get__type__via__url(url);
+                }
                 // manager.config.addResourceData({ name: url, url: url });
-                r = { name: url, url: url, type: type_1, extra: true };
+                r = { name: url, url: url, type: type, extra: true };
             }
-            RES.manager.load(r).then(function (value) {
+            return RES.manager.load(r).then(function (value) {
                 if (compFunc && r) {
                     compFunc.call(thisObject, value, r.url);
                 }
+                return value;
             });
-            return this.getResAsync(url, compFunc, thisObject);
         };
         /**
          * 销毁单个资源文件或一组资源的缓存数据,返回是否删除成功。

@@ -47,6 +47,8 @@ module RES {
 
 		export const TYPE_IMAGE: string = "image";
 
+		export const TYPE_TEXT: string = "text";
+
 		export function convertToResItem(r: ResourceInfo): ResourceItem {
 
 			let name:string = "";
