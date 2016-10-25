@@ -523,7 +523,10 @@ declare module RES {
 }
 declare module RES {
     let checkNull: MethodDecorator;
-    let checkDecorator: MethodDecorator;
+    namespace upgrade {
+        function setUpgradeGuideLevel(level: "warning" | "silent"): void;
+        let checkDecorator: MethodDecorator;
+    }
 }
 declare module RES {
     /**
@@ -883,6 +886,7 @@ declare module RES {
      * @private
      */
     class Resource extends egret.EventDispatcher {
+        private loadedGroups;
         /**
          * 构造函数
          * @method RES.constructor

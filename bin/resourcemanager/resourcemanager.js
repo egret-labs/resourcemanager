@@ -1090,17 +1090,27 @@ var RES;
             }
         };
     };
-    RES.checkDecorator = function (target, propertyKey, descriptor) {
-        var method = descriptor.value;
-        descriptor.value = function () {
-            if (!RES['configItem']) {
-                var url = "config.resjs";
-                RES['configItem'] = { url: url, resourceRoot: "resource", type: "commonjs", name: url };
-                console.warn("RES.loadConfig() 不再接受参数，请使用 RES.mapConfig 注解");
-            }
-            return method.apply(this);
+    var upgrade;
+    (function (upgrade) {
+        var _level = "warning";
+        function setUpgradeGuideLevel(level) {
+            _level = level;
+        }
+        upgrade.setUpgradeGuideLevel = setUpgradeGuideLevel;
+        upgrade.checkDecorator = function (target, propertyKey, descriptor) {
+            var method = descriptor.value;
+            descriptor.value = function () {
+                if (!RES['configItem']) {
+                    var url = "config.resjs";
+                    RES['configItem'] = { url: url, resourceRoot: "resource", type: "commonjs", name: url };
+                    if (_level == "warning") {
+                        console.warn("RES.loadConfig() 不再接受参数，请使用 RES.mapConfig 注解", "http://www.baidu.com");
+                    }
+                }
+                return method.apply(this);
+            };
         };
-    };
+    })(upgrade = RES.upgrade || (RES.upgrade = {}));
 })(RES || (RES = {}));
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1526,7 +1536,9 @@ var RES;
          * @private
          */
         function Resource() {
-            return _super.call(this) || this;
+            var _this = _super.call(this) || this;
+            _this.loadedGroups = [];
+            return _this;
         }
         /**
          * 开始加载配置
@@ -1550,7 +1562,7 @@ var RES;
          * @returns {boolean}
          */
         Resource.prototype.isGroupLoaded = function (name) {
-            return false; //todo this.loadedGroups.indexOf(name) != -1;
+            return this.loadedGroups.indexOf(name) != -1;
         };
         /**
          * 根据组名获取组加载项列表
@@ -1705,7 +1717,7 @@ var RES;
         return Resource;
     }(egret.EventDispatcher));
     __decorate([
-        RES.checkDecorator
+        RES.upgrade.checkDecorator
     ], Resource.prototype, "loadConfig", null);
     __decorate([
         RES.checkNull

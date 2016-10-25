@@ -54,6 +54,7 @@ module RES {
         throw 'unimplement';
     }
 
+
     /**
      * @language en_US
      * Load configuration file and parse.
@@ -427,6 +428,8 @@ module RES {
      * @private
      */
     export class Resource extends egret.EventDispatcher {
+
+        private loadedGroups:string[] = [];
         /**
          * 构造函数
 		 * @method RES.constructor
@@ -443,7 +446,7 @@ module RES {
 		 * @param resourceRoot {string}
 		 * @param type {string}
          */
-        @checkDecorator
+        @upgrade.checkDecorator
         public loadConfig(): Promise<void> {
             return manager.init().then(data => {
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
@@ -459,7 +462,7 @@ module RES {
 		 * @returns {boolean}
          */
         public isGroupLoaded(name: string): boolean {
-            return false;//todo this.loadedGroups.indexOf(name) != -1;
+            return this.loadedGroups.indexOf(name) != -1;
         }
         /**
          * 根据组名获取组加载项列表

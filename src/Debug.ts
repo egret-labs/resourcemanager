@@ -14,16 +14,35 @@ module RES {
         }
     }
 
-    export let checkDecorator: MethodDecorator = (target, propertyKey, descriptor) => {
-        const method = descriptor.value;
-        descriptor.value = function () {
-            if (!RES['configItem']) {
-                let url = "config.resjs";
-                RES['configItem'] = { url, resourceRoot: "resource", type: "commonjs", name: url };
-                console.warn("RES.loadConfig() 不再接受参数，请使用 RES.mapConfig 注解")
+
+
+
+    export namespace upgrade {
+
+
+        var _level:LOG_LEVEL = "warning";
+
+        type LOG_LEVEL = "warning" | "silent"
+
+        export function setUpgradeGuideLevel(level: "warning" | "silent") {
+            _level = level;
+        }
+
+        export let checkDecorator: MethodDecorator = (target, propertyKey, descriptor) => {
+            const method = descriptor.value;
+            descriptor.value = function () {
+                if (!RES['configItem']) {
+                    let url = "config.resjs";
+                    RES['configItem'] = { url, resourceRoot: "resource", type: "commonjs", name: url };
+                    if (_level == "warning"){
+                        console.warn("RES.loadConfig() 不再接受参数，请使用 RES.mapConfig 注解","http://www.baidu.com")
+                    }
+                    
+                }
+
+                return method.apply(this);
             }
 
-            return method.apply(this);
         }
 
     }
