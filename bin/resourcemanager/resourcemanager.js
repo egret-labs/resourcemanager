@@ -1568,9 +1568,14 @@ var RES;
          * @param priority {number}
          */
         Resource.prototype.loadGroup = function (name, priority, reporter) {
+            var _this = this;
             if (priority === void 0) { priority = 0; }
             var resources = RES.manager.config.getGroupByName(name);
-            return RES.manager.load(resources, reporter);
+            return RES.manager.load(resources, reporter).then(function (data) {
+                RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.GROUP_COMPLETE, name);
+            }, function (error) {
+                RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.GROUP_LOAD_ERROR, name);
+            });
         };
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。

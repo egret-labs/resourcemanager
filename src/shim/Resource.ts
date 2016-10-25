@@ -480,7 +480,11 @@ module RES {
         public loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<any> {
 
             let resources = manager.config.getGroupByName(name);
-            return manager.load(resources, reporter);
+            return manager.load(resources, reporter).then(data => {
+                ResourceEvent.dispatchResourceEvent(this, ResourceEvent.GROUP_COMPLETE, name);
+            }, error => {
+                ResourceEvent.dispatchResourceEvent(this, ResourceEvent.GROUP_LOAD_ERROR, name);
+            })
         }
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。

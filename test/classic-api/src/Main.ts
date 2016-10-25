@@ -7,7 +7,7 @@ class Main extends egret.DisplayObjectContainer {
     public constructor() {
 
         super();
-        this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
+        this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
     }
 
     private onAddToStage(event: egret.Event) {
@@ -48,18 +48,8 @@ class Main extends egret.DisplayObjectContainer {
 
             setTimeout(() => {
                 RES.destroyRes("preload");
-                RES.getResAsync("sheet_json", () => {
-                    let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
-                    this.sky.texture = spritesheet.getTexture("bg_jpg");
-                }, this);
-                // RES.createGroup("tempGroup", ["sheet_json"]);
-                // RES.loadGroup("tempGroup")
-            }, 1000);
-        }
-        else if (event.groupName == "tempGroup") {
-            let spritesheet: egret.SpriteSheet = RES.getRes("sheet_json");
-            this.sky.texture = spritesheet.getTexture("bg_jpg");
 
+            }, 1000);
         }
     }
 
