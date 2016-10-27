@@ -525,10 +525,10 @@ module RES {
             let r = manager.config.getResource(key);
             if (r && host.isSupport(r)) {
                 let data = host.get(r);
-                if (subkey){
+                if (subkey) {
                     let processor = host.isSupport(r);
-                    if (processor && processor.getSubResource){
-                        return processor.getSubResource(host,r,data,subkey);
+                    if (processor && processor.getSubResource) {
+                        return processor.getSubResource(host, r, data, subkey);
                     }
                 }
                 return data;
@@ -549,6 +549,13 @@ module RES {
             var {key, subkey} = manager.config.parseResKey(key);
             let r = manager.config.getResource(key, true);
             return manager.load(r).then(value => {
+
+                if (subkey) {
+                    let processor = host.isSupport(r);
+                    if (processor && processor.getSubResource) {
+                        value = processor.getSubResource(host, r, value, subkey);
+                    }
+                }
                 if (compFunc) {
                     compFunc.call(thisObject, value, r.url);
                 }
