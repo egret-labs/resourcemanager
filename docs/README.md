@@ -15,6 +15,8 @@ class Main extends egret.DisplayObjectContainer {
 ```
 白鹭资源管理框架采用 ES7 的装饰器语法进行配置。
 
+
+<a name="upgrade-decorator">
 > 如果开发者从老项目迁移到新版资源管理框架，
 当没有配置 RES.mapConfig 注解时，
 会强制添加名为 "config.resjs" 的配置，
