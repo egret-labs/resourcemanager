@@ -270,6 +270,7 @@ declare module RES {
     interface Processor {
         onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
         onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
+        getSubResource?(host: ProcessHost, resource: ResourceInfo, data: any, subkey: string): any;
     }
     class ResourceManagerError extends Error {
         static errorMessage: {

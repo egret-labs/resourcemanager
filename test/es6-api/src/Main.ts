@@ -32,7 +32,17 @@ class Main extends egret.DisplayObjectContainer {
         ;
 
         let testSpriteSheet = () => {
-            RES.getResAsync("assets/sheet/sheet1.json").then(value => console.log(value));
+            RES.getResAsync("assets/sheet/sheet1.json")
+            .then((value:egret.SpriteSheet) => {
+                
+                var button = new egret.Bitmap();
+                this.addChild(button);
+                // button.texture = value.getTexture("off");
+                let texture = RES.getRes("assets/sheet/sheet1.json#off");
+                console.log ('111',texture)
+                button.texture = texture;
+                button.y = 100;
+            })
         }
 
         let testLoadResByUrl = () =>

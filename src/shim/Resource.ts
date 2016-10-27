@@ -524,7 +524,14 @@ module RES {
             let {key, subkey} = manager.config.parseResKey(resKey);
             let r = manager.config.getResource(key);
             if (r && host.isSupport(r)) {
-                return host.get(r);
+                let data = host.get(r);
+                if (subkey){
+                    let processor = host.isSupport(r);
+                    if (processor && processor.getSubResource){
+                        return processor.getSubResource(host,r,data,subkey);
+                    }
+                }
+                return data;
             }
         }
 

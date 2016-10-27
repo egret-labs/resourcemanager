@@ -82,8 +82,8 @@ module RES {
                 "text": TextProcessor,
                 "xml": XMLProcessor,
                 "sheet": SheetProcessor,
-                "font":FontProcessor,
-                "bin":BinaryProcessor,
+                "font": FontProcessor,
+                "bin": BinaryProcessor,
                 "commonjs": CommonJSProcessor
             }
 
@@ -142,6 +142,8 @@ module RES {
         onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
 
         onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
+
+        getSubResource?(host: ProcessHost, resource: ResourceInfo, data: any, subkey: string): any;
 
 
     }

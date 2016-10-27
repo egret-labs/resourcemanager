@@ -819,6 +819,9 @@ var RES;
                 });
             });
         },
+        getSubResource: function (host, resource, data, subkey) {
+            return data.getTexture(subkey);
+        },
         onRemoveStart: function (host, resource) {
             return Promise.resolve();
         }
@@ -826,7 +829,7 @@ var RES;
     RES.FontProcessor = {
         onLoadStart: function (host, resource) {
             return __awaiter(this, void 0, void 0, function () {
-                var getTexturePath, data, imageUrl, r, texture, font;
+                var getTexturePath, data, imageUrl, config, r, texture, font;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -850,17 +853,25 @@ var RES;
                                 }
                                 return url;
                             };
-                            return [4 /*yield*/, host.load(resource, RES.JsonProcessor)];
+                            return [4 /*yield*/, host.load(resource, RES.TextProcessor)];
                         case 1:
                             data = _a.sent();
-                            imageUrl = getRelativePath(resource.url, data.file);
+                            imageUrl = "";
+                            try {
+                                config = JSON.parse(data);
+                                imageUrl = getRelativePath(resource.url, config.file);
+                            }
+                            catch (e) {
+                                config = data;
+                                imageUrl = this.getTexturePath(resource.url, data);
+                            }
                             r = host.resourceConfig.getResource(imageUrl);
                             if (!r)
                                 return [3 /*break*/, 3];
                             return [4 /*yield*/, host.load(r)];
                         case 2:
                             texture = _a.sent();
-                            font = new egret.BitmapFont(texture, data);
+                            font = new egret.BitmapFont(texture, config);
                             return [2 /*return*/, font];
                         case 3: return [2 /*return*/, null];
                     }
@@ -1711,7 +1722,14 @@ var RES;
             var _a = RES.manager.config.parseResKey(resKey), key = _a.key, subkey = _a.subkey;
             var r = RES.manager.config.getResource(key);
             if (r && RES.host.isSupport(r)) {
-                return RES.host.get(r);
+                var data = RES.host.get(r);
+                if (subkey) {
+                    var processor = RES.host.isSupport(r);
+                    if (processor && processor.getSubResource) {
+                        return processor.getSubResource(RES.host, r, data, subkey);
+                    }
+                }
+                return data;
             }
         };
         Resource.prototype.getResAsync = function (key, compFunc, thisObject) {

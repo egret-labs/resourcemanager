@@ -181,6 +181,11 @@ module RES {
         },
 
 
+        getSubResource(host,resource,data:egret.SpriteSheet,subkey){
+            return data.getTexture(subkey);
+        },
+
+
         onRemoveStart(host, resource): Promise<any> {
             return Promise.resolve();
         }
