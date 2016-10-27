@@ -287,6 +287,7 @@ declare module RES {
     var XMLProcessor: Processor;
     var CommonJSProcessor: Processor;
     var SheetProcessor: Processor;
+    var FontProcessor: Processor;
 }
 declare module RES {
     /**

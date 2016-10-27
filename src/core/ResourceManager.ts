@@ -82,6 +82,7 @@ module RES {
                 "text": TextProcessor,
                 "xml": XMLProcessor,
                 "sheet": SheetProcessor,
+                "font":FontProcessor,
                 "bin":BinaryProcessor,
                 "commonjs": CommonJSProcessor
             }

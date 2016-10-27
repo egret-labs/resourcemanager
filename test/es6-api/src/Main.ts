@@ -36,9 +36,17 @@ class Main extends egret.DisplayObjectContainer {
                 this.sky.texture = RES.getRes("assets/bg.jpg")
             }).then(() => {
                 RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
-            }).then(()=>{
-                RES.getResAsync("assets/armature/skeleton.json").then(value => console.log (value))
-            })
+            }).then(() => {
+                RES.getResAsync("assets/armature/skeleton.json").then(value => console.log(value))
+            }).then(() => {
+                RES.getResAsync("assets/font/font.fnt").then((value) => { 
+                    console.log(value) 
+                    var text = new egret.BitmapText();
+                    text.font = value;
+                    this.addChild(text);
+                    text.text = "0";
+                });
+            });
             // .catch((e) => {
             //     console.warn(e);
             //     console.log(e.stack)

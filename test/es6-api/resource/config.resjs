@@ -10,6 +10,8 @@ exports.filter = function (p) {
         case "png":
         case "jpg":
             return "image";
+		case "fnt":
+			return "font";
     }
 }
 exports.resources = {
@@ -33,6 +35,16 @@ exports.resources = {
 			},
 			"texture.png": {
 				"url": "assets/armature/texture.png",
+				"type": "image"
+			}
+		},
+		"font": {
+			"font.fnt": {
+				"url": "assets/font/font.fnt",
+				"type": "font"
+			},
+			"font.png": {
+				"url": "assets/font/font.png",
 				"type": "image"
 			}
 		}

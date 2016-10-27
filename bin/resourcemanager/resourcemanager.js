@@ -567,6 +567,7 @@ var RES;
                 "text": RES.TextProcessor,
                 "xml": RES.XMLProcessor,
                 "sheet": RES.SheetProcessor,
+                "font": RES.FontProcessor,
                 "bin": RES.BinaryProcessor,
                 "commonjs": RES.CommonJSProcessor
             };
@@ -795,6 +796,7 @@ var RES;
                         case 1:
                             data = _a.sent();
                             imageUrl = getRelativePath(resource.url, data.file);
+                            //todo 
                             host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
                             r = host.resourceConfig.getResource(imageUrl);
                             if (!r) {
@@ -813,6 +815,54 @@ var RES;
                                 texture = spriteSheet.createTexture(subkey, config.x, config.y, config.w, config.h, config.offX, config.offY, config.sourceW, config.sourceH);
                             }
                             return [2 /*return*/, spriteSheet];
+                    }
+                });
+            });
+        },
+        onRemoveStart: function (host, resource) {
+            return Promise.resolve();
+        }
+    };
+    RES.FontProcessor = {
+        onLoadStart: function (host, resource) {
+            return __awaiter(this, void 0, void 0, function () {
+                var getTexturePath, data, imageUrl, r, texture, font;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            getTexturePath = function (url, fntText) {
+                                var file = "";
+                                var lines = fntText.split("\n");
+                                var pngLine = lines[2];
+                                var index = pngLine.indexOf("file=\"");
+                                if (index != -1) {
+                                    pngLine = pngLine.substring(index + 6);
+                                    index = pngLine.indexOf("\"");
+                                    file = pngLine.substring(0, index);
+                                }
+                                url = url.split("\\").join("/");
+                                var index = url.lastIndexOf("/");
+                                if (index != -1) {
+                                    url = url.substring(0, index + 1) + file;
+                                }
+                                else {
+                                    url = file;
+                                }
+                                return url;
+                            };
+                            return [4 /*yield*/, host.load(resource, RES.JsonProcessor)];
+                        case 1:
+                            data = _a.sent();
+                            imageUrl = getRelativePath(resource.url, data.file);
+                            r = host.resourceConfig.getResource(imageUrl);
+                            if (!r)
+                                return [3 /*break*/, 3];
+                            return [4 /*yield*/, host.load(r)];
+                        case 2:
+                            texture = _a.sent();
+                            font = new egret.BitmapFont(texture, data);
+                            return [2 /*return*/, font];
+                        case 3: return [2 /*return*/, null];
                     }
                 });
             });

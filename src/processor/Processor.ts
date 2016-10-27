@@ -151,6 +151,7 @@ module RES {
 
             let data = await host.load(resource, JsonProcessor);
             let imageUrl = getRelativePath(resource.url, data.file);
+            //todo 
             host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
             let r = host.resourceConfig.getResource(imageUrl);
             if (!r) {
@@ -177,15 +178,67 @@ module RES {
                 //     }
             }
             return spriteSheet;
-
-
-            return Promise.resolve();
         },
 
 
         onRemoveStart(host, resource): Promise<any> {
             return Promise.resolve();
         }
+
+    }
+
+
+    export var FontProcessor: Processor = {
+
+
+        async onLoadStart(host, resource): Promise<any> {
+
+
+            let getTexturePath = function (url: string, fntText: string): string {
+
+                var file: string = "";
+                var lines = fntText.split("\n");
+                var pngLine = lines[2];
+                var index: number = pngLine.indexOf("file=\"");
+                if (index != -1) {
+                    pngLine = pngLine.substring(index + 6);
+                    index = pngLine.indexOf("\"");
+                    file = pngLine.substring(0, index);
+                }
+
+                url = url.split("\\").join("/");
+                var index: number = url.lastIndexOf("/");
+                if (index != -1) {
+                    url = url.substring(0, index + 1) + file;
+                }
+                else {
+                    url = file;
+                }
+                return url;
+            }
+
+
+            let data = await host.load(resource, JsonProcessor);
+            let imageUrl = getRelativePath(resource.url, data.file);
+            let r = host.resourceConfig.getResource(imageUrl);
+            if (r) {
+                var texture: egret.Texture = await host.load(r);
+                var font = new egret.BitmapFont(texture, data);
+                return font;
+            }
+            else {
+                return null;
+            }
+        },
+
+
+
+
+
+        onRemoveStart(host, resource): Promise<any> {
+            return Promise.resolve();
+        }
+
 
     }
 }
