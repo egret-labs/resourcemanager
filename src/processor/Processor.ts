@@ -62,6 +62,26 @@ module RES {
 
     }
 
+    export var BinaryProcessor: Processor = {
+
+        async onLoadStart(host, resource) {
+
+            var request: egret.HttpRequest = new egret.HttpRequest();
+            request.responseType = egret.HttpResponseType.ARRAY_BUFFER;
+            let prefix = resource.extra ? "" : "resource/";
+            request.open(prefix + resource.url, "get");
+            request.send();
+            let arraybuffer = await promisify(request, resource);
+            return arraybuffer;
+
+        },
+
+        onRemoveStart(host, resource) {
+            return Promise.resolve();
+        }
+
+    }
+
     export var TextProcessor: Processor = {
 
         async onLoadStart(host, resource) {
@@ -112,10 +132,10 @@ module RES {
 
         async onLoadStart(host, resource) {
             let text = await host.load(resource, TextProcessor);
-            let f = new Function('require','exports',text);
-            var require = function(){};
+            let f = new Function('require', 'exports', text);
+            var require = function () { };
             var exports = {};
-            f(require,exports);
+            f(require, exports);
             return exports;
         },
 

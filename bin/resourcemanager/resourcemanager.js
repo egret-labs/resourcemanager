@@ -1,3 +1,8 @@
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -32,11 +37,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
-};
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -524,7 +524,7 @@ var RES;
                 processor = RES.host.isSupport(r);
             }
             if (!processor) {
-                throw 'error';
+                throw new ResourceManagerError(2001, r.type);
             }
             return processor.onLoadStart(RES.host, r)
                 .then(function (data) {
@@ -567,6 +567,7 @@ var RES;
                 "text": RES.TextProcessor,
                 "xml": RES.XMLProcessor,
                 "sheet": RES.SheetProcessor,
+                "bin": RES.BinaryProcessor,
                 "commonjs": RES.CommonJSProcessor
             };
             return map[type];
@@ -591,6 +592,20 @@ var RES;
         }
         manager.destory = destory;
     })(manager = RES.manager || (RES.manager = {}));
+    var ResourceManagerError = (function (_super) {
+        __extends(ResourceManagerError, _super);
+        function ResourceManagerError(code, replacer) {
+            var _this = _super.call(this) || this;
+            _this.name = code.toString();
+            _this.message = ResourceManagerError.errorMessage[code].replace("{0}", replacer);
+            return _this;
+        }
+        return ResourceManagerError;
+    }(Error));
+    ResourceManagerError.errorMessage = {
+        2001: "不支持指定解析类型:{0}，请编写自定义 Processor ，更多内容请参见 http://www.egret.com //todo"
+    };
+    RES.ResourceManagerError = ResourceManagerError;
 })(RES || (RES = {}));
 var RES;
 (function (RES) {
@@ -659,6 +674,30 @@ var RES;
         onRemoveStart: function (host, resource) {
             var texture = host.get(resource);
             texture.dispose();
+            return Promise.resolve();
+        }
+    };
+    RES.BinaryProcessor = {
+        onLoadStart: function (host, resource) {
+            return __awaiter(this, void 0, void 0, function () {
+                var request, prefix, arraybuffer;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            request = new egret.HttpRequest();
+                            request.responseType = egret.HttpResponseType.ARRAY_BUFFER;
+                            prefix = resource.extra ? "" : "resource/";
+                            request.open(prefix + resource.url, "get");
+                            request.send();
+                            return [4 /*yield*/, promisify(request, resource)];
+                        case 1:
+                            arraybuffer = _a.sent();
+                            return [2 /*return*/, arraybuffer];
+                    }
+                });
+            });
+        },
+        onRemoveStart: function (host, resource) {
             return Promise.resolve();
         }
     };
@@ -1104,7 +1143,7 @@ var RES;
                     var url = "config.resjs";
                     RES['configItem'] = { url: url, resourceRoot: "resource", type: "commonjs", name: url };
                     if (_level == "warning") {
-                        console.warn("RES.loadConfig() 不再接受参数，请使用 RES.mapConfig 注解", "http://www.baidu.com");
+                        console.warn("RES.loadConfig() 不再接受参数，强制访问 resource/config.resjs 文件\n", "请访问以下站点了解更多细节\n", "https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#upgrade-decorator ");
                     }
                 }
                 return method.apply(this);
@@ -1346,7 +1385,7 @@ var RES;
     }
     RES.getRes = getRes;
     function getResAsync(key, compFunc, thisObject) {
-        instance.getResAsync.apply(instance, arguments);
+        return instance.getResAsync.apply(instance, arguments);
     }
     RES.getResAsync = getResAsync;
     /**
@@ -1632,6 +1671,7 @@ var RES;
                 if (compFunc) {
                     compFunc.call(thisObject, value, r.url);
                 }
+                return value;
             });
         };
         /**

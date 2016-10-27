@@ -20,7 +20,7 @@ module RES {
     export namespace upgrade {
 
 
-        var _level:LOG_LEVEL = "warning";
+        var _level: LOG_LEVEL = "warning";
 
         type LOG_LEVEL = "warning" | "silent"
 
@@ -34,10 +34,14 @@ module RES {
                 if (!RES['configItem']) {
                     let url = "config.resjs";
                     RES['configItem'] = { url, resourceRoot: "resource", type: "commonjs", name: url };
-                    if (_level == "warning"){
-                        console.warn("RES.loadConfig() 不再接受参数，请使用 RES.mapConfig 注解","http://www.baidu.com")
+                    if (_level == "warning") {
+                        console.warn(
+                            "RES.loadConfig() 不再接受参数，强制访问 resource/config.resjs 文件\n",
+                            "请访问以下站点了解更多细节\n",
+                            "https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#upgrade-decorator "
+                        )
                     }
-                    
+
                 }
 
                 return method.apply(this);

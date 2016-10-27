@@ -27,7 +27,7 @@ module RES {
                 processor = host.isSupport(r);
             }
             if (!processor) {
-                throw 'error';
+                throw new ResourceManagerError(2001, r.type);
             }
             return processor.onLoadStart(host, r)
                 .then(data => {
@@ -82,6 +82,7 @@ module RES {
                 "text": TextProcessor,
                 "xml": XMLProcessor,
                 "sheet": SheetProcessor,
+                "bin":BinaryProcessor,
                 "commonjs": CommonJSProcessor
             }
 
@@ -142,6 +143,23 @@ module RES {
         onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
 
 
+    }
+
+    export class ResourceManagerError extends Error {
+
+
+
+        static errorMessage = {
+
+            2001: "不支持指定解析类型:{0}，请编写自定义 Processor ，更多内容请参见 http://www.egret.com //todo"
+
+        }
+
+        constructor(code: number, replacer?: string) {
+            super();
+            this.name = code.toString();
+            this.message = ResourceManagerError.errorMessage[code].replace("{0}", replacer);
+        }
     }
 
 

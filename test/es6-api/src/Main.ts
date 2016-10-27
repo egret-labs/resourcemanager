@@ -36,11 +36,14 @@ class Main extends egret.DisplayObjectContainer {
                 this.sky.texture = RES.getRes("assets/bg.jpg")
             }).then(() => {
                 RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
-            }).catch((e) => {
-                console.warn(e);
-                console.log(e.stack)
-                // throw e;
-            });
+            }).then(()=>{
+                RES.getResAsync("assets/armature/skeleton.json").then(value => console.log (value))
+            })
+            // .catch((e) => {
+            //     console.warn(e);
+            //     console.log(e.stack)
+            //     // throw e;
+            // });
     }
 
 

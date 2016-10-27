@@ -271,10 +271,17 @@ declare module RES {
         onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
         onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
     }
+    class ResourceManagerError extends Error {
+        static errorMessage: {
+            2001: string;
+        };
+        constructor(code: number, replacer?: string);
+    }
 }
 declare module RES {
     function getRelativePath(url: string, file: string): string;
     var ImageProcessor: Processor;
+    var BinaryProcessor: Processor;
     var TextProcessor: Processor;
     var JsonProcessor: Processor;
     var XMLProcessor: Processor;

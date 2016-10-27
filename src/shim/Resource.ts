@@ -251,7 +251,7 @@ module RES {
     export function getResAsync(key: string): Promise<any>
     export function getResAsync(key: string, compFunc: Function, thisObject: any): void
     export function getResAsync(key: string, compFunc?: Function, thisObject?: any): Promise<any> | void {
-        instance.getResAsync.apply(instance, arguments);
+        return instance.getResAsync.apply(instance, arguments);
     }
     /**
      * @language en_US
@@ -429,7 +429,7 @@ module RES {
      */
     export class Resource extends egret.EventDispatcher {
 
-        private loadedGroups:string[] = [];
+        private loadedGroups: string[] = [];
         /**
          * 构造函数
 		 * @method RES.constructor
@@ -537,7 +537,7 @@ module RES {
          */
         public getResAsync(key: string): Promise<any>
         public getResAsync(key: string, compFunc: Function, thisObject: any): void
-        public getResAsync(key: string, compFunc?: Function, thisObject?: any): Promise<void> | void {
+        public getResAsync(key: string, compFunc?: Function, thisObject?: any): Promise<any> | void {
 
             var {key, subkey} = manager.config.parseResKey(key);
             let r = manager.config.getResource(key, true);
@@ -545,6 +545,7 @@ module RES {
                 if (compFunc) {
                     compFunc.call(thisObject, value, r.url);
                 }
+                return value;
             })
         }
 
