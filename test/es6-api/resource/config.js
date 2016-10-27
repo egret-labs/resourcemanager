@@ -56,7 +56,7 @@ exports.resources = {
 		"sheet": {
 			"sheet1.json": {
 				"url": "assets/sheet/sheet1.json",
-				"type": "sheet"
+				"type": "json"
 			},
 			"sheet1.png": {
 				"url": "assets/sheet/sheet1.png",

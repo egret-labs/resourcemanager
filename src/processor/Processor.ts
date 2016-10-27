@@ -218,12 +218,21 @@ module RES {
             }
 
 
-            let data = await host.load(resource, JsonProcessor);
-            let imageUrl = getRelativePath(resource.url, data.file);
+            let data = await host.load(resource, TextProcessor);
+            let imageUrl = "";
+            let config;
+            try {
+                config = JSON.parse(data);
+                imageUrl = getRelativePath(resource.url, config.file);
+            }
+            catch (e) {
+                config = data;
+                imageUrl = this.getTexturePath(resource.url, data);
+            }
             let r = host.resourceConfig.getResource(imageUrl);
             if (r) {
                 var texture: egret.Texture = await host.load(r);
-                var font = new egret.BitmapFont(texture, data);
+                var font = new egret.BitmapFont(texture, config);
                 return font;
             }
             else {

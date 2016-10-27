@@ -21,6 +21,24 @@ class Main extends egret.DisplayObjectContainer {
             }
         }
 
+        let testBitmapFont = () =>
+            RES.getResAsync("assets/font/font.fnt").then(value => {
+                console.log(value)
+                var text = new egret.BitmapText();
+                text.font = value;
+                this.addChild(text);
+                text.text = "0";
+            });
+        ;
+
+        let testSpriteSheet = () => {
+            RES.getResAsync("assets/sheet/sheet1.json").then(value => console.log(value));
+        }
+
+        let testLoadResByUrl = () =>
+            RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
+
+
         RES.loadConfig()
             .then(() => RES.loadGroup("preload", 0, reportrer))
             .then(() => this.createGameScene())
@@ -31,27 +49,17 @@ class Main extends egret.DisplayObjectContainer {
             //     return RES.loadGroup("tempGroup")
             // })
             .then(() => sleep(1000))
-            .then(() => RES.loadGroup("preload", 0, reportrer))
-            .then(() => {
+            .then(() => RES.loadGroup("preload", 0, reportrer).then(() => {
                 this.sky.texture = RES.getRes("assets/bg.jpg")
-            }).then(() => {
-                RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
-            }).then(() => {
-                RES.getResAsync("assets/armature/skeleton.json").then(value => console.log(value))
-            }).then(() => {
-                RES.getResAsync("assets/font/font.fnt").then((value) => { 
-                    console.log(value) 
-                    var text = new egret.BitmapText();
-                    text.font = value;
-                    this.addChild(text);
-                    text.text = "0";
-                });
-            });
-            // .catch((e) => {
-            //     console.warn(e);
-            //     console.log(e.stack)
-            //     // throw e;
-            // });
+            }))
+            .then(testLoadResByUrl)
+            .then(testBitmapFont)
+            .then(testSpriteSheet)
+        // .catch((e) => {
+        //     console.warn(e);
+        //     console.log(e.stack)
+        //     // throw e;
+        // });
     }
 
 
