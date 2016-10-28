@@ -2,22 +2,29 @@ var fs = require("fs");
 
 exports.groups = { "preload": ["bg_jpg"] };
 exports.alias = { "bg_jpg": "assets/bg.jpg" };
-exports.filter = function (p) {
+exports.filter = function (p,plugins) {
     var ext = p.substr(p.lastIndexOf(".") + 1);
+	var type;
     switch (ext) {
         case "json":
 			if (p.indexOf("sheet") >= 0){
-				return "sheet";
+				type = "sheet";
 			}
 			else{
-				return "json";
+				type = "json";
 			}
+			break;
         case "png":
         case "jpg":
-            return "image";
+            type = "image";
+			break;
 		case "fnt":
-			return "font";
+			type = "font";
+			break;
     }
+	var url = plugins.crc32(p);
+	return {url,type}
+
 }
 exports.resources = {
 	"assets": {

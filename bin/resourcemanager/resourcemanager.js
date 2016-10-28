@@ -610,6 +610,7 @@ var RES;
 })(RES || (RES = {}));
 var RES;
 (function (RES) {
+    var temp__prefix = "bin-debug/resource/";
     function promisify(loader, resource) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
@@ -654,7 +655,7 @@ var RES;
                     switch (_a.label) {
                         case 0:
                             loader = new egret.ImageLoader();
-                            prefix = resource.extra ? "" : "resource/";
+                            prefix = resource.extra ? "" : temp__prefix;
                             loader.load(prefix + resource.url);
                             return [4 /*yield*/, promisify(loader, resource)];
                         case 1:
@@ -687,7 +688,7 @@ var RES;
                         case 0:
                             request = new egret.HttpRequest();
                             request.responseType = egret.HttpResponseType.ARRAY_BUFFER;
-                            prefix = resource.extra ? "" : "resource/";
+                            prefix = resource.extra ? "" : temp__prefix;
                             request.open(prefix + resource.url, "get");
                             request.send();
                             return [4 /*yield*/, promisify(request, resource)];
@@ -711,7 +712,7 @@ var RES;
                         case 0:
                             request = new egret.HttpRequest();
                             request.responseType = egret.HttpResponseType.TEXT;
-                            prefix = resource.extra ? "" : "resource/";
+                            prefix = resource.extra ? "" : temp__prefix;
                             request.open(prefix + resource.url, "get");
                             request.send();
                             return [4 /*yield*/, promisify(request, resource)];

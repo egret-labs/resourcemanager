@@ -1,4 +1,7 @@
 module RES {
+
+    var temp__prefix = "bin-debug/resource/";
+
     async function promisify(loader: egret.ImageLoader | egret.HttpRequest, resource: ResourceInfo): Promise<any> {
 
         return new Promise((reslove, reject) => {
@@ -39,7 +42,7 @@ module RES {
 
         async onLoadStart(host, resource) {
             var loader = new egret.ImageLoader();
-            let prefix = resource.extra ? "" : "resource/";
+            let prefix = resource.extra ? "" : temp__prefix;
             loader.load(prefix + resource.url);
             var bitmapData = await promisify(loader, resource);
             var texture = new egret.Texture();
@@ -68,7 +71,7 @@ module RES {
 
             var request: egret.HttpRequest = new egret.HttpRequest();
             request.responseType = egret.HttpResponseType.ARRAY_BUFFER;
-            let prefix = resource.extra ? "" : "resource/";
+            let prefix = resource.extra ? "" : temp__prefix;
             request.open(prefix + resource.url, "get");
             request.send();
             let arraybuffer = await promisify(request, resource);
@@ -88,7 +91,7 @@ module RES {
 
             var request: egret.HttpRequest = new egret.HttpRequest();
             request.responseType = egret.HttpResponseType.TEXT;
-            let prefix = resource.extra ? "" : "resource/";
+            let prefix = resource.extra ? "" : temp__prefix;
             request.open(prefix + resource.url, "get");
             request.send();
             let text = await promisify(request, resource);
