@@ -4,12 +4,14 @@
   "description": "",
   "scripts": {
     "publish": "tsc",
+    "debug": "tsc && egret build test/es6-api -e && egret-cli resource build test/es6-api && egret run test/es6-api",
     "test": "egret build test/es6-api -e && egret-cli resource build test/es6-api && egret run test/es6-api",
     "test-classic": "egret build test/classic-api -e && egret-cli resource build test/classic-api && egret run test/classic-api"
   },
   "author": "wander",
   "license": "ISC",
   "devDependencies": {
+    "egret-cli": "^0.2.0",
     "typescript": "^2.1.0-dev.20161019"
   }
 }

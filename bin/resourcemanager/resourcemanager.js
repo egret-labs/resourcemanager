@@ -1736,6 +1736,12 @@ var RES;
             var _a = RES.manager.config.parseResKey(key), key = _a.key, subkey = _a.subkey;
             var r = RES.manager.config.getResource(key, true);
             return RES.manager.load(r).then(function (value) {
+                if (subkey) {
+                    var processor = RES.host.isSupport(r);
+                    if (processor && processor.getSubResource) {
+                        value = processor.getSubResource(RES.host, r, value, subkey);
+                    }
+                }
                 if (compFunc) {
                     compFunc.call(thisObject, value, r.url);
                 }
