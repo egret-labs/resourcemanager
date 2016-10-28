@@ -1,6 +1,6 @@
 module RES {
 
-    async function promisify(loader: egret.ImageLoader | egret.HttpRequest, resource: ResourceInfo): Promise<any> {
+    async function promisify(loader: egret.ImageLoader | egret.HttpRequest | egret.Sound, resource: ResourceInfo): Promise<any> {
 
         return new Promise((reslove, reject) => {
             let onSuccess = () => {
@@ -255,5 +255,19 @@ module RES {
         }
 
 
+    }
+
+
+        export var SoundProcessor: Processor = {
+        async onLoadStart(host, resource) {
+            let prefix = resource.extra ? "" : "resource/";
+            var sound:egret.Sound = new egret.Sound();
+            sound.load(prefix + resource.url);
+            await promisify(sound, resource);
+            return sound;
+        },
+        onRemoveStart(host, resource) {
+             return Promise.resolve();
+        }
     }
 }

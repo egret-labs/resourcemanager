@@ -84,7 +84,8 @@ module RES {
                 "sheet": SheetProcessor,
                 "font": FontProcessor,
                 "bin": BinaryProcessor,
-                "commonjs": CommonJSProcessor
+                "commonjs": CommonJSProcessor,
+                "sound":SoundProcessor
             }
 
             return map[type];

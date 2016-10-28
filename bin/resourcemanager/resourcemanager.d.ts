@@ -290,6 +290,7 @@ declare module RES {
     var CommonJSProcessor: Processor;
     var SheetProcessor: Processor;
     var FontProcessor: Processor;
+    var SoundProcessor: Processor;
 }
 declare module RES {
     /**

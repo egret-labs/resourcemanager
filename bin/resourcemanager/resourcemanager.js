@@ -568,7 +568,8 @@ var RES;
                 "sheet": RES.SheetProcessor,
                 "font": RES.FontProcessor,
                 "bin": RES.BinaryProcessor,
-                "commonjs": RES.CommonJSProcessor
+                "commonjs": RES.CommonJSProcessor,
+                "sound": RES.SoundProcessor
             };
             return map[type];
         }
@@ -873,6 +874,28 @@ var RES;
                             font = new egret.BitmapFont(texture, config);
                             return [2 /*return*/, font];
                         case 3: return [2 /*return*/, null];
+                    }
+                });
+            });
+        },
+        onRemoveStart: function (host, resource) {
+            return Promise.resolve();
+        }
+    };
+    RES.SoundProcessor = {
+        onLoadStart: function (host, resource) {
+            return __awaiter(this, void 0, void 0, function () {
+                var prefix, sound;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            prefix = resource.extra ? "" : "resource/";
+                            sound = new egret.Sound();
+                            sound.load(prefix + resource.url);
+                            return [4 /*yield*/, promisify(sound, resource)];
+                        case 1:
+                            _a.sent();
+                            return [2 /*return*/, sound];
                     }
                 });
             });

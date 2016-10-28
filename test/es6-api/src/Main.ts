@@ -33,21 +33,29 @@ class Main extends egret.DisplayObjectContainer {
 
         let testSpriteSheet = () => {
             RES.getResAsync("assets/sheet/sheet1.json")
-            .then((value:egret.SpriteSheet) => {
-                
-                var button = new egret.Bitmap();
-                this.addChild(button);
-                // button.texture = value.getTexture("off");
-                let texture = RES.getRes("assets/sheet/sheet1.json#off");
-                console.log ('111',texture)
-                button.texture = texture;
-                button.y = 100;
-            })
+                .then((value: egret.SpriteSheet) => {
+
+                    var button = new egret.Bitmap();
+                    this.addChild(button);
+                    // button.texture = value.getTexture("off");
+                    let texture = RES.getRes("assets/sheet/sheet1.json#off");
+                    console.log('111', texture)
+                    button.texture = texture;
+                    button.y = 100;
+                })
         }
 
         let testLoadResByUrl = () =>
             RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
 
+
+        let testSoundByUrl = () => {
+            RES.getResAsync("assets/sound/sound_go.mp3").then((value) => {
+                console.log(value)
+                var sound: egret.Sound = value;
+                sound.play();
+            })
+        }
 
         RES.loadConfig()
             .then(() => RES.loadGroup("preload", 0, reportrer))
@@ -65,11 +73,12 @@ class Main extends egret.DisplayObjectContainer {
             .then(testLoadResByUrl)
             .then(testBitmapFont)
             .then(testSpriteSheet)
-        .catch((e) => {
-            console.warn(e);
-            console.log(e.stack)
-            // throw e;
-        });
+            .then(testSoundByUrl)
+            .catch((e) => {
+                console.warn(e);
+                console.log(e.stack)
+                // throw e;
+            });
     }
 
 
