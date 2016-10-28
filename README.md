@@ -3,13 +3,29 @@
 
 ## 核心功能
 
-* 友好的资源加载 API
-* 版本控制支持
-* 针对不同平台发布不同的资源
-* 更容易开发者进行扩展的结构
-* 80% 兼容旧版 API 
+#### 友好的资源加载 API
 
-## 当前状态 - Public Beta 1
+* 遵循 ES6 Promise 标准的异步语法
+``` javascript
+RES.loadConfig().then(()=>{
+    RES.getResAsync("assets/bg.jpg");
+}).then(()=>{
+    RES.getResAsync("assets/icon.jpg");
+});
+```
+* 即将支持 ES2015 async / await 异步语法
+``` javascript
+await RES.loadConfig()
+await RES.getResAsync("assets/bg.jpg");
+await RES.getResAsync("assets/icon.jpg");
+```
+
+#### 版本控制支持
+#### 针对不同平台发布不同的资源
+#### 更容易开发者进行扩展的结构
+#### 80% 兼容旧版 API 
+
+## 当前状态 - Public Beta 2
 
 资源管理模块目前作为白鹭引擎的全新特性，本次开放发布希望获得开发者的广泛反馈意见，目前暂时不建议开发者用于正式项目中。具体时间表如下：
 
@@ -23,6 +39,12 @@
 ## 运行测试项目
 
 执行 ```egret run test/es6-api``` 或者 ``` egret run test/classic-api ``` 
+
+## 如何调试
+
+* 安装 Egret Wing 或者 VSCode ，打开项目根目录
+* 在项目根目录下执行 npm install
+* 调试项目（F5)，或执行 ``` npm run debug ```
 
 ## 如何使用
 

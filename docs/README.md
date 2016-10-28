@@ -13,7 +13,7 @@ class Main extends egret.DisplayObjectContainer {
     }
 }
 ```
-白鹭资源管理框架采用 ES7 的装饰器语法进行配置。
+白鹭资源管理框架采用 ES2015 的装饰器语法进行配置。
 
 
 <a name="upgrade-decorator">
