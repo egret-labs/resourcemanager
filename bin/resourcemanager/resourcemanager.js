@@ -153,18 +153,17 @@ var RES;
      */
     function mapConfig(url, selector) {
         return function (target) {
-            var resourceRoot;
             var type = "commonjs";
             if (typeof selector == "string") {
-                resourceRoot = selector;
+                RES.resourceRoot = selector;
             }
             else {
-                resourceRoot = selector();
+                RES.resourceRoot = selector();
             }
-            if (resourceRoot.lastIndexOf("/") != 0) {
-                resourceRoot = resourceRoot + "/";
+            if (RES.resourceRoot.lastIndexOf("/") != 0) {
+                RES.resourceRoot = RES.resourceRoot + "/";
             }
-            RES.configItem = { url: url, resourceRoot: resourceRoot, type: type, name: url };
+            RES.configItem = { url: url, resourceRoot: RES.resourceRoot, type: type, name: url };
         };
     }
     RES.mapConfig = mapConfig;
@@ -610,7 +609,6 @@ var RES;
 })(RES || (RES = {}));
 var RES;
 (function (RES) {
-    var temp__prefix = "bin-debug/resource/";
     function promisify(loader, resource) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
@@ -655,7 +653,7 @@ var RES;
                     switch (_a.label) {
                         case 0:
                             loader = new egret.ImageLoader();
-                            prefix = resource.extra ? "" : temp__prefix;
+                            prefix = resource.extra ? "" : RES.resourceRoot;
                             loader.load(prefix + resource.url);
                             return [4 /*yield*/, promisify(loader, resource)];
                         case 1:
@@ -688,7 +686,7 @@ var RES;
                         case 0:
                             request = new egret.HttpRequest();
                             request.responseType = egret.HttpResponseType.ARRAY_BUFFER;
-                            prefix = resource.extra ? "" : temp__prefix;
+                            prefix = resource.extra ? "" : RES.resourceRoot;
                             request.open(prefix + resource.url, "get");
                             request.send();
                             return [4 /*yield*/, promisify(request, resource)];
@@ -712,7 +710,7 @@ var RES;
                         case 0:
                             request = new egret.HttpRequest();
                             request.responseType = egret.HttpResponseType.TEXT;
-                            prefix = resource.extra ? "" : temp__prefix;
+                            prefix = resource.extra ? "" : RES.resourceRoot;
                             request.open(prefix + resource.url, "get");
                             request.send();
                             return [4 /*yield*/, promisify(request, resource)];

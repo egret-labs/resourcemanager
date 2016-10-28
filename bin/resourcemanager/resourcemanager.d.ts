@@ -173,6 +173,7 @@ declare module RES {
      * @platform Web,Native
      */
     function mapConfig<T>(url: string, selector: ResourceRootSelector<T>): (target: any) => void;
+    var resourceRoot: string;
     interface ResourceInfo {
         url: string;
         type: string;
