@@ -428,6 +428,10 @@ var RES;
                 this.config.alias[data.name] = data.url;
             }
         };
+        ResourceConfig.prototype.destory = function () {
+            this.config = { groups: {}, alias: {}, resources: {} };
+            RES.FileSystem.data = {};
+        };
         return ResourceConfig;
     }());
     RES.ResourceConfig = ResourceConfig;
@@ -600,6 +604,7 @@ var RES;
         }
         manager.load = load;
         function destory() {
+            manager.config.destory();
             systemPid++;
             //todo 销毁整个 ResourceManager上下文全部内容
         }
@@ -1771,12 +1776,16 @@ var RES;
         Resource.prototype.loadGroup = function (name, priority, reporter) {
             var _this = this;
             if (priority === void 0) { priority = 0; }
-            var resources = RES.manager.config.getGroupByName(name);
-            return RES.manager.load(resources, reporter).then(function (data) {
+            return this._loadGroup(name, priority, reporter).then(function (data) {
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.GROUP_COMPLETE, name);
             }, function (error) {
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.GROUP_LOAD_ERROR, name);
             });
+        };
+        Resource.prototype._loadGroup = function (name, priority, reporter) {
+            if (priority === void 0) { priority = 0; }
+            var resources = RES.manager.config.getGroupByName(name);
+            return RES.manager.load(resources, reporter);
         };
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
@@ -1923,6 +1932,9 @@ var RES;
         RES.upgrade.checkDecorator,
         RES.checkCancelation
     ], Resource.prototype, "loadConfig", null);
+    __decorate([
+        RES.checkCancelation
+    ], Resource.prototype, "_loadGroup", null);
     __decorate([
         RES.checkNull
     ], Resource.prototype, "getRes", null);

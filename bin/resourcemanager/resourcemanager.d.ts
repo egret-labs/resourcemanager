@@ -247,6 +247,7 @@ declare module RES {
             type?: string;
             url: string;
         }): void;
+        destory(): void;
     }
 }
 declare module RES {
@@ -940,6 +941,7 @@ declare module RES {
          * @param priority {number}
          */
         loadGroup(name: string, priority?: number, reporter?: PromiseTaskReporter): Promise<any>;
+        private _loadGroup(name, priority?, reporter?);
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
          * 可以监听ResourceEvent.CONFIG_COMPLETE事件来确认配置加载完成。
