@@ -293,6 +293,7 @@ declare module RES.processor {
     var SheetProcessor: Processor;
     var FontProcessor: Processor;
     var SoundProcessor: Processor;
+    var MovieClipProcessor: Processor;
 }
 declare module RES {
     /**
