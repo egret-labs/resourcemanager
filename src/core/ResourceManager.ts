@@ -71,24 +71,8 @@ module RES {
             delete __tempCache[resource.url];
         },
 
-
-
         isSupport(resource: ResourceInfo) {
-            let type = resource.type;
-
-            let map = {
-                "image": ImageProcessor,
-                "json": JsonProcessor,
-                "text": TextProcessor,
-                "xml": XMLProcessor,
-                "sheet": SheetProcessor,
-                "font": FontProcessor,
-                "bin": BinaryProcessor,
-                "commonjs": CommonJSProcessor,
-                "sound":SoundProcessor
-            }
-
-            return map[type];
+            return RES.processor.isSupport(resource);
         }
     }
 

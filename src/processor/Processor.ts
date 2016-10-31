@@ -1,4 +1,14 @@
-module RES {
+module RES.processor {
+
+
+
+    export function isSupport(resource: ResourceInfo) {
+        return _map[resource.type];
+    }
+
+    export function map(type: string, processor: Processor) {
+        _map[type] = processor;
+    }
 
     async function promisify(loader: egret.ImageLoader | egret.HttpRequest | egret.Sound, resource: ResourceInfo): Promise<any> {
 
@@ -182,7 +192,7 @@ module RES {
         },
 
 
-        getSubResource(host,resource,data:egret.SpriteSheet,subkey){
+        getSubResource(host, resource, data: egret.SpriteSheet, subkey) {
             return data.getTexture(subkey);
         },
 
@@ -258,16 +268,28 @@ module RES {
     }
 
 
-        export var SoundProcessor: Processor = {
+    export var SoundProcessor: Processor = {
         async onLoadStart(host, resource) {
             let prefix = resource.extra ? "" : "resource/";
-            var sound:egret.Sound = new egret.Sound();
+            var sound: egret.Sound = new egret.Sound();
             sound.load(prefix + resource.url);
             await promisify(sound, resource);
             return sound;
         },
         onRemoveStart(host, resource) {
-             return Promise.resolve();
+            return Promise.resolve();
         }
+    }
+
+    var _map = {
+        "image": ImageProcessor,
+        "json": JsonProcessor,
+        "text": TextProcessor,
+        "xml": XMLProcessor,
+        "sheet": SheetProcessor,
+        "font": FontProcessor,
+        "bin": BinaryProcessor,
+        "commonjs": CommonJSProcessor,
+        "sound": SoundProcessor
     }
 }

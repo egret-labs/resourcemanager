@@ -559,19 +559,7 @@ var RES;
             delete __tempCache[resource.url];
         },
         isSupport: function (resource) {
-            var type = resource.type;
-            var map = {
-                "image": RES.ImageProcessor,
-                "json": RES.JsonProcessor,
-                "text": RES.TextProcessor,
-                "xml": RES.XMLProcessor,
-                "sheet": RES.SheetProcessor,
-                "font": RES.FontProcessor,
-                "bin": RES.BinaryProcessor,
-                "commonjs": RES.CommonJSProcessor,
-                "sound": RES.SoundProcessor
-            };
-            return map[type];
+            return RES.processor.isSupport(resource);
         }
     };
     var manager;
@@ -610,300 +598,322 @@ var RES;
 })(RES || (RES = {}));
 var RES;
 (function (RES) {
-    function promisify(loader, resource) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            return __generator(this, function (_a) {
-                return [2 /*return*/, new Promise(function (reslove, reject) {
-                        var onSuccess = function () {
-                            var texture = loader['data'] ? loader['data'] : loader['response'];
-                            reslove(texture);
-                        };
-                        var onError = function () {
-                            var e = { code: 1001, message: "\u6587\u4EF6\u52A0\u8F7D\u5931\u8D25:'" + resource.url + "'" };
-                            reject(e);
-                        };
-                        loader.addEventListener(egret.Event.COMPLETE, onSuccess, _this);
-                        loader.addEventListener(egret.IOErrorEvent.IO_ERROR, onError, _this);
-                    })];
-            });
-        });
-    }
-    function getRelativePath(url, file) {
-        url = url.split("\\").join("/");
-        var params = url.match(/#.*|\?.*/);
-        var paramUrl = "";
-        if (params) {
-            paramUrl = params[0];
+    var processor;
+    (function (processor_1) {
+        function isSupport(resource) {
+            return _map[resource.type];
         }
-        var index = url.lastIndexOf("/");
-        if (index != -1) {
-            url = url.substring(0, index + 1) + file;
+        processor_1.isSupport = isSupport;
+        function map(type, processor) {
+            _map[type] = processor;
         }
-        else {
-            url = file;
-        }
-        return url + paramUrl;
-    }
-    RES.getRelativePath = getRelativePath;
-    RES.ImageProcessor = {
-        onLoadStart: function (host, resource) {
+        processor_1.map = map;
+        function promisify(loader, resource) {
             return __awaiter(this, void 0, void 0, function () {
-                var loader, prefix, bitmapData, texture;
+                var _this = this;
                 return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            loader = new egret.ImageLoader();
-                            prefix = resource.extra ? "" : RES.resourceRoot;
-                            loader.load(prefix + resource.url);
-                            return [4 /*yield*/, promisify(loader, resource)];
-                        case 1:
-                            bitmapData = _a.sent();
-                            texture = new egret.Texture();
-                            texture._setBitmapData(bitmapData);
-                            // var config: any = resItem.data;
-                            // if (config && config["scale9grid"]) {
-                            //     var str: string = config["scale9grid"];
-                            //     var list: Array<string> = str.split(",");
-                            //     texture["scale9Grid"] = new egret.Rectangle(parseInt(list[0]), parseInt(list[1]), parseInt(list[2]), parseInt(list[3]));
-                            // }
-                            return [2 /*return*/, texture];
-                    }
-                });
-            });
-        },
-        onRemoveStart: function (host, resource) {
-            var texture = host.get(resource);
-            texture.dispose();
-            return Promise.resolve();
-        }
-    };
-    RES.BinaryProcessor = {
-        onLoadStart: function (host, resource) {
-            return __awaiter(this, void 0, void 0, function () {
-                var request, prefix, arraybuffer;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            request = new egret.HttpRequest();
-                            request.responseType = egret.HttpResponseType.ARRAY_BUFFER;
-                            prefix = resource.extra ? "" : RES.resourceRoot;
-                            request.open(prefix + resource.url, "get");
-                            request.send();
-                            return [4 /*yield*/, promisify(request, resource)];
-                        case 1:
-                            arraybuffer = _a.sent();
-                            return [2 /*return*/, arraybuffer];
-                    }
-                });
-            });
-        },
-        onRemoveStart: function (host, resource) {
-            return Promise.resolve();
-        }
-    };
-    RES.TextProcessor = {
-        onLoadStart: function (host, resource) {
-            return __awaiter(this, void 0, void 0, function () {
-                var request, prefix, text;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            request = new egret.HttpRequest();
-                            request.responseType = egret.HttpResponseType.TEXT;
-                            prefix = resource.extra ? "" : RES.resourceRoot;
-                            request.open(prefix + resource.url, "get");
-                            request.send();
-                            return [4 /*yield*/, promisify(request, resource)];
-                        case 1:
-                            text = _a.sent();
-                            return [2 /*return*/, text];
-                    }
-                });
-            });
-        },
-        onRemoveStart: function (host, resource) {
-            return Promise.resolve();
-        }
-    };
-    RES.JsonProcessor = {
-        onLoadStart: function (host, resource) {
-            return __awaiter(this, void 0, void 0, function () {
-                var text, data;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, host.load(resource, RES.TextProcessor)];
-                        case 1:
-                            text = _a.sent();
-                            data = JSON.parse(text);
-                            return [2 /*return*/, data];
-                    }
-                });
-            });
-        },
-        onRemoveStart: function (host, request) {
-            return Promise.resolve();
-        }
-    };
-    RES.XMLProcessor = {
-        onLoadStart: function (host, resource) {
-            return __awaiter(this, void 0, void 0, function () {
-                var text, data;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, host.load(resource, RES.TextProcessor)];
-                        case 1:
-                            text = _a.sent();
-                            data = egret.XML.parse(text);
-                            return [2 /*return*/, data];
-                    }
-                });
-            });
-        },
-        onRemoveStart: function (host, resource) {
-            return Promise.resolve();
-        }
-    };
-    RES.CommonJSProcessor = {
-        onLoadStart: function (host, resource) {
-            return __awaiter(this, void 0, void 0, function () {
-                var text, f, require, exports;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, host.load(resource, RES.TextProcessor)];
-                        case 1:
-                            text = _a.sent();
-                            f = new Function('require', 'exports', text);
-                            require = function () { };
-                            exports = {};
-                            f(require, exports);
-                            return [2 /*return*/, exports];
-                    }
-                });
-            });
-        },
-        onRemoveStart: function (host, resource) {
-            return Promise.resolve();
-        }
-    };
-    RES.SheetProcessor = {
-        onLoadStart: function (host, resource) {
-            return __awaiter(this, void 0, void 0, function () {
-                var data, imageUrl, r, texture, frames, spriteSheet, subkey, config, texture;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, host.load(resource, RES.JsonProcessor)];
-                        case 1:
-                            data = _a.sent();
-                            imageUrl = getRelativePath(resource.url, data.file);
-                            //todo 
-                            host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
-                            r = host.resourceConfig.getResource(imageUrl);
-                            if (!r) {
-                                throw 'error';
-                            }
-                            return [4 /*yield*/, host.load(r)];
-                        case 2:
-                            texture = _a.sent();
-                            frames = data.frames;
-                            if (!frames) {
-                                throw 'error';
-                            }
-                            spriteSheet = new egret.SpriteSheet(texture);
-                            for (subkey in frames) {
-                                config = frames[subkey];
-                                texture = spriteSheet.createTexture(subkey, config.x, config.y, config.w, config.h, config.offX, config.offY, config.sourceW, config.sourceH);
-                            }
-                            return [2 /*return*/, spriteSheet];
-                    }
-                });
-            });
-        },
-        getSubResource: function (host, resource, data, subkey) {
-            return data.getTexture(subkey);
-        },
-        onRemoveStart: function (host, resource) {
-            return Promise.resolve();
-        }
-    };
-    RES.FontProcessor = {
-        onLoadStart: function (host, resource) {
-            return __awaiter(this, void 0, void 0, function () {
-                var getTexturePath, data, imageUrl, config, r, texture, font;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            getTexturePath = function (url, fntText) {
-                                var file = "";
-                                var lines = fntText.split("\n");
-                                var pngLine = lines[2];
-                                var index = pngLine.indexOf("file=\"");
-                                if (index != -1) {
-                                    pngLine = pngLine.substring(index + 6);
-                                    index = pngLine.indexOf("\"");
-                                    file = pngLine.substring(0, index);
-                                }
-                                url = url.split("\\").join("/");
-                                var index = url.lastIndexOf("/");
-                                if (index != -1) {
-                                    url = url.substring(0, index + 1) + file;
-                                }
-                                else {
-                                    url = file;
-                                }
-                                return url;
+                    return [2 /*return*/, new Promise(function (reslove, reject) {
+                            var onSuccess = function () {
+                                var texture = loader['data'] ? loader['data'] : loader['response'];
+                                reslove(texture);
                             };
-                            return [4 /*yield*/, host.load(resource, RES.TextProcessor)];
-                        case 1:
-                            data = _a.sent();
-                            imageUrl = "";
-                            try {
-                                config = JSON.parse(data);
-                                imageUrl = getRelativePath(resource.url, config.file);
-                            }
-                            catch (e) {
-                                config = data;
-                                imageUrl = this.getTexturePath(resource.url, data);
-                            }
-                            r = host.resourceConfig.getResource(imageUrl);
-                            if (!r)
-                                return [3 /*break*/, 3];
-                            return [4 /*yield*/, host.load(r)];
-                        case 2:
-                            texture = _a.sent();
-                            font = new egret.BitmapFont(texture, config);
-                            return [2 /*return*/, font];
-                        case 3: return [2 /*return*/, null];
-                    }
+                            var onError = function () {
+                                var e = { code: 1001, message: "\u6587\u4EF6\u52A0\u8F7D\u5931\u8D25:'" + resource.url + "'" };
+                                reject(e);
+                            };
+                            loader.addEventListener(egret.Event.COMPLETE, onSuccess, _this);
+                            loader.addEventListener(egret.IOErrorEvent.IO_ERROR, onError, _this);
+                        })];
                 });
             });
-        },
-        onRemoveStart: function (host, resource) {
-            return Promise.resolve();
         }
-    };
-    RES.SoundProcessor = {
-        onLoadStart: function (host, resource) {
-            return __awaiter(this, void 0, void 0, function () {
-                var prefix, sound;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            prefix = resource.extra ? "" : "resource/";
-                            sound = new egret.Sound();
-                            sound.load(prefix + resource.url);
-                            return [4 /*yield*/, promisify(sound, resource)];
-                        case 1:
-                            _a.sent();
-                            return [2 /*return*/, sound];
-                    }
+        function getRelativePath(url, file) {
+            url = url.split("\\").join("/");
+            var params = url.match(/#.*|\?.*/);
+            var paramUrl = "";
+            if (params) {
+                paramUrl = params[0];
+            }
+            var index = url.lastIndexOf("/");
+            if (index != -1) {
+                url = url.substring(0, index + 1) + file;
+            }
+            else {
+                url = file;
+            }
+            return url + paramUrl;
+        }
+        processor_1.getRelativePath = getRelativePath;
+        processor_1.ImageProcessor = {
+            onLoadStart: function (host, resource) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var loader, prefix, bitmapData, texture;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                loader = new egret.ImageLoader();
+                                prefix = resource.extra ? "" : RES.resourceRoot;
+                                loader.load(prefix + resource.url);
+                                return [4 /*yield*/, promisify(loader, resource)];
+                            case 1:
+                                bitmapData = _a.sent();
+                                texture = new egret.Texture();
+                                texture._setBitmapData(bitmapData);
+                                // var config: any = resItem.data;
+                                // if (config && config["scale9grid"]) {
+                                //     var str: string = config["scale9grid"];
+                                //     var list: Array<string> = str.split(",");
+                                //     texture["scale9Grid"] = new egret.Rectangle(parseInt(list[0]), parseInt(list[1]), parseInt(list[2]), parseInt(list[3]));
+                                // }
+                                return [2 /*return*/, texture];
+                        }
+                    });
                 });
-            });
-        },
-        onRemoveStart: function (host, resource) {
-            return Promise.resolve();
-        }
-    };
+            },
+            onRemoveStart: function (host, resource) {
+                var texture = host.get(resource);
+                texture.dispose();
+                return Promise.resolve();
+            }
+        };
+        processor_1.BinaryProcessor = {
+            onLoadStart: function (host, resource) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var request, prefix, arraybuffer;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                request = new egret.HttpRequest();
+                                request.responseType = egret.HttpResponseType.ARRAY_BUFFER;
+                                prefix = resource.extra ? "" : RES.resourceRoot;
+                                request.open(prefix + resource.url, "get");
+                                request.send();
+                                return [4 /*yield*/, promisify(request, resource)];
+                            case 1:
+                                arraybuffer = _a.sent();
+                                return [2 /*return*/, arraybuffer];
+                        }
+                    });
+                });
+            },
+            onRemoveStart: function (host, resource) {
+                return Promise.resolve();
+            }
+        };
+        processor_1.TextProcessor = {
+            onLoadStart: function (host, resource) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var request, prefix, text;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                request = new egret.HttpRequest();
+                                request.responseType = egret.HttpResponseType.TEXT;
+                                prefix = resource.extra ? "" : RES.resourceRoot;
+                                request.open(prefix + resource.url, "get");
+                                request.send();
+                                return [4 /*yield*/, promisify(request, resource)];
+                            case 1:
+                                text = _a.sent();
+                                return [2 /*return*/, text];
+                        }
+                    });
+                });
+            },
+            onRemoveStart: function (host, resource) {
+                return Promise.resolve();
+            }
+        };
+        processor_1.JsonProcessor = {
+            onLoadStart: function (host, resource) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var text, data;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, host.load(resource, processor_1.TextProcessor)];
+                            case 1:
+                                text = _a.sent();
+                                data = JSON.parse(text);
+                                return [2 /*return*/, data];
+                        }
+                    });
+                });
+            },
+            onRemoveStart: function (host, request) {
+                return Promise.resolve();
+            }
+        };
+        processor_1.XMLProcessor = {
+            onLoadStart: function (host, resource) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var text, data;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, host.load(resource, processor_1.TextProcessor)];
+                            case 1:
+                                text = _a.sent();
+                                data = egret.XML.parse(text);
+                                return [2 /*return*/, data];
+                        }
+                    });
+                });
+            },
+            onRemoveStart: function (host, resource) {
+                return Promise.resolve();
+            }
+        };
+        processor_1.CommonJSProcessor = {
+            onLoadStart: function (host, resource) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var text, f, require, exports;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, host.load(resource, processor_1.TextProcessor)];
+                            case 1:
+                                text = _a.sent();
+                                f = new Function('require', 'exports', text);
+                                require = function () { };
+                                exports = {};
+                                f(require, exports);
+                                return [2 /*return*/, exports];
+                        }
+                    });
+                });
+            },
+            onRemoveStart: function (host, resource) {
+                return Promise.resolve();
+            }
+        };
+        processor_1.SheetProcessor = {
+            onLoadStart: function (host, resource) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var data, imageUrl, r, texture, frames, spriteSheet, subkey, config, texture;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, host.load(resource, processor_1.JsonProcessor)];
+                            case 1:
+                                data = _a.sent();
+                                imageUrl = getRelativePath(resource.url, data.file);
+                                //todo 
+                                host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
+                                r = host.resourceConfig.getResource(imageUrl);
+                                if (!r) {
+                                    throw 'error';
+                                }
+                                return [4 /*yield*/, host.load(r)];
+                            case 2:
+                                texture = _a.sent();
+                                frames = data.frames;
+                                if (!frames) {
+                                    throw 'error';
+                                }
+                                spriteSheet = new egret.SpriteSheet(texture);
+                                for (subkey in frames) {
+                                    config = frames[subkey];
+                                    texture = spriteSheet.createTexture(subkey, config.x, config.y, config.w, config.h, config.offX, config.offY, config.sourceW, config.sourceH);
+                                }
+                                return [2 /*return*/, spriteSheet];
+                        }
+                    });
+                });
+            },
+            getSubResource: function (host, resource, data, subkey) {
+                return data.getTexture(subkey);
+            },
+            onRemoveStart: function (host, resource) {
+                return Promise.resolve();
+            }
+        };
+        processor_1.FontProcessor = {
+            onLoadStart: function (host, resource) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var getTexturePath, data, imageUrl, config, r, texture, font;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                getTexturePath = function (url, fntText) {
+                                    var file = "";
+                                    var lines = fntText.split("\n");
+                                    var pngLine = lines[2];
+                                    var index = pngLine.indexOf("file=\"");
+                                    if (index != -1) {
+                                        pngLine = pngLine.substring(index + 6);
+                                        index = pngLine.indexOf("\"");
+                                        file = pngLine.substring(0, index);
+                                    }
+                                    url = url.split("\\").join("/");
+                                    var index = url.lastIndexOf("/");
+                                    if (index != -1) {
+                                        url = url.substring(0, index + 1) + file;
+                                    }
+                                    else {
+                                        url = file;
+                                    }
+                                    return url;
+                                };
+                                return [4 /*yield*/, host.load(resource, processor_1.TextProcessor)];
+                            case 1:
+                                data = _a.sent();
+                                imageUrl = "";
+                                try {
+                                    config = JSON.parse(data);
+                                    imageUrl = getRelativePath(resource.url, config.file);
+                                }
+                                catch (e) {
+                                    config = data;
+                                    imageUrl = this.getTexturePath(resource.url, data);
+                                }
+                                r = host.resourceConfig.getResource(imageUrl);
+                                if (!r)
+                                    return [3 /*break*/, 3];
+                                return [4 /*yield*/, host.load(r)];
+                            case 2:
+                                texture = _a.sent();
+                                font = new egret.BitmapFont(texture, config);
+                                return [2 /*return*/, font];
+                            case 3: return [2 /*return*/, null];
+                        }
+                    });
+                });
+            },
+            onRemoveStart: function (host, resource) {
+                return Promise.resolve();
+            }
+        };
+        processor_1.SoundProcessor = {
+            onLoadStart: function (host, resource) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var prefix, sound;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                prefix = resource.extra ? "" : "resource/";
+                                sound = new egret.Sound();
+                                sound.load(prefix + resource.url);
+                                return [4 /*yield*/, promisify(sound, resource)];
+                            case 1:
+                                _a.sent();
+                                return [2 /*return*/, sound];
+                        }
+                    });
+                });
+            },
+            onRemoveStart: function (host, resource) {
+                return Promise.resolve();
+            }
+        };
+        var _map = {
+            "image": processor_1.ImageProcessor,
+            "json": processor_1.JsonProcessor,
+            "text": processor_1.TextProcessor,
+            "xml": processor_1.XMLProcessor,
+            "sheet": processor_1.SheetProcessor,
+            "font": processor_1.FontProcessor,
+            "bin": processor_1.BinaryProcessor,
+            "commonjs": processor_1.CommonJSProcessor,
+            "sound": processor_1.SoundProcessor
+        };
+    })(processor = RES.processor || (RES.processor = {}));
 })(RES || (RES = {}));
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1224,7 +1234,8 @@ var RES;
             descriptor.value = function () {
                 if (!RES['configItem']) {
                     var url = "config.resjs";
-                    RES['configItem'] = { url: url, resourceRoot: "resource", type: "commonjs", name: url };
+                    RES.resourceRoot = "resource/";
+                    RES['configItem'] = { url: url, resourceRoot: RES.resourceRoot, type: "commonjs", name: url };
                     if (_level == "warning") {
                         console.warn("RES.loadConfig() 不再接受参数，强制访问 resource/config.resjs 文件\n", "请访问以下站点了解更多细节\n", "https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#upgrade-decorator ");
                     }
@@ -1746,9 +1757,9 @@ var RES;
             if (r && RES.host.isSupport(r)) {
                 var data = RES.host.get(r);
                 if (subkey) {
-                    var processor = RES.host.isSupport(r);
-                    if (processor && processor.getSubResource) {
-                        return processor.getSubResource(RES.host, r, data, subkey);
+                    var processor_2 = RES.host.isSupport(r);
+                    if (processor_2 && processor_2.getSubResource) {
+                        return processor_2.getSubResource(RES.host, r, data, subkey);
                     }
                 }
                 return data;
@@ -1759,9 +1770,9 @@ var RES;
             var r = RES.manager.config.getResource(key, true);
             return RES.manager.load(r).then(function (value) {
                 if (subkey) {
-                    var processor = RES.host.isSupport(r);
-                    if (processor && processor.getSubResource) {
-                        value = processor.getSubResource(RES.host, r, value, subkey);
+                    var processor_3 = RES.host.isSupport(r);
+                    if (processor_3 && processor_3.getSubResource) {
+                        value = processor_3.getSubResource(RES.host, r, value, subkey);
                     }
                 }
                 if (compFunc) {

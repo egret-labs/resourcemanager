@@ -280,7 +280,9 @@ declare module RES {
         constructor(code: number, replacer?: string);
     }
 }
-declare module RES {
+declare module RES.processor {
+    function isSupport(resource: ResourceInfo): any;
+    function map(type: string, processor: Processor): void;
     function getRelativePath(url: string, file: string): string;
     var ImageProcessor: Processor;
     var BinaryProcessor: Processor;

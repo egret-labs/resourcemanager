@@ -32,6 +32,7 @@
         "src/shim/ResourceItem.ts",
         "src/DEBUG.ts",
         "src/shim/Resource.ts",
-        "libs/egret.d.ts"
+        "libs/egret.d.ts",
+        "libs/game.d.ts"
     ]
 }

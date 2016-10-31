@@ -33,7 +33,8 @@ module RES {
             descriptor.value = function () {
                 if (!RES['configItem']) {
                     let url = "config.resjs";
-                    RES['configItem'] = { url, resourceRoot: "resource", type: "commonjs", name: url };
+                    resourceRoot = "resource/";
+                    RES['configItem'] = { url, resourceRoot, type: "commonjs", name: url };
                     if (_level == "warning") {
                         console.warn(
                             "RES.loadConfig() 不再接受参数，强制访问 resource/config.resjs 文件\n",
