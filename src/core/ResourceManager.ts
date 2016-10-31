@@ -86,7 +86,7 @@ module RES {
         export function init(): Promise<void> {
             return host.load(configItem).then((data) => {
                 config.parseConfig(data, "resource");
-            }).catch(e => Promise.reject({ code: 1002 }));
+            }).catch(e => Promise.reject(new ResourceManagerError(1002)));
         }
 
         export function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<ResourceInfo[] | ResourceInfo> {
@@ -138,12 +138,13 @@ module RES {
 
 
         static errorMessage = {
-
+            1001: '文件加载失败:{0}',
+            1002: "ResourceManager 初始化失败：配置文件加载解析失败",
             2001: "不支持指定解析类型:{0}，请编写自定义 Processor ，更多内容请参见 http://www.egret.com //todo"
 
         }
 
-        constructor(code: number, replacer?: string) {
+        constructor(code: number, replacer?: Object) {
             super();
             this.name = code.toString();
             this.message = ResourceManagerError.errorMessage[code].replace("{0}", replacer);

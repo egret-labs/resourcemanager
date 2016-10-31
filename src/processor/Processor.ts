@@ -19,7 +19,7 @@ module RES.processor {
             }
 
             let onError = () => {
-                let e = { code: 1001, message: `文件加载失败:'${resource.url}'` }
+                let e = new ResourceManagerError(1001,resource.url);
                 reject(e);
             }
             loader.addEventListener(egret.Event.COMPLETE, onSuccess, this);
@@ -163,7 +163,7 @@ module RES.processor {
             let data = await host.load(resource, JsonProcessor);
             let imageUrl = getRelativePath(resource.url, data.file);
             //todo 
-            host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
+            // host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
             let r = host.resourceConfig.getResource(imageUrl);
             if (!r) {
                 throw 'error';

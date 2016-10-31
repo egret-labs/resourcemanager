@@ -275,9 +275,11 @@ declare module RES {
     }
     class ResourceManagerError extends Error {
         static errorMessage: {
+            1001: string;
+            1002: string;
             2001: string;
         };
-        constructor(code: number, replacer?: string);
+        constructor(code: number, replacer?: Object);
     }
 }
 declare module RES.processor {

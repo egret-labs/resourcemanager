@@ -40,6 +40,7 @@ class Main extends egret.DisplayObjectContainer {
                     // button.texture = value.getTexture("off");
                     let texture = RES.getRes("assets/sheet/sheet1.json#off");
                     console.log('111', texture)
+                    console.assert(texture instanceof egret.Texture,"测试SpriteSheet纹理")
                     button.texture = texture;
                     button.y = 100;
                 })

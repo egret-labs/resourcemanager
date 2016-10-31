@@ -10,7 +10,7 @@
             "sourceMaps": true,
             "webRoot": "${workspaceRoot}",
             "preLaunchTask": "debug",
-            "port": 3000
+            "port": 3001
         },
         {
             "name": "使用本机 Chrome 调试",
@@ -22,7 +22,7 @@
             "webRoot": "${workspaceRoot}",
             "preLaunchTask": "debug",
             "userDataDir": "${tmpdir}",
-            "port": 3003
+            "port": 3001
         },
         {
             "name": "附加到 Chrome 进程",

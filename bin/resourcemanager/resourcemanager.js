@@ -569,7 +569,7 @@ var RES;
         function init() {
             return RES.host.load(RES.configItem).then(function (data) {
                 manager.config.parseConfig(data, "resource");
-            }).catch(function (e) { return Promise.reject({ code: 1002 }); });
+            }).catch(function (e) { return Promise.reject(new ResourceManagerError(1002)); });
         }
         manager.init = init;
         function load(resources, reporter) {
@@ -592,6 +592,8 @@ var RES;
         return ResourceManagerError;
     }(Error));
     ResourceManagerError.errorMessage = {
+        1001: '文件加载失败:{0}',
+        1002: "ResourceManager 初始化失败：配置文件加载解析失败",
         2001: "不支持指定解析类型:{0}，请编写自定义 Processor ，更多内容请参见 http://www.egret.com //todo"
     };
     RES.ResourceManagerError = ResourceManagerError;
@@ -618,7 +620,7 @@ var RES;
                                 reslove(texture);
                             };
                             var onError = function () {
-                                var e = { code: 1001, message: "\u6587\u4EF6\u52A0\u8F7D\u5931\u8D25:'" + resource.url + "'" };
+                                var e = new RES.ResourceManagerError(1001, resource.url);
                                 reject(e);
                             };
                             loader.addEventListener(egret.Event.COMPLETE, onSuccess, _this);
@@ -794,8 +796,6 @@ var RES;
                             case 1:
                                 data = _a.sent();
                                 imageUrl = getRelativePath(resource.url, data.file);
-                                //todo 
-                                host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
                                 r = host.resourceConfig.getResource(imageUrl);
                                 if (!r) {
                                     throw 'error';
