@@ -838,9 +838,6 @@ var RES;
                             case 2:
                                 texture = _a.sent();
                                 frames = data.frames;
-                                if (!frames) {
-                                    throw 'error';
-                                }
                                 spriteSheet = new egret.SpriteSheet(texture);
                                 for (subkey in frames) {
                                     config = frames[subkey];
@@ -939,19 +936,17 @@ var RES;
         processor_1.MovieClipProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var mcData, jsonUrl, imageUrl, r, mcTexture, mcDataFactory;
+                    var mcData, jsonPath, imagePath, r, mcTexture, mcDataFactory;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0: return [4 /*yield*/, host.load(resource, processor_1.JsonProcessor)];
                             case 1:
                                 mcData = _a.sent();
-                                jsonUrl = resource.url;
-                                imageUrl = jsonUrl.substring(0, jsonUrl.lastIndexOf(".")) + ".png";
-                                //todo 
-                                host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
-                                r = host.resourceConfig.getResource(imageUrl);
+                                jsonPath = resource.name;
+                                imagePath = jsonPath.substring(0, jsonPath.lastIndexOf(".")) + ".png";
+                                r = host.resourceConfig.getResource(imagePath);
                                 if (!r) {
-                                    throw 'error';
+                                    throw new RES.ResourceManagerError(1001, imagePath);
                                 }
                                 return [4 /*yield*/, host.load(r)];
                             case 2:

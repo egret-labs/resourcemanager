@@ -19,7 +19,7 @@ module RES.processor {
             }
 
             let onError = () => {
-                let e = new ResourceManagerError(1001,resource.url);
+                let e = new ResourceManagerError(1001, resource.url);
                 reject(e);
             }
             loader.addEventListener(egret.Event.COMPLETE, onSuccess, this);
@@ -162,19 +162,12 @@ module RES.processor {
 
             let data = await host.load(resource, JsonProcessor);
             let imagePath = getRelativePath(resource.name, data.file);
-            //todo 
-            // host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
             let r = host.resourceConfig.getResource(imagePath);
             if (!r) {
-                throw new ResourceManagerError(1001,imagePath);
+                throw new ResourceManagerError(1001, imagePath);
             }
             var texture: egret.Texture = await host.load(r);
-
-
             var frames: any = data.frames;
-            if (!frames) {
-                throw 'error';
-            }
             var spriteSheet = new egret.SpriteSheet(texture);
             for (var subkey in frames) {
                 var config: any = frames[subkey];
@@ -283,22 +276,20 @@ module RES.processor {
     export var MovieClipProcessor: Processor = {
         async onLoadStart(host, resource) {
             let mcData = await host.load(resource, JsonProcessor);
-            let jsonUrl = resource.url;
-            let imageUrl = jsonUrl.substring(0,jsonUrl.lastIndexOf(".")) + ".png";
-            //todo 
-            host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
-            let r = host.resourceConfig.getResource(imageUrl);
+            let jsonPath = resource.name;
+            let imagePath = jsonPath.substring(0, jsonPath.lastIndexOf(".")) + ".png";
+            let r = host.resourceConfig.getResource(imagePath);
             if (!r) {
-                throw 'error';
+                throw new ResourceManagerError(1001, imagePath);
             }
             var mcTexture: egret.Texture = await host.load(r);
             var mcDataFactory = new egret.MovieClipDataFactory(mcData, mcTexture);
             return mcDataFactory;
         },
         onRemoveStart(host, resource) {
-             return Promise.resolve();
+            return Promise.resolve();
         }
-	}
+    }
 
     var _map = {
         "image": ImageProcessor,
@@ -310,6 +301,6 @@ module RES.processor {
         "bin": BinaryProcessor,
         "commonjs": CommonJSProcessor,
         "sound": SoundProcessor,
-        "movieclip":MovieClipProcessor
+        "movieclip": MovieClipProcessor
     }
 }
