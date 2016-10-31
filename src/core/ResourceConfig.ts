@@ -238,20 +238,20 @@ module RES {
         /**
          * @internal
          */
-        public getResource(url_or_alias: string, shouldNotBeNull: false): ResourceInfo | null
+        public getResource(path_or_alias: string, shouldNotBeNull: false): ResourceInfo | null
         /**
          * @internal
          */
-        public getResource(url_or_alias: string, shouldNotBeNull: true): ResourceInfo
-        public getResource(url_or_alias: string, shouldNotBeNull?: boolean): ResourceInfo | null {
-            let url = this.config.alias[url_or_alias];
-            if (!url) {
-                url = url_or_alias;
+        public getResource(path_or_alias: string, shouldNotBeNull: true): ResourceInfo
+        public getResource(path_or_alias: string, shouldNotBeNull?: boolean): ResourceInfo | null {
+            let path = this.config.alias[path_or_alias];
+            if (!path) {
+                path = path_or_alias;
             }
-            let r = getResourceInfo(url);
+            let r = getResourceInfo(path);
             if (!r) {
                 if (shouldNotBeNull) {
-                    throw `none resource url or alias : ${url_or_alias}`;
+                    throw `none resource url or alias : ${path_or_alias}`;
                 }
                 return null;
 

@@ -161,12 +161,12 @@ module RES.processor {
         async onLoadStart(host, resource): Promise<any> {
 
             let data = await host.load(resource, JsonProcessor);
-            let imageUrl = getRelativePath(resource.url, data.file);
+            let imagePath = getRelativePath(resource.name, data.file);
             //todo 
             // host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
-            let r = host.resourceConfig.getResource(imageUrl);
+            let r = host.resourceConfig.getResource(imagePath);
             if (!r) {
-                throw 'error';
+                throw new ResourceManagerError(1001,imagePath);
             }
             var texture: egret.Texture = await host.load(r);
 
@@ -239,11 +239,11 @@ module RES.processor {
             let config;
             try {
                 config = JSON.parse(data);
-                imageUrl = getRelativePath(resource.url, config.file);
+                imageUrl = getRelativePath(resource.name, config.file);
             }
             catch (e) {
                 config = data;
-                imageUrl = this.getTexturePath(resource.url, data);
+                imageUrl = this.getTexturePath(resource.name, data);
             }
             let r = host.resourceConfig.getResource(imageUrl);
             if (r) {
@@ -270,7 +270,7 @@ module RES.processor {
 
     export var SoundProcessor: Processor = {
         async onLoadStart(host, resource) {
-            let prefix = resource.extra ? "" : "resource/";
+            let prefix = resource.extra ? "" : resourceRoot;
             var sound: egret.Sound = new egret.Sound();
             sound.load(prefix + resource.url);
             await promisify(sound, resource);

@@ -27,8 +27,8 @@ module RES {
         FILE, DICTIONARY
     }
 
-    export function getResourceInfo(url: string): File {
-        return FileSystem.getFile(url);
+    export function getResourceInfo(path: string): File {
+        return FileSystem.getFile(path);
     }
 
     export namespace FileSystem {
@@ -49,7 +49,11 @@ module RES {
         }
 
         export function getFile(filename: string): File {
-            return reslove(filename) as File;
+            let result = reslove(filename) as File;
+            if (result) {
+                result.name = filename;
+            }
+            return result;
         }
 
         function basename(filename: string) {

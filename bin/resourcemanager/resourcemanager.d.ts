@@ -143,7 +143,7 @@ declare module RES {
     interface Dictionary {
         [file: string]: File | Dictionary;
     }
-    function getResourceInfo(url: string): File;
+    function getResourceInfo(path: string): File;
     namespace FileSystem {
         var data: Dictionary;
         function addFile(filename: string, type?: string): void;

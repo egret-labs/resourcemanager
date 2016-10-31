@@ -54,8 +54,8 @@ var RES;
         ResourceNodeType[ResourceNodeType["FILE"] = 0] = "FILE";
         ResourceNodeType[ResourceNodeType["DICTIONARY"] = 1] = "DICTIONARY";
     })(ResourceNodeType || (ResourceNodeType = {}));
-    function getResourceInfo(url) {
-        return FileSystem.getFile(url);
+    function getResourceInfo(path) {
+        return FileSystem.getFile(path);
     }
     RES.getResourceInfo = getResourceInfo;
     var FileSystem;
@@ -75,7 +75,11 @@ var RES;
         }
         FileSystem.addFile = addFile;
         function getFile(filename) {
-            return reslove(filename);
+            var result = reslove(filename);
+            if (result) {
+                result.name = filename;
+            }
+            return result;
         }
         FileSystem.getFile = getFile;
         function basename(filename) {
@@ -269,15 +273,15 @@ var RES;
                 return aliasName;
             }
         };
-        ResourceConfig.prototype.getResource = function (url_or_alias, shouldNotBeNull) {
-            var url = this.config.alias[url_or_alias];
-            if (!url) {
-                url = url_or_alias;
+        ResourceConfig.prototype.getResource = function (path_or_alias, shouldNotBeNull) {
+            var path = this.config.alias[path_or_alias];
+            if (!path) {
+                path = path_or_alias;
             }
-            var r = RES.getResourceInfo(url);
+            var r = RES.getResourceInfo(path);
             if (!r) {
                 if (shouldNotBeNull) {
-                    throw "none resource url or alias : " + url_or_alias;
+                    throw "none resource url or alias : " + path_or_alias;
                 }
                 return null;
             }
@@ -819,16 +823,16 @@ var RES;
         processor_1.SheetProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var data, imageUrl, r, texture, frames, spriteSheet, subkey, config, texture;
+                    var data, imagePath, r, texture, frames, spriteSheet, subkey, config, texture;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0: return [4 /*yield*/, host.load(resource, processor_1.JsonProcessor)];
                             case 1:
                                 data = _a.sent();
-                                imageUrl = getRelativePath(resource.url, data.file);
-                                r = host.resourceConfig.getResource(imageUrl);
+                                imagePath = getRelativePath(resource.name, data.file);
+                                r = host.resourceConfig.getResource(imagePath);
                                 if (!r) {
-                                    throw 'error';
+                                    throw new RES.ResourceManagerError(1001, imagePath);
                                 }
                                 return [4 /*yield*/, host.load(r)];
                             case 2:
@@ -887,11 +891,11 @@ var RES;
                                 imageUrl = "";
                                 try {
                                     config = JSON.parse(data);
-                                    imageUrl = getRelativePath(resource.url, config.file);
+                                    imageUrl = getRelativePath(resource.name, config.file);
                                 }
                                 catch (e) {
                                     config = data;
-                                    imageUrl = this.getTexturePath(resource.url, data);
+                                    imageUrl = this.getTexturePath(resource.name, data);
                                 }
                                 r = host.resourceConfig.getResource(imageUrl);
                                 if (!r)
@@ -917,7 +921,7 @@ var RES;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
-                                prefix = resource.extra ? "" : "resource/";
+                                prefix = resource.extra ? "" : RES.resourceRoot;
                                 sound = new egret.Sound();
                                 sound.load(prefix + resource.url);
                                 return [4 /*yield*/, promisify(sound, resource)];
