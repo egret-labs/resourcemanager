@@ -252,6 +252,7 @@ declare module RES {
 declare module RES {
 }
 declare module RES {
+    let checkCancelation: MethodDecorator;
     function profile(): void;
     var host: ProcessHost;
     namespace manager {
@@ -277,6 +278,7 @@ declare module RES {
         static errorMessage: {
             1001: string;
             1002: string;
+            1005: string;
             2001: string;
         };
         constructor(code: number, replacer?: Object);

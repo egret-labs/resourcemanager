@@ -2,3 +2,4 @@ node_modules
 test/**/bin-debug
 test/**/libs/
 bin-release
+resource-publish

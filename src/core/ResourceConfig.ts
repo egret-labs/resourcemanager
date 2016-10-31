@@ -421,5 +421,10 @@ module RES {
 
 
         }
+
+        public destory(){
+            this.config = {groups:{},alias:{},resources:{}};
+            FileSystem.data = {};
+        }
     }
 }

@@ -447,6 +447,7 @@ module RES {
 		 * @param type {string}
          */
         @upgrade.checkDecorator
+        @checkCancelation
         public loadConfig(): Promise<void> {
             return manager.init().then(data => {
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
@@ -542,8 +543,10 @@ module RES {
          * @param compFunc {Function} 回调函数。示例：compFunc(data,url):void。
          * @param thisObject {any}
          */
+
         public getResAsync(key: string): Promise<any>
         public getResAsync(key: string, compFunc: Function, thisObject: any): void
+        @checkCancelation
         public getResAsync(key: string, compFunc?: Function, thisObject?: any): Promise<any> | void {
 
             var {key, subkey} = manager.config.parseResKey(key);
@@ -571,6 +574,7 @@ module RES {
 		 * @param thisObject {any}
 		 * @param type {string}
          */
+        @checkCancelation
         public getResByUrl(url: string, compFunc: Function, thisObject: any, type: string = ""): Promise<any> | void {
             let r = manager.config.getResource(url);
             if (!r) {

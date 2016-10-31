@@ -2,6 +2,29 @@ module RES {
 
     const __tempCache = {};
 
+    /**
+     * 整个资源加载系统的进程id，协助管理回调派发机制
+     */
+    var systemPid = 0
+
+    export let checkCancelation: MethodDecorator = (target, propertyKey, descriptor) => {
+        const method = descriptor.value;
+        descriptor.value = function (...arg) {
+            let currentPid = systemPid;
+         
+            var result:Promise<any> = method.apply(this, arg);
+            return result.then(value=>{
+                if (systemPid != currentPid){
+                    throw new ResourceManagerError(1005,arg[0]);
+                }
+                else{
+                    return value;
+                }
+            });
+
+        }
+    }
+
     export function profile() {
         console.log(FileSystem.data);
         console.log(__tempCache);
@@ -85,8 +108,8 @@ module RES {
 
         export function init(): Promise<void> {
             return host.load(configItem).then((data) => {
-                config.parseConfig(data, "resource");
-            }).catch(e => Promise.reject(new ResourceManagerError(1002)));
+                config.parseConfig(data, "resource")
+            }).catch(e => Promise.reject(new ResourceManagerError(1002)))
         }
 
         export function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<ResourceInfo[] | ResourceInfo> {
@@ -94,6 +117,8 @@ module RES {
         }
 
         export function destory() {
+            config.destory();
+            systemPid++;
             //todo 销毁整个 ResourceManager上下文全部内容
         }
 
@@ -140,6 +165,7 @@ module RES {
         static errorMessage = {
             1001: '文件加载失败:{0}',
             1002: "ResourceManager 初始化失败：配置文件加载解析失败",
+            1005: 'ResourceManager 已被销毁，文件加载失败:{0}',
             2001: "不支持指定解析类型:{0}，请编写自定义 Processor ，更多内容请参见 http://www.egret.com //todo"
 
         }

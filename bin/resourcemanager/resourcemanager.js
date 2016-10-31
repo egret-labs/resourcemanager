@@ -499,6 +499,29 @@ var RES;
 var RES;
 (function (RES) {
     var __tempCache = {};
+    /**
+     * 整个资源加载系统的进程id，协助管理回调派发机制
+     */
+    var systemPid = 0;
+    RES.checkCancelation = function (target, propertyKey, descriptor) {
+        var method = descriptor.value;
+        descriptor.value = function () {
+            var arg = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                arg[_i - 0] = arguments[_i];
+            }
+            var currentPid = systemPid;
+            var result = method.apply(this, arg);
+            return result.then(function (value) {
+                if (systemPid != currentPid) {
+                    throw new ResourceManagerError(1005, arg[0]);
+                }
+                else {
+                    return value;
+                }
+            });
+        };
+    };
     function profile() {
         console.log(RES.FileSystem.data);
         console.log(__tempCache);
@@ -577,6 +600,7 @@ var RES;
         }
         manager.load = load;
         function destory() {
+            systemPid++;
             //todo 销毁整个 ResourceManager上下文全部内容
         }
         manager.destory = destory;
@@ -594,6 +618,7 @@ var RES;
     ResourceManagerError.errorMessage = {
         1001: '文件加载失败:{0}',
         1002: "ResourceManager 初始化失败：配置文件加载解析失败",
+        1005: 'ResourceManager 已被销毁，文件加载失败:{0}',
         2001: "不支持指定解析类型:{0}，请编写自定义 Processor ，更多内容请参见 http://www.egret.com //todo"
     };
     RES.ResourceManagerError = ResourceManagerError;
@@ -1895,11 +1920,18 @@ var RES;
         return Resource;
     }(egret.EventDispatcher));
     __decorate([
-        RES.upgrade.checkDecorator
+        RES.upgrade.checkDecorator,
+        RES.checkCancelation
     ], Resource.prototype, "loadConfig", null);
     __decorate([
         RES.checkNull
     ], Resource.prototype, "getRes", null);
+    __decorate([
+        RES.checkCancelation
+    ], Resource.prototype, "getResAsync", null);
+    __decorate([
+        RES.checkCancelation
+    ], Resource.prototype, "getResByUrl", null);
     RES.Resource = Resource;
     /**
      * Resource单例

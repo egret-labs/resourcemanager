@@ -14,12 +14,7 @@ class Main extends egret.DisplayObjectContainer {
 
     private onAddToStage(event: egret.Event) {
 
-        let reportrer = {
 
-            onProgress: (current, total) => {
-                console.log(current, total);
-            }
-        }
 
         let testBitmapFont = () =>
             RES.getResAsync("assets/font/font.fnt").then(value => {
@@ -31,7 +26,7 @@ class Main extends egret.DisplayObjectContainer {
             });
         ;
 
-        let testSpriteSheet = () => {
+        let testSpriteSheet = () =>
             RES.getResAsync("assets/sheet/sheet1.json")
                 .then((value: egret.SpriteSheet) => {
 
@@ -40,54 +35,68 @@ class Main extends egret.DisplayObjectContainer {
                     // button.texture = value.getTexture("off");
                     let texture = RES.getRes("assets/sheet/sheet1.json#off");
                     console.log('111', texture)
-                    console.assert(texture instanceof egret.Texture,"测试SpriteSheet纹理")
+                    console.assert(texture instanceof egret.Texture, "测试SpriteSheet纹理")
                     button.texture = texture;
                     button.y = 100;
-                })
-        }
+                });
 
         let testLoadResByUrl = () =>
             RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
 
 
-        let testSoundByUrl = () => {
+        let testSoundByUrl = () =>
             RES.getResAsync("assets/sound/sound_go.mp3").then((value) => {
                 console.log(value)
+                console.log('sound play')
                 var sound: egret.Sound = value;
                 sound.play();
             })
+
+
+        let testCreateAndDestoryResource = () => {
+            let reporter = {
+
+                onProgress: (current, total) => {
+                    console.log(current, total);
+                }
+            }
+            return RES.loadGroup("preload", 0, reporter)
+                .then(() => this.createGameScene())
+                .then(() => sleep(1000))
+                .then(() => RES.destroyRes("preload"))
+                .then(() => RES.loadGroup("preload", 0, reporter).then(() => {
+                    this.sky.texture = RES.getRes("assets/bg.jpg")
+                }))
         }
 
-        let testAnimationByUrl = () => {
+        /**
+         * 关闭整个 RES 模块
+         */
+        let testDestroy = () => {
+            console.log('test destroy');
+            RES.getResAsync("assets/bg.jpg").then(() => console.error('never get here'))
+            RES.manager.destory();
+        }
+
+        let testAnimationByUrl = () =>
             RES.getResAsync("assets/movieclip/movieclip.json").then((value) => {
-                var mcDataFactory:egret.MovieClipDataFactory = value;
+                var mcDataFactory: egret.MovieClipDataFactory = value;
                 var attack = new egret.MovieClip(mcDataFactory.generateMovieClipData("test"));
                 this.addChild(attack);
                 attack.x = 50;
                 attack.y = 150;
-                attack.gotoAndPlay(1,-1);
-
+                attack.gotoAndPlay(1, -1);
             })
-        }
+
 
         RES.loadConfig()
-            .then(() => RES.loadGroup("preload", 0, reportrer))
-            .then(() => this.createGameScene())
-            .then(() => sleep(1000))
-            .then(() => RES.destroyRes("preload"))
-            // .then(() => {
-            //     RES.createGroup("tempGroup", ["sheet_json"]);
-            //     return RES.loadGroup("tempGroup")
-            // })
-            .then(() => sleep(1000))
-            .then(() => RES.loadGroup("preload", 0, reportrer).then(() => {
-                this.sky.texture = RES.getRes("assets/bg.jpg")
-            }))
+            .then(testCreateAndDestoryResource)
             .then(testLoadResByUrl)
             .then(testBitmapFont)
             .then(testSpriteSheet)
             .then(testSoundByUrl)
             .then(testAnimationByUrl)
+            .then(testDestroy)
             .catch((e) => {
                 console.warn(e);
                 console.log(e.stack)
