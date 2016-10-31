@@ -902,6 +902,36 @@ var RES;
                 return Promise.resolve();
             }
         };
+        processor_1.MovieClipProcessor = {
+            onLoadStart: function (host, resource) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var mcData, jsonUrl, imageUrl, r, mcTexture, mcDataFactory;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, host.load(resource, processor_1.JsonProcessor)];
+                            case 1:
+                                mcData = _a.sent();
+                                jsonUrl = resource.url;
+                                imageUrl = jsonUrl.substring(0, jsonUrl.lastIndexOf(".")) + ".png";
+                                //todo 
+                                host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
+                                r = host.resourceConfig.getResource(imageUrl);
+                                if (!r) {
+                                    throw 'error';
+                                }
+                                return [4 /*yield*/, host.load(r)];
+                            case 2:
+                                mcTexture = _a.sent();
+                                mcDataFactory = new egret.MovieClipDataFactory(mcData, mcTexture);
+                                return [2 /*return*/, mcDataFactory];
+                        }
+                    });
+                });
+            },
+            onRemoveStart: function (host, resource) {
+                return Promise.resolve();
+            }
+        };
         var _map = {
             "image": processor_1.ImageProcessor,
             "json": processor_1.JsonProcessor,
@@ -911,7 +941,8 @@ var RES;
             "font": processor_1.FontProcessor,
             "bin": processor_1.BinaryProcessor,
             "commonjs": processor_1.CommonJSProcessor,
-            "sound": processor_1.SoundProcessor
+            "sound": processor_1.SoundProcessor,
+            "movieclip": processor_1.MovieClipProcessor
         };
     })(processor = RES.processor || (RES.processor = {}));
 })(RES || (RES = {}));

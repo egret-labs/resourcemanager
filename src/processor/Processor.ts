@@ -280,6 +280,25 @@ module RES.processor {
             return Promise.resolve();
         }
     }
+    export var MovieClipProcessor: Processor = {
+        async onLoadStart(host, resource) {
+            let mcData = await host.load(resource, JsonProcessor);
+            let jsonUrl = resource.url;
+            let imageUrl = jsonUrl.substring(0,jsonUrl.lastIndexOf(".")) + ".png";
+            //todo 
+            host.resourceConfig.addResourceData({ name: imageUrl, type: "image", url: imageUrl });
+            let r = host.resourceConfig.getResource(imageUrl);
+            if (!r) {
+                throw 'error';
+            }
+            var mcTexture: egret.Texture = await host.load(r);
+            var mcDataFactory = new egret.MovieClipDataFactory(mcData, mcTexture);
+            return mcDataFactory;
+        },
+        onRemoveStart(host, resource) {
+             return Promise.resolve();
+        }
+	}
 
     var _map = {
         "image": ImageProcessor,
@@ -290,6 +309,7 @@ module RES.processor {
         "font": FontProcessor,
         "bin": BinaryProcessor,
         "commonjs": CommonJSProcessor,
-        "sound": SoundProcessor
+        "sound": SoundProcessor,
+        "movieclip":MovieClipProcessor
     }
 }

@@ -58,6 +58,18 @@ class Main extends egret.DisplayObjectContainer {
             })
         }
 
+        let testAnimationByUrl = () => {
+            RES.getResAsync("assets/movieclip/movieclip.json").then((value) => {
+                var mcDataFactory:egret.MovieClipDataFactory = value;
+                var attack = new egret.MovieClip(mcDataFactory.generateMovieClipData("test"));
+                this.addChild(attack);
+                attack.x = 50;
+                attack.y = 150;
+                attack.gotoAndPlay(1,-1);
+
+            })
+        }
+
         RES.loadConfig()
             .then(() => RES.loadGroup("preload", 0, reportrer))
             .then(() => this.createGameScene())
@@ -75,6 +87,7 @@ class Main extends egret.DisplayObjectContainer {
             .then(testBitmapFont)
             .then(testSpriteSheet)
             .then(testSoundByUrl)
+            .then(testAnimationByUrl)
             .catch((e) => {
                 console.warn(e);
                 console.log(e.stack)

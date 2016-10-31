@@ -9,8 +9,9 @@ exports.filter = function (p, plugins) {
 		case "json":
 			if (p.indexOf("sheet") >= 0) {
 				type = "sheet";
-			}
-			else {
+			}else if(p.indexOf("movieclip") >= 0){
+				type = "movieclip";
+			}else {
 				type = "json";
 			}
 			break;
@@ -65,6 +66,16 @@ exports.resources = {
 			},
 			"font.png": {
 				"url": "assets/font/font.png",
+				"type": "image"
+			}
+		},
+		"movieclip": {
+			"movieclip.json": {
+				"url": "assets/movieclip/movieclip.json",
+				"type": "movieclip"
+			},
+			"movieclip.png": {
+				"url": "assets/movieclip/movieclip.png",
 				"type": "image"
 			}
 		},
