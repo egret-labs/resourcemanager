@@ -962,6 +962,164 @@ var RES;
                 return Promise.resolve();
             }
         };
+        var PVRParser = (function () {
+            function PVRParser() {
+            }
+            PVRParser.parse = function (arrayBuffer, callback, errorCallback) {
+                // the header length of int32
+                var headerIntLength = 13;
+                // get header part of arrayBuffer
+                var header = new Uint32Array(arrayBuffer, 0, headerIntLength);
+                // separate buffer and header
+                var pvrDatas = {
+                    buffer: arrayBuffer,
+                    header: header
+                };
+                // PVR v3
+                if (header[0] === 0x03525650) {
+                    PVRParser._parseV3(pvrDatas, callback, errorCallback);
+                }
+                else if (header[11] === 0x21525650) {
+                    PVRParser._parseV2(pvrDatas, callback, errorCallback);
+                }
+                else {
+                    errorCallback(pvrDatas, "pvr parse error!");
+                }
+            };
+            PVRParser._parseV2 = function (pvrDatas, callback, errorCallback) {
+                var header = pvrDatas.header;
+                var headerLength = header[0], height = header[1], width = header[2], numMipmaps = header[3], flags = header[4], dataLength = header[5], bpp = header[6], bitmaskRed = header[7], bitmaskGreen = header[8], bitmaskBlue = header[9], bitmaskAlpha = header[10], pvrTag = header[11], numSurfs = header[12];
+                var TYPE_MASK = 0xff;
+                var PVRTC_2 = 24, PVRTC_4 = 25;
+                var formatFlags = flags & TYPE_MASK;
+                var bpp, format;
+                var _hasAlpha = bitmaskAlpha > 0;
+                if (formatFlags === PVRTC_4) {
+                    format = _hasAlpha ? PVRParser.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG : PVRParser.COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
+                    bpp = 4;
+                }
+                else if (formatFlags === PVRTC_2) {
+                    format = _hasAlpha ? PVRParser.COMPRESSED_RGBA_PVRTC_2BPPV1_IMG : PVRParser.COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
+                    bpp = 2;
+                }
+                else {
+                    errorCallback(pvrDatas, "pvr v2 parse error");
+                    console.log("unknow format flags::" + formatFlags);
+                }
+                var dataOffset = headerLength;
+                pvrDatas.pvrtcData = new Uint8Array(pvrDatas.buffer, dataOffset);
+                pvrDatas.bpp = bpp;
+                pvrDatas.format = format;
+                pvrDatas.width = width;
+                pvrDatas.height = height;
+                pvrDatas.surfacesCount = numSurfs;
+                pvrDatas.mipmapsCount = numMipmaps + 1;
+                // guess cubemap type seems tricky in v2
+                // it juste a pvr containing 6 surface (no explicit cubemap type)
+                pvrDatas.isCubemap = (pvrDatas.surfacesCount === 6);
+                callback(pvrDatas);
+            };
+            PVRParser._parseV3 = function (pvrDatas, callback, errorCallback) {
+                var header = pvrDatas.header;
+                var bpp, format;
+                var pixelFormat = header[2];
+                switch (pixelFormat) {
+                    case 0:
+                        bpp = 2;
+                        format = PVRParser.COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
+                        break;
+                    case 1:
+                        bpp = 2;
+                        format = PVRParser.COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
+                        break;
+                    case 2:
+                        bpp = 4;
+                        format = PVRParser.COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
+                        break;
+                    case 3:
+                        bpp = 4;
+                        format = PVRParser.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
+                        break;
+                    default:
+                        errorCallback(pvrDatas, "pvr v3 parse error");
+                        console.log("unknow pixel format::" + pixelFormat);
+                }
+                var dataOffset = 52 + header[12];
+                pvrDatas.pvrtcData = new Uint8Array(pvrDatas.buffer, dataOffset);
+                pvrDatas.bpp = bpp;
+                pvrDatas.format = format;
+                pvrDatas.width = header[7];
+                pvrDatas.height = header[6];
+                pvrDatas.surfacesCount = header[10];
+                pvrDatas.mipmapsCount = header[11];
+                pvrDatas.isCubemap = (pvrDatas.surfacesCount === 6);
+                callback(pvrDatas);
+            };
+            return PVRParser;
+        }());
+        PVRParser.COMPRESSED_RGB_PVRTC_4BPPV1_IMG = 0x8C00;
+        PVRParser.COMPRESSED_RGB_PVRTC_2BPPV1_IMG = 0x8C01;
+        PVRParser.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG = 0x8C02;
+        PVRParser.COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03;
+        processor_1.PVRProcessor = {
+            onLoadStart: function (host, resource) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var request, prefix, arraybuffer, width, height, borderWidth, borderHeight, byteArray, list, pvrDataBuffer, i, buffer, dataLength, self, texture;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                request = new egret.HttpRequest();
+                                request.responseType = egret.HttpResponseType.ARRAY_BUFFER;
+                                prefix = resource.extra ? "" : RES.resourceRoot;
+                                request.open(prefix + resource.url, "get");
+                                request.send();
+                                return [4 /*yield*/, promisify(request, resource)];
+                            case 1:
+                                arraybuffer = _a.sent();
+                                width = 512;
+                                height = 512;
+                                borderWidth = 0;
+                                borderHeight = 0;
+                                byteArray = new egret.ByteArray(arraybuffer);
+                                byteArray.position = 7;
+                                list = ["body", "ext"];
+                                for (i = 0; i < list.length; i++) {
+                                    buffer = void 0;
+                                    switch (list[i]) {
+                                        case "body":
+                                            byteArray.position += 2;
+                                            dataLength = byteArray.readUnsignedInt();
+                                            pvrDataBuffer = byteArray.buffer.slice(byteArray.position, byteArray.position + dataLength);
+                                            byteArray.position += dataLength;
+                                            break;
+                                        case "ext":
+                                            byteArray.position += 6;
+                                            width = byteArray.readUnsignedShort();
+                                            height = byteArray.readUnsignedShort();
+                                            borderWidth = byteArray.readUnsignedShort();
+                                            borderHeight = byteArray.readUnsignedShort();
+                                            break;
+                                    }
+                                }
+                                self = this;
+                                PVRParser.parse(pvrDataBuffer, function (pvrData) {
+                                    var bitmapData = new egret.BitmapData(pvrData);
+                                    bitmapData.format = "pvr";
+                                    texture = new egret.Texture();
+                                    texture._setBitmapData(bitmapData);
+                                    texture.$initData(borderWidth, borderHeight, width, height, 0, 0, width, height, bitmapData.width, bitmapData.height);
+                                }, function () {
+                                    console.log("pvr error");
+                                });
+                                return [2 /*return*/, texture];
+                        }
+                    });
+                });
+            },
+            onRemoveStart: function (host, resource) {
+                return Promise.resolve();
+            }
+        };
         var _map = {
             "image": processor_1.ImageProcessor,
             "json": processor_1.JsonProcessor,
@@ -972,7 +1130,8 @@ var RES;
             "bin": processor_1.BinaryProcessor,
             "commonjs": processor_1.CommonJSProcessor,
             "sound": processor_1.SoundProcessor,
-            "movieclip": processor_1.MovieClipProcessor
+            "movieclip": processor_1.MovieClipProcessor,
+            "pvr": processor_1.PVRProcessor
         };
     })(processor = RES.processor || (RES.processor = {}));
 })(RES || (RES = {}));

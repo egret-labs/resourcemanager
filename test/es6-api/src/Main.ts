@@ -87,7 +87,14 @@ class Main extends egret.DisplayObjectContainer {
                 attack.x = 50;
                 attack.y = 150;
                 attack.gotoAndPlay(1, -1);
-            })
+            });
+
+
+        let testPVR = () =>
+            RES.getResAsync("assets/pvr/0.pvr")
+                .then(value => {
+                    console.log(value)
+                });
 
 
         RES.loadConfig()
@@ -97,6 +104,7 @@ class Main extends egret.DisplayObjectContainer {
             .then(testSpriteSheet)
             .then(testSoundByUrl)
             .then(testAnimationByUrl)
+            .then(testPVR)
             .then(testDestroy)
             .catch((e) => {
                 console.warn(e);
