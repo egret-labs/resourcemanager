@@ -4,14 +4,16 @@ var path = require("path");
 
 exports.groups = { "preload": ["bg_jpg"] };
 exports.alias = { "bg_jpg": "assets/bg.jpg" };
-exports.filter = function(p, plugins) {
+exports.filter = function(file, env,plugins) {
 
     var cwebp = require(path.resolve(__dirname, '../../../node_modules/cwebp-bin'));
     var execFile = require('child_process').execFile;
 
     return new Promise((reslove, reject) => {
-        var ext = p.substr(p.lastIndexOf(".") + 1);
         var type;
+		var ext = file.ext;
+		var p = file.path;
+		console.log (file)
         switch (ext) {
             case "json":
                 if (p.indexOf("sheet") >= 0) {
@@ -37,21 +39,24 @@ exports.filter = function(p, plugins) {
 				break;
         }
         if (type) {
-
-            if (ext == "jpg" || ext == "png") {
-                var source = path.join(__dirname, p);
-                var output = source.replace(ext, "webp");
-                execFile(cwebp, [source, '-o', output], function(err) {
-                    if (err) {
-                        throw err;
-                    }
-                    var url = path.relative(__dirname,output);//plugins.crc32(p) + "." + ext;
-                    reslove({ url, type })
-                })
+			if (false) {
+            // if (ext == "jpg" || ext == "png") {
+            //     var source = path.join(__dirname, p);
+            //     var output = source.replace(ext, "webp");
+            //     execFile(cwebp, [source, '-o', output], function(err) {
+            //         if (err) {
+            //             throw err;
+            //         }
+            //         var url = path.relative(__dirname,output);//plugins.crc32(p) + "." + ext;
+            //         reslove({ url, type })
+            //     })
             }
             else {
                 var url = p;//plugins.crc32(p) + "." + ext;
-                reslove({ url, type });
+				console.log (url)
+				plugins.add({url,type,name:p})
+				reslove();
+                // reslove({ url, type });
             }
         }
         else {
@@ -63,6 +68,14 @@ exports.filter = function(p, plugins) {
 }
 exports.resources = {
 	"assets": {
+		"bg.jpg": {
+			"url": "assets/bg.jpg",
+			"type": "image"
+		},
+		"egret_icon.png": {
+			"url": "assets/egret_icon.png",
+			"type": "image"
+		},
 		"armature": {
 			"skeleton.json": {
 				"url": "assets/armature/skeleton.json",
@@ -73,7 +86,7 @@ exports.resources = {
 				"type": "json"
 			},
 			"texture.png": {
-				"url": "assets/armature/texture.webp",
+				"url": "assets/armature/texture.png",
 				"type": "image"
 			}
 		},
@@ -83,7 +96,7 @@ exports.resources = {
 				"type": "font"
 			},
 			"font.png": {
-				"url": "assets/font/font.webp",
+				"url": "assets/font/font.png",
 				"type": "image"
 			}
 		},
@@ -93,7 +106,7 @@ exports.resources = {
 				"type": "movieclip"
 			},
 			"movieclip.png": {
-				"url": "assets/movieclip/movieclip.webp",
+				"url": "assets/movieclip/movieclip.png",
 				"type": "image"
 			}
 		},
@@ -109,7 +122,7 @@ exports.resources = {
 				"type": "sheet"
 			},
 			"sheet1.png": {
-				"url": "assets/sheet/sheet1.webp",
+				"url": "assets/sheet/sheet1.png",
 				"type": "image"
 			}
 		},
@@ -118,14 +131,6 @@ exports.resources = {
 				"url": "assets/sound/sound_go.mp3",
 				"type": "sound"
 			}
-		},
-		"egret_icon.png": {
-			"url": "assets/egret_icon.webp",
-			"type": "image"
-		},
-		"bg.jpg": {
-			"url": "assets/bg.webp",
-			"type": "image"
 		}
 	}
 }
