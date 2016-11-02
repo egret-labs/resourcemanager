@@ -364,7 +364,7 @@ var RES;
          * @param data {any} 配置文件数据
          * @param folder {string} 加载项的路径前缀。
          */
-        ResourceConfig.prototype.parseConfig = function (data, resourceRoot) {
+        ResourceConfig.prototype.parseConfig = function (data) {
             this.config = data;
             RES.FileSystem.data = data.resources;
             // if (!data)
@@ -599,7 +599,7 @@ var RES;
         var queue = new RES.PromiseQueue();
         function init() {
             return RES.host.load(RES.configItem).then(function (data) {
-                manager.config.parseConfig(data, "resource");
+                manager.config.parseConfig(data);
             }).catch(function (e) { return Promise.reject(new ResourceManagerError(1002)); });
         }
         manager.init = init;
@@ -628,7 +628,8 @@ var RES;
         1001: '文件加载失败:{0}',
         1002: "ResourceManager 初始化失败：配置文件加载解析失败",
         1005: 'ResourceManager 已被销毁，文件加载失败:{0}',
-        2001: "不支持指定解析类型:{0}，请编写自定义 Processor ，更多内容请参见 http://www.egret.com //todo"
+        2001: "不支持指定解析类型:{0}，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
+        2002: "Analyzer 相关API 在 ResourceManager 中不再支持，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor"
     };
     RES.ResourceManagerError = ResourceManagerError;
 })(RES || (RES = {}));
@@ -1354,7 +1355,7 @@ var RES;
      * @includeExample extension/resource/Resource.ts
      */
     function registerAnalyzer(type, analyzerClass) {
-        throw 'unimplement';
+        throw new RES.ResourceManagerError(2002);
     }
     RES.registerAnalyzer = registerAnalyzer;
     /**

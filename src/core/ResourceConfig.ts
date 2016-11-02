@@ -344,7 +344,7 @@ module RES {
          * @param data {any} 配置文件数据
          * @param folder {string} 加载项的路径前缀。
          */
-        public parseConfig(data: Data, resourceRoot: string): void {
+        public parseConfig(data: Data): void {
 
             this.config = data;
             FileSystem.data = data.resources;

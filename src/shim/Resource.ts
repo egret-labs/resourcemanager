@@ -51,7 +51,7 @@ module RES {
      * @includeExample extension/resource/Resource.ts
      */
     export function registerAnalyzer(type: string, analyzerClass: any) {
-        throw 'unimplement';
+        throw new ResourceManagerError(2002);
     }
 
 

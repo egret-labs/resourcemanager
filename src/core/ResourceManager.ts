@@ -11,13 +11,13 @@ module RES {
         const method = descriptor.value;
         descriptor.value = function (...arg) {
             let currentPid = systemPid;
-         
-            var result:Promise<any> = method.apply(this, arg);
-            return result.then(value=>{
-                if (systemPid != currentPid){
-                    throw new ResourceManagerError(1005,arg[0]);
+
+            var result: Promise<any> = method.apply(this, arg);
+            return result.then(value => {
+                if (systemPid != currentPid) {
+                    throw new ResourceManagerError(1005, arg[0]);
                 }
-                else{
+                else {
                     return value;
                 }
             });
@@ -45,7 +45,7 @@ module RES {
             return manager.config;
         },
 
-        load: (r: ResourceInfo, processor: Processor | undefined, cache: boolean = true) => {
+        load: (r: ResourceInfo, processor: processor.Processor | undefined, cache: boolean = true) => {
             if (!processor) {
                 processor = host.isSupport(r);
             }
@@ -108,7 +108,7 @@ module RES {
 
         export function init(): Promise<void> {
             return host.load(configItem).then((data) => {
-                config.parseConfig(data, "resource")
+                config.parseConfig(data)
             }).catch(e => Promise.reject(new ResourceManagerError(1002)))
         }
 
@@ -130,7 +130,7 @@ module RES {
 
         resourceConfig: ResourceConfig;
 
-        load: (resource: ResourceInfo, processor?: Processor) => Promise<any>;
+        load: (resource: ResourceInfo, processor?: processor.Processor) => Promise<any>;
 
         unload: (resource: ResourceInfo) => Promise<any>
 
@@ -143,18 +143,7 @@ module RES {
         /**
          * @internal
          */
-        isSupport: (resource: ResourceInfo) => Processor | undefined;
-
-    }
-
-    export interface Processor {
-
-        onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
-
-        onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
-
-        getSubResource?(host: ProcessHost, resource: ResourceInfo, data: any, subkey: string): any;
-
+        isSupport: (resource: ResourceInfo) => processor.Processor | undefined;
 
     }
 
@@ -166,7 +155,8 @@ module RES {
             1001: '文件加载失败:{0}',
             1002: "ResourceManager 初始化失败：配置文件加载解析失败",
             1005: 'ResourceManager 已被销毁，文件加载失败:{0}',
-            2001: "不支持指定解析类型:{0}，请编写自定义 Processor ，更多内容请参见 http://www.egret.com //todo"
+            2001: "不支持指定解析类型:{0}，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
+            2002: "Analyzer 相关API 在 ResourceManager 中不再支持，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor"
 
         }
 

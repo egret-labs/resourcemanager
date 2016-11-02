@@ -1,6 +1,16 @@
 module RES.processor {
 
 
+    export interface Processor {
+
+        onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
+
+        onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
+
+        getSubResource?(host: ProcessHost, resource: ResourceInfo, data: any, subkey: string): any;
+
+
+    }
 
     export function isSupport(resource: ResourceInfo) {
         return _map[resource.type];

@@ -226,7 +226,7 @@ declare module RES {
          * @param data {any} 配置文件数据
          * @param folder {string} 加载项的路径前缀。
          */
-        parseConfig(data: Data, resourceRoot: string): void;
+        parseConfig(data: Data): void;
         /**
          * 添加一个二级键名到配置列表。
          * @method RES.ResourceConfig#addSubkey
@@ -264,16 +264,11 @@ declare module RES {
     }
     interface ProcessHost {
         resourceConfig: ResourceConfig;
-        load: (resource: ResourceInfo, processor?: Processor) => Promise<any>;
+        load: (resource: ResourceInfo, processor?: processor.Processor) => Promise<any>;
         unload: (resource: ResourceInfo) => Promise<any>;
         save: (rexource: ResourceInfo, data: any) => void;
         get: (resource: ResourceInfo) => any;
         remove: (resource: ResourceInfo) => void;
-    }
-    interface Processor {
-        onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
-        onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
-        getSubResource?(host: ProcessHost, resource: ResourceInfo, data: any, subkey: string): any;
     }
     class ResourceManagerError extends Error {
         static errorMessage: {
@@ -281,11 +276,17 @@ declare module RES {
             1002: string;
             1005: string;
             2001: string;
+            2002: string;
         };
         constructor(code: number, replacer?: Object);
     }
 }
 declare module RES.processor {
+    interface Processor {
+        onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
+        onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
+        getSubResource?(host: ProcessHost, resource: ResourceInfo, data: any, subkey: string): any;
+    }
     function isSupport(resource: ResourceInfo): any;
     function map(type: string, processor: Processor): void;
     function getRelativePath(url: string, file: string): string;
