@@ -411,13 +411,13 @@ var RES;
          * @param name {string} 二级键名所属的资源name属性
          */
         ResourceConfig.prototype.addSubkey = function (subkey, name) {
-            this.addAlias(subkey, name);
+            this.addAlias(subkey, name + "#" + subkey);
         };
         ResourceConfig.prototype.addAlias = function (alias, key) {
             if (this.config.alias[key]) {
                 key = this.config.alias[key];
             }
-            this.config.alias[alias] = key + "#" + alias;
+            this.config.alias[alias] = key;
         };
         /**
          * 获取加载项类型。
