@@ -97,6 +97,8 @@ class Main extends egret.DisplayObjectContainer {
                 });
 
 
+
+
         RES.loadConfig()
             .then(testCreateAndDestoryResource)
             .then(testLoadResByUrl)

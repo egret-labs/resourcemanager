@@ -51,7 +51,7 @@ var customProcessor:RES.processor.Processor = {
         })
     },
 
-    getSubResource(host,resource,data,subkey) => { //可选函数
+    getData(host, resource, key, subkey) => { //可选函数
 
     }
 

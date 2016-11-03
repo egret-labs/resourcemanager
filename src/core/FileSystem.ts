@@ -69,6 +69,9 @@ module RES {
         }
 
         function reslove(dirpath: string) {
+            if (dirpath == ""){
+                return data;
+            }
             dirpath = normalize(dirpath);
             let list = dirpath.split("/");
             let current: File | Dictionary = data;
@@ -96,6 +99,7 @@ module RES {
         }
 
         export function exists(dirpath: string) {
+            if (dirpath == "") return true;
             dirpath = normalize(dirpath);
             let list = dirpath.split("/");
             let current = data;

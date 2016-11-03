@@ -92,6 +92,9 @@ var RES;
             return path.substr(0, path.lastIndexOf("/"));
         }
         function reslove(dirpath) {
+            if (dirpath == "") {
+                return FileSystem.data;
+            }
             dirpath = normalize(dirpath);
             var list = dirpath.split("/");
             var current = FileSystem.data;
@@ -120,6 +123,8 @@ var RES;
         }
         FileSystem.mkdir = mkdir;
         function exists(dirpath) {
+            if (dirpath == "")
+                return true;
             dirpath = normalize(dirpath);
             var list = dirpath.split("/");
             var current = FileSystem.data;
@@ -851,7 +856,13 @@ var RES;
             },
             getData: function (host, resource, key, subkey) {
                 var data = host.get(resource);
-                return data.getTexture(subkey);
+                if (data) {
+                    return data.getTexture(subkey);
+                }
+                else {
+                    console.error("missing resource :" + resource.name);
+                    return null;
+                }
             },
             onRemoveStart: function (host, resource) {
                 return Promise.resolve();
@@ -1065,16 +1076,10 @@ var RES;
         processor_1.PVRProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var request, prefix, arraybuffer, width, height, borderWidth, borderHeight, byteArray, list, pvrDataBuffer, i, buffer, dataLength, self, texture;
+                    var arraybuffer, width, height, borderWidth, borderHeight, byteArray, list, pvrDataBuffer, i, buffer, dataLength, self, texture;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0:
-                                request = new egret.HttpRequest();
-                                request.responseType = egret.HttpResponseType.ARRAY_BUFFER;
-                                prefix = resource.extra ? "" : RES.resourceRoot;
-                                request.open(prefix + resource.url, "get");
-                                request.send();
-                                return [4 /*yield*/, promisify(request, resource)];
+                            case 0: return [4 /*yield*/, host.load(resource, processor_1.BinaryProcessor)];
                             case 1:
                                 arraybuffer = _a.sent();
                                 width = 512;

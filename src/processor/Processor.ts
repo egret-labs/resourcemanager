@@ -197,7 +197,13 @@ module RES.processor {
 
         getData(host, resource, key, subkey) {
             let data:egret.SpriteSheet = host.get(resource);
-            return data.getTexture(subkey);
+            if (data){
+                return data.getTexture(subkey);
+            }
+            else{
+                console.error("missing resource :" + resource.name);
+                return null;
+            }
         },
 
 
@@ -435,14 +441,7 @@ module RES.processor {
     export var PVRProcessor: Processor = {
 
         async onLoadStart(host, resource) {
-
-            let request: egret.HttpRequest = new egret.HttpRequest();
-            request.responseType = egret.HttpResponseType.ARRAY_BUFFER;
-            let prefix = resource.extra ? "" : resourceRoot;
-            request.open(prefix + resource.url, "get");
-            request.send();
-            let arraybuffer = await promisify(request, resource);
-
+            let arraybuffer = await host.load(resource,BinaryProcessor);
             let width = 512;
             let height = 512;
             let borderWidth = 0;
