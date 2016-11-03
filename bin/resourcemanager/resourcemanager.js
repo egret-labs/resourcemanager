@@ -849,7 +849,8 @@ var RES;
                     });
                 });
             },
-            getSubResource: function (host, resource, data, subkey) {
+            getData: function (host, resource, key, subkey) {
+                var data = host.get(resource);
                 return data.getTexture(subkey);
             },
             onRemoveStart: function (host, resource) {
@@ -1978,26 +1979,23 @@ var RES;
         Resource.prototype.getRes = function (resKey) {
             var _a = RES.manager.config.parseResKey(resKey), key = _a.key, subkey = _a.subkey;
             var r = RES.manager.config.getResource(key);
-            if (r && RES.host.isSupport(r)) {
-                var data = RES.host.get(r);
-                if (subkey) {
-                    var processor_2 = RES.host.isSupport(r);
-                    if (processor_2 && processor_2.getSubResource) {
-                        return processor_2.getSubResource(RES.host, r, data, subkey);
-                    }
+            if (r) {
+                var processor_2 = RES.host.isSupport(r);
+                if (processor_2 && processor_2.getData) {
+                    return processor_2.getData(RES.host, r, key, subkey);
                 }
-                return data;
+                else {
+                    return RES.host.get(r);
+                }
             }
         };
         Resource.prototype.getResAsync = function (key, compFunc, thisObject) {
             var _a = RES.manager.config.parseResKey(key), key = _a.key, subkey = _a.subkey;
             var r = RES.manager.config.getResource(key, true);
             return RES.manager.load(r).then(function (value) {
-                if (subkey) {
-                    var processor_3 = RES.host.isSupport(r);
-                    if (processor_3 && processor_3.getSubResource) {
-                        value = processor_3.getSubResource(RES.host, r, value, subkey);
-                    }
+                var processor = RES.host.isSupport(r);
+                if (processor && processor.getData) {
+                    value = processor.getData(RES.host, r, key, subkey);
                 }
                 if (compFunc) {
                     compFunc.call(thisObject, value, r.url);

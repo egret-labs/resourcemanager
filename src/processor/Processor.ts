@@ -7,7 +7,7 @@ module RES.processor {
 
         onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
 
-        getSubResource?(host: ProcessHost, resource: ResourceInfo, data: any, subkey: string): any;
+        getData?(host: ProcessHost, resource: ResourceInfo, key: string, subkey: string): any;
 
 
     }
@@ -195,7 +195,8 @@ module RES.processor {
         },
 
 
-        getSubResource(host, resource, data: egret.SpriteSheet, subkey) {
+        getData(host, resource, key, subkey) {
+            let data:egret.SpriteSheet = host.get(resource);
             return data.getTexture(subkey);
         },
 

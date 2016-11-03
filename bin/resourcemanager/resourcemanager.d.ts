@@ -285,7 +285,7 @@ declare module RES.processor {
     interface Processor {
         onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
         onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
-        getSubResource?(host: ProcessHost, resource: ResourceInfo, data: any, subkey: string): any;
+        getData?(host: ProcessHost, resource: ResourceInfo, key: string, subkey: string): any;
     }
     function isSupport(resource: ResourceInfo): any;
     function map(type: string, processor: Processor): void;
