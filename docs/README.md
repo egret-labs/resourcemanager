@@ -67,4 +67,11 @@ RES.processor.map("customType",customProcessor);
 
 
 
+## 不兼容的变化
+
+* RES.Analyzer 相关 API 已被废弃，开发者应使用 RES.processor.Processor API 进行替换
+* ```RES.getResAsync("sheet.json#icon")``` 如果 ```sheet.json```尚未加载，将会返回一个 null，而之前的版本会去自动加载并返回 ```sheet.json#icon```所对应的 Texture
+> 这条改动未来可能会被调整回去
+
+
 
