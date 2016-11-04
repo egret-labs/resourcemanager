@@ -210,49 +210,17 @@ var RES;
             if (!url) {
                 url = url_or_alias;
             }
-            var suffix = url.substr(url.lastIndexOf(".") + 1);
-            if (suffix) {
-                suffix = suffix.toLowerCase();
+            var ext = url.substr(url.lastIndexOf(".") + 1);
+            if (ext) {
+                ext = ext.toLowerCase();
             }
-            var type;
-            switch (suffix) {
-                case "xml":
-                case "json":
-                case "sheet":
-                    type = suffix;
-                    break;
-                case "png":
-                case "jpg":
-                case "gif":
-                case "jpeg":
-                case "bmp":
-                    type = "image";
-                    break;
-                case "fnt":
-                    type = "font";
-                    break;
-                case "txt":
-                    type = "text";
-                    break;
-                case "mp3":
-                case "ogg":
-                case "mpeg":
-                case "wav":
-                case "m4a":
-                case "mp4":
-                case "aiff":
-                case "wma":
-                case "mid":
-                    type = "sound";
-                    break;
-                case "jmc":
-                    type = "json";
-                    break;
-                default:
-                    type = "bin";
-                    break;
+            if (this.config.getTypeByFileExtensionName) {
+                return this.config.getTypeByFileExtensionName(ext);
             }
-            return type;
+            else {
+                console.warn("config.resjs 中未找到 getTypeByFileExtensionName 方法");
+                return "unknown";
+            }
         };
         ResourceConfig.prototype.parseResKey = function (key) {
             key = this.getKeyByAlias(key);
@@ -370,7 +338,36 @@ var RES;
          * @param folder {string} 加载项的路径前缀。
          */
         ResourceConfig.prototype.parseConfig = function (data) {
+            var _this = this;
             this.config = data;
+            var resource = data.resources;
+            var loop = function (r, prefix, walk) {
+                for (var key in r) {
+                    var p = prefix ? prefix + "/" + key : key;
+                    var f = r[key];
+                    if (isFile(f)) {
+                        if (typeof f === 'string') {
+                            f = { url: f, name: p };
+                            r[key] = f;
+                        }
+                        else {
+                            f['name'] = p;
+                        }
+                        walk(f);
+                    }
+                    else {
+                        loop(f, p, walk);
+                    }
+                }
+            };
+            var isFile = function (r) {
+                return typeof r === "string" || r.url != null;
+            };
+            loop(resource, "", function (value) {
+                if (!value.type) {
+                    value.type = _this.__temp__get__type__via__url(value.url);
+                }
+            });
             RES.FileSystem.data = data.resources;
             // if (!data)
             //     return;

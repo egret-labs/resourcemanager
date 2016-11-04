@@ -4,63 +4,78 @@ var path = require("path");
 
 exports.groups = { "preload": ["bg_jpg"] };
 exports.alias = { "bg_jpg": "assets/bg.jpg" };
-exports.filter = function(file, env,plugins) {
+exports.getTypeByFileExtensionName = function(ext) {
+    var type;
+    switch (ext) {
+        case "png":
+        case "jpg":
+            type = "image";
+            break;
+        case "fnt":
+            type = "font";
+            break;
+        case "mp3":
+            type = "sound";
+            break;
+        case "pvr":
+            type = "pvr";
+            break;
+    }
+    return type;
+}
+exports.filter = function(file, env, plugins) {
 
     var cwebp = require(path.resolve(__dirname, '../../../node_modules/cwebp-bin'));
     var execFile = require('child_process').execFile;
 
     return new Promise((reslove, reject) => {
         var type;
-		var ext = file.ext;
-		var p = file.path;
-		console.log (file)
-        switch (ext) {
-            case "json":
-                if (p.indexOf("sheet") >= 0) {
-                    type = "sheet";
-                } else if (p.indexOf("movieclip") >= 0) {
-                    type = "movieclip";
-                } else {
-                    type = "json";
-                }
-                break;
-            case "png":
-            case "jpg":
-                type = "image";
-                break;
-            case "fnt":
-                type = "font";
-                break;
-            case "mp3":
-                type = "sound";
-                break;
-			case "pvr":
-				type = "pvr";
-				break;
+        var doNotExportType = true;
+        var ext = file.ext;
+        var p = file.path;
+        console.log(file)
+        type = exports.getTypeByFileExtensionName(ext);
+        if (!type) {
+            switch (ext) {
+                case "json":
+                    if (p.indexOf("sheet") >= 0) {
+                        type = "sheet";
+                    } else if (p.indexOf("movieclip") >= 0) {
+                        type = "movieclip";
+                    } else {
+                        type = "json";
+                    }
+                    break;
+            }
+            doNotExportType = false;
         }
         if (type) {
-			if (false) {
-            // if (ext == "jpg" || ext == "png") {
-            //     var source = path.join(__dirname, p);
-            //     var output = source.replace(ext, "webp");
-            //     execFile(cwebp, [source, '-o', output], function(err) {
-            //         if (err) {
-            //             throw err;
-            //         }
-            //         var url = path.relative(__dirname,output);//plugins.crc32(p) + "." + ext;
-            //         reslove({ url, type })
-            //     })
+            if (false) {
+                // if (ext == "jpg" || ext == "png") {
+                //     var source = path.join(__dirname, p);
+                //     var output = source.replace(ext, "webp");
+                //     execFile(cwebp, [source, '-o', output], function(err) {
+                //         if (err) {
+                //             throw err;
+                //         }
+                //         var url = path.relative(__dirname,output);//plugins.crc32(p) + "." + ext;
+                //         reslove({ url, type })
+                //     })
             }
             else {
                 var url = p;//plugins.crc32(p) + "." + ext;
-				console.log (url)
-				plugins.add({url,type,name:p})
-				reslove();
+                console.log(url)
+                // plugins.add(url)
+                if (doNotExportType) {
+                    type = ""
+                }
+                plugins.add({ url, type, name: p })
+                reslove();
                 // reslove({ url, type });
             }
         }
         else {
-			reslove(null);
+            reslove(null);
         }
     });
 
@@ -68,14 +83,8 @@ exports.filter = function(file, env,plugins) {
 }
 exports.resources = {
 	"assets": {
-		"bg.jpg": {
-			"url": "assets/bg.jpg",
-			"type": "image"
-		},
-		"egret_icon.png": {
-			"url": "assets/egret_icon.png",
-			"type": "image"
-		},
+		"bg.jpg": "assets/bg.jpg",
+		"egret_icon.png": "assets/egret_icon.png",
 		"armature": {
 			"skeleton.json": {
 				"url": "assets/armature/skeleton.json",
@@ -85,52 +94,31 @@ exports.resources = {
 				"url": "assets/armature/texture.json",
 				"type": "json"
 			},
-			"texture.png": {
-				"url": "assets/armature/texture.png",
-				"type": "image"
-			}
+			"texture.png": "assets/armature/texture.png"
 		},
 		"font": {
-			"font.fnt": {
-				"url": "assets/font/font.fnt",
-				"type": "font"
-			},
-			"font.png": {
-				"url": "assets/font/font.png",
-				"type": "image"
-			}
+			"font.fnt": "assets/font/font.fnt",
+			"font.png": "assets/font/font.png"
 		},
 		"movieclip": {
 			"movieclip.json": {
 				"url": "assets/movieclip/movieclip.json",
 				"type": "movieclip"
 			},
-			"movieclip.png": {
-				"url": "assets/movieclip/movieclip.png",
-				"type": "image"
-			}
+			"movieclip.png": "assets/movieclip/movieclip.png"
 		},
 		"pvr": {
-			"0.pvr": {
-				"url": "assets/pvr/0.pvr",
-				"type": "pvr"
-			}
+			"0.pvr": "assets/pvr/0.pvr"
 		},
 		"sheet": {
 			"sheet1.json": {
 				"url": "assets/sheet/sheet1.json",
 				"type": "sheet"
 			},
-			"sheet1.png": {
-				"url": "assets/sheet/sheet1.png",
-				"type": "image"
-			}
+			"sheet1.png": "assets/sheet/sheet1.png"
 		},
 		"sound": {
-			"sound_go.mp3": {
-				"url": "assets/sound/sound_go.mp3",
-				"type": "sound"
-			}
+			"sound_go.mp3": "assets/sound/sound_go.mp3"
 		}
 	}
 }

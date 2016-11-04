@@ -64,7 +64,7 @@ module RES {
         }
     };
 
-    export var resourceRoot:string;
+    export var resourceRoot: string;
 
 
     export interface ResourceInfo {
@@ -85,7 +85,7 @@ module RES {
         /**
          * 是否被资源管理器进行管理，默认值为 false
          */
-        extra?:boolean;
+        extra?: boolean;
 
     }
 
@@ -99,7 +99,10 @@ module RES {
 
         alias: {
             [aliasName: string]: string;
-        }
+        },
+
+
+        getTypeByFileExtensionName?: (p) => string;
 
     }
 
@@ -154,57 +157,27 @@ module RES {
 
 
         __temp__get__type__via__url(url_or_alias: string): string {
+
             let url = this.config.alias[url_or_alias];
             if (!url) {
                 url = url_or_alias;
             }
 
-            let suffix: string = url.substr(url.lastIndexOf(".") + 1);
-            if (suffix) {
-                suffix = suffix.toLowerCase();
+            let ext = url.substr(url.lastIndexOf(".") + 1);
+            if (ext) {
+                ext = ext.toLowerCase();
             }
-            let type: string;
-            switch (suffix) {
-                case "xml":
-                case "json":
-                case "sheet":
-                    type = suffix;
-                    break;
-                case "png":
-                case "jpg":
-                case "gif":
-                case "jpeg":
-                case "bmp":
-                    type = "image";
-                    break;
-                case "fnt":
-                    type = "font";
-                    break;
-                case "txt":
-                    type = "text";
-                    break;
-                case "mp3":
-                case "ogg":
-                case "mpeg":
-                case "wav":
-                case "m4a":
-                case "mp4":
-                case "aiff":
-                case "wma":
-                case "mid":
-                    type = "sound";
-                    break;
-                case "jmc":
-                    type = "json";
-                    break;
-                default:
-                    type = "bin"
-                    break;
+
+            if (this.config.getTypeByFileExtensionName) {
+                return this.config.getTypeByFileExtensionName(ext);
             }
-            return type;
+            else {
+                console.warn("config.resjs 中未找到 getTypeByFileExtensionName 方法");
+                return "unknown";
+            }
         }
 
-         public parseResKey(key: string) {
+        public parseResKey(key: string) {
             key = this.getKeyByAlias(key);
             let index = key.indexOf("#");
             if (index >= 0) {
@@ -347,6 +320,44 @@ module RES {
         public parseConfig(data: Data): void {
 
             this.config = data;
+
+            let resource = data.resources;
+
+
+
+
+            let loop = (r, prefix, walk:(r:ResourceInfo)=>void) => {
+                for (var key in r) {
+                    let p = prefix ? prefix + "/" + key : key;
+                    var f = r[key];
+                    if (isFile(f)) {
+
+                        if (typeof f === 'string'){
+                            f = {url:f,name:p};
+                            r[key] = f;
+                        }
+                        else{
+                            f['name'] = p;
+                        }
+                        walk(f);
+                    }
+                    else {
+                        loop(f, p, walk);
+                    }
+
+                }
+            }
+
+            let isFile = (r) => {
+                return typeof r === "string" || r.url != null;
+            }
+
+            loop(resource, "", value => {
+                if (!value.type){
+                    value.type = this.__temp__get__type__via__url(value.url);
+                }
+            })
+
             FileSystem.data = data.resources;
 
             // if (!data)
@@ -422,8 +433,8 @@ module RES {
 
         }
 
-        public destory(){
-            this.config = {groups:{},alias:{},resources:{}};
+        public destory() {
+            this.config = { groups: {}, alias: {}, resources: {} };
             FileSystem.data = {};
         }
     }
