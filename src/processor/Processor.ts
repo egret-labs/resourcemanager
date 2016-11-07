@@ -156,7 +156,13 @@ module RES.processor {
             let f = new Function('require', 'exports', text);
             var require = function () { };
             var exports = {};
-            f(require, exports);
+            try {
+                f(require, exports);
+            }
+            catch (e) {
+                throw new ResourceManagerError(2003,resource.name,e.message)
+            }
+
             return exports;
         },
 
@@ -196,11 +202,11 @@ module RES.processor {
 
 
         getData(host, resource, key, subkey) {
-            let data:egret.SpriteSheet = host.get(resource);
-            if (data){
+            let data: egret.SpriteSheet = host.get(resource);
+            if (data) {
                 return data.getTexture(subkey);
             }
-            else{
+            else {
                 console.error("missing resource :" + resource.name);
                 return null;
             }
@@ -309,7 +315,7 @@ module RES.processor {
     }
 
 
-     class PVRParser {
+    class PVRParser {
 
         public static COMPRESSED_RGB_PVRTC_4BPPV1_IMG = 0x8C00;
         public static COMPRESSED_RGB_PVRTC_2BPPV1_IMG = 0x8C01;
@@ -441,7 +447,7 @@ module RES.processor {
     export var PVRProcessor: Processor = {
 
         async onLoadStart(host, resource) {
-            let arraybuffer = await host.load(resource,BinaryProcessor);
+            let arraybuffer = await host.load(resource, BinaryProcessor);
             let width = 512;
             let height = 512;
             let borderWidth = 0;

@@ -109,7 +109,12 @@ module RES {
         export function init(): Promise<void> {
             return host.load(configItem).then((data) => {
                 config.parseConfig(data)
-            }).catch(e => Promise.reject(new ResourceManagerError(1002)))
+            }).catch(e => {
+                if (!e.__resource_manager_error__) {
+                    e = new ResourceManagerError(1002);
+                }
+                return Promise.reject(e);
+            })
         }
 
         export function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<ResourceInfo[] | ResourceInfo> {
@@ -153,17 +158,22 @@ module RES {
 
         static errorMessage = {
             1001: '文件加载失败:{0}',
-            1002: "ResourceManager 初始化失败：配置文件加载解析失败",
+            1002: "ResourceManager 初始化失败：配置文件加载失败",
             1005: 'ResourceManager 已被销毁，文件加载失败:{0}',
             2001: "不支持指定解析类型:{0}，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
-            2002: "Analyzer 相关API 在 ResourceManager 中不再支持，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor"
-
+            2002: "Analyzer 相关API 在 ResourceManager 中不再支持，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
+            2003: "{0}解析失败,错误原因:{1}",
         }
 
-        constructor(code: number, replacer?: Object) {
+        /**
+         * why instanceof e  != ResourceManagerError ???
+         */
+        private __resource_manager_error__ = true;
+
+        constructor(code: number, replacer?: Object, replacer2?: Object) {
             super();
             this.name = code.toString();
-            this.message = ResourceManagerError.errorMessage[code].replace("{0}", replacer);
+            this.message = ResourceManagerError.errorMessage[code].replace("{0}", replacer).replace("{1}", replacer2);
         }
     }
 

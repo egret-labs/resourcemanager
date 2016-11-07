@@ -602,7 +602,12 @@ var RES;
         function init() {
             return RES.host.load(RES.configItem).then(function (data) {
                 manager.config.parseConfig(data);
-            }).catch(function (e) { return Promise.reject(new ResourceManagerError(1002)); });
+            }).catch(function (e) {
+                if (!e.__resource_manager_error__) {
+                    e = new ResourceManagerError(1002);
+                }
+                return Promise.reject(e);
+            });
         }
         manager.init = init;
         function load(resources, reporter) {
@@ -618,20 +623,25 @@ var RES;
     })(manager = RES.manager || (RES.manager = {}));
     var ResourceManagerError = (function (_super) {
         __extends(ResourceManagerError, _super);
-        function ResourceManagerError(code, replacer) {
+        function ResourceManagerError(code, replacer, replacer2) {
             var _this = _super.call(this) || this;
+            /**
+             * why instanceof e  != ResourceManagerError ???
+             */
+            _this.__resource_manager_error__ = true;
             _this.name = code.toString();
-            _this.message = ResourceManagerError.errorMessage[code].replace("{0}", replacer);
+            _this.message = ResourceManagerError.errorMessage[code].replace("{0}", replacer).replace("{1}", replacer2);
             return _this;
         }
         return ResourceManagerError;
     }(Error));
     ResourceManagerError.errorMessage = {
         1001: '文件加载失败:{0}',
-        1002: "ResourceManager 初始化失败：配置文件加载解析失败",
+        1002: "ResourceManager 初始化失败：配置文件加载失败",
         1005: 'ResourceManager 已被销毁，文件加载失败:{0}',
         2001: "不支持指定解析类型:{0}，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
-        2002: "Analyzer 相关API 在 ResourceManager 中不再支持，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor"
+        2002: "Analyzer 相关API 在 ResourceManager 中不再支持，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
+        2003: "{0}解析失败,错误原因:{1}",
     };
     RES.ResourceManagerError = ResourceManagerError;
 })(RES || (RES = {}));
@@ -813,7 +823,12 @@ var RES;
                                 f = new Function('require', 'exports', text);
                                 require = function () { };
                                 exports = {};
-                                f(require, exports);
+                                try {
+                                    f(require, exports);
+                                }
+                                catch (e) {
+                                    throw new RES.ResourceManagerError(2003, resource.name, e.message);
+                                }
                                 return [2 /*return*/, exports];
                         }
                     });
@@ -1909,6 +1924,7 @@ var RES;
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_COMPLETE);
             }, function (error) {
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_LOAD_ERROR);
+                return Promise.reject(error);
             });
         };
         /**
@@ -1942,6 +1958,7 @@ var RES;
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.GROUP_COMPLETE, name);
             }, function (error) {
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.GROUP_LOAD_ERROR, name);
+                return Promise.reject(error);
             });
         };
         Resource.prototype._loadGroup = function (name, priority, reporter) {
