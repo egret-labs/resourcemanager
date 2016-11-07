@@ -33,7 +33,7 @@ exports.filter = function(file, env, plugins) {
         var doNotExportType = true;
         var ext = file.ext;
         var p = file.path;
-        console.log(file)
+        //console.log(file)
         type = exports.getTypeByFileExtensionName(ext);
         if (!type) {
             switch (ext) {
@@ -64,7 +64,7 @@ exports.filter = function(file, env, plugins) {
             }
             else {
                 var url = p;//plugins.crc32(p) + "." + ext;
-                console.log(url)
+                //console.log(url)
                 // plugins.add(url)
                 if (doNotExportType) {
                     type = ""

@@ -279,6 +279,7 @@ declare module RES {
             2001: string;
             2002: string;
             2003: string;
+            2004: string;
         };
         /**
          * why instanceof e  != ResourceManagerError ???

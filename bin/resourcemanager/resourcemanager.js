@@ -215,7 +215,11 @@ var RES;
                 ext = ext.toLowerCase();
             }
             if (this.config.getTypeByFileExtensionName) {
-                return this.config.getTypeByFileExtensionName(ext);
+                var type = this.config.getTypeByFileExtensionName(ext);
+                if (!type) {
+                    throw new RES.ResourceManagerError(2004, url);
+                }
+                return type;
             }
             else {
                 console.warn("config.resjs 中未找到 getTypeByFileExtensionName 方法");
@@ -642,6 +646,7 @@ var RES;
         2001: "不支持指定解析类型:{0}，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
         2002: "Analyzer 相关API 在 ResourceManager 中不再支持，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
         2003: "{0}解析失败,错误原因:{1}",
+        2004: "无法找到文件类型:{0}"
     };
     RES.ResourceManagerError = ResourceManagerError;
 })(RES || (RES = {}));
@@ -1954,7 +1959,15 @@ var RES;
         Resource.prototype.loadGroup = function (name, priority, reporter) {
             var _this = this;
             if (priority === void 0) { priority = 0; }
-            return this._loadGroup(name, priority, reporter).then(function (data) {
+            var reporterDelegate = {
+                onProgress: function (current, total) {
+                    if (reporter && reporter.onProgress) {
+                        reporter.onProgress(current, total);
+                    }
+                    RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.GROUP_PROGRESS, name, undefined, current, total);
+                }
+            };
+            return this._loadGroup(name, priority, reporterDelegate).then(function (data) {
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.GROUP_COMPLETE, name);
             }, function (error) {
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.GROUP_LOAD_ERROR, name);

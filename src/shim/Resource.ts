@@ -484,7 +484,15 @@ module RES {
          */
         public loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<any> {
 
-            return this._loadGroup(name, priority, reporter).then(data => {
+            let reporterDelegate = {
+                onProgress: (current, total) => {
+                    if (reporter && reporter.onProgress) {
+                        reporter.onProgress(current, total);
+                    }
+                    ResourceEvent.dispatchResourceEvent(this, ResourceEvent.GROUP_PROGRESS, name, undefined, current, total);
+                }
+            }
+            return this._loadGroup(name, priority, reporterDelegate).then(data => {
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.GROUP_COMPLETE, name);
             }, error => {
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.GROUP_LOAD_ERROR, name);

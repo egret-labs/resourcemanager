@@ -169,7 +169,11 @@ module RES {
             }
 
             if (this.config.getTypeByFileExtensionName) {
-                return this.config.getTypeByFileExtensionName(ext);
+                let type = this.config.getTypeByFileExtensionName(ext);
+                if (!type){
+                    throw new ResourceManagerError(2004,url);
+                }
+                return type;
             }
             else {
                 console.warn("config.resjs 中未找到 getTypeByFileExtensionName 方法");
