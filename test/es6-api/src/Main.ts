@@ -16,6 +16,7 @@ class Main extends egret.DisplayObjectContainer {
     private onAddToStage(event: egret.Event) {
 
 
+        let testNull = () => RES.getRes("");
 
         let testBitmapFont = () =>
             RES.getResAsync("assets/font/font.fnt").then(value => {
@@ -100,6 +101,7 @@ class Main extends egret.DisplayObjectContainer {
 
 
         RES.loadConfig()
+            .then(testNull)
             .then(testCreateAndDestoryResource)
             .then(testLoadResByUrl)
             .then(testBitmapFont)

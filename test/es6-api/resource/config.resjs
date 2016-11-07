@@ -2,8 +2,14 @@ var fs = require("fs");
 var path = require("path");
 
 
-exports.groups = { "preload": ["bg_jpg"] };
-exports.alias = { "bg_jpg": "assets/bg.jpg" };
+exports.groups = {
+	"preload": [
+		"bg_jpg"
+	]
+};
+exports.alias = {
+	"bg_jpg": "assets/bg.jpg"
+};
 exports.getTypeByFileExtensionName = function(ext) {
     var type;
     switch (ext) {
