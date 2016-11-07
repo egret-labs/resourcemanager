@@ -66,6 +66,7 @@ class Main extends egret.DisplayObjectContainer {
                 .then(() => this.createGameScene())
                 .then(() => sleep(1000))
                 .then(() => RES.destroyRes("preload"))
+                .then(()=> RES.destroyRes("assets/bg.jpg"))
                 .then(() => RES.loadGroup("preload", 0, reporter).then(() => {
                     this.sky.texture = RES.getRes("assets/bg.jpg")
                 }))

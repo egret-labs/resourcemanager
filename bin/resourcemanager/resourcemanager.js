@@ -572,6 +572,11 @@ var RES;
         },
         unload: function (r, cache) {
             if (cache === void 0) { cache = true; }
+            var data = RES.host.get(r);
+            if (!data) {
+                console.warn("尝试释放不存在的资源:", r.name);
+                return Promise.resolve();
+            }
             var processor = RES.host.isSupport(r);
             if (processor) {
                 return processor.onRemoveStart(RES.host, r)

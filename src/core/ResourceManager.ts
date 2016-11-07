@@ -63,6 +63,11 @@ module RES {
         },
 
         unload(r: ResourceInfo, cache: boolean = true) {
+            let data = host.get(r);
+            if (!data) {
+                console.warn("尝试释放不存在的资源:",r.name);
+                return Promise.resolve();
+            }
             let processor = host.isSupport(r);
             if (processor) {
                 return processor.onRemoveStart(host, r)
