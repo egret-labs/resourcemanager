@@ -1,12 +1,15 @@
 {
   "name": "resourcemanager",
   "version": "3.9.0",
+  "bin": {
+    "res": "script/out/cli.js"
+  },
   "description": "",
   "scripts": {
     "publish": "tsc",
-    "debug": "tsc && egret build test/es6-api -e && egret-cli resource build test/es6-api && egret run test/es6-api",
-    "test": "egret build test/es6-api -e && egret-cli resource build test/es6-api && egret run test/es6-api",
-    "test-classic": "egret build test/classic-api -e && egret-cli resource build test/classic-api && egret run test/classic-api"
+    "debug": "tsc && egret build test/es6-api -e && res test/es6-api && egret run test/es6-api",
+    "test": "egret build test/es6-api -e && res test/es6-api && egret run test/es6-api",
+    "test-classic": "egret build test/classic-api -e && egret-cli res test/es6-api && egret run test/classic-api"
   },
   "author": "wander",
   "license": "ISC",
