@@ -45,7 +45,7 @@ module RES {
             return manager.config;
         },
 
-        load: (r: ResourceInfo, processor: processor.Processor | undefined, cache: boolean = true) => {
+        load: (r: ResourceInfo, processor: processor.Processor | undefined) => {
             if (!processor) {
                 processor = host.isSupport(r);
             }
@@ -53,28 +53,19 @@ module RES {
                 throw new ResourceManagerError(2001, r.type);
             }
             return processor.onLoadStart(host, r)
-                .then(data => {
-                    if (cache) {
-                        host.save(r, data);
-                    }
-                    return data;
-                }
-                )
         },
 
-        unload(r: ResourceInfo, cache: boolean = true) {
+        unload(r: ResourceInfo) {
             let data = host.get(r);
             if (!data) {
-                console.warn("尝试释放不存在的资源:",r.name);
+                console.warn("尝试释放不存在的资源:", r.name);
                 return Promise.resolve();
             }
             let processor = host.isSupport(r);
             if (processor) {
                 return processor.onRemoveStart(host, r)
                     .then(result => {
-                        if (cache) {
-                            host.remove(r);
-                        }
+                        host.remove(r);
                         return result;
                     }
                     )

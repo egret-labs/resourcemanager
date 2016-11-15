@@ -11,6 +11,7 @@ var game_file_list = [
 	"libs/modules/eui/eui.js",
 	"libs/modules/dragonBones/dragonBones.js",
 	"bin-debug/Main.js",
+	"bin-debug/TestCase.js",
 	//----auto game_file_list end----
 ];
 

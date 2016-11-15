@@ -3,7 +3,7 @@
  */
 
 // @RES.mapConfig<"resource" | "resource-publish/ios">("config.resjs", () => "resource-publish/ios")
-@RES.mapConfig<"resource" | "resource-publish/ios">("config.resjs", () => "resource")
+@RES.mapConfig<"resource" | "resource-publish/test3">("config.resjs", () => "resource-publish/test3")
 class Main extends egret.DisplayObjectContainer {
 
     private sky: egret.Bitmap;
@@ -66,7 +66,7 @@ class Main extends egret.DisplayObjectContainer {
                 .then(() => this.createGameScene())
                 .then(() => sleep(1000))
                 .then(() => RES.destroyRes("preload"))
-                .then(()=> RES.destroyRes("assets/bg.jpg"))
+                .then(() => RES.destroyRes("assets/bg.jpg"))
                 .then(() => RES.loadGroup("preload", 0, reporter).then(() => {
                     this.sky.texture = RES.getRes("assets/bg.jpg")
                 }))
@@ -106,6 +106,7 @@ class Main extends egret.DisplayObjectContainer {
             .then(testCreateAndDestoryResource)
             .then(testLoadResByUrl)
             .then(testBitmapFont)
+            .then(testNetworkDelay)
             .then(testSpriteSheet)
             .then(testSoundByUrl)
             .then(testAnimationByUrl)

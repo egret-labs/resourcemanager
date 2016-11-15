@@ -53,7 +53,7 @@ module RES {
 			let total = 1;
 			let mapper = (r) => host.load(r)
 				.then(response => {
-					// host.save(r, response);
+					host.save(r, response);
 					current++;
 					if (reporter && reporter.onProgress) {
 						reporter.onProgress(current, total);

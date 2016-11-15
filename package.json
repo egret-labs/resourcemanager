@@ -12,6 +12,8 @@
   "license": "ISC",
   "devDependencies": {
     "egret-cli": "^0.4.0",
-    "typescript": "^2.1.0-dev.20161019"
+    "egret-node-utils": "0.0.7",
+    "egret-typescript-ast": "0.0.10",
+    "typescript": "^2.2.0-dev.20161115"
   }
 }

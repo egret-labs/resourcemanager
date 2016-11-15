@@ -491,7 +491,7 @@ var RES;
             var total = 1;
             var mapper = function (r) { return RES.host.load(r)
                 .then(function (response) {
-                // host.save(r, response);
+                RES.host.save(r, response);
                 current++;
                 if (reporter && reporter.onProgress) {
                     reporter.onProgress(current, total);
@@ -554,24 +554,16 @@ var RES;
         get resourceConfig() {
             return manager.config;
         },
-        load: function (r, processor, cache) {
-            if (cache === void 0) { cache = true; }
+        load: function (r, processor) {
             if (!processor) {
                 processor = RES.host.isSupport(r);
             }
             if (!processor) {
                 throw new ResourceManagerError(2001, r.type);
             }
-            return processor.onLoadStart(RES.host, r)
-                .then(function (data) {
-                if (cache) {
-                    RES.host.save(r, data);
-                }
-                return data;
-            });
+            return processor.onLoadStart(RES.host, r);
         },
-        unload: function (r, cache) {
-            if (cache === void 0) { cache = true; }
+        unload: function (r) {
             var data = RES.host.get(r);
             if (!data) {
                 console.warn("尝试释放不存在的资源:", r.name);
@@ -581,9 +573,7 @@ var RES;
             if (processor) {
                 return processor.onRemoveStart(RES.host, r)
                     .then(function (result) {
-                    if (cache) {
-                        RES.host.remove(r);
-                    }
+                    RES.host.remove(r);
                     return result;
                 });
             }

@@ -4,3 +4,4 @@ test/**/libs/
 bin-release
 resource-publish
 *.webp
+script/out

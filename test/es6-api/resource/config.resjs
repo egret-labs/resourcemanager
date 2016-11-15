@@ -2,6 +2,20 @@ var fs = require("fs");
 var path = require("path");
 
 
+exports.executeGulp = function(){
+
+    var a = function(){
+        console.log (arguments);
+        console.log ('=====')
+    }
+
+    console.log ("gulp");
+    var gulp = require("gulp")
+    var webp = require('gulp-webp');
+    gulp.src('resource/**/{*.jpg,*.png}').pipe(a()).pipe(gulp.dest('resource-publish/test3'))
+   // gulp.src('resource/**/{*.json,*.fnt,*.pvr,*.mp3}').pipe(webp()).pipe(gulp.dest('resource-publish/test3'))
+}
+
 exports.groups = {
 	"preload": [
 		"bg_jpg"
