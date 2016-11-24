@@ -70,32 +70,6 @@ export namespace ResourceConfig {
 
     var resourcePath: string;
 
-
-    export async function execute() {
-        if (!config.executeGulp) {
-            return;
-        }
-
-        config.executeGulp();
-
-        // let option: utils.walk.WalkOptions = {
-        //     relative: true,
-        //     ignoreHiddenFile: true
-        // }
-
-        // let list = await utils.walk(resourcePath, () => true, option);
-        // for (let file of list) {
-        //     for (let plugin of config.publishPlugins) {
-        //         if (plugin.test(file)) {
-        //             for (let p of plugin.plugin){
-        //                 // await 
-        //             }
-        //         }
-        //     }
-        // }
-
-    }
-
     export function addFile(r) {
         filesystem.addFile(r);
     }
@@ -275,13 +249,6 @@ exports.resources = ${JSON.stringify(obj.resources, null, "\t")};`
         }
 
     }
-
-
 }
 
-
-
-export async function build(p: string, target?: string) {
-
-    return _build.build(p, target);
-}
+export var build = _build;

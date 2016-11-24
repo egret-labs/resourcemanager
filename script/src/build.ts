@@ -1,7 +1,6 @@
-import {Data, ResourceConfig} from './';
+import { Data, ResourceConfig } from './';
+import * as c from './config';
 import * as utils from 'egret-node-utils';
-
-import * as ts from 'typescript';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 
@@ -89,40 +88,24 @@ export async function build(p: string, target?: string) {
         return result;
     }
 
-    let updateResourceConfigFileContent = async (filename, matcher, data) => {
 
-        let replacedText = JSON.stringify(data, null, "\t");
-        let config = ResourceConfig.config;
-        let content = await fs.readFileAsync(filename, "utf-8");
-        let sourceFile = ts.createSourceFile(filename, content, ts.ScriptTarget.ES2015, /*setParentNodes */ true);
-        content = await delint(sourceFile, matcher, replacedText);;
-        await fs.writeFileAsync(filename, content, "utf-8");
-        return content;
-    }
 
     projectRoot = p;
     let resourcePath = path.join(projectRoot, "resource");
 
     let filename = getResourceConfigFile();
-    await ResourceConfig.init(filename,resourcePath);
+    await ResourceConfig.init(filename, resourcePath);
 
     let option: utils.walk.WalkOptions = {
         relative: true,
         ignoreHiddenFile: true
     }
 
-
-    await ResourceConfig.execute();
-
     let list = await utils.walk(resourcePath, () => true, option);
     await Promise.all(list.map(executeFilter)).catch(e => console.log(e));
 
-    await convertResourceJson(ResourceConfig.config);
-
-    //todo : performance-optimize
-    let content = await updateResourceConfigFileContent(filename, "exports.resources", ResourceConfig.config.resources);
-    content = await updateResourceConfigFileContent(filename, "exports.groups", ResourceConfig.config.groups);
-    content = await updateResourceConfigFileContent(filename, "exports.alias", ResourceConfig.config.alias);
+    await convertResourceJson(filename);
+    let content = await updateResourceConfigFileContent(filename);
 
     if (target) {
         var outputFileDir = path.resolve(process.cwd(), projectRoot, target);
@@ -136,60 +119,25 @@ function getResourceConfigFile() {
     return path.resolve(process.cwd(), projectRoot, "resource/config.resjs");
 }
 
+export async function updateResourceConfigFileContent(filename: string) {
+    var c = ResourceConfig.config;
+    let content = await updateResourceConfigFileContent_2(filename, "exports.resources", c.resources);
+    content = await updateResourceConfigFileContent_2(filename, "exports.groups", c.groups);
+    content = await updateResourceConfigFileContent_2(filename, "exports.alias", c.alias);
+    return content;
+}
 
-
-
-//分析特定文件中的 exports.resource = {blablabla}，将其中右侧的内容进行替换
-function delint(sourceFile: ts.SourceFile, matcher: string, replacedText: string): Promise<string> {
-
-    let config = ResourceConfig.config;
-
-    return new Promise((reslove, reject) => {
-
-        function delintNode(node: ts.Node) {
-
-            // ExpressionStatement  表达式
-            //    |-- BinaryExpression 二元表达式
-            //      |-- left  左侧
-            //      |-- right  右侧
-            if (node.kind == ts.SyntaxKind.ExpressionStatement) {
-                if ((node as ts.ExpressionStatement).expression.kind == ts.SyntaxKind.BinaryExpression) {
-                    let expression = (node as ts.ExpressionStatement).expression as ts.BinaryExpression;
-                    if (expression.left.getText() == matcher) {
-                        let right = expression.right;
-                        let positionStart = right.getStart();
-                        let positionFinish = right.getWidth();
-                        let fullText = sourceFile.getFullText();
-
-                        fullText = fullText.substr(0, positionStart) + replacedText + fullText.substr(positionStart + positionFinish);
-                        result = fullText;
-                    }
-                }
-            }
-            else {
-                ts.forEachChild(node, delintNode);
-            }
-
-
-        }
-        let result = "";
-        let count = setInterval(() => {
-            if (result) {
-                clearInterval(count);
-                reslove(result);
-            }
-        }, 100)
-        delintNode(sourceFile);
-    });
-
-
+async function updateResourceConfigFileContent_2(filename, matcher, data) {
+    let content = await c.publish(filename, matcher, data);
+    await fs.writeFileAsync(filename, content, "utf-8");
+    return content;
 }
 
 
 
-async function convertResourceJson(config: Data) {
+async function convertResourceJson(filename: string) {
 
-
+    let config = ResourceConfig.config;
     let resourceJsonPath = path.join(projectRoot, "resource/default.res.json");
     if (!fs.existsSync(resourceJsonPath)) {
         resourceJsonPath = path.join(projectRoot, "resource/resource.json");
@@ -229,4 +177,6 @@ async function convertResourceJson(config: Data) {
     for (let group of resourceJson.groups) {
         config.groups[group.name] = group.keys.split(",");
     }
+
+    return ResourceConfig.config;
 }

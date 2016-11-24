@@ -5,3 +5,4 @@ bin-release
 resource-publish
 *.webp
 script/out
+test_xxx

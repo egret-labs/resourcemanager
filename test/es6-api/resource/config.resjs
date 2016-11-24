@@ -71,16 +71,7 @@ exports.filter = function(file, env, plugins) {
         }
         if (type) {
             if (false) {
-                // if (ext == "jpg" || ext == "png") {
-                //     var source = path.join(__dirname, p);
-                //     var output = source.replace(ext, "webp");
-                //     execFile(cwebp, [source, '-o', output], function(err) {
-                //         if (err) {
-                //             throw err;
-                //         }
-                //         var url = path.relative(__dirname,output);//plugins.crc32(p) + "." + ext;
-                //         reslove({ url, type })
-                //     })
+               
             }
             else {
                 var url = p;//plugins.crc32(p) + "." + ext;
@@ -89,9 +80,7 @@ exports.filter = function(file, env, plugins) {
                 if (doNotExportType) {
                     type = ""
                 }
-                plugins.add({ url, type, name: p })
-                reslove();
-                // reslove({ url, type });
+                reslove({ url, type, name: p });
             }
         }
         else {
