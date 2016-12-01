@@ -6,6 +6,7 @@ function getProjectPath(p) {
     return p ? p : ".";
 }
 
+
 console.log(process.argv);
 var command = process.argv[2];
 switch (command) {
@@ -15,7 +16,8 @@ switch (command) {
         break;
     default:
         var p = getProjectPath(command);
-        res.build.build(command);
+        console.log (p)
+        res.build.build(p).catch(e => console.log (e.stack))
         break;
 }
 

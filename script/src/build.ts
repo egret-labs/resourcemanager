@@ -43,8 +43,6 @@ let add = (r) => {
 }
 
 export async function build(p: string, target?: string) {
-    console.log (111)
-    console.log (p)
 
     let resourceRoot = "resource";
 
@@ -78,10 +76,13 @@ export async function build(p: string, target?: string) {
 
     let executeFilter = async (f) => {
 
+
+
         let config = ResourceConfig.config;
         if (!config.filter) {
             throw "missing filter in config.resjs";
         }
+   
         var ext = f.substr(f.lastIndexOf(".") + 1);
         let file = { path: f, fullname: path.join(resourceRoot, f), ext };
         let env = { target, resourceRoot };
@@ -104,8 +105,15 @@ export async function build(p: string, target?: string) {
 
     let list = await utils.walk(resourcePath, () => true, option);
     await Promise.all(list.map(executeFilter)).catch(e => console.log(e));
+    let resourceJsonPath = path.join(projectRoot, "resource/default.res.json");
+    if (!fs.existsSync(resourceJsonPath)) {
+        resourceJsonPath = path.join(projectRoot, "resource/resource.json");
+    }
+    if (fs.existsSync(resourceJsonPath)) {
+        await convertResourceJson(resourceJsonPath);
+    }
 
-    await convertResourceJson(filename);
+
     let content = await updateResourceConfigFileContent(filename);
 
     if (target) {
@@ -139,14 +147,7 @@ async function updateResourceConfigFileContent_2(filename, matcher, data) {
 export async function convertResourceJson(filename: string) {
 
     let config = ResourceConfig.config;
-    let resourceJsonPath = path.join(projectRoot, "resource/default.res.json");
-    if (!fs.existsSync(resourceJsonPath)) {
-        resourceJsonPath = path.join(projectRoot, "resource/resource.json");
-    }
-    if (!fs.existsSync(resourceJsonPath)) {
-        return;
-    }
-    let resourceJson: original.Info = await fs.readJSONAsync(resourceJsonPath);
+    let resourceJson: original.Info = await fs.readJSONAsync(filename);
     // let resourceJson: original.Info = await fs.readJSONAsync(resourceJsonPath);
     for (let r of resourceJson.resources) {
         config.alias[r.name] = r.url;

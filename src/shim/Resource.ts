@@ -525,6 +525,7 @@ module RES {
          * @param key {string} 对应配置文件里的name属性或sbuKeys属性的一项。
 		 * @returns {boolean}
          */
+        @checkNull
         public hasRes(key: string): boolean {
             let name = manager.config.parseResKey(key).key;
             return manager.config.getResource(name) != null;
@@ -562,6 +563,7 @@ module RES {
 
         public getResAsync(key: string): Promise<any>
         public getResAsync(key: string, compFunc: Function, thisObject: any): void
+        @checkNull
         @checkCancelation
         public getResAsync(key: string, compFunc?: Function, thisObject?: any): Promise<any> | void {
 
@@ -587,6 +589,7 @@ module RES {
 		 * @param thisObject {any}
 		 * @param type {string}
          */
+        @checkNull
         @checkCancelation
         public getResByUrl(url: string, compFunc: Function, thisObject: any, type: string = ""): Promise<any> | void {
             let r = manager.config.getResource(url);
