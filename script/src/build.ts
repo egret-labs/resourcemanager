@@ -43,7 +43,8 @@ let add = (r) => {
 }
 
 export async function build(p: string, target?: string) {
-
+    console.log (111)
+    console.log (p)
 
     let resourceRoot = "resource";
 
@@ -135,7 +136,7 @@ async function updateResourceConfigFileContent_2(filename, matcher, data) {
 
 
 
-async function convertResourceJson(filename: string) {
+export async function convertResourceJson(filename: string) {
 
     let config = ResourceConfig.config;
     let resourceJsonPath = path.join(projectRoot, "resource/default.res.json");

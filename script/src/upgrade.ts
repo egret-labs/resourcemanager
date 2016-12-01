@@ -1,45 +1,49 @@
-// import * as egret_project from '../egret-project';
-// import * as Config from '../Config';
-// import * as path from 'path';
-// import * as fs from 'fs-extra-promise';
 
-// import * as resource from './';
+import * as path from 'path';
+import * as fs from 'fs-extra-promise';
 
-
-
-
-// export async function run(env) {
-
-
-
-//     async function copyLibrary() {
-//         let folder = await Config.getConfig("egret-libs-folder");
-//         let source = path.join(folder, "resourcemanager", "bin");
-//         let target = path.join(env.egretProjectPath, "bin");
-//         await fs.copyAsync(source, target);
-//     }
+import * as resource from './';
 
 
 
 
+export async function run(projectPath) {
 
 
 
-//     async function convertEgretProperties() {
-//         let propertyData = await egret_project.getEgretProjectConfig(env);
-//         delete propertyData.modules['res'];
+    async function copyLibrary() {
+        console.log (__dirname)
+        let folder = path.resolve(__dirname,"../../")
+        console.log (folder)
+        let source = path.join(folder, "bin");
+        let target = path.join(projectPath, "bin");
+        await fs.copyAsync(source, target);
+    }
 
-//         for (let m of propertyData.modules) {
-//             if (m.name == "res") {
-//                 m.name = "resourcemanager";
-//                 m.path = "."
-//             }
-//         }
-//         await egret_project.updateProjectConfig(env);
-//     }
 
-//     await convertEgretProperties();
-//     await copyLibrary();
 
-// }
+
+
+
+
+    async function convertEgretProperties() {
+        var propertyFile = path.join(projectPath,"egretProperties.json");
+        console.log (propertyFile)
+        let propertyData = await fs.readJsonAsync(propertyFile) as any;
+        console.log (propertyData)
+        delete propertyData.modules['res'];
+
+        for (let m of propertyData.modules) {
+            if (m.name == "res") {
+                m.name = "resourcemanager";
+                m.path = "."
+            }
+        }
+        await fs.writeJSONAsync(propertyFile,propertyData);
+    }
+
+    await convertEgretProperties();
+    await copyLibrary();
+
+}
 

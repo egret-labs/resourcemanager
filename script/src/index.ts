@@ -5,6 +5,7 @@ import * as fs from 'fs-extra-promise';
 
 import * as _config from './config';
 import * as _build from './build';
+import * as _upgrade from './upgrade';
 
 export var config = _config;
 
@@ -78,9 +79,9 @@ export namespace ResourceConfig {
         return filesystem.getFile(filename);
     }
 
-    export async function init(filename, r) {
+    export async function init(filename, resourceRootPath) {
 
-        resourcePath = r;
+        resourcePath = resourceRootPath;
 
         if (!fs.existsSync(filename)) {
             console.log(filename)
@@ -252,3 +253,5 @@ exports.resources = ${JSON.stringify(obj.resources, null, "\t")};`
 }
 
 export var build = _build;
+
+export var upgrade = _upgrade;

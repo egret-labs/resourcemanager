@@ -522,7 +522,7 @@ var RES;
         descriptor.value = function () {
             var arg = [];
             for (var _i = 0; _i < arguments.length; _i++) {
-                arg[_i - 0] = arguments[_i];
+                arg[_i] = arguments[_i];
             }
             var currentPid = systemPid;
             var result = method.apply(this, arg);
@@ -1449,7 +1449,7 @@ var RES;
         descriptor.value = function () {
             var arg = [];
             for (var _i = 0; _i < arguments.length; _i++) {
-                arg[_i - 0] = arguments[_i];
+                arg[_i] = arguments[_i];
             }
             if (!arg[0]) {
                 console.warn("\u65B9\u6CD5" + propertyKey + "\u7684\u53C2\u6570\u4E0D\u80FD\u4E3Anull");
