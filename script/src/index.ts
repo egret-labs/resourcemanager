@@ -6,25 +6,12 @@ import * as fs from 'fs-extra-promise';
 import * as _config from './config';
 import * as _build from './build';
 import * as _upgrade from './upgrade';
+import * as vfs from './FileSystem'
 
 export var config = _config;
 
 
-export interface File {
 
-    url: string;
-
-    type: string;
-
-    name?: string;
-
-}
-
-export interface Dictionary {
-
-    [file: string]: File | Dictionary
-
-}
 
 enum ResourceNodeType {
     FILE, DICTIONARY
@@ -36,11 +23,11 @@ export interface Data {
 
     publishPlugins?: { test: any, plugin: Function[] }[]
 
-    executeGulp?:Function;
+    executeGulp?: Function;
 
     filter?: (file: any, env: any, plugins: any) => Promise<File>;
 
-    resources: Dictionary,
+    resources: vfs.Dictionary,
 
     groups?: {
         [groupName: string]: string[]
@@ -72,24 +59,22 @@ export namespace ResourceConfig {
     var resourcePath: string;
 
     export function addFile(r) {
-        filesystem.addFile(r);
+        vfs.addFile(r);
     }
 
-    export function getFile(filename: string): File {
-        return filesystem.getFile(filename);
+    export function getFile(filename: string): vfs.File {
+        return vfs.getFile(filename);
     }
 
     export async function init(filename, resourceRootPath) {
-
         resourcePath = resourceRootPath;
-
         if (!fs.existsSync(filename)) {
-            console.log(filename)
+            console.info(`${filename}不存在，创建文件`)
             await createResourceConfigFile(filename);
         }
         let data: Data = require(filename);
         data.resources = {};
-        filesystem.data = data.resources;
+        vfs.init(data.resources);
         config = data;
     }
 
@@ -171,85 +156,7 @@ exports.resources = ${JSON.stringify(obj.resources, null, "\t")};`
 
 
 
-    namespace filesystem {
-
-        export var data: Dictionary = {};
-
-
-        export function addFile(r: File) {
-
-            var type = r.type;
-            var filename = r.name;
-            var url = r.url;
-            if (!type) type = "";
-            filename = normalize(filename);
-            let basefilename = basename(filename);
-            let folder = dirname(filename);
-            if (!exists(folder)) {
-                mkdir(folder);
-            }
-            let d = reslove(folder);
-            //  console.log (type)
-            if (type == "") {
-                d[basefilename] = url;
-            }
-            else {
-                d[basefilename] = { url: url, type };
-            }
-        }
-
-        export function getFile(filename: string): File {
-            return reslove(filename) as File;
-        }
-
-        function basename(filename: string) {
-            return filename.substr(filename.lastIndexOf("/") + 1);
-        }
-
-        function normalize(filename: string) {
-            return filename.split("/").filter(d => !!d).join("/");
-        }
-
-        function dirname(path: string) {
-            return path.substr(0, path.lastIndexOf("/"));
-        }
-
-        function reslove(dirpath: string) {
-            dirpath = normalize(dirpath);
-            let list = dirpath.split("/");
-            let current: File | Dictionary = data;
-            for (let f of list) {
-                current = current[f];
-            }
-            return current;
-        }
-
-        export function mkdir(dirpath: string) {
-            dirpath = normalize(dirpath);
-            let list = dirpath.split("/");
-            let current = data;
-            for (let f of list) {
-                if (!current[f]) {
-                    current[f] = {};
-                }
-                current = current[f] as Dictionary;
-            }
-        }
-
-        export function exists(dirpath: string) {
-            dirpath = normalize(dirpath);
-            let list = dirpath.split("/");
-            let current = data;
-            for (let f of list) {
-                if (!current[f]) {
-                    return false;
-                }
-                current = current[f] as Dictionary;
-            }
-            return true;
-        }
-
-    }
+    
 }
 
 export var build = _build;
