@@ -31,12 +31,9 @@ exports.getTypeByFileExtensionName = function(ext) {
 exports.filter = function(file, env, plugins) {
 
     return new Promise((reslove, reject) => {
-        var type;
-        var doNotExportType = true;
         var ext = file.ext;
         var p = file.path;
-        //console.log(file)
-        type = exports.getTypeByFileExtensionName(ext);
+        var type = exports.getTypeByFileExtensionName(ext);
         if (!type) {
             switch (ext) {
                 case "json":
@@ -49,12 +46,9 @@ exports.filter = function(file, env, plugins) {
                     }
                     break;
             }
-            doNotExportType = false;
         }
         if (type) {
-            var url = p;
-            console.log (url);
-            reslove({ url, type, name: p });
+            reslove({ url:p, type, name: p });
         }
         else {
             reslove(null);
