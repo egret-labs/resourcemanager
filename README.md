@@ -55,7 +55,11 @@ await RES.getResAsync("assets/icon.jpg");
 ## 如何使用
 
 * 在命令行中执行 ``` npm install egret-resource-manager -g ``` 安装命令行工具
+
 * 执行 egret upgrade { your-project } 将旧版 res 模块升级为新版本，升级过程会完成下述操作
-    * 将 ```egret-resource-manager``` 中包含的新版本资源管理系统的源代码复制到项目文件夹的 bin 目录下
-    * 将 ```egretProperties.json``` 中的 ```res``` 字段修改为 ```resourcemanager```
+    
+    * 将 ```egret-resource-manager``` 中包含的新版本资源管理系统的源代码复制到项目文件夹的 bin 目录下
+    
+    * 将 ```egretProperties.json``` 中的 ```res``` 字段修改为 ```resourcemanager```
+
 * 当游戏资源发生变化后，执行```res build { your_project }```，更新资源配置
