@@ -1,21 +1,6 @@
 var fs = require("fs");
 var path = require("path");
 
-
-exports.executeGulp = function(){
-
-    var a = function(){
-        console.log (arguments);
-        console.log ('=====')
-    }
-
-    console.log ("gulp");
-    var gulp = require("gulp")
-    var webp = require('gulp-webp');
-    gulp.src('resource/**/{*.jpg,*.png}').pipe(a()).pipe(gulp.dest('resource-publish/test3'))
-   // gulp.src('resource/**/{*.json,*.fnt,*.pvr,*.mp3}').pipe(webp()).pipe(gulp.dest('resource-publish/test3'))
-}
-
 exports.groups = {
 	"preload": [
 		"bg_jpg"
@@ -67,18 +52,9 @@ exports.filter = function(file, env, plugins) {
             doNotExportType = false;
         }
         if (type) {
-            if (false) {
-               
-            }
-            else {
-                var url = p;//plugins.crc32(p) + "." + ext;
-                //console.log(url)
-                // plugins.add(url)
-                if (doNotExportType) {
-                    type = ""
-                }
-                reslove({ url, type, name: p });
-            }
+            var url = p;
+            console.log (url);
+            reslove({ url, type, name: p });
         }
         else {
             reslove(null);
@@ -87,5 +63,72 @@ exports.filter = function(file, env, plugins) {
 
 
 }
-exports.resources = {}
+exports.resources = {
+	"assets": {
+		"bg.jpg": {
+			"url": "assets/bg.jpg",
+			"type": "image"
+		},
+		"egret_icon.png": {
+			"url": "assets/egret_icon.png",
+			"type": "image"
+		},
+		"armature": {
+			"skeleton.json": {
+				"url": "assets/armature/skeleton.json",
+				"type": "json"
+			},
+			"texture.json": {
+				"url": "assets/armature/texture.json",
+				"type": "json"
+			},
+			"texture.png": {
+				"url": "assets/armature/texture.png",
+				"type": "image"
+			}
+		},
+		"font": {
+			"font.fnt": {
+				"url": "assets/font/font.fnt",
+				"type": "font"
+			},
+			"font.png": {
+				"url": "assets/font/font.png",
+				"type": "image"
+			}
+		},
+		"movieclip": {
+			"movieclip.json": {
+				"url": "assets/movieclip/movieclip.json",
+				"type": "movieclip"
+			},
+			"movieclip.png": {
+				"url": "assets/movieclip/movieclip.png",
+				"type": "image"
+			}
+		},
+		"pvr": {
+			"0.pvr": {
+				"url": "assets/pvr/0.pvr",
+				"type": "pvr"
+			}
+		},
+		"sheet": {
+			"sheet1.json": {
+				"url": "assets/sheet/sheet1.json",
+				"type": "sheet"
+			},
+			"sheet1.png": {
+				"url": "assets/sheet/sheet1.png",
+				"type": "image"
+			}
+		},
+		"sound": {
+			"sound_go.mp3": {
+				"url": "assets/sound/sound_go.mp3",
+				"type": "sound"
+			}
+		}
+	}
+}
 

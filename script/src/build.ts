@@ -104,7 +104,8 @@ export async function build(p: string, target?: string) {
     }
 
     let list = await utils.walk(resourcePath, () => true, option);
-    await Promise.all(list.map(executeFilter)).catch(e => console.log(e));
+    list = await Promise.all(list.map(executeFilter)).catch(e => console.log(e));
+    list.filter(a => a).forEach(element => ResourceConfig.addFile(element));
     let resourceJsonPath = path.join(projectRoot, "resource/default.res.json");
     if (!fs.existsSync(resourceJsonPath)) {
         resourceJsonPath = path.join(projectRoot, "resource/resource.json");

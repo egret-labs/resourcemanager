@@ -6,8 +6,6 @@ function getProjectPath(p) {
     return p ? p : ".";
 }
 
-
-console.log(process.argv);
 var command = process.argv[2];
 switch (command) {
     case "upgrade":
