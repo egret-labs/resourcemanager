@@ -45,9 +45,6 @@ exports.getTypeByFileExtensionName = function(ext) {
 }
 exports.filter = function(file, env, plugins) {
 
-    var cwebp = require(path.resolve(__dirname, '../../../node_modules/cwebp-bin'));
-    var execFile = require('child_process').execFile;
-
     return new Promise((reslove, reject) => {
         var type;
         var doNotExportType = true;
@@ -90,45 +87,5 @@ exports.filter = function(file, env, plugins) {
 
 
 }
-exports.resources = {
-	"assets": {
-		"bg.jpg": "assets/bg.jpg",
-		"egret_icon.png": "assets/egret_icon.png",
-		"armature": {
-			"skeleton.json": {
-				"url": "assets/armature/skeleton.json",
-				"type": "json"
-			},
-			"texture.json": {
-				"url": "assets/armature/texture.json",
-				"type": "json"
-			},
-			"texture.png": "assets/armature/texture.png"
-		},
-		"font": {
-			"font.fnt": "assets/font/font.fnt",
-			"font.png": "assets/font/font.png"
-		},
-		"movieclip": {
-			"movieclip.json": {
-				"url": "assets/movieclip/movieclip.json",
-				"type": "movieclip"
-			},
-			"movieclip.png": "assets/movieclip/movieclip.png"
-		},
-		"pvr": {
-			"0.pvr": "assets/pvr/0.pvr"
-		},
-		"sheet": {
-			"sheet1.json": {
-				"url": "assets/sheet/sheet1.json",
-				"type": "sheet"
-			},
-			"sheet1.png": "assets/sheet/sheet1.png"
-		},
-		"sound": {
-			"sound_go.mp3": "assets/sound/sound_go.mp3"
-		}
-	}
-}
+exports.resources = {}
 

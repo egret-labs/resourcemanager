@@ -3,7 +3,7 @@
  */
 
 // @RES.mapConfig<"resource" | "resource-publish/ios">("config.resjs", () => "resource-publish/ios")
-@RES.mapConfig<"resource" | "resource-publish/test3">("config.resjs", () => "resource-publish/test3")
+@RES.mapConfig<"resource" | "resource-publish/test3">("config.resjs", () => "resource")
 class Main extends egret.DisplayObjectContainer {
 
     private sky: egret.Bitmap;

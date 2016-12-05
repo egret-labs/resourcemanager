@@ -2121,11 +2121,16 @@ var RES;
     ], Resource.prototype, "_loadGroup", null);
     __decorate([
         RES.checkNull
+    ], Resource.prototype, "hasRes", null);
+    __decorate([
+        RES.checkNull
     ], Resource.prototype, "getRes", null);
     __decorate([
+        RES.checkNull,
         RES.checkCancelation
     ], Resource.prototype, "getResAsync", null);
     __decorate([
+        RES.checkNull,
         RES.checkCancelation
     ], Resource.prototype, "getResByUrl", null);
     RES.Resource = Resource;
