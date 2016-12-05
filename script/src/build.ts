@@ -82,7 +82,7 @@ export async function build(p: string, target?: string) {
         if (!config.filter) {
             throw "missing filter in config.resjs";
         }
-   
+
         var ext = f.substr(f.lastIndexOf(".") + 1);
         let file = { path: f, fullname: path.join(resourceRoot, f), ext };
         let env = { target, resourceRoot };
@@ -104,8 +104,8 @@ export async function build(p: string, target?: string) {
     }
 
     let list = await utils.walk(resourcePath, () => true, option);
-    list = await Promise.all(list.map(executeFilter)).catch(e => console.log(e));
-    list.filter(a => a).forEach(element => ResourceConfig.addFile(element));
+    let files = await Promise.all(list.map(executeFilter));
+    files.filter(a => a).forEach(element => ResourceConfig.addFile(element));
     let resourceJsonPath = path.join(projectRoot, "resource/default.res.json");
     if (!fs.existsSync(resourceJsonPath)) {
         resourceJsonPath = path.join(projectRoot, "resource/resource.json");

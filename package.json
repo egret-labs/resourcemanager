@@ -8,6 +8,7 @@
   "typings": "script/out/index.d.ts",
   "description": "",
   "scripts": {
+    "install": "tsc -p script",
     "res":"node script/out/cli.js",
     "debug": "tsc && egret build test/es6-api -e && npm run res test/es6-api && egret run test/es6-api",
     "test": "egret build test/es6-api -e && res test/es6-api && egret run test/es6-api",
