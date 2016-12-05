@@ -31,7 +31,7 @@ await RES.getResAsync("assets/icon.jpg");
 #### 更容易开发者进行扩展的结构
 #### 80% 兼容旧版 API 
 除了 ```RES.Analyzer```相关 API 之外其他所有API均可向下兼容，并提供升级脚本帮助您将现有项目升级至新版本资源管理器
-## 当前状态 - Public Beta 2
+## 当前状态 - Release Candidate
 
 资源管理模块目前作为白鹭引擎的全新特性，本次开放发布希望获得开发者的广泛反馈意见，目前暂时不建议开发者用于正式项目中。具体时间表如下：
 
@@ -54,11 +54,8 @@ await RES.getResAsync("assets/icon.jpg");
 
 ## 如何使用
 
-* 在命令行中执行 ``` npm install egret-cli -g ``` 安装命令行工具
-
-> ```egret-cli```是白鹭引擎测试性的命令行工具，在未来版本中，```egret-cli```会被集成进 ```egret```命令行中，无需重复下载安装
-* 在 egret 项目文件夹中执行 ```egret-cli resource upgrade```，升级老项目的资源配置文件( default.res.json )
-* 在 ```egretProperties.json``` 中，删除 ```module/res``` 字段，添加 ```module/resourcemanager```字段，并将 bin/resourcemanager 文件夹拷贝至项目中
-* 当游戏资源发生变化后，执行```egret-cli resource build```，更新资源配置
-
-> 在即将到来的下个版本，这一步会自动执行
+* 在命令行中执行 ``` npm install egret-resource-manager -g ``` 安装命令行工具
+* 执行 egret upgrade { your-project } 将旧版 res 模块升级为新版本，升级过程会完成下述操作
+    * 将 ```egret-resource-manager``` 中包含的新版本资源管理系统的源代码复制到项目文件夹的 bin 目录下
+    * 将 ```egretProperties.json``` 中的 ```res``` 字段修改为 ```resourcemanager```
+* 当游戏资源发生变化后，执行```res build { your_project }```，更新资源配置
