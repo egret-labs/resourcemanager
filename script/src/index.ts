@@ -25,7 +25,7 @@ export interface Data {
 
     executeGulp?: Function;
 
-    filter?: (file: any, env: any, plugins: any) => Promise<File>;
+    filter?: (file: any, env: any, plugins: any) => Promise<any>;
 
     resources: vfs.Dictionary,
 
@@ -120,10 +120,8 @@ exports.filter = function(file, env, plugins) {
 
     return new Promise((reslove, reject) => {
         var type;
-        var doNotExportType = true;
         var ext = file.ext;
         var p = file.path;
-        //console.log(file)
         type = exports.getTypeByFileExtensionName(ext);
         if (!type) {
             switch (ext) {
@@ -137,20 +135,9 @@ exports.filter = function(file, env, plugins) {
                     }
                     break;
             }
-            doNotExportType = false;
         }
         if (type) {
-
-                var url = p;//plugins.crc32(p) + "." + ext;
-                //console.log(url)
-                // plugins.add(url)
-                if (doNotExportType) {
-                    type = ""
-                }
-                plugins.add({ url, type, name: p })
-                reslove();
-                // reslove({ url, type });
-    
+            reslove({ url:p, type }); 
         }
         else {
             reslove(null);

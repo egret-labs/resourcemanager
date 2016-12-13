@@ -27,56 +27,14 @@ namespace original {
 
 let projectRoot;
 
-let add = (r) => {
-
-    if (ResourceConfig.config.getTypeByFileExtensionName) {
-        var f = r.name;
-        var ext = f.substr(f.lastIndexOf(".") + 1);
-        var type = ResourceConfig.config.getTypeByFileExtensionName(ext);
-        if (type == r.type) {
-            r.type = "";
-            // console.log (r)
-        }
-    }
-    // console.log (r)
-    ResourceConfig.addFile(r);
-}
 
 export async function build(p: string, target?: string) {
 
     let resourceRoot = "resource";
 
-    let register = (moduleName) => {
-
-        let modulePath = path.join(projectRoot, moduleName);
-        if (!fs.existsSync(modulePath)) {
-            modulePath = path.join(projectRoot, "node_modules", moduleName);
-        }
-        var m = require(modulePath);
-        return m;
-    }
-
-    let crc32 = (p) => {
-        var c = require("crc32");
-        var data = fs.readFileSync(path.join(resourcePath, p));
-        var code = c(data);
-        // console.log(p, code);
-        return code;
-    }
-
-
-
-
-    let copy = async (r) => {
-        let from = path.resolve(projectRoot, resourceRoot, r.name);
-        let to = path.resolve(projectRoot, target, r.url);
-        await fs.copyAsync(from, to);
-    }
 
 
     let executeFilter = async (f) => {
-
-
 
         let config = ResourceConfig.config;
         if (!config.filter) {
@@ -86,7 +44,8 @@ export async function build(p: string, target?: string) {
         var ext = f.substr(f.lastIndexOf(".") + 1);
         let file = { path: f, fullname: path.join(resourceRoot, f), ext };
         let env = { target, resourceRoot };
-        let result = await config.filter(file, env, { crc32, add, copy, register });
+        let result = await config.filter(file, env,{});
+        if (result) result.name = f;
         return result;
     }
 
