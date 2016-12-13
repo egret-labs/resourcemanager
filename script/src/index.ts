@@ -62,7 +62,6 @@ export namespace ResourceConfig {
 
         var f = r.url;
         var ext = f.substr(f.lastIndexOf(".") + 1);
-                console.log ('add file',r,ext)
         if (r.type == config.getTypeByFileExtensionName(ext)){
             r.type = "";
         }
