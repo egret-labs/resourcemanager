@@ -1,6 +1,6 @@
 {
   "name": "egret-resource-manager",
-  "version": "3.9.8",
+  "version": "3.9.9",
   "bin": {
     "res": "script/out/cli.js"
   },

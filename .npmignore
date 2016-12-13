@@ -3,5 +3,4 @@ test
 bin
 libs
 src
-tsconfig.json
 test_xxx
