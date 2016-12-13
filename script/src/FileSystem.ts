@@ -14,7 +14,7 @@ export interface Dictionary {
 
 }
 
-export function init(d:Dictionary){
+export function init(d: Dictionary) {
     root = d;
 }
 
@@ -34,12 +34,11 @@ export function addFile(r: File) {
         mkdir(folder);
     }
     let d = reslove(folder);
-    //  console.log (type)
-    if (type == "") {
+    if (!type) {
         d[basefilename] = url;
     }
     else {
-        d[basefilename] = { url: url, type };
+        d[basefilename] = { url, type };
     }
 }
 

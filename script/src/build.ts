@@ -106,14 +106,8 @@ export async function build(p: string, target?: string) {
     let list = await utils.walk(resourcePath, () => true, option);
     let files = await Promise.all(list.map(executeFilter));
     files.filter(a => a).forEach(element => ResourceConfig.addFile(element));
-    let resourceJsonPath = path.join(projectRoot, "resource/default.res.json");
-    if (!fs.existsSync(resourceJsonPath)) {
-        resourceJsonPath = path.join(projectRoot, "resource/resource.json");
-    }
-    if (fs.existsSync(resourceJsonPath)) {
-        await convertResourceJson(resourceJsonPath);
-    }
 
+    await convertResourceJson(projectRoot);
 
     let content = await updateResourceConfigFileContent(filename);
 
@@ -145,8 +139,15 @@ async function updateResourceConfigFileContent_2(filename, matcher, data) {
 
 
 
-export async function convertResourceJson(filename: string) {
+export async function convertResourceJson(projectRoot: string) {
 
+    let filename = path.join(projectRoot, "resource/default.res.json");
+    if (!fs.existsSync(filename)) {
+        filename = path.join(projectRoot, "resource/resource.json");
+    }
+    if (!fs.existsSync(filename)) {
+        return;
+    }
     let config = ResourceConfig.config;
     let resourceJson: original.Info = await fs.readJSONAsync(filename);
     // let resourceJson: original.Info = await fs.readJSONAsync(resourceJsonPath);

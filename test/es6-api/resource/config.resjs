@@ -14,6 +14,7 @@ exports.getTypeByFileExtensionName = function(ext) {
     switch (ext) {
         case "png":
         case "jpg":
+		case "webp":
             type = "image";
             break;
         case "fnt":
@@ -59,70 +60,40 @@ exports.filter = function(file, env, plugins) {
 }
 exports.resources = {
 	"assets": {
-		"bg.jpg": {
-			"url": "assets/bg.jpg",
-			"type": "image"
-		},
-		"egret_icon.png": {
-			"url": "assets/egret_icon.png",
-			"type": "image"
-		},
 		"armature": {
 			"skeleton.json": {
-				"url": "assets/armature/skeleton.json",
+				"url": "14580444fe.json",
 				"type": "json"
 			},
 			"texture.json": {
-				"url": "assets/armature/texture.json",
+				"url": "28cfd12437.json",
 				"type": "json"
 			},
-			"texture.png": {
-				"url": "assets/armature/texture.png",
-				"type": "image"
-			}
+			"texture.png": "80c674697c.webp"
+		},
+		"sound": {
+			"sound_go.mp3": "3117a9ab5c.mp3"
 		},
 		"font": {
-			"font.fnt": {
-				"url": "assets/font/font.fnt",
-				"type": "font"
-			},
-			"font.png": {
-				"url": "assets/font/font.png",
-				"type": "image"
-			}
+			"font.fnt": "eff18df84a.fnt",
+			"font.png": "25197d000b.webp"
 		},
 		"movieclip": {
 			"movieclip.json": {
-				"url": "assets/movieclip/movieclip.json",
+				"url": "c4af147cdc.json",
 				"type": "movieclip"
 			},
-			"movieclip.png": {
-				"url": "assets/movieclip/movieclip.png",
-				"type": "image"
-			}
-		},
-		"pvr": {
-			"0.pvr": {
-				"url": "assets/pvr/0.pvr",
-				"type": "pvr"
-			}
+			"movieclip.png": "2f8975398d.webp"
 		},
 		"sheet": {
 			"sheet1.json": {
-				"url": "assets/sheet/sheet1.json",
+				"url": "d9fd82add1.json",
 				"type": "sheet"
 			},
-			"sheet1.png": {
-				"url": "assets/sheet/sheet1.png",
-				"type": "image"
-			}
+			"sheet1.png": "861c973c18.webp"
 		},
-		"sound": {
-			"sound_go.mp3": {
-				"url": "assets/sound/sound_go.mp3",
-				"type": "sound"
-			}
-		}
+		"bg.jpg": "f3f6f21061.webp",
+		"egret_icon.png": "188111d46e.webp"
 	}
 }
 
