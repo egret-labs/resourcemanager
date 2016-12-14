@@ -1085,6 +1085,51 @@ var RES;
         PVRParser.COMPRESSED_RGB_PVRTC_2BPPV1_IMG = 0x8C01;
         PVRParser.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG = 0x8C02;
         PVRParser.COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03;
+        if (egret && egret["web"] && egret["web"].WebGLRenderContext) {
+            // Calcualates the size of a compressed texture level in bytes
+            function textureLevelSize(format, width, height) {
+                switch (format) {
+                    case PVRParser.COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
+                    case PVRParser.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
+                        return Math.floor((Math.max(width, 8) * Math.max(height, 8) * 4 + 7) / 8);
+                    case PVRParser.COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
+                    case PVRParser.COMPRESSED_RGBA_PVRTC_2BPPV1_IMG:
+                        return Math.floor((Math.max(width, 16) * Math.max(height, 8) * 2 + 7) / 8);
+                    default:
+                        return 0;
+                }
+            }
+            egret["web"].WebGLRenderContext.prototype.createTextureFromCompressedData = function (data, width, height, levels, internalFormat) {
+                var gl = this.context;
+                if (!this.pvrtcExt) {
+                    this.pvrtcExt = gl.getExtension("WEBKIT_WEBGL_compressed_texture_pvrtc");
+                }
+                var texture = gl.createTexture();
+                gl.bindTexture(gl.TEXTURE_2D, texture);
+                var offset = 0;
+                // Loop through each mip level of compressed texture data provided and upload it to the given texture.
+                for (var i = 0; i < levels; ++i) {
+                    // Determine how big this level of compressed texture data is in bytes.
+                    var levelSize = textureLevelSize(internalFormat, width, height);
+                    // Get a view of the bytes for this level of DXT data.
+                    var dxtLevel = new Uint8Array(data.buffer, data.byteOffset + offset, levelSize);
+                    // Upload!
+                    gl.compressedTexImage2D(gl.TEXTURE_2D, i, internalFormat, width, height, 0, dxtLevel);
+                    // The next mip level will be half the height and width of this one.
+                    width = width >> 1;
+                    if (width < 1)
+                        width = 1;
+                    height = height >> 1;
+                    if (height < 1)
+                        height = 1;
+                    // Advance the offset into the compressed texture data past the current mip level's data.
+                    offset += levelSize;
+                }
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                return texture;
+            };
+        }
         processor_1.PVRProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
