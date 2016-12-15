@@ -2062,6 +2062,7 @@ var RES;
             }
         };
         Resource.prototype.getResAsync = function (key, compFunc, thisObject) {
+            var paramKey = key;
             var _a = RES.manager.config.parseResKey(key), key = _a.key, subkey = _a.subkey;
             var r = RES.manager.config.getResource(key, true);
             return RES.manager.load(r).then(function (value) {
@@ -2070,7 +2071,7 @@ var RES;
                     value = processor.getData(RES.host, r, key, subkey);
                 }
                 if (compFunc) {
-                    compFunc.call(thisObject, value, r.url);
+                    compFunc.call(thisObject, value, paramKey);
                 }
                 return value;
             });

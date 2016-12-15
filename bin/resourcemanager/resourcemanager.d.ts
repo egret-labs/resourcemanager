@@ -557,6 +557,7 @@ declare module RES {
     }
 }
 declare module RES {
+    type GetResAsyncCallback = (value?: any, key?: string) => any;
     /**
      * @language en_US
      * Conduct mapping injection with class definition as the value.
@@ -755,7 +756,7 @@ declare module RES {
      * @platform Web,Native
      */
     function getResAsync(key: string): Promise<any>;
-    function getResAsync(key: string, compFunc: Function, thisObject: any): void;
+    function getResAsync(key: string, compFunc: GetResAsyncCallback, thisObject: any): void;
     /**
      * @language en_US
      * Access to external resources through the full URL.
@@ -983,7 +984,7 @@ declare module RES {
          * @param thisObject {any}
          */
         getResAsync(key: string): Promise<any>;
-        getResAsync(key: string, compFunc: Function, thisObject: any): void;
+        getResAsync(key: string, compFunc: GetResAsyncCallback, thisObject: any): void;
         /**
          * 通过url获取资源
          * @method RES.getResByUrl

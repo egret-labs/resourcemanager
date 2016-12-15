@@ -31,6 +31,9 @@
 module RES {
 
 
+    export type GetResAsyncCallback = (value?: any, key?: string) => any;
+
+
 
     /**
      * @language en_US
@@ -249,8 +252,8 @@ module RES {
      * @platform Web,Native
      */
     export function getResAsync(key: string): Promise<any>
-    export function getResAsync(key: string, compFunc: Function, thisObject: any): void
-    export function getResAsync(key: string, compFunc?: Function, thisObject?: any): Promise<any> | void {
+    export function getResAsync(key: string, compFunc: GetResAsyncCallback, thisObject: any): void
+    export function getResAsync(key: string, compFunc?: GetResAsyncCallback, thisObject?: any): Promise<any> | void {
         return instance.getResAsync.apply(instance, arguments);
     }
     /**
@@ -562,11 +565,11 @@ module RES {
          */
 
         public getResAsync(key: string): Promise<any>
-        public getResAsync(key: string, compFunc: Function, thisObject: any): void
+        public getResAsync(key: string, compFunc: GetResAsyncCallback, thisObject: any): void
         @checkNull
         @checkCancelation
-        public getResAsync(key: string, compFunc?: Function, thisObject?: any): Promise<any> | void {
-
+        public getResAsync(key: string, compFunc?: GetResAsyncCallback, thisObject?: any): Promise<any> | void {
+            var paramKey = key;
             var {key, subkey} = manager.config.parseResKey(key);
             let r = manager.config.getResource(key, true);
             return manager.load(r).then(value => {
@@ -575,7 +578,7 @@ module RES {
                     value = processor.getData(host, r, key, subkey);
                 }
                 if (compFunc) {
-                    compFunc.call(thisObject, value, r.url);
+                    compFunc.call(thisObject, value, paramKey);
                 }
                 return value;
             })
