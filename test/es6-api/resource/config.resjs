@@ -60,40 +60,43 @@ exports.filter = function(file, env, plugins) {
 }
 exports.resources = {
 	"assets": {
+		"bg.jpg": "assets/bg.jpg",
+		"egret_icon.png": "assets/egret_icon.png",
 		"armature": {
 			"skeleton.json": {
-				"url": "14580444fe.json",
+				"url": "assets/armature/skeleton.json",
 				"type": "json"
 			},
 			"texture.json": {
-				"url": "28cfd12437.json",
+				"url": "assets/armature/texture.json",
 				"type": "json"
 			},
-			"texture.png": "80c674697c.webp"
-		},
-		"sound": {
-			"sound_go.mp3": "3117a9ab5c.mp3"
+			"texture.png": "assets/armature/texture.png"
 		},
 		"font": {
-			"font.fnt": "eff18df84a.fnt",
-			"font.png": "25197d000b.webp"
+			"font.fnt": "assets/font/font.fnt",
+			"font.png": "assets/font/font.png"
 		},
 		"movieclip": {
 			"movieclip.json": {
-				"url": "c4af147cdc.json",
+				"url": "assets/movieclip/movieclip.json",
 				"type": "movieclip"
 			},
-			"movieclip.png": "2f8975398d.webp"
+			"movieclip.png": "assets/movieclip/movieclip.png"
+		},
+		"pvr": {
+			"0.pvr": "assets/pvr/0.pvr"
 		},
 		"sheet": {
 			"sheet1.json": {
-				"url": "d9fd82add1.json",
+				"url": "assets/sheet/sheet1.json",
 				"type": "sheet"
 			},
-			"sheet1.png": "861c973c18.webp"
+			"sheet1.png": "assets/sheet/sheet1.png"
 		},
-		"bg.jpg": "f3f6f21061.webp",
-		"egret_icon.png": "188111d46e.webp"
+		"sound": {
+			"sound_go.mp3": "assets/sound/sound_go.mp3"
+		}
 	}
 }
 
