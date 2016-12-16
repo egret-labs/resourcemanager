@@ -1,37 +1,32 @@
 import * as ast from 'egret-typescript-ast';
 import * as path from 'path';
 import * as ts from 'typescript';
-import {Data, ResourceConfig} from './';
+import { Data, ResourceConfig } from './';
 import * as fs from 'fs-extra-promise';
 
-export async function run(egretRoot: string) {
+export async function getConfigViaDecorator(egretRoot: string) {
 
     let decorators = await ast.findDecorator(path.join(egretRoot, "src/Main.ts"));
     decorators = decorators.filter(item => item.name == "RES.mapConfig");
-    let resourceConfigFileFileName = "";
+    if (!decorators || decorators.length > 1) {
+        throw 'missing decorator';
+    }
+    let decorator = decorators[0];
+    let resourceConfigFileName = decorator.paramters[0];
+    let filter = decorator.paramters[2];
     let resourceRoot = "resource/";
-    if (!decorators || !decorators.length) {
-        resourceConfigFileFileName = "config.resjs";
-    }
-    else {
-        let resourceFileNames = decorators.map(item => item.paramters[0]);
-        resourceConfigFileFileName = resourceFileNames[0];
-    }
-
-
-
-    let resConfigFilePath = path.join(resourceRoot, resourceConfigFileFileName);
-    return { resourceRoot, resourceConfigFileFileName };
+    let resConfigFilePath = path.join(resourceRoot, resourceConfigFileName);
+    return { resourceRoot, resourceConfigFileName, filter };
 }
 
 
-export async function publish(filename, matcher, data){
-        let replacedText = JSON.stringify(data, null, "\t");
-        let config = ResourceConfig.config;
-        let content = await fs.readFileAsync(filename, "utf-8");
-        let sourceFile = ts.createSourceFile(filename, content, ts.ScriptTarget.ES2015, /*setParentNodes */ true);
-        content = await delint(sourceFile, matcher, replacedText);
-        return content;
+export async function publish(filename, matcher, data) {
+    let replacedText = JSON.stringify(data, null, "\t");
+    let config = ResourceConfig.config;
+    let content = await fs.readFileAsync(filename, "utf-8");
+    let sourceFile = ts.createSourceFile(filename, content, ts.ScriptTarget.ES2015, /*setParentNodes */ true);
+    content = await delint(sourceFile, matcher, replacedText);
+    return content;
 }
 
 

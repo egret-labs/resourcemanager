@@ -1,6 +1,6 @@
 {
   "name": "egret-resource-manager",
-  "version": "3.9.9",
+  "version": "3.9.10",
   "bin": {
     "res": "script/out/cli.js"
   },
@@ -19,7 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "egret-node-utils": "0.0.7",
-    "egret-typescript-ast": "0.0.10",
+    "egret-typescript-ast": "0.0.11",
     "typescript": "^2.2.0-dev.20161115"
   }
 }

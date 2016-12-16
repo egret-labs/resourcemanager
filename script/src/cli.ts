@@ -14,7 +14,6 @@ switch (command) {
         break;
     default:
         var p = getProjectPath(command);
-        console.log (p)
         res.build.build(p).catch(e => console.log (e.stack))
         break;
 }

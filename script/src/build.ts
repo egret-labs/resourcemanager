@@ -30,9 +30,9 @@ let projectRoot;
 
 export async function build(p: string, target?: string) {
 
-    let resourceRoot = "resource";
-
-
+    let result = await c.getConfigViaDecorator(p);
+    let resourceRoot = result.resourceRoot;
+    let resourceConfigFileName = result.resourceConfigFileName;
 
     let executeFilter = async (f) => {
 
@@ -44,7 +44,7 @@ export async function build(p: string, target?: string) {
         var ext = f.substr(f.lastIndexOf(".") + 1);
         let file = { path: f, fullname: path.join(resourceRoot, f), ext };
         let env = { target, resourceRoot };
-        let result = await config.filter(file, env,{});
+        let result = await config.filter(file, env, {});
         if (result) result.name = f;
         return result;
     }
@@ -54,7 +54,7 @@ export async function build(p: string, target?: string) {
     projectRoot = p;
     let resourcePath = path.join(projectRoot, "resource");
 
-    let filename = getResourceConfigFile();
+    let filename = path.join(process.cwd(), projectRoot, resourceRoot, resourceConfigFileName);;
     await ResourceConfig.init(filename, resourcePath);
 
     let option: utils.walk.WalkOptions = {
@@ -76,10 +76,6 @@ export async function build(p: string, target?: string) {
         await fs.mkdirpAsync(outputFileDir);
         await fs.writeFileAsync(outputFileName, content, "utf-8");
     }
-}
-
-function getResourceConfigFile() {
-    return path.resolve(process.cwd(), projectRoot, "resource/config.resjs");
 }
 
 export async function updateResourceConfigFileContent(filename: string) {
