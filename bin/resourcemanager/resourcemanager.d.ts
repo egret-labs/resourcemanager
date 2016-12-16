@@ -152,7 +152,8 @@ declare module RES {
         function exists(dirpath: string): boolean;
     }
 }
-declare type ResourceRootSelector<T> = T | (() => T);
+declare type ResourceRootSelector<T extends string> = () => T;
+declare type ResourceTypeSelector = (file: string) => string;
 declare module RES {
     /**
    * @language en_US
@@ -172,7 +173,7 @@ declare module RES {
      * @version Egret 3.1.5
      * @platform Web,Native
      */
-    function mapConfig<T>(url: string, selector: ResourceRootSelector<T>): (target: any) => void;
+    function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector: ResourceTypeSelector): (target: any) => void;
     var resourceRoot: string;
     interface ResourceInfo {
         url: string;

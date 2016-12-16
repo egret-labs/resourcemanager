@@ -26,10 +26,14 @@
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-type ResourceRootSelector<T> = T | (() => T)
+type ResourceRootSelector<T extends string> = () => T;
+
+type ResourceTypeSelector = (file: string) => string;
 
 module RES {
 
+
+    var resourceTypeSelector: ResourceTypeSelector;
     /**
    * @language en_US
    * Definition profile.
@@ -48,19 +52,20 @@ module RES {
      * @version Egret 3.1.5
      * @platform Web,Native
      */
-    export function mapConfig<T>(url: string, selector: ResourceRootSelector<T>) {
+    export function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector: ResourceTypeSelector) {
         return function (target) {
             let type: string = "commonjs";
-            if (typeof selector == "string") {
-                resourceRoot = selector as any as string;
+            if (typeof rootSelector == "string") {
+                resourceRoot = rootSelector as any as string;
             }
             else {
-                resourceRoot = (selector as any as Function)();
+                resourceRoot = (rootSelector as any as Function)();
             }
             if (resourceRoot.lastIndexOf("/") != 0) {
                 resourceRoot = resourceRoot + "/";
             }
             configItem = { url, resourceRoot, type, name: url };
+            resourceTypeSelector = typeSelector;
         }
     };
 
@@ -170,8 +175,8 @@ module RES {
 
             if (this.config.getTypeByFileExtensionName) {
                 let type = this.config.getTypeByFileExtensionName(ext);
-                if (!type){
-                    throw new ResourceManagerError(2004,url);
+                if (!type) {
+                    throw new ResourceManagerError(2004, url);
                 }
                 return type;
             }
@@ -330,17 +335,17 @@ module RES {
 
 
 
-            let loop = (r, prefix, walk:(r:ResourceInfo)=>void) => {
+            let loop = (r, prefix, walk: (r: ResourceInfo) => void) => {
                 for (var key in r) {
                     let p = prefix ? prefix + "/" + key : key;
                     var f = r[key];
                     if (isFile(f)) {
 
-                        if (typeof f === 'string'){
-                            f = {url:f,name:p};
+                        if (typeof f === 'string') {
+                            f = { url: f, name: p };
                             r[key] = f;
                         }
-                        else{
+                        else {
                             f['name'] = p;
                         }
                         walk(f);
@@ -357,7 +362,7 @@ module RES {
             }
 
             loop(resource, "", value => {
-                if (!value.type){
+                if (!value.type) {
                     value.type = this.__temp__get__type__via__url(value.url);
                 }
             })

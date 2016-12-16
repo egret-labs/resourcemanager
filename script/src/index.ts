@@ -19,13 +19,9 @@ enum ResourceNodeType {
 
 export interface Data {
 
-    getTypeByFileExtensionName?: (extName: string) => string;
 
     publishPlugins?: { test: any, plugin: Function[] }[]
 
-    executeGulp?: Function;
-
-    filter?: (file: any, env: any, plugins: any) => Promise<any>;
 
     resources: vfs.Dictionary,
 
@@ -55,6 +51,7 @@ export namespace ResourceConfig {
 
     export var config: Data;
 
+    export var typeSelector:(path:string)=>string;
 
     var resourcePath: string;
 
@@ -62,7 +59,7 @@ export namespace ResourceConfig {
 
         var f = r.url;
         var ext = f.substr(f.lastIndexOf(".") + 1);
-        if (r.type == config.getTypeByFileExtensionName(ext)){
+        if (r.type == typeSelector(ext)){
             r.type = "";
         }
         vfs.addFile(r);

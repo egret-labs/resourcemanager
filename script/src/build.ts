@@ -31,22 +31,22 @@ let projectRoot;
 export async function build(p: string, target?: string) {
 
     let result = await c.getConfigViaDecorator(p);
+    ResourceConfig.typeSelector = result.typeSelector;
     let resourceRoot = result.resourceRoot;
     let resourceConfigFileName = result.resourceConfigFileName;
 
     let executeFilter = async (f) => {
 
         let config = ResourceConfig.config;
-        if (!config.filter) {
-            throw "missing filter in config.resjs";
+        if (!ResourceConfig.typeSelector) {
+            throw "missing typeSelector in Main.ts";
         }
 
         var ext = f.substr(f.lastIndexOf(".") + 1);
         let file = { path: f, fullname: path.join(resourceRoot, f), ext };
         let env = { target, resourceRoot };
-        let result = await config.filter(file, env, {});
-        if (result) result.name = f;
-        return result;
+        let type = ResourceConfig.typeSelector(f);
+        return { name: f, url: f, type };
     }
 
 

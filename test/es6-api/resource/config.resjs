@@ -1,6 +1,3 @@
-var fs = require("fs");
-var path = require("path");
-
 exports.groups = {
 	"preload": [
 		"bg_jpg"
@@ -9,68 +6,15 @@ exports.groups = {
 exports.alias = {
 	"bg_jpg": "assets/bg.jpg"
 };
-exports.getTypeByFileExtensionName = function(ext) {
-    var type;
-    switch (ext) {
-        case "png":
-        case "jpg":
-		case "webp":
-            type = "image";
-            break;
-        case "fnt":
-            type = "font";
-            break;
-        case "mp3":
-            type = "sound";
-            break;
-        case "pvr":
-            type = "pvr";
-            break;
-    }
-    return type;
-}
-exports.filter = function(file, env, plugins) {
 
-    return new Promise((reslove, reject) => {
-        var ext = file.ext;
-        var p = file.path;
-        var type = exports.getTypeByFileExtensionName(ext);
-        if (!type) {
-            switch (ext) {
-                case "json":
-                    if (p.indexOf("sheet") >= 0) {
-                        type = "sheet";
-                    } else if (p.indexOf("movieclip") >= 0) {
-                        type = "movieclip";
-                    } else {
-                        type = "json";
-                    }
-                    break;
-            }
-        }
-        if (type) {
-            reslove({ url:p, type, name: p });
-        }
-        else {
-            reslove(null);
-        }
-    });
-
-
-}
 exports.resources = {
+	"config.resjs": "config.resjs",
 	"assets": {
 		"bg.jpg": "assets/bg.jpg",
 		"egret_icon.png": "assets/egret_icon.png",
 		"armature": {
-			"skeleton.json": {
-				"url": "assets/armature/skeleton.json",
-				"type": "json"
-			},
-			"texture.json": {
-				"url": "assets/armature/texture.json",
-				"type": "json"
-			},
+			"skeleton.json": "assets/armature/skeleton.json",
+			"texture.json": "assets/armature/texture.json",
 			"texture.png": "assets/armature/texture.png"
 		},
 		"font": {
@@ -78,24 +22,18 @@ exports.resources = {
 			"font.png": "assets/font/font.png"
 		},
 		"movieclip": {
-			"movieclip.json": {
-				"url": "assets/movieclip/movieclip.json",
-				"type": "movieclip"
-			},
+			"movieclip.json": "assets/movieclip/movieclip.json",
 			"movieclip.png": "assets/movieclip/movieclip.png"
 		},
 		"pvr": {
 			"0.pvr": "assets/pvr/0.pvr"
 		},
 		"sheet": {
-			"sheet1.json": {
-				"url": "assets/sheet/sheet1.json",
-				"type": "sheet"
-			},
+			"sheet1.json": "assets/sheet/sheet1.json",
 			"sheet1.png": "assets/sheet/sheet1.png"
 		},
 		"sound": {
 			"sound_go.mp3": "assets/sound/sound_go.mp3"
 		}
 	}
-}
+};

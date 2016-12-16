@@ -142,6 +142,7 @@ var RES;
 })(RES || (RES = {}));
 var RES;
 (function (RES) {
+    var resourceTypeSelector;
     /**
    * @language en_US
    * Definition profile.
@@ -160,19 +161,20 @@ var RES;
      * @version Egret 3.1.5
      * @platform Web,Native
      */
-    function mapConfig(url, selector) {
+    function mapConfig(url, rootSelector, typeSelector) {
         return function (target) {
             var type = "commonjs";
-            if (typeof selector == "string") {
-                RES.resourceRoot = selector;
+            if (typeof rootSelector == "string") {
+                RES.resourceRoot = rootSelector;
             }
             else {
-                RES.resourceRoot = selector();
+                RES.resourceRoot = rootSelector();
             }
             if (RES.resourceRoot.lastIndexOf("/") != 0) {
                 RES.resourceRoot = RES.resourceRoot + "/";
             }
             RES.configItem = { url: url, resourceRoot: RES.resourceRoot, type: type, name: url };
+            resourceTypeSelector = typeSelector;
         };
     }
     RES.mapConfig = mapConfig;

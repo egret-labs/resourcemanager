@@ -1,7 +1,33 @@
 /**
  * 新版 RES API
  */
-@RES.mapConfig("config.resjs", () => "resource")
+@RES.mapConfig("config.resjs", () => "resource", (path) => {
+    var ext = path.substr(path.lastIndexOf(".") + 1);
+    var typeMap = {
+        "jpg": "image",
+        "png": "image",
+        "webp": "image",
+        "json": "json",
+        "fnt": "font",
+        "pvr": "pvr",
+        "mp3": "sound"
+    }
+    var type = typeMap[ext];
+    if (!type) {
+        switch (ext) {
+            case "json":
+                if (path.indexOf("sheet") >= 0) {
+                    type = "sheet";
+                } else if (path.indexOf("movieclip") >= 0) {
+                    type = "movieclip";
+                } else {
+                    type = "json";
+                }
+                break;
+        }
+    }
+    return type;
+})
 class Main extends egret.DisplayObjectContainer {
 
     private sky: egret.Bitmap;
