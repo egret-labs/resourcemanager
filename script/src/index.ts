@@ -52,7 +52,7 @@ export namespace ResourceConfig {
 
         var f = r.url;
         var ext = f.substr(f.lastIndexOf(".") + 1);
-        if (r.type == typeSelector(ext)) {
+        if (r.type == typeSelector(r.name)) {
             r.type = "";
         }
         vfs.addFile(r);
@@ -62,8 +62,12 @@ export namespace ResourceConfig {
         return vfs.getFile(filename);
     }
 
-    export async function init(filename, resourceRootPath) {
-        resourcePath = resourceRootPath;
+    export async function init(projectPath) {
+        let result = await _config.getConfigViaDecorator(projectPath);
+        typeSelector = result.typeSelector;
+        console.log (result)
+        resourcePath = path.resolve(projectPath, result.resourceRoot);
+        let filename = path.resolve(process.cwd(), projectPath, result.resourceRoot, result.resourceConfigFileName);;
         let data: Data;
         try {
             data = await fs.readJSONAsync(filename);
@@ -74,6 +78,8 @@ export namespace ResourceConfig {
         }
         vfs.init(data.resources);
         config = data;
+        return result;
+
     }
 }
 

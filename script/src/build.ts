@@ -30,13 +30,12 @@ let projectRoot;
 
 export async function build(p: string) {
 
-    let result = await c.getConfigViaDecorator(p);
+    let result = await ResourceConfig.init(p);
     ResourceConfig.typeSelector = result.typeSelector;
     if (!ResourceConfig.typeSelector) {
         throw new Error("missing typeSelector in Main.ts");
     }
-    let resourceRoot = result.resourceRoot;
-    let resourceConfigFileName = result.resourceConfigFileName;
+
 
     let executeFilter = async (f) => {
 
@@ -49,13 +48,10 @@ export async function build(p: string) {
 
     }
 
-
-
     projectRoot = p;
     let resourcePath = path.join(projectRoot, result.resourceRoot);
+    let filename = path.join(resourcePath, result.resourceConfigFileName);
 
-    let filename = path.join(process.cwd(), projectRoot, resourceRoot, resourceConfigFileName);;
-    await ResourceConfig.init(filename, resourcePath);
     let option: utils.walk.WalkOptions = {
         relative: true,
         ignoreHiddenFile: true

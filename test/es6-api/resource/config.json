@@ -10,6 +10,7 @@
 		]
 	},
 	"resources": {
+		"config.json": "config.json",
 		"resource.json": "resource.json",
 		"assets": {
 			"bg.jpg": "assets/bg.jpg",
@@ -24,26 +25,19 @@
 				"font.png": "assets/font/font.png"
 			},
 			"movieclip": {
-				"movieclip.json": {
-					"url": "assets/movieclip/movieclip.json",
-					"type": "movieclip"
-				},
+				"movieclip.json": "assets/movieclip/movieclip.json",
 				"movieclip.png": "assets/movieclip/movieclip.png"
 			},
 			"pvr": {
 				"0.pvr": "assets/pvr/0.pvr"
 			},
 			"sheet": {
-				"sheet1.json": {
-					"url": "assets/sheet/sheet1.json",
-					"type": "sheet"
-				},
+				"sheet1.json": "assets/sheet/sheet1.json",
 				"sheet1.png": "assets/sheet/sheet1.png"
 			},
 			"sound": {
 				"sound_go.mp3": "assets/sound/sound_go.mp3"
 			}
-		},
-		"config.json": "config.json"
+		}
 	}
 }

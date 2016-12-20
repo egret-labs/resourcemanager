@@ -605,6 +605,7 @@ var RES;
                 manager.config.parseConfig(data);
             }).catch(function (e) {
                 if (!e.__resource_manager_error__) {
+                    console.error(e.stack);
                     e = new ResourceManagerError(1002);
                 }
                 return Promise.reject(e);
