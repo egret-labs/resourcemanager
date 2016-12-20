@@ -50,7 +50,7 @@ module RES {
                 processor = host.isSupport(r);
             }
             if (!processor) {
-                throw new ResourceManagerError(2001, r.type);
+                throw new ResourceManagerError(2001, r.name, r.type);
             }
             return processor.onLoadStart(host, r)
         },
@@ -156,7 +156,7 @@ module RES {
             1001: '文件加载失败:{0}',
             1002: "ResourceManager 初始化失败：配置文件加载失败",
             1005: 'ResourceManager 已被销毁，文件加载失败:{0}',
-            2001: "不支持指定解析类型:{0}，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
+            2001: "{0}解析失败,不支持指定解析类型:\'{1}\'，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
             2002: "Analyzer 相关API 在 ResourceManager 中不再支持，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
             2003: "{0}解析失败,错误原因:{1}",
             2004: "无法找到文件类型:{0}"

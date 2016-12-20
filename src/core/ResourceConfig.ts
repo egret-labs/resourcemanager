@@ -53,8 +53,8 @@ module RES {
      * @platform Web,Native
      */
     export function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector: ResourceTypeSelector) {
-        return function (target) {
-            let type: string = "commonjs";
+        return function(target) {
+            let type: string = typeSelector(url);
             if (typeof rootSelector == "string") {
                 resourceRoot = rootSelector as any as string;
             }

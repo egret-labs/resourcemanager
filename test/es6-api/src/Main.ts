@@ -1,7 +1,7 @@
 /**
  * 新版 RES API
  */
-@RES.mapConfig("config.resjs", () => "resource", path => {
+@RES.mapConfig("config.json", () => "resource", path => {
     var ext = path.substr(path.lastIndexOf(".") + 1);
     var typeMap = {
         "jpg": "image",

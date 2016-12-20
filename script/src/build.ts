@@ -28,23 +28,20 @@ namespace original {
 let projectRoot;
 
 
-export async function build(p: string, target?: string) {
+export async function build(p: string) {
 
     let result = await c.getConfigViaDecorator(p);
     ResourceConfig.typeSelector = result.typeSelector;
+    if (!ResourceConfig.typeSelector) {
+        throw new Error("missing typeSelector in Main.ts");
+    }
     let resourceRoot = result.resourceRoot;
     let resourceConfigFileName = result.resourceConfigFileName;
 
     let executeFilter = async (f) => {
 
         let config = ResourceConfig.config;
-        if (!ResourceConfig.typeSelector) {
-            throw "missing typeSelector in Main.ts";
-        }
-
         var ext = f.substr(f.lastIndexOf(".") + 1);
-        let file = { path: f, fullname: path.join(resourceRoot, f), ext };
-        let env = { target, resourceRoot };
         let type = ResourceConfig.typeSelector(f);
         if (type) {
             return { name: f, url: f, type };
@@ -55,11 +52,10 @@ export async function build(p: string, target?: string) {
 
 
     projectRoot = p;
-    let resourcePath = path.join(projectRoot, "resource");
+    let resourcePath = path.join(projectRoot, result.resourceRoot);
 
     let filename = path.join(process.cwd(), projectRoot, resourceRoot, resourceConfigFileName);;
     await ResourceConfig.init(filename, resourcePath);
-
     let option: utils.walk.WalkOptions = {
         relative: true,
         ignoreHiddenFile: true
@@ -70,23 +66,18 @@ export async function build(p: string, target?: string) {
     files.filter(a => a).forEach(element => ResourceConfig.addFile(element));
 
     await convertResourceJson(projectRoot);
-
-    let content = await updateResourceConfigFileContent(filename);
-
-    if (target) {
-        var outputFileDir = path.resolve(process.cwd(), projectRoot, target);
-        let outputFileName = path.join(outputFileDir, "config.resjs");
-        await fs.mkdirpAsync(outputFileDir);
-        await fs.writeFileAsync(outputFileName, content, "utf-8");
-    }
+    await updateResourceConfigFileContent(filename);
 }
 
 export async function updateResourceConfigFileContent(filename: string) {
-    var c = ResourceConfig.config;
-    let content = await updateResourceConfigFileContent_2(filename, "exports.resources", c.resources);
-    content = await updateResourceConfigFileContent_2(filename, "exports.groups", c.groups);
-    content = await updateResourceConfigFileContent_2(filename, "exports.alias", c.alias);
+    let content = JSON.stringify(ResourceConfig.config, null, "\t");
+    await fs.writeFileAsync(filename, content, "utf-8");
     return content;
+    // var c = ResourceConfig.config;
+    // let content = await updateResourceConfigFileContent_2(filename, "exports.resources", c.resources);
+    // content = await updateResourceConfigFileContent_2(filename, "exports.groups", c.groups);
+    // content = await updateResourceConfigFileContent_2(filename, "exports.alias", c.alias);
+    // return content;
 }
 
 async function updateResourceConfigFileContent_2(filename, matcher, data) {

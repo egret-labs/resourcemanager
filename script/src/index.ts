@@ -1,3 +1,4 @@
+import { Data } from './index';
 import * as path from 'path';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
@@ -63,11 +64,15 @@ export namespace ResourceConfig {
 
     export async function init(filename, resourceRootPath) {
         resourcePath = resourceRootPath;
-        if (!fs.existsSync(filename)) {
-            throw `${filename}不存在`;
+        let data: Data;
+        try {
+            data = await fs.readJSONAsync(filename);
         }
-        let data: Data = require(filename);
-        data.resources = vfs.init({});
+        catch (e) {
+            console.warn(`${filename}解析失败,使用初始值`)
+            data = { alias: {}, groups: {}, resources: {} };
+        }
+        vfs.init(data.resources);
         config = data;
     }
 }
