@@ -16,6 +16,7 @@ export interface Dictionary {
 
 export function init(d: Dictionary) {
     root = d;
+    return root;
 }
 
 var root: Dictionary = {};

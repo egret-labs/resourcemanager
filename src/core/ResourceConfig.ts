@@ -104,10 +104,7 @@ module RES {
 
         alias: {
             [aliasName: string]: string;
-        },
-
-
-        getTypeByFileExtensionName?: (p) => string;
+        }
 
     }
 
@@ -173,15 +170,15 @@ module RES {
                 ext = ext.toLowerCase();
             }
 
-            if (this.config.getTypeByFileExtensionName) {
-                let type = this.config.getTypeByFileExtensionName(ext);
+            if (resourceTypeSelector) {
+                let type = resourceTypeSelector(url);
                 if (!type) {
                     throw new ResourceManagerError(2004, url);
                 }
                 return type;
             }
             else {
-                console.warn("config.resjs 中未找到 getTypeByFileExtensionName 方法");
+                console.warn("RES.mapConfig 并未设置 typeSelector");
                 return "unknown";
             }
         }

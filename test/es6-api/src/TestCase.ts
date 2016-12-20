@@ -55,18 +55,15 @@ function testNetworkDelay() {
 
     sleep(1000).then(() => {
         let texture = RES.getRes("assets/sheet/sheet1.json#off");
-        console.log('111', texture)
+        console.assert(!texture, "由于有3秒延迟，而此时只经过了1秒，所以尚未获取到 texture")
     })
 
     return RES.getResAsync("assets/sheet/sheet1.json")
         .then((value: egret.SpriteSheet) => {
-            // button.texture = value.getTexture("off");
-            console.log(value)
             let texture = RES.getRes("assets/sheet/sheet1.json#off");
-            console.log('111', texture)
-            console.assert(texture instanceof egret.Texture, "测试SpriteSheet纹理")
+            console.assert(texture instanceof egret.Texture, "获取到texture")
 
-              RES.processor.map("sheet", RES.processor.SheetProcessor);
+            RES.processor.map("sheet", RES.processor.SheetProcessor);
         });
 
 

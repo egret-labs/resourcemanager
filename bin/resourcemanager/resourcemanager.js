@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
         function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments)).next());
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
@@ -216,15 +216,15 @@ var RES;
             if (ext) {
                 ext = ext.toLowerCase();
             }
-            if (this.config.getTypeByFileExtensionName) {
-                var type = this.config.getTypeByFileExtensionName(ext);
+            if (resourceTypeSelector) {
+                var type = resourceTypeSelector(url);
                 if (!type) {
                     throw new RES.ResourceManagerError(2004, url);
                 }
                 return type;
             }
             else {
-                console.warn("config.resjs 中未找到 getTypeByFileExtensionName 方法");
+                console.warn("RES.mapConfig 并未设置 typeSelector");
                 return "unknown";
             }
         };

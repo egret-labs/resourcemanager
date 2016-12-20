@@ -46,7 +46,10 @@ export async function build(p: string, target?: string) {
         let file = { path: f, fullname: path.join(resourceRoot, f), ext };
         let env = { target, resourceRoot };
         let type = ResourceConfig.typeSelector(f);
-        return { name: f, url: f, type };
+        if (type) {
+            return { name: f, url: f, type };
+        }
+
     }
 
 

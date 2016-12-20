@@ -195,7 +195,6 @@ declare module RES {
         alias: {
             [aliasName: string]: string;
         };
-        getTypeByFileExtensionName?: (p) => string;
     }
     /**
      * @class RES.ResourceConfig
