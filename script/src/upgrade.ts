@@ -72,11 +72,36 @@ export async function run(projectPath) {
                 + contents.substr(index);
         }
         await fs.writeFileAsync(mainSourceFile, contents, "utf-8");
+    };
+
+
+
+    async function modifyTypeScriptConfigFile() {
+        let tsconfigFile = path.join(projectPath, "tsconfig.json");
+        if (!await fs.existsAsync(tsconfigFile)) {
+            let contents = `{
+   "compilerOptions": {
+      "target": "es5",
+      "experimentalDecorators":true
+   },
+   "exclude": [
+      "node_modules"
+   ]
+}`;
+            await fs.writeFileAsync(tsconfigFile, contents, 'utf-8');
+        }
+        else {
+            let tsconfigJson = await fs.readJSONAsync(tsconfigFile) as any;
+            tsconfigJson.compilerOptions.experimentalDecorators = true;
+            await fs.writeFileAsync(tsconfigFile, JSON.stringify(tsconfigJson, null, "\t"), 'utf-8');
+        }
+
     }
 
     await convertEgretProperties();
     await copyLibrary();
     await createDecorator();
+    await modifyTypeScriptConfigFile();
 
 }
 
