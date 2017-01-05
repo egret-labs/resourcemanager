@@ -65,7 +65,6 @@ export namespace ResourceConfig {
     export async function init(projectPath) {
         let result = await _config.getConfigViaDecorator(projectPath);
         typeSelector = result.typeSelector;
-        console.log (result)
         resourcePath = path.resolve(projectPath, result.resourceRoot);
         let filename = path.resolve(process.cwd(), projectPath, result.resourceRoot, result.resourceConfigFileName);;
         let data: Data;

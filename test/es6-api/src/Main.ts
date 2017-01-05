@@ -49,13 +49,12 @@ class Main extends egret.DisplayObjectContainer {
         let testSpriteSheet = () =>
             RES.getResAsync("assets/sheet/sheet1.json")
                 .then((value: egret.SpriteSheet) => {
-
                     var button = new egret.Bitmap();
                     this.addChild(button);
-                    // button.texture = value.getTexture("off");
                     let texture = RES.getRes("assets/sheet/sheet1.json#off");
-                    console.log('111', texture)
+                    console.assert(value instanceof egret.SpriteSheet, "测试SpriteSheet纹理")
                     console.assert(texture instanceof egret.Texture, "测试SpriteSheet纹理")
+                    console.assert(texture === value.getTexture("off"));
                     button.texture = texture;
                     button.y = 100;
                 });
@@ -77,16 +76,19 @@ class Main extends egret.DisplayObjectContainer {
             let reporter = {
 
                 onProgress: (current, total) => {
-                    console.log(current, total);
                 }
             }
             return RES.loadGroup("preload", 0, reporter)
                 .then(() => this.createGameScene())
                 .then(() => sleep(1000))
                 .then(() => RES.destroyRes("preload"))
-                .then(() => RES.destroyRes("assets/bg.jpg"))
+
+                .then(() => sleep(1000))
+                // .then(() => RES.destroyRes("assets/bg.jpg"))
                 .then(() => RES.loadGroup("preload", 0, reporter).then(() => {
-                    this.sky.texture = RES.getRes("assets/bg.jpg")
+                    alert(111)
+                    this.sky.y = 1;
+                    // this.sky.texture = RES.getRes("assets/bg.jpg")
                 }))
         }
 
@@ -120,16 +122,16 @@ class Main extends egret.DisplayObjectContainer {
 
 
         RES.loadConfig()
-            .then(testNull)
-            .then(testCreateAndDestoryResource)
-            .then(testLoadResByUrl)
-            .then(testBitmapFont)
-            .then(testNetworkDelay)
+            // .then(testNull)
+            // .then(testCreateAndDestoryResource)
+            // .then(testLoadResByUrl)
+            // .then(testBitmapFont)
+            // .then(testNetworkDelay)
             .then(testSpriteSheet)
-            .then(testSoundByUrl)
-            .then(testAnimationByUrl)
-            .then(testPVR)
-            .then(testDestroy)
+            // .then(testSoundByUrl)
+            // .then(testAnimationByUrl)
+            // .then(testPVR)
+            // .then(testDestroy)
             .catch((e) => {
                 console.warn(e);
                 console.log(e.stack)

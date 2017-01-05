@@ -56,6 +56,9 @@ module RES.processor {
         }
         return url + paramUrl;
     }
+
+    // var cache: {[index:string]:egret.Texture} = {};
+
     export var ImageProcessor: Processor = {
 
         async onLoadStart(host, resource) {
@@ -63,7 +66,11 @@ module RES.processor {
             let prefix = resource.extra ? "" : resourceRoot;
             loader.load(prefix + resource.url);
             var bitmapData = await promisify(loader, resource);
-            var texture = new egret.Texture();
+            // if (!cache[resource.url]){
+            //     cache[resource.url] = new egret.Texture();
+            // }
+            // var texture = cache[resource.url];
+            let texture = new egret.Texture();
             texture._setBitmapData(bitmapData);
             // var config: any = resItem.data;
             // if (config && config["scale9grid"]) {

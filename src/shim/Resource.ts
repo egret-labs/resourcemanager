@@ -546,7 +546,7 @@ module RES {
             let r = manager.config.getResource(key);
             if (r) {
                 let processor = host.isSupport(r);
-                if (processor && processor.getData) {
+                if (processor && processor.getData && subkey) {
                     return processor.getData(host, r, key, subkey);
                 }
                 else {
@@ -574,7 +574,7 @@ module RES {
             let r = manager.config.getResource(key, true);
             return manager.load(r).then(value => {
                 let processor = host.isSupport(r);
-                if (processor && processor.getData) {
+                if (processor && processor.getData && subkey) {
                     value = processor.getData(host, r, key, subkey);
                 }
                 if (compFunc) {

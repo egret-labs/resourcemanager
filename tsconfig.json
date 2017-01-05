@@ -8,8 +8,7 @@
         "allowUnreachableCode": true,
         "experimentalDecorators": true,
         "strictNullChecks": true,
-        "sourceMap": true,
-        "sourceRoot": "http://localhost:3005"
+        "sourceMap": false
     },
     "files": [
         "src/promise.ts",

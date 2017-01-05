@@ -696,6 +696,7 @@ var RES;
             return url + paramUrl;
         }
         processor_1.getRelativePath = getRelativePath;
+        // var cache: {[index:string]:egret.Texture} = {};
         processor_1.ImageProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
@@ -2056,7 +2057,7 @@ var RES;
             var r = RES.manager.config.getResource(key);
             if (r) {
                 var processor_2 = RES.host.isSupport(r);
-                if (processor_2 && processor_2.getData) {
+                if (processor_2 && processor_2.getData && subkey) {
                     return processor_2.getData(RES.host, r, key, subkey);
                 }
                 else {
@@ -2070,7 +2071,7 @@ var RES;
             var r = RES.manager.config.getResource(key, true);
             return RES.manager.load(r).then(function (value) {
                 var processor = RES.host.isSupport(r);
-                if (processor && processor.getData) {
+                if (processor && processor.getData && subkey) {
                     value = processor.getData(RES.host, r, key, subkey);
                 }
                 if (compFunc) {
@@ -2188,4 +2189,3 @@ var RES;
      */
     var instance = new Resource();
 })(RES || (RES = {}));
-//# sourceMappingURL=resourcemanager.js.map
