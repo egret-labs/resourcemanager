@@ -13,7 +13,7 @@ RES.loadConfig().then(()=>{
     RES.getResAsync("assets/icon.jpg");
 });
 ```
-* 即将支持 ES2015 async / await 异步语法
+* 支持 ES2015 async / await 异步语法 ( 依赖白鹭引擎4.0版本 )
 ``` javascript
 await RES.loadConfig()
 await RES.getResAsync("assets/bg.jpg");
@@ -31,7 +31,8 @@ await RES.getResAsync("assets/icon.jpg");
 #### 更容易开发者进行扩展的结构
 #### 80% 兼容旧版 API 
 除了 ```RES.Analyzer```相关 API 之外其他所有API均可向下兼容，并提供升级脚本帮助您将现有项目升级至新版本资源管理器
-## 当前状态 - Release Candidate
+
+## 当前状态 - Final
 
 资源管理模块目前作为白鹭引擎的全新特性，本次开放发布希望获得开发者的广泛反馈意见，目前暂时不建议开发者用于正式项目中。具体时间表如下：
 
@@ -56,7 +57,7 @@ await RES.getResAsync("assets/icon.jpg");
 
 * 在命令行中执行 ``` npm install egret-resource-manager -g ``` 安装命令行工具
 
-* 执行 egret upgrade { your-project } 将旧版 res 模块升级为新版本，升级过程会完成下述操作
+* 执行 ```res upgrade { your-project }``` 将旧版 res 模块升级为新版本，升级过程会完成下述操作
     
     * 将 ```egret-resource-manager``` 中包含的新版本资源管理系统的源代码复制到项目文件夹的 bin 目录下
     
