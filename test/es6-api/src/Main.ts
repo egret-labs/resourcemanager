@@ -1,12 +1,7 @@
 /**
  * 新版 RES API
  */
-@RES.mapConfig("config.json", () => {
-    if (iOS()) return "test2";
-    else {
-        return "test3"
-    } 
-}, path => {
+@RES.mapConfig("config.json", () => "resource", path => {
     var ext = path.substr(path.lastIndexOf(".") + 1);
     var typeMap = {
         "jpg": "image",

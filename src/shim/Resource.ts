@@ -499,7 +499,7 @@ module RES {
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.GROUP_COMPLETE, name);
             }, error => {
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.GROUP_LOAD_ERROR, name);
-                return egret.Promise.reject(error);
+                return Promise.reject(error);
             })
         }
 
