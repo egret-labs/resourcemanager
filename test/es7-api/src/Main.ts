@@ -3,20 +3,35 @@
  */
 
 function sleep(time): Promise<void> {
-    return new Promise<void>((reslove, reject) => {
-        setTimeout(reslove, time);
-    });
+    return new Promise<any>(function (reslove,reject){});
 }
 
-@RES.mapConfig("resource-new.json", () => "resource", () => 'todo')
+@RES.mapConfig("config.json", () => "resource", path => {
+    var ext = path.substr(path.lastIndexOf(".") + 1);
+    var typeMap = {
+        "jpg": "image",
+        "png": "image",
+        "webp": "image",
+        "json": "json",
+        "fnt": "font",
+        "pvr": "pvr",
+        "mp3": "sound"
+    }
+    var type = typeMap[ext];
+    if (type == "json") {
+        if (path.indexOf("sheet") >= 0) {
+            type = "sheet";
+        } else if (path.indexOf("movieclip") >= 0) {
+            type = "movieclip";
+        };
+    }
+    return type;
+})
 class Main extends egret.DisplayObjectContainer {
 
     public constructor() {
         super();
-        this.addEventListener(egret.TouchEvent.TOUCH_TAP, async event => { 
-            // 通过类型推断，TypeScript 无需开发者手动声明 event 为 egret.TouchEvent
-            // 并因此告知开发者，不存在 localx 这个属性，应为 localX
-            console.log (event.localx)
+        this.addEventListener(egret.Event.ADDED_TO_STAGE, async event => { 
             let reportrer = {
                 onProgress: (current, total) => {
                     console.log(current, total);
