@@ -45,9 +45,110 @@ module RES {
 	export namespace ResourceItem {
 
 
-		export const TYPE_IMAGE: string = "image";
-
-		export const TYPE_TEXT: string = "text";
+		/**
+		 * XML file.
+		 * @version Egret 2.4
+		 * @platform Web,Native
+		 * @language en_US
+		 */
+		/**
+		 * XML 文件。
+		 * @version Egret 2.4
+		 * @platform Web,Native
+		 * @language zh_CN
+		 */
+		export const TYPE_XML:string = "xml";
+		/**
+		 * Picture file.
+		 * @version Egret 2.4
+		 * @platform Web,Native
+		 * @language en_US
+		 */
+		/**
+		 * 图片文件。
+		 * @version Egret 2.4
+		 * @platform Web,Native
+		 * @language zh_CN
+		 */
+		export const TYPE_IMAGE:string = "image";
+		/**
+		 * Binary file.
+		 * @version Egret 2.4
+		 * @platform Web
+		 * @language en_US
+		 */
+		/**
+		 * 二进制文件。
+		 * @version Egret 2.4
+		 * @platform Web
+		 * @language zh_CN
+		 */
+		export const TYPE_BIN:string = "bin";
+		/**
+		 * Text file.
+		 * @version Egret 2.4
+		 * @platform Web,Native
+		 * @language en_US
+		 */
+		/**
+		 * 文本文件。
+		 * @version Egret 2.4
+		 * @platform Web,Native
+		 * @language zh_CN
+		 */
+		export const TYPE_TEXT:string = "text";
+		/**
+		 * JSON file.
+		 * @version Egret 2.4
+		 * @platform Web,Native
+		 * @language en_US
+		 */
+		/**
+		 * JSON 文件。
+		 * @version Egret 2.4
+		 * @platform Web,Native
+		 * @language zh_CN
+		 */
+        export const TYPE_JSON:string = "json";
+		/**
+		 * SpriteSheet file.
+		 * @version Egret 2.4
+		 * @platform Web,Native
+		 * @language en_US
+		 */
+		/**
+		 * SpriteSheet 文件。
+		 * @version Egret 2.4
+		 * @platform Web,Native
+		 * @language zh_CN
+		 */
+        export const TYPE_SHEET:string = "sheet";
+		/**
+		 * BitmapTextSpriteSheet file.
+		 * @version Egret 2.4
+		 * @platform Web,Native
+		 * @language en_US
+		 */
+		/**
+		 * BitmapTextSpriteSheet 文件。
+		 * @version Egret 2.4
+		 * @platform Web,Native
+		 * @language zh_CN
+		 */
+        export const TYPE_FONT:string = "font";
+		/**
+		 * Sound file.
+		 * @version Egret 2.4
+		 * @platform Web,Native
+		 * @language en_US
+		 */
+		/**
+		 * 声音文件。
+		 * @version Egret 2.4
+		 * @platform Web,Native
+		 * @language zh_CN
+		 */
+        export const TYPE_SOUND:string = "sound";
 
 		export function convertToResItem(r: ResourceInfo): ResourceItem {
 

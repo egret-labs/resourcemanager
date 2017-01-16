@@ -918,7 +918,7 @@ var RES;
                                 }
                                 catch (e) {
                                     config = data;
-                                    imageUrl = this.getTexturePath(resource.name, data);
+                                    imageUrl = getTexturePath(resource.name, data);
                                 }
                                 r = host.resourceConfig.getResource(imageUrl);
                                 if (!r)
@@ -1462,8 +1462,110 @@ var RES;
      */
     var ResourceItem;
     (function (ResourceItem) {
+        /**
+         * XML file.
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * XML 文件。
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        ResourceItem.TYPE_XML = "xml";
+        /**
+         * Picture file.
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 图片文件。
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
         ResourceItem.TYPE_IMAGE = "image";
+        /**
+         * Binary file.
+         * @version Egret 2.4
+         * @platform Web
+         * @language en_US
+         */
+        /**
+         * 二进制文件。
+         * @version Egret 2.4
+         * @platform Web
+         * @language zh_CN
+         */
+        ResourceItem.TYPE_BIN = "bin";
+        /**
+         * Text file.
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 文本文件。
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
         ResourceItem.TYPE_TEXT = "text";
+        /**
+         * JSON file.
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * JSON 文件。
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        ResourceItem.TYPE_JSON = "json";
+        /**
+         * SpriteSheet file.
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * SpriteSheet 文件。
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        ResourceItem.TYPE_SHEET = "sheet";
+        /**
+         * BitmapTextSpriteSheet file.
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * BitmapTextSpriteSheet 文件。
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        ResourceItem.TYPE_FONT = "font";
+        /**
+         * Sound file.
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 声音文件。
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        ResourceItem.TYPE_SOUND = "sound";
         function convertToResItem(r) {
             var name = "";
             var config = RES["configInstance"];

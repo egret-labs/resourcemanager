@@ -256,7 +256,6 @@ module RES.processor {
                 return url;
             }
 
-
             let data = await host.load(resource, TextProcessor);
             let imageUrl = "";
             let config;
@@ -266,7 +265,7 @@ module RES.processor {
             }
             catch (e) {
                 config = data;
-                imageUrl = this.getTexturePath(resource.name, data);
+                imageUrl = getTexturePath(resource.name, data);
             }
             let r = host.resourceConfig.getResource(imageUrl);
             if (r) {
