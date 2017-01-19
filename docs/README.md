@@ -71,11 +71,14 @@
 var customProcessor:RES.processor.Processor = {
 
     async onLoadStart(host,resource) {
-        
+        let text = host.load(resource,RES.processor.TextProcessor);
+        let data = my_parser.parse(text);
+        return text;
     },
 
     async onRemoveStart(host,resource) {
-        
+        let data = host.get(resource);
+        data.dispose();
     },
 
     getData(host, resource, key, subkey) => { //可选函数
@@ -97,8 +100,6 @@ RES.processor.map("customType",customProcessor);
 ## 不兼容的变化
 
 * RES.Analyzer 相关 API 已被废弃，开发者应使用 RES.processor.Processor API 进行替换
-* ```RES.getResAsync("sheet.json#icon")``` 如果 ```sheet.json```尚未加载，将会返回一个 null，而之前的版本会去自动加载并返回 ```sheet.json#icon```所对应的 Texture
-> 这条改动未来可能会被调整回去
-
+* 开发者请务必确认 ```RES.mapConfig```函数的第三个参数，针对文件类型的判断符合您的游戏要求，特别是json等同一文件扩展名，却可能有多种类型的情况。
 
 
