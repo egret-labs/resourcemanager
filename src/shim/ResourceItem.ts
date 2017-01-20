@@ -30,16 +30,16 @@
 module RES {
 
 	/**
-	 * @language en_US
 	 * Resource term. One of the resources arrays in resource.json.
 	 * @version Egret 2.4
 	 * @platform Web,Native
+	 * @language en_US
 	 */
 	/**
-	 * @language zh_CN
 	 * 资源项。对应 resource.json 中 resources 数组中的一项。
 	 * @version Egret 2.4
 	 * @platform Web,Native
+	 * @language zh_CN
 	 */
 
 	export namespace ResourceItem {
@@ -182,56 +182,56 @@ module RES {
 	export interface ResourceItem extends ResourceInfo {
 
 		/**
-		 * @language en_US
 		 * Name of resource term.
 		 * @version Egret 2.4
 		 * @platform Web,Native
+		 * @language en_US
 		 */
 		/**
-		 * @language zh_CN
 		 * 加载项名称。
 		 * @version Egret 2.4
 		 * @platform Web,Native
+		 * @language zh_CN
 		 */
 		name: string;
 		/**
-		 * @language en_US
 		 * URL of resource term.
 		 * @version Egret 2.4
 		 * @platform Web,Native
+		 * @language en_US
 		 */
 		/**
-		 * @language zh_CN
 		 * 要加载的文件地址。
 		 * @version Egret 2.4
 		 * @platform Web,Native
+		 * @language zh_CN
 		 */
 		url: string;
 		/**
-		 * @language en_US
 		 * Type of resource term.
 		 * @version Egret 2.4
 		 * @platform Web,Native
+		 * @language en_US
 		 */
 		/**
-		 * @language zh_CN
 		 * 加载项文件类型。
 		 * @version Egret 2.4
 		 * @platform Web,Native
+		 * @language zh_CN
 		 */
 		type: string;
 
 		/**
-		 * @language en_US
 		 * The raw data object to be referenced.
 		 * @version Egret 2.4
 		 * @platform Web,Native
+		 * @language en_US
 		 */
 		/**
-		 * @language zh_CN
 		 * 被引用的原始数据对象。
 		 * @version Egret 2.4
 		 * @platform Web,Native
+		 * @language zh_CN
 		 */
 		data: ResourceInfo;
 

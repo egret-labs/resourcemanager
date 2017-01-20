@@ -182,10 +182,19 @@ module RES {
 }
 
 namespace RES {
+    /**
+     * Promise的回调函数集合
+     */
     export interface PromiseTaskReporter {
 
+        /**
+         * 进度回调
+         */
         onProgress?: (current: number, total: number) => void;
 
+        /**
+         * 取消回调
+         */
         onCancel?: () => void;
 
     }
