@@ -72,7 +72,7 @@ export namespace ResourceConfig {
             data = await fs.readJSONAsync(filename);
         }
         catch (e) {
-            console.warn(`${filename}解析失败,使用初始值`)
+            console.warn(`未找到${filename},将为您自动创建`)
             data = { alias: {}, groups: {}, resources: {} };
         }
         vfs.init(data.resources);

@@ -9,7 +9,7 @@ export async function getConfigViaDecorator(egretRoot: string) {
     let decorators = await ast.findDecorator(path.join(egretRoot, "src/Main.ts"));
     decorators = decorators.filter(item => item.name == "RES.mapConfig");
     if (!decorators || decorators.length == 0 || decorators.length > 1) {
-        throw new Error('missing decorator');
+        throw 'missing decorator';
     }
     let decorator = decorators[0];
     let resourceConfigFileName = decorator.paramters[0];

@@ -33,7 +33,7 @@ export async function build(p: string) {
     let result = await ResourceConfig.init(p);
     ResourceConfig.typeSelector = result.typeSelector;
     if (!ResourceConfig.typeSelector) {
-        throw new Error("missing typeSelector in Main.ts");
+        throw "missing typeSelector in Main.ts";
     }
 
 
