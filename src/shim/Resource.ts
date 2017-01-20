@@ -476,7 +476,7 @@ module RES {
 		 * @returns {Array<egret.ResourceItem>}
          */
         public getGroupByName(name: string): Array<ResourceInfo> {
-            return manager.config.getGroupByName(name);
+            return manager.config.getGroupByName(name, true); //这里不应该传入 true，但是为了老版本的 TypeScriptCompiler 兼容性，暂时这样做
         }
 
         /**
@@ -505,7 +505,7 @@ module RES {
 
         @checkCancelation
         private _loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<any> {
-            let resources = manager.config.getGroupByName(name);
+            let resources = manager.config.getGroupByName(name, true);
             return manager.load(resources, reporter);
         }
 

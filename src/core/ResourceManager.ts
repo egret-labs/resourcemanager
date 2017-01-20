@@ -161,11 +161,13 @@ module RES {
             2001: "{0}解析失败,不支持指定解析类型:\'{1}\'，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
             2002: "Analyzer 相关API 在 ResourceManager 中不再支持，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
             2003: "{0}解析失败,错误原因:{1}",
-            2004: "无法找到文件类型:{0}"
+            2004: "无法找到文件类型:{0}",
+            2005: "无法找到特定的资源组:{0}"
         }
 
         /**
          * why instanceof e  != ResourceManagerError ???
+         * see link : https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work
          */
         private __resource_manager_error__ = true;
 

@@ -53,7 +53,7 @@ module RES {
      * @platform Web,Native
      */
     export function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector: ResourceTypeSelector) {
-        return function(target) {
+        return function (target) {
             let type: string = typeSelector(url);
             if (typeof rootSelector == "string") {
                 resourceRoot = rootSelector as any as string;
@@ -133,7 +133,11 @@ module RES {
         /**
          * @internal
          */
-        public getGroupByName(name: string, shouldNotBeNull?: true): ResourceInfo[];
+        public getGroupByName(name: string, shouldNotBeNull: true): ResourceInfo[];
+        /**
+         * @internal
+         */
+        public getGroupByName(name: string): ResourceInfo[] | null;
         /**
          * @internal
          */
@@ -143,7 +147,7 @@ module RES {
             let result: ResourceInfo[] = [];
             if (!group) {
                 if (shouldNotBeNull) {
-                    throw `none group ${name}`
+                    throw new RES.ResourceManagerError(2005, name)
                 }
                 return null;
             }

@@ -123,18 +123,18 @@ class Main extends egret.DisplayObjectContainer {
 
         RES.loadConfig()
             // .then(testNull)
-            // .then(testCreateAndDestoryResource)
+            .then(testCreateAndDestoryResource)
             // .then(testLoadResByUrl)
             // .then(testBitmapFont)
             // .then(testNetworkDelay)
-            .then(testSpriteSheet)
+            // .then(testSpriteSheet)
             // .then(testSoundByUrl)
             // .then(testAnimationByUrl)
             // .then(testPVR)
             // .then(testDestroy)
             .catch((e) => {
                 console.warn(e);
-                console.log(e.stack)
+                console.warn(e.stack)
                 // throw e;
             });
     }

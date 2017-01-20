@@ -193,7 +193,7 @@ var RES;
             var result = [];
             if (!group) {
                 if (shouldNotBeNull) {
-                    throw "none group " + name;
+                    throw new RES.ResourceManagerError(2005, name);
                 }
                 return null;
             }
@@ -641,7 +641,8 @@ var RES;
         2001: "{0}解析失败,不支持指定解析类型:\'{1}\'，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
         2002: "Analyzer 相关API 在 ResourceManager 中不再支持，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
         2003: "{0}解析失败,错误原因:{1}",
-        2004: "无法找到文件类型:{0}"
+        2004: "无法找到文件类型:{0}",
+        2005: "无法找到特定的资源组:{0}"
     };
     RES.ResourceManagerError = ResourceManagerError;
 })(RES || (RES = {}));
@@ -2091,7 +2092,7 @@ var RES;
          * @returns {Array<egret.ResourceItem>}
          */
         Resource.prototype.getGroupByName = function (name) {
-            return RES.manager.config.getGroupByName(name);
+            return RES.manager.config.getGroupByName(name, true); //这里不应该传入 true，但是为了老版本的 TypeScriptCompiler 兼容性，暂时这样做
         };
         /**
          * 根据组名加载一组资源
@@ -2119,7 +2120,7 @@ var RES;
         };
         Resource.prototype._loadGroup = function (name, priority, reporter) {
             if (priority === void 0) { priority = 0; }
-            var resources = RES.manager.config.getGroupByName(name);
+            var resources = RES.manager.config.getGroupByName(name, true);
             return RES.manager.load(resources, reporter);
         };
         /**
