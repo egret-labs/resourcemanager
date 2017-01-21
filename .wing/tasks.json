@@ -9,8 +9,11 @@
     "tasks": [
         {
             "taskName": "debug",
-            "args": ["run","debug"],
-            "isBuildCommand":"true"
+            "args": [
+                "run",
+                "debug-classic"
+            ],
+            "isBuildCommand": true
         }
     ]
 }

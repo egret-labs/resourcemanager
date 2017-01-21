@@ -13,7 +13,7 @@
     "tsc": "tsc && uglifyjs bin/resourcemanager/resourcemanager.js > bin/resourcemanager/resourcemanager.min.js",
     "debug": "tsc -p script && tsc && egret build test/es6-api -e && npm run res test/es6-api",
     "test": "egret build test/es6-api -e && res test/es6-api && egret run test/es6-api",
-    "test-classic": "egret build test/classic-api -e && egret-cli res test/es6-api && egret run test/classic-api"
+    "debug-classic": "tsc -p script && tsc && egret build test/classic-api -e && npm run res test/classic-api"
   },
   "author": "wander",
   "license": "ISC",
