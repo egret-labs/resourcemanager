@@ -37,9 +37,9 @@ module RES {
                     RES['configItem'] = { url, resourceRoot, type: "commonjs", name: url };
                     if (_level == "warning") {
                         console.warn(
-                            "RES.loadConfig() 不再接受参数，强制访问 resource/config.resjs 文件\n",
+                            "RES.loadConfig() 不再接受参数，强制访问 resource/config.json 文件\n",
                             "请访问以下站点了解更多细节\n",
-                            "https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#upgrade-decorator "
+                            "https://github.com/egret-labs/resourcemanager/blob/master/docs/"
                         )
                     }
 

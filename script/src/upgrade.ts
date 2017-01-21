@@ -9,24 +9,22 @@ import * as resource from './';
 
 export async function run(projectPath) {
 
-
-
-    async function copyLibrary() {
-        let folder = path.resolve(__dirname, "../../")
-        let source = path.join(folder, "bin");
-        let target = path.join(projectPath, "bin");
-        await fs.copyAsync(source, target);
+    let generateVersion = (versionString: string) => {
+        let v = versionString.split(".");
+        let result = 0;
+        for (var i = 0; i < v.length; i++) {
+            result += parseInt(v[i]) * Math.pow(100, (3 - i))
+        }
+        return result;
     }
 
+    async function copyLibrary() {
 
 
-
-
-
-
-    async function convertEgretProperties() {
         var propertyFile = path.join(projectPath, "egretProperties.json");
         let propertyData = await fs.readJsonAsync(propertyFile) as any;
+        let version = generateVersion(propertyData.egret_version);
+
         delete propertyData.modules['res'];
 
         for (let m of propertyData.modules) {
@@ -35,8 +33,24 @@ export async function run(projectPath) {
                 m.path = "."
             }
         }
+
+        let folder = path.resolve(__dirname, "../../")
+        let source = path.join(folder, "bin");
+        let target = path.join(projectPath, "bin");
+
+        if (version >= 4000100) { //4.0.1.0
+            console.log('www')
+            for (let m of propertyData.modules) {
+                if (m.name == "resourcemanager") {
+                    m.path = "resourcemanager"
+                }
+            }
+            target = projectPath;
+        }
         await fs.writeJSONAsync(propertyFile, propertyData);
+        await fs.copyAsync(source, target);
     }
+
 
 
     async function createDecorator() {
@@ -98,7 +112,6 @@ export async function run(projectPath) {
 
     }
 
-    await convertEgretProperties();
     await copyLibrary();
     await createDecorator();
     await modifyTypeScriptConfigFile();

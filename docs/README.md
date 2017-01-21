@@ -28,8 +28,9 @@
 * 在 Promise 机制的基础上，引入 async / await 语法，大幅提升异步处理的开发效率
 * 允许开发者针对不同平台发布不同的资源，大幅降低特定平台的资源尺寸
 
-
 ## 配置
+
+白鹭资源管理框架采用 ES2015 的装饰器语法进行配置。
 
 ```typescript
 @RES.mapConfig("config.json", () => "resource", path => {
@@ -44,16 +45,15 @@
     return typeMap[ext];
 })
 ```
-白鹭资源管理框架采用 ES2015 的装饰器语法进行配置。
+
+## 命令行的执行原理
+* 存在一个全局唯一的资源配置文件，并通过 ```res build``` 命令自动生成，生成的文件名为```RES.mapConfig```的第一个参数所对应的文件名
+* 每当资源文件发生变化时，需要重新执行```res build```
+* 当 ```res build``` 命令执行后，会遍历 ```resource```文件夹，并将其中的每一个文件执行 ```RES.mapConfig```的第三个参数所指向的函数，如果该文件返回 undefined ，则此文件不会被加入到资源配置文件中。
 
 
-<a name="upgrade-decorator">
-> 如果开发者从老项目迁移到新版资源管理框架，
-当没有配置 RES.mapConfig 注解时，
-会强制添加名为 "config.json" 的配置，
-并忽略 RES.loadConfig() 中的参数
+<a name="processor"></a>
 
-<a name="processor">
 ## 资源生命周期
 
 任意一个资源的生命周期都遵循以下机制：
