@@ -70,6 +70,7 @@ export namespace ResourceConfig {
         let data: Data;
         try {
             data = await fs.readJSONAsync(filename);
+            data.resources = {};
         }
         catch (e) {
             console.warn(`未找到${filename},将为您自动创建`)

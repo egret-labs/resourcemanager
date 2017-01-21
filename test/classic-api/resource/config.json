@@ -2,6 +2,7 @@
 	"alias": {},
 	"groups": {},
 	"resources": {
+		"config.json": "config.json",
 		"assets": {
 			"bg.jpg": "assets/bg.jpg",
 			"egret_icon.png": "assets/egret_icon.png"
