@@ -68,6 +68,7 @@ class Main extends egret.DisplayObjectContainer {
             this.createGameScene();
 
             setTimeout(() => {
+                RES.getResAsync("test/none");
                 RES.destroyRes("preload");
 
             }, 1000);

@@ -234,7 +234,7 @@ module RES {
             let r = getResourceInfo(path);
             if (!r) {
                 if (shouldNotBeNull) {
-                    throw `none resource url or alias : ${path_or_alias}`;
+                    throw new ResourceManagerError(2006, path_or_alias)
                 }
                 return null;
 

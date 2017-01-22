@@ -8,7 +8,7 @@
             "file": "index.html",
             "runtimeExecutable": "${execPath}",
             "sourceMaps": true,
-            "webRoot": "${workspaceRoot}/test/es6-api",
+            "webRoot": "${workspaceRoot}/test/classic-api",
             "preLaunchTask": "debug",
             "port": 3000
         },

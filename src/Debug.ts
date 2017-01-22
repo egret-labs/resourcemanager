@@ -32,7 +32,7 @@ module RES {
             const method = descriptor.value;
             descriptor.value = function () {
                 if (!RES['configItem']) {
-                    let url = "config.resjs";
+                    let url = "config.json";
                     resourceRoot = "resource/";
                     RES['configItem'] = { url, resourceRoot, type: "commonjs", name: url };
                     if (_level == "warning") {
