@@ -71,8 +71,8 @@ class Main extends egret.DisplayObjectContainer {
                 sound.play();
             })
         let temp = () => {
-            return RES.getResAsync("off")
-            // return RES.loadGroup("preload");
+            // return RES.getResAsync("off")
+            return RES.loadGroup("preload");
         }
 
         let testCreateAndDestoryResource = () => {

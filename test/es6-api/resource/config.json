@@ -9,7 +9,9 @@
 	},
 	"groups": {
 		"preload": [
-			"off"
+			"off",
+			"on",
+			"sheet_json"
 		]
 	},
 	"resources": {

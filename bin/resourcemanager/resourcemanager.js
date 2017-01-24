@@ -198,8 +198,9 @@ var RES;
                 return null;
             }
             for (var _i = 0, group_1 = group; _i < group_1.length; _i++) {
-                var key = group_1[_i];
-                var r = this.getResource(key, true);
+                var paramKey = group_1[_i];
+                var _a = RES.manager.config.parseResKey(paramKey), key = _a.key, subkey = _a.subkey;
+                var r = RES.manager.config.getResource(key, true);
                 result.push(r);
             }
             return result;

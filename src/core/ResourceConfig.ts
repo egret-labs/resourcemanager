@@ -151,8 +151,9 @@ module RES {
                 }
                 return null;
             }
-            for (var key of group) {
-                let r = this.getResource(key, true);
+            for (var paramKey of group) {
+                var {key, subkey} = manager.config.parseResKey(paramKey);
+                let r = manager.config.getResource(key, true);
                 result.push(r);
                 // if (r) {
 
