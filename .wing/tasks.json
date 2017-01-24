@@ -11,7 +11,7 @@
             "taskName": "debug",
             "args": [
                 "run",
-                "debug-classic"
+                "debug"
             ],
             "isBuildCommand": true
         }

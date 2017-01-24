@@ -1,0 +1,21 @@
+{
+	"resources": [
+		{
+			"name": "sheet_png",
+			"type": "image",
+			"url": "assets/sheet/sheet.png"
+		},
+		{
+			"name": "sheet_json",
+			"type": "sheet",
+			"url": "assets/sheet/sheet.json",
+			"subkeys": "off,on"
+		}
+	],
+	"groups": [
+		{
+			"name": "preload",
+			"keys": "off"
+		}
+	]
+}

@@ -8,9 +8,9 @@
             "file": "index.html",
             "runtimeExecutable": "${execPath}",
             "sourceMaps": true,
-            "webRoot": "${workspaceRoot}/test/classic-api",
+            "webRoot": "${workspaceRoot}/test/es6-api",
             "preLaunchTask": "debug",
-            "port": 3000
+            "port": 6744
         },
         {
             "name": "使用本机 Chrome 调试",
