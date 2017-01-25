@@ -158,7 +158,7 @@ var RES;
      * @platform Web,Native
      * @language zh_CN
      */
-    function mapConfig(url, rootSelector, typeSelector) {
+    function mapConfig(url, rootSelector, typeSelector, mergerSelector) {
         return function (target) {
             var type = typeSelector(url);
             if (typeof rootSelector == "string") {

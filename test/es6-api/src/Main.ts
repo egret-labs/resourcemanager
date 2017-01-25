@@ -10,7 +10,8 @@
         "json": "json",
         "fnt": "font",
         "pvr": "pvr",
-        "mp3": "sound"
+        "mp3": "sound",
+        "zip": "zip"
     }
     var type = typeMap[ext];
     if (type == "json") {
@@ -21,12 +22,16 @@
         };
     }
     return type;
+}, path => {
+    if (path == "bg.jpg" || path == "egret_icon.png")
+        return 'sheet2/sheet.json'
 })
 class Main extends egret.DisplayObjectContainer {
 
     private sky: egret.Bitmap;
 
     public constructor() {
+
         super();
         this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
     }

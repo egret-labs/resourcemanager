@@ -11,7 +11,8 @@
 		"preload": [
 			"off",
 			"on",
-			"sheet_json"
+			"sheet_json",
+			"sheet_png"
 		]
 	},
 	"resources": {
