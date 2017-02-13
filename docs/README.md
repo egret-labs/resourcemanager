@@ -93,13 +93,23 @@ var customProcessor:RES.processor.Processor = {
 ```typescript
 RES.processor.map("customType",customProcessor);
 ```
-并在 ```RES.mapConfig```的第三个参数中，将特定文件的类型设置为 ```customType```
+并在 ```RES.mapConfig```的第三个参数 TypeSelector 中，将特定文件的类型设置为 ```customType```,参考代码如下:
+
+```typescript
+RES.mapConfig("config.json",()=>"resource",(path)=>{
+    if (path == "a/custom/file/type.bin") {
+        return "customType";
+    }
+})
+```
 
 
 
 ## 不兼容的变化
 
 * RES.Analyzer 相关 API 已被废弃，开发者应使用 RES.processor.Processor API 进行替换
-* 开发者请务必确认 ```RES.mapConfig```函数的第三个参数，针对文件类型的判断符合您的游戏要求，特别是json等同一文件扩展名，却可能有多种类型的情况。
+* 开发者请确认 ```RES.mapConfig```函数的第三个参数 TypeSelector
+    * TypeSelector 中没有匹配成功的文件，不会生成在 ```config.json```中。
+    * 有部分文件存在同样的扩展名，却表示为不同的类型，（ 如 JSON 有可能是 json , movieclip , sheet 等多种类型 ），请检查自己的判断函数是正确的
 
 
