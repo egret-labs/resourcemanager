@@ -301,7 +301,7 @@ module RES {
      * @platform Web,Native
      * @language zh_CN
      */
-    export function destroyRes(name: string, force?: boolean): boolean {
+    export function destroyRes(name: string, force?: boolean): Promise<boolean> {
         return instance.destroyRes(name, force);
     }
     /**
@@ -432,7 +432,6 @@ module RES {
      */
     export class Resource extends egret.EventDispatcher {
 
-        private loadedGroups: string[] = [];
         /**
          * 构造函数
 		 * @method RES.constructor
@@ -467,7 +466,8 @@ module RES {
 		 * @returns {boolean}
          */
         public isGroupLoaded(name: string): boolean {
-            return this.loadedGroups.indexOf(name) != -1;
+            let resources = manager.config.getGroupByName(name, true);
+            return resources.every(r => host.get(r) != null);
         }
         /**
          * 根据组名获取组加载项列表
@@ -618,25 +618,22 @@ module RES {
          * @param force {boolean} 销毁一个资源组时其他资源组有同样资源情况资源是否会被删除，默认值true
 		 * @returns {boolean}
          */
-        public destroyRes(name: string, force: boolean = true): boolean {
+        public async destroyRes(name: string, force: boolean = true) {
             var group = manager.config.getGroup(name);
-
             let remove = (r: ResourceInfo) => {
-
-                host.unload(r);
-                // host.remove(r)
+                return host.unload(r);
             }
 
             if (group && group.length > 0) {
                 for (let item of group) {
-                    remove(item);
+                    await remove(item);
                 }
                 return true;
             }
             else {
                 let item = manager.config.getResource(name);
                 if (item) {
-                    remove(item);
+                    await remove(item);
                     return true;
                 }
                 else {
@@ -686,6 +683,7 @@ module RES {
 
 
 }
+
 
 
 

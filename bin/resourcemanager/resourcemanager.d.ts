@@ -787,7 +787,7 @@ declare module RES {
      * @platform Web,Native
      * @language zh_CN
      */
-    function destroyRes(name: string, force?: boolean): boolean;
+    function destroyRes(name: string, force?: boolean): Promise<boolean>;
     /**
      * Sets the maximum number of concurrent load threads, the default value is 2.
      * @param thread The number of concurrent loads to be set.
@@ -902,7 +902,6 @@ declare module RES {
      * @private
      */
     class Resource extends egret.EventDispatcher {
-        private loadedGroups;
         /**
          * 构造函数
          * @method RES.constructor
@@ -988,7 +987,7 @@ declare module RES {
          * @param force {boolean} 销毁一个资源组时其他资源组有同样资源情况资源是否会被删除，默认值true
          * @returns {boolean}
          */
-        destroyRes(name: string, force?: boolean): boolean;
+        destroyRes(name: string, force?: boolean): Promise<boolean>;
         /**
          * 设置最大并发加载线程数量，默认值是2.
          * @method RES.setMaxLoadingThread

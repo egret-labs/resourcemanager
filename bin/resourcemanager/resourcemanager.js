@@ -925,8 +925,7 @@ var RES;
                                     imageUrl = getTexturePath(resource.name, data);
                                 }
                                 r = host.resourceConfig.getResource(imageUrl);
-                                if (!r)
-                                    return [3 /*break*/, 3];
+                                if (!r) return [3 /*break*/, 3];
                                 return [4 /*yield*/, host.load(r)];
                             case 2:
                                 texture = _a.sent();
@@ -2059,9 +2058,7 @@ var RES;
          * @private
          */
         function Resource() {
-            var _this = _super.call(this) || this;
-            _this.loadedGroups = [];
-            return _this;
+            return _super.call(this) || this;
         }
         /**
          * 开始加载配置
@@ -2086,7 +2083,8 @@ var RES;
          * @returns {boolean}
          */
         Resource.prototype.isGroupLoaded = function (name) {
-            return this.loadedGroups.indexOf(name) != -1;
+            var resources = RES.manager.config.getGroupByName(name, true);
+            return resources.every(function (r) { return RES.host.get(r) != null; });
         };
         /**
          * 根据组名获取组加载项列表
@@ -2217,29 +2215,42 @@ var RES;
          */
         Resource.prototype.destroyRes = function (name, force) {
             if (force === void 0) { force = true; }
-            var group = RES.manager.config.getGroup(name);
-            var remove = function (r) {
-                RES.host.unload(r);
-                // host.remove(r)
-            };
-            if (group && group.length > 0) {
-                for (var _i = 0, group_2 = group; _i < group_2.length; _i++) {
-                    var item = group_2[_i];
-                    remove(item);
-                }
-                return true;
-            }
-            else {
-                var item = RES.manager.config.getResource(name);
-                if (item) {
-                    remove(item);
-                    return true;
-                }
-                else {
-                    console.warn("\u65E0\u6CD5\u5220\u9664\u6307\u5B9A\u7EC4:" + name);
-                    return false;
-                }
-            }
+            return __awaiter(this, void 0, void 0, function () {
+                var group, remove, _i, group_2, item, item;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            group = RES.manager.config.getGroup(name);
+                            remove = function (r) {
+                                return RES.host.unload(r);
+                            };
+                            if (!(group && group.length > 0)) return [3 /*break*/, 5];
+                            _i = 0, group_2 = group;
+                            _a.label = 1;
+                        case 1:
+                            if (!(_i < group_2.length)) return [3 /*break*/, 4];
+                            item = group_2[_i];
+                            return [4 /*yield*/, remove(item)];
+                        case 2:
+                            _a.sent();
+                            _a.label = 3;
+                        case 3:
+                            _i++;
+                            return [3 /*break*/, 1];
+                        case 4: return [2 /*return*/, true];
+                        case 5:
+                            item = RES.manager.config.getResource(name);
+                            if (!item) return [3 /*break*/, 7];
+                            return [4 /*yield*/, remove(item)];
+                        case 6:
+                            _a.sent();
+                            return [2 /*return*/, true];
+                        case 7:
+                            console.warn("\u65E0\u6CD5\u5220\u9664\u6307\u5B9A\u7EC4:" + name);
+                            return [2 /*return*/, false];
+                    }
+                });
+            });
         };
         /**
          * 设置最大并发加载线程数量，默认值是2.

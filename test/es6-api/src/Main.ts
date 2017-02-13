@@ -70,10 +70,6 @@ class Main extends egret.DisplayObjectContainer {
                 var sound: egret.Sound = value;
                 sound.play();
             })
-        let temp = () => {
-            // return RES.getResAsync("off")
-            return RES.loadGroup("preload");
-        }
 
         let testCreateAndDestoryResource = () => {
             let reporter = {
@@ -125,7 +121,7 @@ class Main extends egret.DisplayObjectContainer {
 
 
         RES.loadConfig()
-            .then(temp)
+            .then(testGroupIsLoaded)
             // .then(testNull)
             // .then(testCreateAndDestoryResource)
             // .then(testLoadResByUrl)
