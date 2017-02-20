@@ -2,15 +2,14 @@
 var game_file_list = [
     //以下为自动修改，请勿修改
     //----auto game_file_list start----
-	"libs/modules/egret/egret.js",
-	"libs/modules/egret/egret.native.js",
-	"libs/modules/game/game.js",
-	"libs/modules/tween/tween.js",
-	"libs/modules/resourcemanager/resourcemanager.js",
-	"libs/modules/eui/eui.js",
-	"libs/modules/dragonBones/dragonBones.js",
-	"bin-debug/Main.js",
-	"bin-debug/TestCase.js",
+	"libs/modules/egret/egret.min.js",
+	"libs/modules/egret/egret.native.min.js",
+	"libs/modules/game/game.min.js",
+	"libs/modules/tween/tween.min.js",
+	"libs/modules/resourcemanager/resourcemanager.min.js",
+	"libs/modules/eui/eui.min.js",
+	"libs/modules/dragonBones/dragonBones.min.js",
+	"main.min.js",
 	//----auto game_file_list end----
 ];
 

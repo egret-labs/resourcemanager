@@ -1634,6 +1634,33 @@ var RES;
         };
     })(upgrade = RES.upgrade || (RES.upgrade = {}));
 })(RES || (RES = {}));
+var RES;
+(function (RES) {
+    function native_init() {
+        console.log(2222);
+        if (egret.Capabilities.runtimeType == egret.RuntimeType.NATIVE) {
+            var data = getLocalData("all.manifest");
+            console.log(2222);
+            console.log(JSON.stringify(data));
+        }
+    }
+    RES.native_init = native_init;
+    function getLocalData(filePath) {
+        if (egret_native.readUpdateFileSync && egret_native.readResourceFileSync) {
+            //先取更新目录
+            var content = egret_native.readUpdateFileSync(filePath);
+            if (content != null) {
+                return JSON.parse(content);
+            }
+            //再取资源目录
+            content = egret_native.readResourceFileSync(filePath);
+            if (content != null) {
+                return JSON.parse(content);
+            }
+        }
+        return null;
+    }
+})(RES || (RES = {}));
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //  Copyright (c) 2014-present, Egret Technology.
@@ -2069,6 +2096,7 @@ var RES;
          */
         Resource.prototype.loadConfig = function () {
             var _this = this;
+            RES.native_init();
             return RES.manager.init().then(function (data) {
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_COMPLETE);
             }, function (error) {

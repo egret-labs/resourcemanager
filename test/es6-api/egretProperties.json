@@ -1,6 +1,7 @@
 {
 	"native": {
-		"path_ignore": []
+		"path_ignore": [],
+		"ios_path": "../../test-ios"
 	},
 	"publish": {
 		"web": 0,
