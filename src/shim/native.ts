@@ -1,13 +1,19 @@
 namespace RES {
 
-    var _versionInfo: any;
+
+    interface R {
+        v: string,
+        s: number
+    }
+
+    var versionInfo: { [url: string]: R };
 
     /**
      * @internal
      */
     export function native_init() {
         if (egret.Capabilities.runtimeType == egret.RuntimeType.NATIVE) {
-            _versionInfo = getLocalData("all.manifest");
+            versionInfo = getLocalData("all.manifest");
         }
     }
 
@@ -16,8 +22,8 @@ namespace RES {
      */
     export function getRealURL(url: string) {
 
-        if (_versionInfo && _versionInfo[url]) {
-            return "resource/" + _versionInfo[url]["v"].substring(0, 2) + "/" + _versionInfo[url]["v"] + "_" + _versionInfo[url]["s"] + "." + url.substring(url.lastIndexOf(".") + 1);
+        if (versionInfo && versionInfo[url]) {
+            return "resource/" + versionInfo[url].v.substring(0, 2) + "/" + versionInfo[url].v + "_" + versionInfo[url].s + "." + url.substring(url.lastIndexOf(".") + 1);
         }
         else {
             return url;
