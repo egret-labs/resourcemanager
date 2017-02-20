@@ -544,7 +544,6 @@ declare module RES {
     }
 }
 declare namespace RES {
-    function native_init(): void;
 }
 declare module RES {
     type GetResAsyncCallback = (value?: any, key?: string) => any;

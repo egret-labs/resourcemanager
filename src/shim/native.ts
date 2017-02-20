@@ -1,14 +1,27 @@
 namespace RES {
 
+    var _versionInfo: any;
 
+    /**
+     * @internal
+     */
     export function native_init() {
-        console.log(2222);
         if (egret.Capabilities.runtimeType == egret.RuntimeType.NATIVE) {
-            let data = getLocalData("all.manifest");
-            console.log(2222);
-            console.log(JSON.stringify(data));
+            _versionInfo = getLocalData("all.manifest");
         }
+    }
 
+    /**
+     * @internal
+     */
+    export function getRealURL(url: string) {
+
+        if (_versionInfo && _versionInfo[url]) {
+            return "resource/" + _versionInfo[url]["v"].substring(0, 2) + "/" + _versionInfo[url]["v"] + "_" + _versionInfo[url]["s"] + "." + url.substring(url.lastIndexOf(".") + 1);
+        }
+        else {
+            return url;
+        }
     }
 
     function getLocalData(filePath): any {
