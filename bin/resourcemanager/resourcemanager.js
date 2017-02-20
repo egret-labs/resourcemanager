@@ -680,6 +680,11 @@ var RES;
                 });
             });
         }
+        function getURL(resource) {
+            var prefix = resource.extra ? "" : RES.resourceRoot;
+            var url = prefix + resource.url;
+            return RES.getRealURL(url);
+        }
         function getRelativePath(url, file) {
             url = url.split("\\").join("/");
             var params = url.match(/#.*|\?.*/);
@@ -701,13 +706,12 @@ var RES;
         processor_1.ImageProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var loader, prefix, bitmapData, texture;
+                    var loader, bitmapData, texture;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 loader = new egret.ImageLoader();
-                                prefix = resource.extra ? "" : RES.resourceRoot;
-                                loader.load(prefix + resource.url);
+                                loader.load(getURL(resource));
                                 return [4 /*yield*/, promisify(loader, resource)];
                             case 1:
                                 bitmapData = _a.sent();
@@ -733,14 +737,13 @@ var RES;
         processor_1.BinaryProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var request, prefix, arraybuffer;
+                    var request, arraybuffer;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 request = new egret.HttpRequest();
                                 request.responseType = egret.HttpResponseType.ARRAY_BUFFER;
-                                prefix = resource.extra ? "" : RES.resourceRoot;
-                                request.open(prefix + resource.url, "get");
+                                request.open(getURL(resource), "get");
                                 request.send();
                                 return [4 /*yield*/, promisify(request, resource)];
                             case 1:
@@ -757,14 +760,13 @@ var RES;
         processor_1.TextProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var request, prefix, text;
+                    var request, text;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 request = new egret.HttpRequest();
                                 request.responseType = egret.HttpResponseType.TEXT;
-                                prefix = resource.extra ? "" : RES.resourceRoot;
-                                request.open(prefix + resource.url, "get");
+                                request.open(getURL(resource), "get");
                                 request.send();
                                 return [4 /*yield*/, promisify(request, resource)];
                             case 1:
@@ -943,13 +945,12 @@ var RES;
         processor_1.SoundProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var prefix, sound;
+                    var sound;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
-                                prefix = resource.extra ? "" : RES.resourceRoot;
                                 sound = new egret.Sound();
-                                sound.load(prefix + resource.url);
+                                sound.load(getURL(resource));
                                 return [4 /*yield*/, promisify(sound, resource)];
                             case 1:
                                 _a.sent();
@@ -1634,6 +1635,46 @@ var RES;
         };
     })(upgrade = RES.upgrade || (RES.upgrade = {}));
 })(RES || (RES = {}));
+var RES;
+(function (RES) {
+    var versionInfo;
+    /**
+     * @internal
+     */
+    function native_init() {
+        if (egret.Capabilities.runtimeType == egret.RuntimeType.NATIVE) {
+            versionInfo = getLocalData("all.manifest");
+        }
+    }
+    RES.native_init = native_init;
+    /**
+     * @internal
+     */
+    function getRealURL(url) {
+        if (versionInfo && versionInfo[url]) {
+            return "resource/" + versionInfo[url].v.substring(0, 2) + "/" + versionInfo[url].v + "_" + versionInfo[url].s + "." + url.substring(url.lastIndexOf(".") + 1);
+        }
+        else {
+            return url;
+        }
+    }
+    RES.getRealURL = getRealURL;
+    function getLocalData(filePath) {
+        if (egret_native.readUpdateFileSync && egret_native.readResourceFileSync) {
+            //先取更新目录
+            var content = egret_native.readUpdateFileSync(filePath);
+            if (content != null) {
+                return JSON.parse(content);
+            }
+            //再取资源目录
+            content = egret_native.readResourceFileSync(filePath);
+            if (content != null) {
+                return JSON.parse(content);
+            }
+        }
+        return null;
+    }
+})(RES || (RES = {}));
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //  Copyright (c) 2014-present, Egret Technology.
@@ -2069,6 +2110,7 @@ var RES;
          */
         Resource.prototype.loadConfig = function () {
             var _this = this;
+            RES.native_init();
             return RES.manager.init().then(function (data) {
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_COMPLETE);
             }, function (error) {

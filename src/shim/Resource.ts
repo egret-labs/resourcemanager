@@ -451,6 +451,7 @@ module RES {
         @upgrade.checkDecorator
         @checkCancelation
         public loadConfig(): Promise<void> {
+            native_init();
             return manager.init().then(data => {
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
             }, error => {

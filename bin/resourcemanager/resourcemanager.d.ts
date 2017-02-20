@@ -543,6 +543,8 @@ declare module RES {
         let checkDecorator: MethodDecorator;
     }
 }
+declare namespace RES {
+}
 declare module RES {
     type GetResAsyncCallback = (value?: any, key?: string) => any;
     /**
