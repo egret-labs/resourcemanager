@@ -8,8 +8,12 @@ import * as _config from './config';
 import * as _build from './build';
 import * as _upgrade from './upgrade';
 import * as vfs from './FileSystem'
+import * as _watch from './watch';
 
 export var config = _config;
+export var build = _build;
+export var upgrade = _upgrade;
+export var watch = _watch;
 
 
 
@@ -74,6 +78,3 @@ export namespace ResourceConfig {
     }
 }
 
-export var build = _build;
-
-export var upgrade = _upgrade;

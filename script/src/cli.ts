@@ -27,6 +27,9 @@ if (p && fs.existsSync(path.join(p, "egretProperties.json"))) {
         case "build":
             res.build.build(p).catch(handleExceiption)
             break;
+        case "watch":
+            res.watch.watch(p).catch(handleExceiption)
+            break;
         default:
             handleExceiption(`找不到指定的命令{command}`)
             break;

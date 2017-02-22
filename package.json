@@ -1,6 +1,6 @@
 {
   "name": "egret-resource-manager",
-  "version": "4.0.2.1",
+  "version": "4.0.3-2",
   "bin": {
     "res": "script/out/cli.js"
   },
@@ -25,6 +25,7 @@
     "egret-node-utils": "0.0.7",
     "egret-typescript-ast": "0.0.11",
     "fs-extra-promise": "0.4.1",
-    "typescript": "2.1.6"
+    "typescript": "2.1.6",
+    "watch": "^1.0.2"
   }
 }
