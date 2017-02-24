@@ -5,7 +5,9 @@
         "noImplicitAny": false,
         "sourceMap": false,
         "outDir": "out",
-        "declaration": true
+        "declaration": true,
+        "allowUnreachableCode": true,
+        "strictNullChecks": true
     },
     "exclude": [
         "node_modules",

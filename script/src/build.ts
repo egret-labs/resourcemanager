@@ -28,7 +28,8 @@ namespace original {
 let projectRoot;
 
 
-export async function build(p: string) {
+export async function build(p: string, format: "json" | "text") {
+
 
     let result = await ResourceConfig.init(p);
     ResourceConfig.typeSelector = result.typeSelector;

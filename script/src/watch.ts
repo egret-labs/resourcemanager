@@ -3,7 +3,7 @@ import * as build from './build';
 import * as path from 'path';
 import * as config from './config';
 
-export async function watch(p: string) {
+export async function watch(p: string, format: "json" | "text") {
     let result = await config.getConfigViaDecorator(p);
     let root = path.join(p, result.resourceRoot);
     w.createMonitor(root, (m) => {
@@ -12,8 +12,10 @@ export async function watch(p: string) {
         // .on("changed", (f) => compileChanged(f, "modified"));
     });
 
-    function compileChanged(f: string, type: string) {
-        build.build(p)
+    async function compileChanged(f: string, type: string) {
+        console.log("res-watch:file changed start");
+        await build.build(p, format)
+        console.log("res-watch:file changed finish");
     }
 }
 

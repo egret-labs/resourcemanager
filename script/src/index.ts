@@ -26,11 +26,11 @@ export interface Data {
 
     resources: vfs.Dictionary,
 
-    groups?: {
+    groups: {
         [groupName: string]: string[]
     },
 
-    alias?: {
+    alias: {
         [aliasName: string]: string
     }
 
