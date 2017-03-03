@@ -31,7 +31,7 @@ type ResourceRootSelector<T extends string> = () => T;
 
 type ResourceTypeSelector = (file: string) => string;
 
-type ResourceMergerSelector = (file: string) => string;
+type ResourceMergerSelector = (file: string) => { path: string, alias: string } | undefined;
 
 
 module RES {

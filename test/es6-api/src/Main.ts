@@ -11,7 +11,8 @@
         "fnt": "font",
         "pvr": "pvr",
         "mp3": "sound",
-        "zip": "zip"
+        "zip": "zip",
+        "mergeJson": "mergeJson"
     }
     var type = typeMap[ext];
     if (type == "json") {
@@ -23,8 +24,15 @@
     }
     return type;
 }, path => {
-    if (path == "bg.jpg" || path == "egret_icon.png")
-        return 'sheet2/sheet.json'
+    if (path.indexOf(".json") >= 0 && path.indexOf("/") >= 0) {
+        return {
+            "path": "111.mergeJson",
+            "alias": path.substr(path.lastIndexOf("/") + 1).replace(".", "_")
+        }
+    }
+    else {
+        return null;
+    }
 })
 class Main extends egret.DisplayObjectContainer {
 

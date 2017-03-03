@@ -26,6 +26,7 @@ namespace original {
 }
 
 let projectRoot;
+let resourcePath;
 
 
 export async function build(p: string, format: "json" | "text") {
@@ -37,12 +38,17 @@ export async function build(p: string, format: "json" | "text") {
         throw "missing typeSelector in Main.ts";
     }
 
+    let mergeCollection: { [mergeFile: string]: string[] } = {};
 
     let executeFilter = async (f) => {
 
         let config = ResourceConfig.config;
-        var ext = f.substr(f.lastIndexOf(".") + 1);
+        merge.walk(f)
+        // var ext = f.substr(f.lastIndexOf(".") + 1);
+
+
         let type = ResourceConfig.typeSelector(f);
+
         if (type) {
             return { name: f, url: f, type };
         }
@@ -50,7 +56,7 @@ export async function build(p: string, format: "json" | "text") {
     }
 
     projectRoot = p;
-    let resourcePath = path.join(projectRoot, result.resourceRoot);
+    resourcePath = path.join(projectRoot, result.resourceRoot);
     let filename = path.join(resourcePath, result.resourceConfigFileName);
 
     let option: utils.walk.WalkOptions = {
@@ -64,6 +70,8 @@ export async function build(p: string, format: "json" | "text") {
 
     await convertResourceJson(projectRoot);
     await updateResourceConfigFileContent(filename);
+
+    merge.output();
 }
 
 export async function updateResourceConfigFileContent(filename: string) {
@@ -133,4 +141,49 @@ export async function convertResourceJson(projectRoot: string) {
     }
 
     return ResourceConfig.config;
+}
+
+
+
+namespace merge {
+
+    let mergeCollection: { [mergeFile: string]: { path: string, alias: string }[] } = {};
+
+    export function walk(f: string) {
+        if (ResourceConfig.mergeSelector) {
+            let merge = ResourceConfig.mergeSelector(f);
+            if (merge) {
+                let mergeFile = merge.path;
+                merge.path = f;
+                let type = ResourceConfig.typeSelector(f);
+                if (!type) {
+                    throw new Error(`missing merge type : ${merge}`);
+                }
+                if (!mergeCollection[mergeFile]) {
+                    mergeCollection[mergeFile] = [];
+                }
+                mergeCollection[mergeFile].push(merge);
+            }
+
+        }
+    }
+
+    export function output() {
+
+
+        for (let mergeFile in mergeCollection) {
+            let outputJson = {};
+            let sourceFiles = mergeCollection[mergeFile];
+            if (ResourceConfig.typeSelector(mergeFile) == "mergeJson") {
+                sourceFiles.map(s => {
+                    let sourcePath = path.join(resourcePath, s.path);
+                    let json = fs.readJSONSync(sourcePath);
+                    outputJson[s.alias] = json;
+                })
+            }
+            fs.writeFileSync(path.join(resourcePath, mergeFile), JSON.stringify(outputJson))
+        }
+
+
+    }
 }
