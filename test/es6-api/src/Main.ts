@@ -151,6 +151,12 @@ class Main extends egret.DisplayObjectContainer {
                     console.log(value)
                 });
 
+        let testMerge = async () => {
+            await RES.getResAsync("111.mergeJson");
+            let data = await RES.getResAsync("skeleton_json");
+            console.log(data)
+        }
+
 
 
 
@@ -162,11 +168,12 @@ class Main extends egret.DisplayObjectContainer {
             // .then(testBitmapFont)
             // .then(testNetworkDelay)
             // .then(testSpriteSheet)
-            .then(testGroupWithURL)
-        // .then(testSoundByUrl)
-        // .then(testAnimationByUrl)
-        // .then(testPVR)
-        // .then(testDestroy)
+            // .then(testGroupWithURL)
+            // .then(testSoundByUrl)
+            // .then(testAnimationByUrl)
+            // .then(testPVR)
+            // .then(testDestroy)
+            .then(testMerge)
         // .catch((e) => {
         //     console.warn(e);
         //     console.warn(e.stack)

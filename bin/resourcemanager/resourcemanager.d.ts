@@ -192,6 +192,7 @@ declare module RES.processor {
     var FontProcessor: Processor;
     var SoundProcessor: Processor;
     var MovieClipProcessor: Processor;
+    const MergeJSONProcessor: Processor;
     var PVRProcessor: Processor;
 }
 declare module RES {

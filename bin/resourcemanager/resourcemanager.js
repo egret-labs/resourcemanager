@@ -995,6 +995,37 @@ var RES;
                 return Promise.resolve();
             }
         };
+        processor_1.MergeJSONProcessor = {
+            onLoadStart: function (host, resource) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var data, key;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, host.load(resource, processor_1.JsonProcessor)];
+                            case 1:
+                                data = _a.sent();
+                                for (key in data) {
+                                    RES.manager.config.addSubkey(key, resource.name);
+                                }
+                                return [2 /*return*/, data];
+                        }
+                    });
+                });
+            },
+            getData: function (host, resource, key, subkey) {
+                var data = host.get(resource);
+                if (data) {
+                    return data[subkey];
+                }
+                else {
+                    console.error("missing resource :" + resource.name);
+                    return null;
+                }
+            },
+            onRemoveStart: function (host, resource) {
+                return Promise.resolve();
+            }
+        };
         var PVRParser = (function () {
             function PVRParser() {
             }
@@ -1203,7 +1234,8 @@ var RES;
             "commonjs": processor_1.CommonJSProcessor,
             "sound": processor_1.SoundProcessor,
             "movieclip": processor_1.MovieClipProcessor,
-            "pvr": processor_1.PVRProcessor
+            "pvr": processor_1.PVRProcessor,
+            "mergeJson": processor_1.MergeJSONProcessor
         };
     })(processor = RES.processor || (RES.processor = {}));
 })(RES || (RES = {}));
