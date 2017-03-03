@@ -280,12 +280,8 @@ module RES {
                     let groupInfo = this.config.groups[key];
                     group = group.concat(groupInfo);
                 }
-                else if (this.config.alias[key] || this.config.resources[key]) {
-                    group = group.concat(key);
-                }
                 else {
                     group = group.concat(key);
-                    console.warn(`resource not exist : ${key}`);
                 }
             }
 

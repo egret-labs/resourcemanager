@@ -63,10 +63,8 @@ class Main extends egret.DisplayObjectContainer {
             });
         ;
 
-        let testMissingSubResource = () => {
-            RES.getResAsync("on").then((data) => {
-                console.log(data)
-            })
+        let testGroupWithURL = () => {
+            RES.createGroup("group1", ["assets/bg.jpg"])
         }
 
         let testSpriteSheet = () =>
@@ -151,7 +149,7 @@ class Main extends egret.DisplayObjectContainer {
             // .then(testBitmapFont)
             // .then(testNetworkDelay)
             // .then(testSpriteSheet)
-            .then(testMissingSubResource)
+            .then(testGroupWithURL)
         // .then(testSoundByUrl)
         // .then(testAnimationByUrl)
         // .then(testPVR)

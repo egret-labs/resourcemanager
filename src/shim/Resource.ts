@@ -476,7 +476,7 @@ module RES {
 		 * @param name {string}
 		 * @returns {Array<egret.ResourceItem>}
          */
-        public getGroupByName(name: string): Array<ResourceInfo> {
+        getGroupByName(name: string): Array<ResourceInfo> {
             return manager.config.getGroupByName(name, true); //这里不应该传入 true，但是为了老版本的 TypeScriptCompiler 兼容性，暂时这样做
         }
 
@@ -486,7 +486,7 @@ module RES {
 		 * @param name {string}
 		 * @param priority {number}
          */
-        public loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<any> {
+        loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<any> {
 
             let reporterDelegate = {
                 onProgress: (current, total) => {
@@ -507,6 +507,11 @@ module RES {
         @checkCancelation
         private _loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<any> {
             let resources = manager.config.getGroupByName(name, true);
+            return manager.load(resources, reporter);
+        }
+
+        loadResources(keys: string[], reporter?: PromiseTaskReporter) {
+            let resources = keys.map(key => manager.config.getResource(key, true))
             return manager.load(resources, reporter);
         }
 

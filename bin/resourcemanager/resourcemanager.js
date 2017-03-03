@@ -298,12 +298,8 @@ var RES;
                     var groupInfo = this.config.groups[key];
                     group = group.concat(groupInfo);
                 }
-                else if (this.config.alias[key] || this.config.resources[key]) {
-                    group = group.concat(key);
-                }
                 else {
                     group = group.concat(key);
-                    console.warn("resource not exist : " + key);
                 }
             }
             this.config.groups[name] = group;
@@ -2167,6 +2163,10 @@ var RES;
         Resource.prototype._loadGroup = function (name, priority, reporter) {
             if (priority === void 0) { priority = 0; }
             var resources = RES.manager.config.getGroupByName(name, true);
+            return RES.manager.load(resources, reporter);
+        };
+        Resource.prototype.loadResources = function (keys, reporter) {
+            var resources = keys.map(function (key) { return RES.manager.config.getResource(key, true); });
             return RES.manager.load(resources, reporter);
         };
         /**
