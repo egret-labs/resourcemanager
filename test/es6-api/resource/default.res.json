@@ -8,7 +8,7 @@
 		{
 			"name": "sheet_json",
 			"type": "sheet",
-			"url": "assets/sheet/sheet.json",
+			"url": "assets/sheet/sheet1.json",
 			"subkeys": "off,on"
 		}
 	],

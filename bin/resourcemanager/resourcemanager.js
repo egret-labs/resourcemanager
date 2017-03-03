@@ -199,7 +199,7 @@ var RES;
             }
             for (var _i = 0, group_1 = group; _i < group_1.length; _i++) {
                 var paramKey = group_1[_i];
-                var _a = RES.manager.config.parseResKey(paramKey), key = _a.key, subkey = _a.subkey;
+                var _a = RES.manager.config.getResourceWithSubkey(paramKey), key = _a.key, subkey = _a.subkey;
                 var r = RES.manager.config.getResource(key, true);
                 result.push(r);
             }
@@ -226,19 +226,22 @@ var RES;
                 return "unknown";
             }
         };
-        ResourceConfig.prototype.parseResKey = function (key) {
+        ResourceConfig.prototype.getResourceWithSubkey = function (key) {
             key = this.getKeyByAlias(key);
             var index = key.indexOf("#");
+            var subkey = "";
             if (index >= 0) {
-                return {
-                    key: key.substr(0, index),
-                    subkey: key.substr(index + 1)
-                };
+                subkey = key.substr(index + 1);
+                key = key.substr(0, index);
+            }
+            var r = this.getResource(key);
+            if (!r) {
+                var msg = subkey ? key + "#" + subkey : key;
+                throw new RES.ResourceManagerError(2006, msg);
             }
             else {
                 return {
-                    key: key,
-                    subkey: ""
+                    r: r, key: key, subkey: subkey
                 };
             }
         };
@@ -2182,12 +2185,17 @@ var RES;
         /**
          * 检查配置文件里是否含有指定的资源
          * @method RES.hasRes
-         * @param key {string} 对应配置文件里的name属性或sbuKeys属性的一项。
+         * @param key {string} 对应配置文件里的name属性或subKeys属性的一项。
          * @returns {boolean}
          */
         Resource.prototype.hasRes = function (key) {
-            var name = RES.manager.config.parseResKey(key).key;
-            return RES.manager.config.getResource(name) != null;
+            try {
+                RES.manager.config.getResourceWithSubkey(key);
+                return true;
+            }
+            catch (e) {
+                return false;
+            }
         };
         /**
          * 通过key同步获取资源
@@ -2196,22 +2204,18 @@ var RES;
          * @returns {any}
          */
         Resource.prototype.getRes = function (resKey) {
-            var _a = RES.manager.config.parseResKey(resKey), key = _a.key, subkey = _a.subkey;
-            var r = RES.manager.config.getResource(key);
-            if (r) {
-                var processor_2 = RES.host.isSupport(r);
-                if (processor_2 && processor_2.getData && subkey) {
-                    return processor_2.getData(RES.host, r, key, subkey);
-                }
-                else {
-                    return RES.host.get(r);
-                }
+            var _a = RES.manager.config.getResourceWithSubkey(resKey), r = _a.r, key = _a.key, subkey = _a.subkey;
+            var processor = RES.host.isSupport(r);
+            if (processor && processor.getData && subkey) {
+                return processor.getData(RES.host, r, key, subkey);
+            }
+            else {
+                return RES.host.get(r);
             }
         };
         Resource.prototype.getResAsync = function (key, compFunc, thisObject) {
             var paramKey = key;
-            var _a = RES.manager.config.parseResKey(key), key = _a.key, subkey = _a.subkey;
-            var r = RES.manager.config.getResource(key, true);
+            var _a = RES.manager.config.getResourceWithSubkey(key), r = _a.r, subkey = _a.subkey;
             return RES.manager.load(r).then(function (value) {
                 var processor = RES.host.isSupport(r);
                 if (processor && processor.getData && subkey) {

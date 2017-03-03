@@ -526,13 +526,18 @@ module RES {
         /**
          * 检查配置文件里是否含有指定的资源
 		 * @method RES.hasRes
-         * @param key {string} 对应配置文件里的name属性或sbuKeys属性的一项。
+         * @param key {string} 对应配置文件里的name属性或subKeys属性的一项。
 		 * @returns {boolean}
          */
         @checkNull
         public hasRes(key: string): boolean {
-            let name = manager.config.parseResKey(key).key;
-            return manager.config.getResource(name) != null;
+            try {
+                manager.config.getResourceWithSubkey(key);
+                return true;
+            }
+            catch (e) {
+                return false;
+            }
         }
 
         /**
@@ -543,17 +548,13 @@ module RES {
          */
         @checkNull
         public getRes(resKey: string): any {
-            let {key, subkey} = manager.config.parseResKey(resKey);
-            let r = manager.config.getResource(key);
-            if (r) {
-                let processor = host.isSupport(r);
-                if (processor && processor.getData && subkey) {
-                    return processor.getData(host, r, key, subkey);
-                }
-                else {
-                    return host.get(r);
-                }
-
+            let {r, key, subkey} = manager.config.getResourceWithSubkey(resKey);
+            let processor = host.isSupport(r);
+            if (processor && processor.getData && subkey) {
+                return processor.getData(host, r, key, subkey);
+            }
+            else {
+                return host.get(r);
             }
         }
 
@@ -571,8 +572,7 @@ module RES {
         @checkCancelation
         public getResAsync(key: string, compFunc?: GetResAsyncCallback, thisObject?: any): Promise<any> | void {
             var paramKey = key;
-            var {key, subkey} = manager.config.parseResKey(key);
-            let r = manager.config.getResource(key, true);
+            var {r, subkey} = manager.config.getResourceWithSubkey(key);
             return manager.load(r).then(value => {
                 let processor = host.isSupport(r);
                 if (processor && processor.getData && subkey) {

@@ -73,7 +73,8 @@ declare module RES {
         resourceRoot: string;
         constructor();
         __temp__get__type__via__url(url_or_alias: string): string;
-        parseResKey(key: string): {
+        getResourceWithSubkey(key: string): {
+            r: ResourceInfo;
             key: string;
             subkey: string;
         };
@@ -953,7 +954,7 @@ declare module RES {
         /**
          * 检查配置文件里是否含有指定的资源
          * @method RES.hasRes
-         * @param key {string} 对应配置文件里的name属性或sbuKeys属性的一项。
+         * @param key {string} 对应配置文件里的name属性或subKeys属性的一项。
          * @returns {boolean}
          */
         hasRes(key: string): boolean;

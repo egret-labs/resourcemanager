@@ -152,7 +152,7 @@ module RES {
                 return null;
             }
             for (var paramKey of group) {
-                var {key, subkey} = manager.config.parseResKey(paramKey);
+                var {key, subkey} = manager.config.getResourceWithSubkey(paramKey);
                 let r = manager.config.getResource(key, true);
                 result.push(r);
                 // if (r) {
@@ -188,22 +188,25 @@ module RES {
             }
         }
 
-        public parseResKey(key: string) {
+        getResourceWithSubkey(key: string) {
             key = this.getKeyByAlias(key);
             let index = key.indexOf("#");
+            let subkey = "";
             if (index >= 0) {
-                return {
-                    key: key.substr(0, index),
-                    subkey: key.substr(index + 1)
-                }
+                subkey = key.substr(index + 1)
+                key = key.substr(0, index);
+
+            }
+            let r = this.getResource(key);
+            if (!r) {
+                let msg = subkey ? `${key}#${subkey}` : key;
+                throw new ResourceManagerError(2006, msg);
             }
             else {
                 return {
-                    key,
-                    subkey: ""
+                    r, key, subkey
                 }
             }
-
         }
 
 
