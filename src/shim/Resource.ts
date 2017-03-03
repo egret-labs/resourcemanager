@@ -301,7 +301,7 @@ module RES {
      * @platform Web,Native
      * @language zh_CN
      */
-    export function destroyRes(name: string, force?: boolean): boolean {
+    export function destroyRes(name: string, force?: boolean): Promise<boolean> {
         return instance.destroyRes(name, force);
     }
     /**
@@ -432,7 +432,6 @@ module RES {
      */
     export class Resource extends egret.EventDispatcher {
 
-        private loadedGroups: string[] = [];
         /**
          * 构造函数
 		 * @method RES.constructor
@@ -452,6 +451,7 @@ module RES {
         @upgrade.checkDecorator
         @checkCancelation
         public loadConfig(): Promise<void> {
+            native_init();
             return manager.init().then(data => {
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
             }, error => {
@@ -467,7 +467,8 @@ module RES {
 		 * @returns {boolean}
          */
         public isGroupLoaded(name: string): boolean {
-            return this.loadedGroups.indexOf(name) != -1;
+            let resources = manager.config.getGroupByName(name, true);
+            return resources.every(r => host.get(r) != null);
         }
         /**
          * 根据组名获取组加载项列表
@@ -475,7 +476,7 @@ module RES {
 		 * @param name {string}
 		 * @returns {Array<egret.ResourceItem>}
          */
-        public getGroupByName(name: string): Array<ResourceInfo> {
+        getGroupByName(name: string): Array<ResourceInfo> {
             return manager.config.getGroupByName(name, true); //这里不应该传入 true，但是为了老版本的 TypeScriptCompiler 兼容性，暂时这样做
         }
 
@@ -485,7 +486,7 @@ module RES {
 		 * @param name {string}
 		 * @param priority {number}
          */
-        public loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<any> {
+        loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<any> {
 
             let reporterDelegate = {
                 onProgress: (current, total) => {
@@ -509,6 +510,11 @@ module RES {
             return manager.load(resources, reporter);
         }
 
+        loadResources(keys: string[], reporter?: PromiseTaskReporter) {
+            let resources = keys.map(key => manager.config.getResource(key, true))
+            return manager.load(resources, reporter);
+        }
+
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
          * 可以监听ResourceEvent.CONFIG_COMPLETE事件来确认配置加载完成。
@@ -525,13 +531,12 @@ module RES {
         /**
          * 检查配置文件里是否含有指定的资源
 		 * @method RES.hasRes
-         * @param key {string} 对应配置文件里的name属性或sbuKeys属性的一项。
+         * @param key {string} 对应配置文件里的name属性或subKeys属性的一项。
 		 * @returns {boolean}
          */
         @checkNull
         public hasRes(key: string): boolean {
-            let name = manager.config.parseResKey(key).key;
-            return manager.config.getResource(name) != null;
+            return manager.config.getResourceWithSubkey(key) != null;
         }
 
         /**
@@ -542,9 +547,11 @@ module RES {
          */
         @checkNull
         public getRes(resKey: string): any {
-            let {key, subkey} = manager.config.parseResKey(resKey);
-            let r = manager.config.getResource(key);
-            if (r) {
+            let result = manager.config.getResourceWithSubkey(resKey);
+            if (result) {
+                let r = result.r;
+                let key = result.key;
+                let subkey = result.subkey;
                 let processor = host.isSupport(r);
                 if (processor && processor.getData && subkey) {
                     return processor.getData(host, r, key, subkey);
@@ -552,8 +559,11 @@ module RES {
                 else {
                     return host.get(r);
                 }
-
             }
+            else {
+                return null;
+            }
+
         }
 
         /**
@@ -570,8 +580,7 @@ module RES {
         @checkCancelation
         public getResAsync(key: string, compFunc?: GetResAsyncCallback, thisObject?: any): Promise<any> | void {
             var paramKey = key;
-            var {key, subkey} = manager.config.parseResKey(key);
-            let r = manager.config.getResource(key, true);
+            var {r, subkey} = manager.config.getResourceWithSubkey(key, true);
             return manager.load(r).then(value => {
                 let processor = host.isSupport(r);
                 if (processor && processor.getData && subkey) {
@@ -618,25 +627,22 @@ module RES {
          * @param force {boolean} 销毁一个资源组时其他资源组有同样资源情况资源是否会被删除，默认值true
 		 * @returns {boolean}
          */
-        public destroyRes(name: string, force: boolean = true): boolean {
+        public async destroyRes(name: string, force: boolean = true) {
             var group = manager.config.getGroup(name);
-
             let remove = (r: ResourceInfo) => {
-
-                host.unload(r);
-                // host.remove(r)
+                return host.unload(r);
             }
 
             if (group && group.length > 0) {
                 for (let item of group) {
-                    remove(item);
+                    await remove(item);
                 }
                 return true;
             }
             else {
                 let item = manager.config.getResource(name);
                 if (item) {
-                    remove(item);
+                    await remove(item);
                     return true;
                 }
                 else {
@@ -686,6 +692,7 @@ module RES {
 
 
 }
+
 
 
 

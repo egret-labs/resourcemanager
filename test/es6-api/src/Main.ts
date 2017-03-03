@@ -39,7 +39,24 @@ class Main extends egret.DisplayObjectContainer {
     private onAddToStage(event: egret.Event) {
 
 
-        let testNull = () => RES.getRes("");
+        let testNull = () => {
+
+
+
+            egret.setTimeout(() => {
+                egret.setTimeout(() => {
+                    let loader = new egret.URLLoader();
+                    loader.load(new egret.URLRequest("http://www.baidu.com"))
+                }, this, 500)
+                RES.createGroup("x", ["123412312"]);
+                RES.loadGroup("x");
+
+            }, this, 500)
+
+
+
+
+        };
 
         let testBitmapFont = () =>
             RES.getResAsync("assets/font/font.fnt").then(value => {
@@ -50,6 +67,10 @@ class Main extends egret.DisplayObjectContainer {
                 text.text = "0";
             });
         ;
+
+        let testGroupWithURL = () => {
+            RES.createGroup("group1", ["assets/bg.jpg"])
+        }
 
         let testSpriteSheet = () =>
             RES.getResAsync("assets/sheet/sheet1.json")
@@ -75,10 +96,6 @@ class Main extends egret.DisplayObjectContainer {
                 var sound: egret.Sound = value;
                 sound.play();
             })
-        let temp = () => {
-            // return RES.getResAsync("off")
-            return RES.loadGroup("preload");
-        }
 
         let testCreateAndDestoryResource = () => {
             let reporter = {
@@ -130,22 +147,23 @@ class Main extends egret.DisplayObjectContainer {
 
 
         RES.loadConfig()
-            .then(temp)
+            // .then(testGroupIsLoaded)
             // .then(testNull)
             // .then(testCreateAndDestoryResource)
             // .then(testLoadResByUrl)
             // .then(testBitmapFont)
             // .then(testNetworkDelay)
             // .then(testSpriteSheet)
-            // .then(testSoundByUrl)
-            // .then(testAnimationByUrl)
-            // .then(testPVR)
-            // .then(testDestroy)
-            .catch((e) => {
-                console.warn(e);
-                console.warn(e.stack)
-                // throw e;
-            });
+            .then(testGroupWithURL)
+        // .then(testSoundByUrl)
+        // .then(testAnimationByUrl)
+        // .then(testPVR)
+        // .then(testDestroy)
+        // .catch((e) => {
+        //     console.warn(e);
+        //     console.warn(e.stack)
+        //     // throw e;
+        // });
     }
 
 

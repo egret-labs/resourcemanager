@@ -74,10 +74,6 @@ declare module RES {
         resourceRoot: string;
         constructor();
         __temp__get__type__via__url(url_or_alias: string): string;
-        parseResKey(key: string): {
-            key: string;
-            subkey: string;
-        };
         getKeyByAlias(aliasName: string): string;
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
@@ -544,6 +540,8 @@ declare module RES {
         let checkDecorator: MethodDecorator;
     }
 }
+declare namespace RES {
+}
 declare module RES {
     type GetResAsyncCallback = (value?: any, key?: string) => any;
     /**
@@ -788,7 +786,7 @@ declare module RES {
      * @platform Web,Native
      * @language zh_CN
      */
-    function destroyRes(name: string, force?: boolean): boolean;
+    function destroyRes(name: string, force?: boolean): Promise<boolean>;
     /**
      * Sets the maximum number of concurrent load threads, the default value is 2.
      * @param thread The number of concurrent loads to be set.
@@ -903,7 +901,6 @@ declare module RES {
      * @private
      */
     class Resource extends egret.EventDispatcher {
-        private loadedGroups;
         /**
          * 构造函数
          * @method RES.constructor
@@ -940,6 +937,7 @@ declare module RES {
          */
         loadGroup(name: string, priority?: number, reporter?: PromiseTaskReporter): Promise<any>;
         private _loadGroup(name, priority?, reporter?);
+        loadResources(keys: string[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]>;
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
          * 可以监听ResourceEvent.CONFIG_COMPLETE事件来确认配置加载完成。
@@ -953,7 +951,7 @@ declare module RES {
         /**
          * 检查配置文件里是否含有指定的资源
          * @method RES.hasRes
-         * @param key {string} 对应配置文件里的name属性或sbuKeys属性的一项。
+         * @param key {string} 对应配置文件里的name属性或subKeys属性的一项。
          * @returns {boolean}
          */
         hasRes(key: string): boolean;
@@ -989,7 +987,7 @@ declare module RES {
          * @param force {boolean} 销毁一个资源组时其他资源组有同样资源情况资源是否会被删除，默认值true
          * @returns {boolean}
          */
-        destroyRes(name: string, force?: boolean): boolean;
+        destroyRes(name: string, force?: boolean): Promise<boolean>;
         /**
          * 设置最大并发加载线程数量，默认值是2.
          * @method RES.setMaxLoadingThread

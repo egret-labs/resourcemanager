@@ -28,7 +28,8 @@ namespace original {
 let projectRoot;
 
 
-export async function build(p: string) {
+export async function build(p: string, format: "json" | "text") {
+
 
     let result = await ResourceConfig.init(p);
     ResourceConfig.typeSelector = result.typeSelector;
@@ -113,7 +114,11 @@ export async function convertResourceJson(projectRoot: string) {
                 }
             }
             else {
-                if (typeof file != "string") {
+
+                if (!file) {
+                    //todo warning
+                }
+                else if (typeof file != "string") {
                     file[resource_custom_key] = r[resource_custom_key];
                 }
                 else {

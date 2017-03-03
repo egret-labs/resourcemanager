@@ -17,15 +17,20 @@ let handleExceiption = (e: string | Error) => {
     }
 }
 
-var command = process.argv[2];
-var p = getProjectPath(process.argv[3]);
+const format = process.argv.indexOf("-json") >= 0 ? "json" : "text";
+
+let command = process.argv[2];
+let p = getProjectPath(process.argv[3]);
 if (p && fs.existsSync(path.join(p, "egretProperties.json"))) {
     switch (command) {
         case "upgrade":
             res.upgrade.run(p).catch(handleExceiption)
             break;
         case "build":
-            res.build.build(p).catch(handleExceiption)
+            res.build.build(p, format).catch(handleExceiption)
+            break;
+        case "watch":
+            res.watch.watch(p, format).catch(handleExceiption)
             break;
         default:
             handleExceiption(`找不到指定的命令{command}`)

@@ -8,8 +8,12 @@ import * as _config from './config';
 import * as _build from './build';
 import * as _upgrade from './upgrade';
 import * as vfs from './FileSystem'
+import * as _watch from './watch';
 
 export var config = _config;
+export var build = _build;
+export var upgrade = _upgrade;
+export var watch = _watch;
 
 
 
@@ -22,11 +26,11 @@ export interface Data {
 
     resources: vfs.Dictionary,
 
-    groups?: {
+    groups: {
         [groupName: string]: string[]
     },
 
-    alias?: {
+    alias: {
         [aliasName: string]: string
     }
 
@@ -58,7 +62,7 @@ export namespace ResourceConfig {
         vfs.addFile(r);
     }
 
-    export function getFile(filename: string): vfs.File {
+    export function getFile(filename: string): vfs.File | undefined {
         return vfs.getFile(filename);
     }
 
@@ -67,22 +71,10 @@ export namespace ResourceConfig {
         typeSelector = result.typeSelector;
         resourcePath = path.resolve(projectPath, result.resourceRoot);
         let filename = path.resolve(process.cwd(), projectPath, result.resourceRoot, result.resourceConfigFileName);;
-        let data: Data;
-        try {
-            data = await fs.readJSONAsync(filename);
-            data.resources = {};
-        }
-        catch (e) {
-            console.warn(`未找到${filename},将为您自动创建`)
-            data = { alias: {}, groups: {}, resources: {} };
-        }
-        vfs.init(data.resources);
-        config = data;
+        config = { alias: {}, groups: {}, resources: {} };
+        vfs.init(config.resources);
         return result;
 
     }
 }
 
-export var build = _build;
-
-export var upgrade = _upgrade;

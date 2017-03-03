@@ -65,8 +65,15 @@ function testNetworkDelay() {
 
             RES.processor.map("sheet", RES.processor.SheetProcessor);
         });
+}
 
-
-
-
+function testGroupIsLoaded() {
+    console.log(RES.isGroupLoaded("preload"));
+    return RES.loadGroup("preload").then(() => {
+        console.log(RES.isGroupLoaded("preload"));
+    }).then(() => {
+        return RES.destroyRes("preload")
+    }).then(() => {
+        console.log(RES.isGroupLoaded("preload"));
+    })
 }

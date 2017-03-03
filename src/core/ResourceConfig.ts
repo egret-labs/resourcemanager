@@ -156,7 +156,7 @@ module RES {
                 return null;
             }
             for (var paramKey of group) {
-                var {key, subkey} = manager.config.parseResKey(paramKey);
+                var {key, subkey} = manager.config.getResourceWithSubkey(paramKey, true);
                 let r = manager.config.getResource(key, true);
                 result.push(r);
                 // if (r) {
@@ -191,23 +191,44 @@ module RES {
                 return "unknown";
             }
         }
+        /**
+         * @internal
+         */
+        getResourceWithSubkey(key: string): { r: ResourceInfo, key: string, subkey: string } | null
+        /**
+         * @internal
+         */
+        getResourceWithSubkey(key: string, shouldNotBeNull: true): { r: ResourceInfo, key: string, subkey: string }
+        /**
+         * @internal
+         */
+        getResourceWithSubkey(key: string, shouldNotBeNull: false): { r: ResourceInfo, key: string, subkey: string } | null
 
-        public parseResKey(key: string) {
+        getResourceWithSubkey(key: string, shouldNotBeNull?: boolean): { r: ResourceInfo, key: string, subkey: string } | null {
             key = this.getKeyByAlias(key);
             let index = key.indexOf("#");
+            let subkey = "";
             if (index >= 0) {
-                return {
-                    key: key.substr(0, index),
-                    subkey: key.substr(index + 1)
+                subkey = key.substr(index + 1)
+                key = key.substr(0, index);
+
+            }
+            let r = this.getResource(key);
+            if (!r) {
+                if (shouldNotBeNull) {
+                    let msg = subkey ? `${key}#${subkey}` : key;
+                    throw new ResourceManagerError(2006, msg);
                 }
+                else {
+                    return null;
+                }
+
             }
             else {
                 return {
-                    key,
-                    subkey: ""
+                    r, key, subkey
                 }
             }
-
         }
 
 
@@ -281,12 +302,8 @@ module RES {
                     let groupInfo = this.config.groups[key];
                     group = group.concat(groupInfo);
                 }
-                else if (this.config.alias[key] || this.config.resources[key]) {
-                    group = group.concat(key);
-                }
                 else {
                     group = group.concat(key);
-                    console.warn(`resource not exist : ${key}`);
                 }
             }
 

@@ -37,6 +37,12 @@ module RES.processor {
         })
     }
 
+    function getURL(resource: ResourceInfo) {
+        let prefix = resource.extra ? "" : resourceRoot;
+        let url = prefix + resource.url;
+        return RES.getRealURL(url);
+    }
+
 
     export function getRelativePath(url: string, file: string): string {
         url = url.split("\\").join("/");
@@ -63,8 +69,7 @@ module RES.processor {
 
         async onLoadStart(host, resource) {
             var loader = new egret.ImageLoader();
-            let prefix = resource.extra ? "" : resourceRoot;
-            loader.load(prefix + resource.url);
+            loader.load(getURL(resource));
             var bitmapData = await promisify(loader, resource);
             // if (!cache[resource.url]){
             //     cache[resource.url] = new egret.Texture();
@@ -96,8 +101,7 @@ module RES.processor {
 
             var request: egret.HttpRequest = new egret.HttpRequest();
             request.responseType = egret.HttpResponseType.ARRAY_BUFFER;
-            let prefix = resource.extra ? "" : resourceRoot;
-            request.open(prefix + resource.url, "get");
+            request.open(getURL(resource), "get");
             request.send();
             let arraybuffer = await promisify(request, resource);
             return arraybuffer;
@@ -116,8 +120,7 @@ module RES.processor {
 
             var request: egret.HttpRequest = new egret.HttpRequest();
             request.responseType = egret.HttpResponseType.TEXT;
-            let prefix = resource.extra ? "" : resourceRoot;
-            request.open(prefix + resource.url, "get");
+            request.open(getURL(resource), "get");
             request.send();
             let text = await promisify(request, resource);
             return text;
@@ -292,9 +295,8 @@ module RES.processor {
 
     export var SoundProcessor: Processor = {
         async onLoadStart(host, resource) {
-            let prefix = resource.extra ? "" : resourceRoot;
             var sound: egret.Sound = new egret.Sound();
-            sound.load(prefix + resource.url);
+            sound.load(getURL(resource));
             await promisify(sound, resource);
             return sound;
         },

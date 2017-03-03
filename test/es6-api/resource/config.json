@@ -1,7 +1,5 @@
 {
 	"alias": {
-		"bg_jpg": "assets/bg.jpg",
-		"egret_icon_png": "assets/egret_icon.png",
 		"sheet_png": "assets/sheet/sheet.png",
 		"sheet_json": "assets/sheet/sheet.json",
 		"off": "assets/sheet/sheet.json#off",
@@ -44,6 +42,10 @@
 			"sound": {
 				"sound_go.mp3": "assets/sound/sound_go.mp3"
 			}
+		},
+		"sheet_png": {
+			"url": "assets/sheet/sheet.png",
+			"type": "image"
 		}
 	}
 }

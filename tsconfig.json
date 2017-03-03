@@ -10,7 +10,9 @@
         "strictNullChecks": true,
         "sourceMap": false,
         "lib": [
-            "es5","dom","es2015.promise"
+            "es5",
+            "dom",
+            "es2015.promise"
         ]
     },
     "files": [
@@ -22,6 +24,7 @@
         "src/shim/ResourceEvent.ts",
         "src/shim/ResourceItem.ts",
         "src/DEBUG.ts",
+        "src/shim/native.ts",
         "src/shim/Resource.ts",
         "libs/egret.d.ts",
         "libs/game.d.ts"
