@@ -73,11 +73,6 @@ declare module RES {
         resourceRoot: string;
         constructor();
         __temp__get__type__via__url(url_or_alias: string): string;
-        getResourceWithSubkey(key: string): {
-            r: ResourceInfo;
-            key: string;
-            subkey: string;
-        };
         getKeyByAlias(aliasName: string): string;
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。

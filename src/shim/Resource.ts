@@ -536,13 +536,7 @@ module RES {
          */
         @checkNull
         public hasRes(key: string): boolean {
-            try {
-                manager.config.getResourceWithSubkey(key);
-                return true;
-            }
-            catch (e) {
-                return false;
-            }
+            return manager.config.getResourceWithSubkey(key) != null;
         }
 
         /**
@@ -553,14 +547,23 @@ module RES {
          */
         @checkNull
         public getRes(resKey: string): any {
-            let {r, key, subkey} = manager.config.getResourceWithSubkey(resKey);
-            let processor = host.isSupport(r);
-            if (processor && processor.getData && subkey) {
-                return processor.getData(host, r, key, subkey);
+            let result = manager.config.getResourceWithSubkey(resKey);
+            if (result) {
+                let r = result.r;
+                let key = result.key;
+                let subkey = result.subkey;
+                let processor = host.isSupport(r);
+                if (processor && processor.getData && subkey) {
+                    return processor.getData(host, r, key, subkey);
+                }
+                else {
+                    return host.get(r);
+                }
             }
             else {
-                return host.get(r);
+                return null;
             }
+
         }
 
         /**
@@ -577,7 +580,7 @@ module RES {
         @checkCancelation
         public getResAsync(key: string, compFunc?: GetResAsyncCallback, thisObject?: any): Promise<any> | void {
             var paramKey = key;
-            var {r, subkey} = manager.config.getResourceWithSubkey(key);
+            var {r, subkey} = manager.config.getResourceWithSubkey(key, true);
             return manager.load(r).then(value => {
                 let processor = host.isSupport(r);
                 if (processor && processor.getData && subkey) {

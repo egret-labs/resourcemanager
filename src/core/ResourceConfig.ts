@@ -152,7 +152,7 @@ module RES {
                 return null;
             }
             for (var paramKey of group) {
-                var {key, subkey} = manager.config.getResourceWithSubkey(paramKey);
+                var {key, subkey} = manager.config.getResourceWithSubkey(paramKey, true);
                 let r = manager.config.getResource(key, true);
                 result.push(r);
                 // if (r) {
@@ -187,8 +187,20 @@ module RES {
                 return "unknown";
             }
         }
+        /**
+         * @internal
+         */
+        getResourceWithSubkey(key: string): { r: ResourceInfo, key: string, subkey: string } | null
+        /**
+         * @internal
+         */
+        getResourceWithSubkey(key: string, shouldNotBeNull: true): { r: ResourceInfo, key: string, subkey: string }
+        /**
+         * @internal
+         */
+        getResourceWithSubkey(key: string, shouldNotBeNull: false): { r: ResourceInfo, key: string, subkey: string } | null
 
-        getResourceWithSubkey(key: string) {
+        getResourceWithSubkey(key: string, shouldNotBeNull?: boolean): { r: ResourceInfo, key: string, subkey: string } | null {
             key = this.getKeyByAlias(key);
             let index = key.indexOf("#");
             let subkey = "";
@@ -199,8 +211,14 @@ module RES {
             }
             let r = this.getResource(key);
             if (!r) {
-                let msg = subkey ? `${key}#${subkey}` : key;
-                throw new ResourceManagerError(2006, msg);
+                if (shouldNotBeNull) {
+                    let msg = subkey ? `${key}#${subkey}` : key;
+                    throw new ResourceManagerError(2006, msg);
+                }
+                else {
+                    return null;
+                }
+
             }
             else {
                 return {

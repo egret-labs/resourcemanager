@@ -199,7 +199,7 @@ var RES;
             }
             for (var _i = 0, group_1 = group; _i < group_1.length; _i++) {
                 var paramKey = group_1[_i];
-                var _a = RES.manager.config.getResourceWithSubkey(paramKey), key = _a.key, subkey = _a.subkey;
+                var _a = RES.manager.config.getResourceWithSubkey(paramKey, true), key = _a.key, subkey = _a.subkey;
                 var r = RES.manager.config.getResource(key, true);
                 result.push(r);
             }
@@ -226,7 +226,7 @@ var RES;
                 return "unknown";
             }
         };
-        ResourceConfig.prototype.getResourceWithSubkey = function (key) {
+        ResourceConfig.prototype.getResourceWithSubkey = function (key, shouldNotBeNull) {
             key = this.getKeyByAlias(key);
             var index = key.indexOf("#");
             var subkey = "";
@@ -236,8 +236,13 @@ var RES;
             }
             var r = this.getResource(key);
             if (!r) {
-                var msg = subkey ? key + "#" + subkey : key;
-                throw new RES.ResourceManagerError(2006, msg);
+                if (shouldNotBeNull) {
+                    var msg = subkey ? key + "#" + subkey : key;
+                    throw new RES.ResourceManagerError(2006, msg);
+                }
+                else {
+                    return null;
+                }
             }
             else {
                 return {
@@ -2189,13 +2194,7 @@ var RES;
          * @returns {boolean}
          */
         Resource.prototype.hasRes = function (key) {
-            try {
-                RES.manager.config.getResourceWithSubkey(key);
-                return true;
-            }
-            catch (e) {
-                return false;
-            }
+            return RES.manager.config.getResourceWithSubkey(key) != null;
         };
         /**
          * 通过key同步获取资源
@@ -2204,18 +2203,26 @@ var RES;
          * @returns {any}
          */
         Resource.prototype.getRes = function (resKey) {
-            var _a = RES.manager.config.getResourceWithSubkey(resKey), r = _a.r, key = _a.key, subkey = _a.subkey;
-            var processor = RES.host.isSupport(r);
-            if (processor && processor.getData && subkey) {
-                return processor.getData(RES.host, r, key, subkey);
+            var result = RES.manager.config.getResourceWithSubkey(resKey);
+            if (result) {
+                var r = result.r;
+                var key = result.key;
+                var subkey = result.subkey;
+                var processor_2 = RES.host.isSupport(r);
+                if (processor_2 && processor_2.getData && subkey) {
+                    return processor_2.getData(RES.host, r, key, subkey);
+                }
+                else {
+                    return RES.host.get(r);
+                }
             }
             else {
-                return RES.host.get(r);
+                return null;
             }
         };
         Resource.prototype.getResAsync = function (key, compFunc, thisObject) {
             var paramKey = key;
-            var _a = RES.manager.config.getResourceWithSubkey(key), r = _a.r, subkey = _a.subkey;
+            var _a = RES.manager.config.getResourceWithSubkey(key, true), r = _a.r, subkey = _a.subkey;
             return RES.manager.load(r).then(function (value) {
                 var processor = RES.host.isSupport(r);
                 if (processor && processor.getData && subkey) {
