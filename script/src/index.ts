@@ -62,7 +62,7 @@ export namespace ResourceConfig {
         vfs.addFile(r);
     }
 
-    export function getFile(filename: string): vfs.File {
+    export function getFile(filename: string): vfs.File | undefined {
         return vfs.getFile(filename);
     }
 

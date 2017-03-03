@@ -35,15 +35,17 @@ export function addFile(r: File) {
         mkdir(folder);
     }
     let d = reslove(folder);
-    if (!type) {
-        d[basefilename] = url;
-    }
-    else {
-        d[basefilename] = { url, type };
+    if (d) {
+        if (!type) {
+            d[basefilename] = url;
+        }
+        else {
+            d[basefilename] = { url, type };
+        }
     }
 }
 
-export function getFile(filename: string): File {
+export function getFile(filename: string): File | undefined {
     return reslove(filename) as File;
 }
 
@@ -68,6 +70,9 @@ function reslove(dirpath: string) {
     let current: File | Dictionary = root;
     for (let f of list) {
         current = current[f];
+        if (!current) {
+            return null;
+        }
     }
     return current;
 }

@@ -3,12 +3,13 @@
 		{
 			"name": "sheet_png",
 			"type": "image",
-			"url": "assets/sheet/sheet.png"
+			"url": "assets/sheet/sheet.png",
+			"custom":"22222"
 		},
 		{
 			"name": "sheet_json",
 			"type": "sheet",
-			"url": "assets/sheet/sheet1.json",
+			"url": "assets/sheet/sheet.json",
 			"subkeys": "off,on"
 		}
 	],

@@ -114,7 +114,11 @@ export async function convertResourceJson(projectRoot: string) {
                 }
             }
             else {
-                if (typeof file != "string") {
+
+                if (!file) {
+                    //todo warning
+                }
+                else if (typeof file != "string") {
                     file[resource_custom_key] = r[resource_custom_key];
                 }
                 else {

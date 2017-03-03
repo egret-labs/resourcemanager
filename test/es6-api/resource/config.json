@@ -1,9 +1,9 @@
 {
 	"alias": {
 		"sheet_png": "assets/sheet/sheet.png",
-		"sheet_json": "assets/sheet/sheet1.json",
-		"off": "assets/sheet/sheet1.json#off",
-		"on": "assets/sheet/sheet1.json#on"
+		"sheet_json": "assets/sheet/sheet.json",
+		"off": "assets/sheet/sheet.json#off",
+		"on": "assets/sheet/sheet.json#on"
 	},
 	"groups": {
 		"preload": [
@@ -42,6 +42,10 @@
 			"sound": {
 				"sound_go.mp3": "assets/sound/sound_go.mp3"
 			}
+		},
+		"sheet_png": {
+			"url": "assets/sheet/sheet.png",
+			"type": "image"
 		}
 	}
 }
