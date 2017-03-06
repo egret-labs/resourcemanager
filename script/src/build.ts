@@ -157,7 +157,7 @@ namespace merge {
                 merge.path = f;
                 let type = ResourceConfig.typeSelector(f);
                 if (!type) {
-                    throw new Error(`missing merge type : ${merge}`);
+                    throw new Error(`missing merge type : ${merge.path}`);
                 }
                 if (!mergeCollection[mergeFile]) {
                     mergeCollection[mergeFile] = [];
@@ -169,8 +169,6 @@ namespace merge {
     }
 
     export function output() {
-
-
         for (let mergeFile in mergeCollection) {
             let outputJson = {};
             let sourceFiles = mergeCollection[mergeFile];
