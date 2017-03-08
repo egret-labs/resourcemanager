@@ -113,3 +113,40 @@ RES.mapConfig("config.json",()=>"resource",(path)=>{
     * 有部分文件存在同样的扩展名，却表示为不同的类型，（ 如 JSON 有可能是 json , movieclip , sheet 等多种类型 ），请检查自己的判断函数是正确的
 
 
+## 常见问题
+
+#### 老项目升级到 ResourceManager 后，所有的合并纹理都无法正常使用了
+
+请检查您的合图纹理的配置文件 ( 以下简称 sheet.json ) 在执行了 RES.mapConfig() 的第三个参数所对应的函数后，返回类型为 sheet 
+
+一种常见的错误是，形如为 ``` assets/bigimage/image.json ``` 的 sheet 文件无法被
+
+```
+@RES.mapConfig("config.json", () => "resource", path => {
+    var ext = path.substr(path.lastIndexOf(".") + 1);
+    var typeMap = {
+        "jpg": "image",
+        "png": "image",
+        "webp": "image",
+        "json": "json",
+        "fnt": "font",
+        "pvr": "pvr",
+        "mp3": "sound"
+    }
+    var type = typeMap[ext];
+    if (type == "json") {
+        if (path.indexOf("sheet") >= 0) { // 修改为 path.indexOf("/bigimage/") >= 0
+            type = "sheet";
+        } else if (path.indexOf("movieclip") >= 0) {
+            type = "movieclip";
+        };
+    }
+    return type;
+})
+```
+这段逻辑解析为 json，需要将其逻辑按照注释所示进行修改
+
+
+#### ResourceManager 与 EUI 模块存在冲突
+
+> todo
