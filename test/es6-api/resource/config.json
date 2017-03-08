@@ -42,10 +42,6 @@
 			"sound": {
 				"sound_go.mp3": "assets/sound/sound_go.mp3"
 			}
-		},
-		"sheet_png": {
-			"url": "assets/sheet/sheet.png",
-			"type": "image"
 		}
 	}
 }
