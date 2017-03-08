@@ -119,7 +119,7 @@ RES.mapConfig("config.json",()=>"resource",(path)=>{
 
 请检查您的合图纹理的配置文件 ( 以下简称 sheet.json ) 在执行了 RES.mapConfig() 的第三个参数所对应的函数后，返回类型为 sheet 
 
-一种常见的错误是，形如为 ``` assets/bigimage/image.json ``` 的 sheet 文件无法被
+一种常见的错误是，形如为 ``` assets/bigimage/image.json ``` 的 sheet 文件无法被下述逻辑解析为 json，需要将其逻辑按照注释所示进行修改
 
 ```
 @RES.mapConfig("config.json", () => "resource", path => {
@@ -144,7 +144,7 @@ RES.mapConfig("config.json",()=>"resource",(path)=>{
     return type;
 })
 ```
-这段逻辑解析为 json，需要将其逻辑按照注释所示进行修改
+
 
 
 #### ResourceManager 与 EUI 模块存在冲突
