@@ -37,17 +37,80 @@ export interface Data {
 }
 
 
-export var data: Data;
+export interface GeneratedDictionary {
 
-export function print() {
-    console.log(data);
+    [file: string]: GeneratedFile | GeneratedDictionary
+
 }
 
+export type GeneratedFile = string | vfs.File;
+
+export interface GeneratedData {
+
+    resources: GeneratedDictionary
+
+    groups: {
+        [groupName: string]: string[]
+    },
+
+    alias: {
+        [aliasName: string]: string
+    }
+
+}
 
 export namespace ResourceConfig {
 
-    export function getConfig(): Data {
+    export function getConfig() {
         return config;
+    }
+
+    export function generateConfig(): GeneratedData {
+        let loop = (r: GeneratedDictionary) => {
+            for (var key in r) {
+                var f = r[key];
+                if (isFile(f)) {
+                    if (typeof (f) != "string") {
+
+                        if (ResourceConfig.typeSelector(f.url) == f.type) {
+
+                            r[key] = f.url;
+                        }
+                    }
+
+
+                    // if (typeof f === 'string') {
+                    //     f = { url: f, name: p };
+                    //     r[key] = f;
+                    // }
+                    // else {
+                    //     f['name'] = p;
+                    // }
+                }
+                else {
+                    loop(f);
+                }
+
+            }
+        }
+
+        let isFile = (r: GeneratedDictionary[keyof GeneratedDictionary]): r is GeneratedFile => {
+            if (r['url']) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        let generatedData: GeneratedDictionary = JSON.parse(JSON.stringify(config.resources));
+        loop(generatedData);
+        let result: GeneratedData = {
+            alias: config.alias,
+            groups: config.groups,
+            resources: generatedData
+        }
+        return result;
     }
 
     var config: Data;
@@ -57,12 +120,6 @@ export namespace ResourceConfig {
     var resourcePath: string;
 
     export function addFile(r) {
-
-        var f = r.url;
-        var ext = f.substr(f.lastIndexOf(".") + 1);
-        if (r.type == typeSelector(r.name)) {
-            r.type = "";
-        }
         vfs.addFile(r);
     }
 

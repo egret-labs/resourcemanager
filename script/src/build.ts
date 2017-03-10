@@ -1,4 +1,4 @@
-import { Data, ResourceConfig } from './';
+import { Data, ResourceConfig, GeneratedData } from './';
 import * as c from './config';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
@@ -62,10 +62,11 @@ export async function build(p: string, format: "json" | "text") {
     files.filter(a => a).forEach(element => ResourceConfig.addFile(element));
     let config = ResourceConfig.getConfig();
     await convertResourceJson(projectRoot, config);
-    await updateResourceConfigFileContent(filename, config);
+    await updateResourceConfigFileContent(filename);
 }
 
-export async function updateResourceConfigFileContent(filename: string, config: Data) {
+export async function updateResourceConfigFileContent(filename: string) {
+    let config = ResourceConfig.generateConfig();
     let content = JSON.stringify(config, null, "\t");
     await fs.writeFileAsync(filename, content, "utf-8");
     return content;
@@ -87,11 +88,8 @@ export async function convertResourceJson(projectRoot: string, config: Data) {
         config.alias[r.name] = r.url;
 
         let file = ResourceConfig.getFile(r.url);
-        console.log(file);
-        console.log(r.type);
-        console.log('-------')
         for (var resource_custom_key in r) {
-            if (resource_custom_key == "url" || resource_custom_key == "type" || resource_custom_key == "name") {
+            if (resource_custom_key == "url" || resource_custom_key == "name") {
                 continue;
             }
             else if (resource_custom_key == "subkeys") {
@@ -107,11 +105,9 @@ export async function convertResourceJson(projectRoot: string, config: Data) {
                 if (!file) {
                     //todo warning
                 }
-                else if (typeof file != "string") {
-                    file[resource_custom_key] = r[resource_custom_key];
-                }
                 else {
-                    console.warn(`missing properties ${resource_custom_key} in ${file}`)
+                    // 包含 type 在内的自定义属性
+                    file[resource_custom_key] = r[resource_custom_key];
                 }
             }
 
@@ -120,4 +116,5 @@ export async function convertResourceJson(projectRoot: string, config: Data) {
     for (let group of resourceJson.groups) {
         config.groups[group.name] = group.keys.split(",");
     }
+
 }

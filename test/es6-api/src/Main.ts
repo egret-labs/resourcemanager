@@ -63,8 +63,9 @@ class Main extends egret.DisplayObjectContainer {
             });
         ;
 
-        let testGroupWithURL = () => {
-            RES.createGroup("group1", ["assets/bg.jpg"])
+        let testGroupWithURL = async () => {
+            let data = await RES.getResAsync("assets/sheet/sheet.json");
+            // RES.createGroup("group1", ["assets/bg.jpg"])
         }
 
         let testSpriteSheet = () =>
