@@ -60,19 +60,19 @@ export async function build(p: string, format: "json" | "text") {
     let list = await utils.walk(resourcePath, () => true, option);
     let files = await Promise.all(list.map(executeFilter));
     files.filter(a => a).forEach(element => ResourceConfig.addFile(element));
-
-    await convertResourceJson(projectRoot);
-    await updateResourceConfigFileContent(filename);
+    let config = ResourceConfig.getConfig();
+    await convertResourceJson(projectRoot, config);
+    await updateResourceConfigFileContent(filename, config);
 }
 
-export async function updateResourceConfigFileContent(filename: string) {
-    let content = JSON.stringify(ResourceConfig.config, null, "\t");
+export async function updateResourceConfigFileContent(filename: string, config: Data) {
+    let content = JSON.stringify(config, null, "\t");
     await fs.writeFileAsync(filename, content, "utf-8");
     return content;
 }
 
 
-export async function convertResourceJson(projectRoot: string) {
+export async function convertResourceJson(projectRoot: string, config: Data) {
 
     let filename = path.join(projectRoot, "resource/default.res.json");
     if (!fs.existsSync(filename)) {
@@ -81,7 +81,6 @@ export async function convertResourceJson(projectRoot: string) {
     if (!fs.existsSync(filename)) {
         return;
     }
-    let config = ResourceConfig.config;
     let resourceJson: original.Info = await fs.readJSONAsync(filename);
     // let resourceJson: original.Info = await fs.readJSONAsync(resourceJsonPath);
     for (let r of resourceJson.resources) {
@@ -121,6 +120,4 @@ export async function convertResourceJson(projectRoot: string) {
     for (let group of resourceJson.groups) {
         config.groups[group.name] = group.keys.split(",");
     }
-
-    return ResourceConfig.config;
 }

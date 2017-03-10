@@ -46,7 +46,11 @@ export function print() {
 
 export namespace ResourceConfig {
 
-    export var config: Data;
+    export function getConfig(): Data {
+        return config;
+    }
+
+    var config: Data;
 
     export var typeSelector: (path: string) => string;
 
