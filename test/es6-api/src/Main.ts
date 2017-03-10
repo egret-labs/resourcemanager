@@ -13,13 +13,13 @@
         "mp3": "sound"
     }
     var type = typeMap[ext];
-    if (type == "json") {
-        if (path.indexOf("sheet") >= 0) {
-            type = "sheet";
-        } else if (path.indexOf("movieclip") >= 0) {
-            type = "movieclip";
-        };
-    }
+    // if (type == "json") {
+    //     if (path.indexOf("sheet") >= 0) {
+    //         type = "sheet";
+    //     } else if (path.indexOf("movieclip") >= 0) {
+    //         type = "movieclip";
+    //     };
+    // }
     return type;
 })
 class Main extends egret.DisplayObjectContainer {

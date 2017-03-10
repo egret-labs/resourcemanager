@@ -40,7 +40,6 @@ export async function build(p: string, format: "json" | "text") {
 
     let executeFilter = async (f) => {
 
-        let config = ResourceConfig.config;
         var ext = f.substr(f.lastIndexOf(".") + 1);
         let type = ResourceConfig.typeSelector(f);
         if (type) {
@@ -70,19 +69,7 @@ export async function updateResourceConfigFileContent(filename: string) {
     let content = JSON.stringify(ResourceConfig.config, null, "\t");
     await fs.writeFileAsync(filename, content, "utf-8");
     return content;
-    // var c = ResourceConfig.config;
-    // let content = await updateResourceConfigFileContent_2(filename, "exports.resources", c.resources);
-    // content = await updateResourceConfigFileContent_2(filename, "exports.groups", c.groups);
-    // content = await updateResourceConfigFileContent_2(filename, "exports.alias", c.alias);
-    // return content;
 }
-
-async function updateResourceConfigFileContent_2(filename, matcher, data) {
-    let content = await c.publish(filename, matcher, data);
-    await fs.writeFileAsync(filename, content, "utf-8");
-    return content;
-}
-
 
 
 export async function convertResourceJson(projectRoot: string) {
@@ -101,6 +88,9 @@ export async function convertResourceJson(projectRoot: string) {
         config.alias[r.name] = r.url;
 
         let file = ResourceConfig.getFile(r.url);
+        console.log(file);
+        console.log(r.type);
+        console.log('-------')
         for (var resource_custom_key in r) {
             if (resource_custom_key == "url" || resource_custom_key == "type" || resource_custom_key == "name") {
                 continue;

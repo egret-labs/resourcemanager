@@ -3,8 +3,7 @@
 		{
 			"name": "sheet_png",
 			"type": "image",
-			"url": "assets/sheet/sheet.png",
-			"custom":"22222"
+			"url": "assets/sheet/sheet.png"
 		},
 		{
 			"name": "sheet_json",
