@@ -1,9 +1,13 @@
+import * as vfs from 'vinyl-fs';
+import * as VinylFile from 'vinyl';
 import { Data, ResourceConfig, GeneratedData } from './';
 import * as c from './config';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 import * as merger from './merger';
+var map = require('map-stream');
+var crc32 = require("crc32");
 
 namespace original {
 
@@ -27,11 +31,9 @@ namespace original {
 }
 
 let projectRoot;
-let resourcePath;
+let resourceFolder;
 
-
-export async function build(p: string, format: "json" | "text") {
-
+export async function publish(p: string, format: "json" | "text") {
 
     let result = await ResourceConfig.init(p);
     ResourceConfig.typeSelector = result.typeSelector;
@@ -41,33 +43,43 @@ export async function build(p: string, format: "json" | "text") {
 
     let executeFilter = async (f) => {
 
-
         var ext = f.substr(f.lastIndexOf(".") + 1);
         merger.walk(f)
         let type = ResourceConfig.typeSelector(f);
-
-        if (type) {
-            return { name: f, url: f, type };
-        }
+        return { name: f, url: f, type };
 
     }
 
     projectRoot = p;
-    resourcePath = path.join(projectRoot, result.resourceRoot);
-    merger.init(resourcePath);
-    let filename = path.join(resourcePath, result.resourceConfigFileName);
+    resourceFolder = path.join(projectRoot, result.resourceRoot);
+
+    merger.init(resourceFolder);
+
 
     let option: utils.walk.WalkOptions = {
         relative: true,
         ignoreHiddenFile: true
     }
 
-    let list = await utils.walk(resourcePath, () => true, option);
-    let files = await Promise.all(list.map(executeFilter));
-    files.filter(a => a).forEach(element => ResourceConfig.addFile(element));
+
+    let convert = (file: VinylFile, cb) => {
+        file.path = file.base + "/" + crc32(file.contents);
+        cb(null, file);
+    };
+
+    let list = await utils.walk(resourceFolder, () => true, option);
+    let files = (await Promise.all(list.map(executeFilter))).filter(a => a.type);
+    //  let outputFolder = path.join(projectRoot, "resource-publish");
+    // vfs.src(files.map(f => f.url), { cwd: resourceFolder, base: resourceFolder })
+    //     .pipe(map(convert))
+    //     .pipe(vfs.dest(outputFolder))
+    files.forEach(element => ResourceConfig.addFile(element));
     let config = ResourceConfig.getConfig();
     await convertResourceJson(projectRoot, config);
+    let filename = path.join(resourceFolder, result.resourceConfigFileName);
     await updateResourceConfigFileContent(filename);
+
+    // await updateResourceConfigFileContent(path.join(outputFolder, result.resourceConfigFileName));
 
     merger.output();
 }
@@ -75,6 +87,7 @@ export async function build(p: string, format: "json" | "text") {
 export async function updateResourceConfigFileContent(filename: string) {
     let config = ResourceConfig.generateConfig();
     let content = JSON.stringify(config, null, "\t");
+    await fs.mkdirpAsync(path.dirname(filename))
     await fs.writeFileAsync(filename, content, "utf-8");
     return content;
 }
@@ -125,6 +138,3 @@ export async function convertResourceJson(projectRoot: string, config: Data) {
     }
 
 }
-
-
-

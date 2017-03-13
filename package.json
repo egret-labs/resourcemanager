@@ -22,9 +22,11 @@
     "npm": "^3.0.0"
   },
   "dependencies": {
+    "crc32": "^0.2.2",
     "egret-node-utils": "0.0.7",
     "egret-typescript-ast": "0.0.11",
     "fs-extra-promise": "0.4.1",
+    "map-stream": "0.0.6",
     "typescript": "2.1.6",
     "vinyl-fs": "^2.4.4",
     "watch": "^1.0.2"
@@ -32,7 +34,9 @@
   "devDependencies": {
     "@types/fs-extra-promise": "0.0.31",
     "@types/node": "^7.0.8",
+    "@types/vinyl": "^2.0.0",
     "@types/vinyl-fs": "^2.4.1",
-    "@types/watch": "0.0.28"
+    "@types/watch": "0.0.28",
+    "vinyl": "^2.0.1"
   }
 }
