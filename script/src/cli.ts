@@ -24,20 +24,20 @@ let p = getProjectPath(process.argv[3]);
 if (p && fs.existsSync(path.join(p, "egretProperties.json"))) {
     switch (command) {
         case "upgrade":
-            res.upgrade.run(p).catch(handleExceiption)
+            res.upgrade(p).catch(handleExceiption)
             break;
         case "build":
-            res.build.build(p, format).catch(handleExceiption)
+            res.build(p, format).catch(handleExceiption)
             break;
         case "publish":
             // res.pu
-            res.publish.publish(p, format).catch(handleExceiption)
+            res.build(p, format).catch(handleExceiption)
             break;
         case "watch":
-            res.watch.watch(p, format).catch(handleExceiption)
+            res.watch(p, format).catch(handleExceiption)
             break;
         case "config":
-            res.config.getConfigViaDecorator(p).then((data) => {
+            res.getConfigViaDecorator(p).then((data) => {
                 let { resourceRoot, resourceConfigFileName } = data;
                 console.log({ resourceRoot, resourceConfigFileName });
             }).catch(handleExceiption);

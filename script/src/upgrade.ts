@@ -7,7 +7,7 @@ import * as resource from './';
 
 
 
-export async function run(projectPath) {
+export async function upgrade(projectPath) {
 
     let generateVersion = (versionString: string) => {
         let v = versionString.split(".");

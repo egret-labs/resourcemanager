@@ -33,7 +33,7 @@ namespace original {
 let projectRoot;
 let resourceFolder;
 
-export async function publish(p: string, format: "json" | "text") {
+export async function build(p: string, format: "json" | "text") {
 
     let result = await ResourceConfig.init(p);
     ResourceConfig.typeSelector = result.typeSelector;
