@@ -199,7 +199,7 @@ var RES;
             }
             for (var _i = 0, group_1 = group; _i < group_1.length; _i++) {
                 var paramKey = group_1[_i];
-                var _a = RES.manager.config.parseResKey(paramKey), key = _a.key, subkey = _a.subkey;
+                var _a = RES.manager.config.getResourceWithSubkey(paramKey, true), key = _a.key, subkey = _a.subkey;
                 var r = RES.manager.config.getResource(key, true);
                 result.push(r);
             }
@@ -226,19 +226,27 @@ var RES;
                 return "unknown";
             }
         };
-        ResourceConfig.prototype.parseResKey = function (key) {
+        ResourceConfig.prototype.getResourceWithSubkey = function (key, shouldNotBeNull) {
             key = this.getKeyByAlias(key);
             var index = key.indexOf("#");
+            var subkey = "";
             if (index >= 0) {
-                return {
-                    key: key.substr(0, index),
-                    subkey: key.substr(index + 1)
-                };
+                subkey = key.substr(index + 1);
+                key = key.substr(0, index);
+            }
+            var r = this.getResource(key);
+            if (!r) {
+                if (shouldNotBeNull) {
+                    var msg = subkey ? key + "#" + subkey : key;
+                    throw new RES.ResourceManagerError(2006, msg);
+                }
+                else {
+                    return null;
+                }
             }
             else {
                 return {
-                    key: key,
-                    subkey: ""
+                    r: r, key: key, subkey: subkey
                 };
             }
         };
@@ -295,12 +303,8 @@ var RES;
                     var groupInfo = this.config.groups[key];
                     group = group.concat(groupInfo);
                 }
-                else if (this.config.alias[key] || this.config.resources[key]) {
-                    group = group.concat(key);
-                }
                 else {
                     group = group.concat(key);
-                    console.warn("resource not exist : " + key);
                 }
             }
             this.config.groups[name] = group;
@@ -680,6 +684,11 @@ var RES;
                 });
             });
         }
+        function getURL(resource) {
+            var prefix = resource.extra ? "" : RES.resourceRoot;
+            var url = prefix + resource.url;
+            return RES.getRealURL(url);
+        }
         function getRelativePath(url, file) {
             url = url.split("\\").join("/");
             var params = url.match(/#.*|\?.*/);
@@ -701,13 +710,12 @@ var RES;
         processor_1.ImageProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var loader, prefix, bitmapData, texture;
+                    var loader, bitmapData, texture;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 loader = new egret.ImageLoader();
-                                prefix = resource.extra ? "" : RES.resourceRoot;
-                                loader.load(prefix + resource.url);
+                                loader.load(getURL(resource));
                                 return [4 /*yield*/, promisify(loader, resource)];
                             case 1:
                                 bitmapData = _a.sent();
@@ -733,14 +741,13 @@ var RES;
         processor_1.BinaryProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var request, prefix, arraybuffer;
+                    var request, arraybuffer;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 request = new egret.HttpRequest();
                                 request.responseType = egret.HttpResponseType.ARRAY_BUFFER;
-                                prefix = resource.extra ? "" : RES.resourceRoot;
-                                request.open(prefix + resource.url, "get");
+                                request.open(getURL(resource), "get");
                                 request.send();
                                 return [4 /*yield*/, promisify(request, resource)];
                             case 1:
@@ -757,14 +764,13 @@ var RES;
         processor_1.TextProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var request, prefix, text;
+                    var request, text;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 request = new egret.HttpRequest();
                                 request.responseType = egret.HttpResponseType.TEXT;
-                                prefix = resource.extra ? "" : RES.resourceRoot;
-                                request.open(prefix + resource.url, "get");
+                                request.open(getURL(resource), "get");
                                 request.send();
                                 return [4 /*yield*/, promisify(request, resource)];
                             case 1:
@@ -877,7 +883,7 @@ var RES;
                     return data.getTexture(subkey);
                 }
                 else {
-                    console.error("missing resource :" + resource.name);
+                    console.error("missing resource :\" + " + key + "#" + subkey);
                     return null;
                 }
             },
@@ -925,8 +931,7 @@ var RES;
                                     imageUrl = getTexturePath(resource.name, data);
                                 }
                                 r = host.resourceConfig.getResource(imageUrl);
-                                if (!r)
-                                    return [3 /*break*/, 3];
+                                if (!r) return [3 /*break*/, 3];
                                 return [4 /*yield*/, host.load(r)];
                             case 2:
                                 texture = _a.sent();
@@ -944,13 +949,12 @@ var RES;
         processor_1.SoundProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var prefix, sound;
+                    var sound;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
-                                prefix = resource.extra ? "" : RES.resourceRoot;
                                 sound = new egret.Sound();
-                                sound.load(prefix + resource.url);
+                                sound.load(getURL(resource));
                                 return [4 /*yield*/, promisify(sound, resource)];
                             case 1:
                                 _a.sent();
@@ -1635,6 +1639,46 @@ var RES;
         };
     })(upgrade = RES.upgrade || (RES.upgrade = {}));
 })(RES || (RES = {}));
+var RES;
+(function (RES) {
+    var versionInfo;
+    /**
+     * @internal
+     */
+    function native_init() {
+        if (egret.Capabilities.runtimeType == egret.RuntimeType.NATIVE) {
+            versionInfo = getLocalData("all.manifest");
+        }
+    }
+    RES.native_init = native_init;
+    /**
+     * @internal
+     */
+    function getRealURL(url) {
+        if (versionInfo && versionInfo[url]) {
+            return "resource/" + versionInfo[url].v.substring(0, 2) + "/" + versionInfo[url].v + "_" + versionInfo[url].s + "." + url.substring(url.lastIndexOf(".") + 1);
+        }
+        else {
+            return url;
+        }
+    }
+    RES.getRealURL = getRealURL;
+    function getLocalData(filePath) {
+        if (egret_native.readUpdateFileSync && egret_native.readResourceFileSync) {
+            //先取更新目录
+            var content = egret_native.readUpdateFileSync(filePath);
+            if (content != null) {
+                return JSON.parse(content);
+            }
+            //再取资源目录
+            content = egret_native.readResourceFileSync(filePath);
+            if (content != null) {
+                return JSON.parse(content);
+            }
+        }
+        return null;
+    }
+})(RES || (RES = {}));
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //  Copyright (c) 2014-present, Egret Technology.
@@ -2059,9 +2103,7 @@ var RES;
          * @private
          */
         function Resource() {
-            var _this = _super.call(this) || this;
-            _this.loadedGroups = [];
-            return _this;
+            return _super.call(this) || this;
         }
         /**
          * 开始加载配置
@@ -2072,6 +2114,7 @@ var RES;
          */
         Resource.prototype.loadConfig = function () {
             var _this = this;
+            RES.native_init();
             return RES.manager.init().then(function (data) {
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_COMPLETE);
             }, function (error) {
@@ -2086,7 +2129,8 @@ var RES;
          * @returns {boolean}
          */
         Resource.prototype.isGroupLoaded = function (name) {
-            return this.loadedGroups.indexOf(name) != -1;
+            var resources = RES.manager.config.getGroupByName(name, true);
+            return resources.every(function (r) { return RES.host.get(r) != null; });
         };
         /**
          * 根据组名获取组加载项列表
@@ -2126,6 +2170,10 @@ var RES;
             var resources = RES.manager.config.getGroupByName(name, true);
             return RES.manager.load(resources, reporter);
         };
+        Resource.prototype.loadResources = function (keys, reporter) {
+            var resources = keys.map(function (key) { return RES.manager.config.getResource(key, true); });
+            return RES.manager.load(resources, reporter);
+        };
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
          * 可以监听ResourceEvent.CONFIG_COMPLETE事件来确认配置加载完成。
@@ -2142,12 +2190,11 @@ var RES;
         /**
          * 检查配置文件里是否含有指定的资源
          * @method RES.hasRes
-         * @param key {string} 对应配置文件里的name属性或sbuKeys属性的一项。
+         * @param key {string} 对应配置文件里的name属性或subKeys属性的一项。
          * @returns {boolean}
          */
         Resource.prototype.hasRes = function (key) {
-            var name = RES.manager.config.parseResKey(key).key;
-            return RES.manager.config.getResource(name) != null;
+            return RES.manager.config.getResourceWithSubkey(key) != null;
         };
         /**
          * 通过key同步获取资源
@@ -2156,9 +2203,11 @@ var RES;
          * @returns {any}
          */
         Resource.prototype.getRes = function (resKey) {
-            var _a = RES.manager.config.parseResKey(resKey), key = _a.key, subkey = _a.subkey;
-            var r = RES.manager.config.getResource(key);
-            if (r) {
+            var result = RES.manager.config.getResourceWithSubkey(resKey);
+            if (result) {
+                var r = result.r;
+                var key = result.key;
+                var subkey = result.subkey;
                 var processor_2 = RES.host.isSupport(r);
                 if (processor_2 && processor_2.getData && subkey) {
                     return processor_2.getData(RES.host, r, key, subkey);
@@ -2167,11 +2216,13 @@ var RES;
                     return RES.host.get(r);
                 }
             }
+            else {
+                return null;
+            }
         };
         Resource.prototype.getResAsync = function (key, compFunc, thisObject) {
             var paramKey = key;
-            var _a = RES.manager.config.parseResKey(key), key = _a.key, subkey = _a.subkey;
-            var r = RES.manager.config.getResource(key, true);
+            var _a = RES.manager.config.getResourceWithSubkey(key, true), r = _a.r, subkey = _a.subkey;
             return RES.manager.load(r).then(function (value) {
                 var processor = RES.host.isSupport(r);
                 if (processor && processor.getData && subkey) {
@@ -2217,29 +2268,42 @@ var RES;
          */
         Resource.prototype.destroyRes = function (name, force) {
             if (force === void 0) { force = true; }
-            var group = RES.manager.config.getGroup(name);
-            var remove = function (r) {
-                RES.host.unload(r);
-                // host.remove(r)
-            };
-            if (group && group.length > 0) {
-                for (var _i = 0, group_2 = group; _i < group_2.length; _i++) {
-                    var item = group_2[_i];
-                    remove(item);
-                }
-                return true;
-            }
-            else {
-                var item = RES.manager.config.getResource(name);
-                if (item) {
-                    remove(item);
-                    return true;
-                }
-                else {
-                    console.warn("\u65E0\u6CD5\u5220\u9664\u6307\u5B9A\u7EC4:" + name);
-                    return false;
-                }
-            }
+            return __awaiter(this, void 0, void 0, function () {
+                var group, remove, _i, group_2, item, item;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            group = RES.manager.config.getGroup(name);
+                            remove = function (r) {
+                                return RES.host.unload(r);
+                            };
+                            if (!(group && group.length > 0)) return [3 /*break*/, 5];
+                            _i = 0, group_2 = group;
+                            _a.label = 1;
+                        case 1:
+                            if (!(_i < group_2.length)) return [3 /*break*/, 4];
+                            item = group_2[_i];
+                            return [4 /*yield*/, remove(item)];
+                        case 2:
+                            _a.sent();
+                            _a.label = 3;
+                        case 3:
+                            _i++;
+                            return [3 /*break*/, 1];
+                        case 4: return [2 /*return*/, true];
+                        case 5:
+                            item = RES.manager.config.getResource(name);
+                            if (!item) return [3 /*break*/, 7];
+                            return [4 /*yield*/, remove(item)];
+                        case 6:
+                            _a.sent();
+                            return [2 /*return*/, true];
+                        case 7:
+                            console.warn("\u65E0\u6CD5\u5220\u9664\u6307\u5B9A\u7EC4:" + name);
+                            return [2 /*return*/, false];
+                    }
+                });
+            });
         };
         /**
          * 设置最大并发加载线程数量，默认值是2.

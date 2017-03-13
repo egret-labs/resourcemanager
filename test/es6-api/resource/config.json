@@ -1,7 +1,5 @@
 {
 	"alias": {
-		"bg_jpg": "assets/bg.jpg",
-		"egret_icon_png": "assets/egret_icon.png",
 		"sheet_png": "assets/sheet/sheet.png",
 		"sheet_json": "assets/sheet/sheet.json",
 		"off": "assets/sheet/sheet.json#off",
@@ -11,7 +9,8 @@
 		"preload": [
 			"off",
 			"on",
-			"sheet_json"
+			"sheet_json",
+			"sheet_png"
 		]
 	},
 	"resources": {
@@ -37,7 +36,11 @@
 				"0.pvr": "assets/pvr/0.pvr"
 			},
 			"sheet": {
-				"sheet.json": "assets/sheet/sheet.json",
+				"sheet.json": {
+					"url": "assets/sheet/sheet.json",
+					"type": "text",
+					"name": "assets/sheet/sheet.json"
+				},
 				"sheet.png": "assets/sheet/sheet.png"
 			},
 			"sound": {

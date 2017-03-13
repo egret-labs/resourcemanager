@@ -39,7 +39,6 @@ export async function run(projectPath) {
         let target = path.join(projectPath, "bin");
 
         if (version >= 4000100) { //4.0.1.0
-            console.log('www')
             for (let m of propertyData.modules) {
                 if (m.name == "resourcemanager") {
                     m.path = "resourcemanager"
@@ -61,8 +60,11 @@ export async function run(projectPath) {
             if (index == -1) {
                 throw new Error("无法匹配到 class Main,升级失败");
             }
-            contents = contents.substr(0, index) +
-                `@RES.mapConfig("config.json",()=>"resource",path => {
+            contents = contents.substr(0, index) + `
+// 资源配置，您可以访问
+// https://github.com/egret-labs/resourcemanager/tree/master/docs
+// 了解更多细节 
+@RES.mapConfig("config.json",()=>"resource",path => {
     var ext = path.substr(path.lastIndexOf(".") + 1);
     var typeMap = {
         "jpg": "image",

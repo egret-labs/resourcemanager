@@ -6,3 +6,5 @@ resource-publish
 *.webp
 script/out
 test_xxx
+test-ios
+temp.xxx
