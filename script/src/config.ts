@@ -13,7 +13,8 @@ export async function getConfigViaDecorator(egretRoot: string) {
     let decorator = decorators[0];
     let resourceConfigFileName = decorator.paramters[0];
     let typeSelector = decorator.paramters[2];
+    let mergeSelector = decorator.paramters[3];
     let resourceRoot = "resource/";
     let resConfigFilePath = path.join(resourceRoot, resourceConfigFileName);
-    return { resourceRoot, resourceConfigFileName, typeSelector };
+    return { resourceRoot, resourceConfigFileName, typeSelector, mergeSelector };
 }

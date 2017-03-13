@@ -28,7 +28,11 @@
 //////////////////////////////////////////////////////////////////////////////////////
 type ResourceRootSelector<T extends string> = () => T;
 
+
 type ResourceTypeSelector = (file: string) => string;
+
+type ResourceMergerSelector = (file: string) => { path: string, alias: string };
+
 
 module RES {
 
@@ -52,7 +56,7 @@ module RES {
      * @platform Web,Native
      * @language zh_CN
      */
-    export function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector: ResourceTypeSelector) {
+    export function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector: ResourceTypeSelector, mergerSelector?: ResourceMergerSelector) {
         return function (target) {
             let type: string = typeSelector(url);
             if (typeof rootSelector == "string") {

@@ -322,6 +322,35 @@ module RES.processor {
         }
     }
 
+    export const MergeJSONProcessor: Processor = {
+
+        async onLoadStart(host, resource): Promise<any> {
+
+            let data = await host.load(resource, JsonProcessor);
+            for (var key in data) {
+                manager.config.addSubkey(key, resource.name);
+            }
+            return data;
+        },
+
+
+        getData(host, resource, key, subkey) {
+            let data = host.get(resource);
+            if (data) {
+                return data[subkey];
+            }
+            else {
+                console.error("missing resource :" + resource.name);
+                return null;
+            }
+        },
+
+
+        onRemoveStart(host, resource): Promise<any> {
+            return Promise.resolve();
+        }
+    }
+
 
 
 
@@ -567,7 +596,8 @@ module RES.processor {
         "commonjs": CommonJSProcessor,
         "sound": SoundProcessor,
         "movieclip": MovieClipProcessor,
-        "pvr": PVRProcessor
+        "pvr": PVRProcessor,
+        "mergeJson": MergeJSONProcessor
     }
 }
 

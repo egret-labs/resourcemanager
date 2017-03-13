@@ -10,7 +10,9 @@
         "json": "json",
         "fnt": "font",
         "pvr": "pvr",
-        "mp3": "sound"
+        "mp3": "sound",
+        "zip": "zip",
+        "mergeJson": "mergeJson"
     }
     var type = typeMap[ext];
     // if (type == "json") {
@@ -21,12 +23,23 @@
     //     };
     // }
     return type;
+}, path => {
+    if (path.indexOf(".json") >= 0 && path.indexOf("/") >= 0) {
+        return {
+            "path": "111.mergeJson",
+            "alias": path.substr(path.lastIndexOf("/") + 1).replace(".", "_")
+        }
+    }
+    else {
+        return null;
+    }
 })
 class Main extends egret.DisplayObjectContainer {
 
     private sky: egret.Bitmap;
 
     public constructor() {
+
         super();
         this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
     }
@@ -139,6 +152,12 @@ class Main extends egret.DisplayObjectContainer {
                     console.log(value)
                 });
 
+        let testMerge = async () => {
+            await RES.getResAsync("111.mergeJson");
+            let data = await RES.getResAsync("skeleton_json");
+            console.log(data)
+        }
+
 
 
 
@@ -150,11 +169,12 @@ class Main extends egret.DisplayObjectContainer {
             // .then(testBitmapFont)
             // .then(testNetworkDelay)
             // .then(testSpriteSheet)
-            .then(testGroupWithURL)
-        // .then(testSoundByUrl)
-        // .then(testAnimationByUrl)
-        // .then(testPVR)
-        // .then(testDestroy)
+            // .then(testGroupWithURL)
+            // .then(testSoundByUrl)
+            // .then(testAnimationByUrl)
+            // .then(testPVR)
+            // .then(testDestroy)
+            .then(testMerge)
         // .catch((e) => {
         //     console.warn(e);
         //     console.warn(e.stack)

@@ -21,6 +21,10 @@ declare module RES {
 }
 declare type ResourceRootSelector<T extends string> = () => T;
 declare type ResourceTypeSelector = (file: string) => string;
+declare type ResourceMergerSelector = (file: string) => {
+    path: string;
+    alias: string;
+};
 declare module RES {
     /**
    * Definition profile.
@@ -40,7 +44,7 @@ declare module RES {
      * @platform Web,Native
      * @language zh_CN
      */
-    function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector: ResourceTypeSelector): (target: any) => void;
+    function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector: ResourceTypeSelector, mergerSelector?: ResourceMergerSelector): (target: any) => void;
     var resourceRoot: string;
     interface ResourceInfo {
         url: string;
@@ -188,6 +192,7 @@ declare module RES.processor {
     var FontProcessor: Processor;
     var SoundProcessor: Processor;
     var MovieClipProcessor: Processor;
+    const MergeJSONProcessor: Processor;
     var PVRProcessor: Processor;
 }
 declare module RES {

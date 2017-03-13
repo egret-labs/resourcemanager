@@ -14,6 +14,7 @@
 		]
 	},
 	"resources": {
+		"111.mergeJson": "111.mergeJson",
 		"config.json": "config.json",
 		"default.res.json": "default.res.json",
 		"assets": {
@@ -38,7 +39,7 @@
 			"sheet": {
 				"sheet.json": {
 					"url": "assets/sheet/sheet.json",
-					"type": "text",
+					"type": "sheet",
 					"name": "assets/sheet/sheet.json"
 				},
 				"sheet.png": "assets/sheet/sheet.png"

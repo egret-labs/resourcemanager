@@ -117,6 +117,8 @@ export namespace ResourceConfig {
 
     export var typeSelector: (path: string) => string;
 
+    export var mergeSelector: (path: string) => { path: string, alias: string } | null;
+
     var resourcePath: string;
 
     export function addFile(r) {
@@ -130,6 +132,7 @@ export namespace ResourceConfig {
     export async function init(projectPath) {
         let result = await _config.getConfigViaDecorator(projectPath);
         typeSelector = result.typeSelector;
+        mergeSelector = result.mergeSelector;
         resourcePath = path.resolve(projectPath, result.resourceRoot);
         let filename = path.resolve(process.cwd(), projectPath, result.resourceRoot, result.resourceConfigFileName);;
         config = { alias: {}, groups: {}, resources: {} };
