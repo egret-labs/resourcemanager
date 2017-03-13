@@ -27,5 +27,11 @@
     "fs-extra-promise": "0.4.1",
     "typescript": "2.1.6",
     "watch": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/fs-extra-promise": "0.0.31",
+    "@types/node": "^7.0.8",
+    "@types/vinyl-fs": "^2.4.1",
+    "@types/watch": "0.0.28"
   }
 }
