@@ -29,6 +29,10 @@ if (p && fs.existsSync(path.join(p, "egretProperties.json"))) {
         case "build":
             res.build.build(p, format).catch(handleExceiption)
             break;
+        case "publish":
+            // res.pu
+            res.publish.publish(p, format).catch(handleExceiption)
+            break;
         case "watch":
             res.watch.watch(p, format).catch(handleExceiption)
             break;

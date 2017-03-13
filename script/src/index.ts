@@ -9,11 +9,13 @@ import * as _build from './build';
 import * as _upgrade from './upgrade';
 import * as vfs from './FileSystem'
 import * as _watch from './watch';
+import * as _publish from './publish';
 
 export var config = _config;
 export var build = _build;
 export var upgrade = _upgrade;
 export var watch = _watch;
+export var publish = _publish;
 
 
 
