@@ -24,7 +24,7 @@ declare type ResourceTypeSelector = (file: string) => string;
 declare type ResourceMergerSelector = (file: string) => {
     path: string;
     alias: string;
-} | undefined;
+};
 declare module RES {
     /**
    * Definition profile.
