@@ -4,6 +4,7 @@ import * as c from './config';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
+import * as merger from './merger';
 
 namespace original {
 
@@ -27,8 +28,7 @@ namespace original {
 }
 
 let projectRoot;
-let resourcePath;
-
+let resourcePath
 
 export async function publish(p: string, format: "json" | "text") {
 
@@ -43,7 +43,7 @@ export async function publish(p: string, format: "json" | "text") {
 
 
         var ext = f.substr(f.lastIndexOf(".") + 1);
-        merge.walk(f)
+        merger.walk(f)
         let type = ResourceConfig.typeSelector(f);
 
         if (type) {
@@ -54,6 +54,7 @@ export async function publish(p: string, format: "json" | "text") {
 
     projectRoot = p;
     resourcePath = path.join(projectRoot, result.resourceRoot);
+    merger.init(resourcePath);
     let filename = path.join(resourcePath, result.resourceConfigFileName);
 
     let option: utils.walk.WalkOptions = {
@@ -68,7 +69,7 @@ export async function publish(p: string, format: "json" | "text") {
     await convertResourceJson(projectRoot, config);
     await updateResourceConfigFileContent("publish-1.json");
 
-    merge.output();
+    merger.output();
 }
 
 export async function updateResourceConfigFileContent(filename: string) {
@@ -124,48 +125,3 @@ export async function convertResourceJson(projectRoot: string, config: Data) {
     }
 
 }
-
-
-
-namespace merge {
-
-    let mergeCollection: { [mergeFile: string]: { path: string, alias: string }[] } = {};
-
-    export function walk(f: string) {
-        if (ResourceConfig.mergeSelector) {
-            let merge = ResourceConfig.mergeSelector(f);
-            if (merge) {
-                let mergeFile = merge.path;
-                merge.path = f;
-                let type = ResourceConfig.typeSelector(f);
-                if (!type) {
-                    throw new Error(`missing merge type : ${merge.path}`);
-                }
-                if (!mergeCollection[mergeFile]) {
-                    mergeCollection[mergeFile] = [];
-                }
-                mergeCollection[mergeFile].push(merge);
-            }
-
-        }
-    }
-
-    export function output() {
-        for (let mergeFile in mergeCollection) {
-            let outputJson = {};
-            let sourceFiles = mergeCollection[mergeFile];
-            if (ResourceConfig.typeSelector(mergeFile) == "mergeJson") {
-                sourceFiles.map(s => {
-                    let sourcePath = path.join(resourcePath, s.path);
-                    let json = fs.readJSONSync(sourcePath);
-                    outputJson[s.alias] = json;
-                })
-            }
-            fs.writeFileSync(path.join(resourcePath, mergeFile), JSON.stringify(outputJson))
-        }
-
-
-    }
-}
-
-
