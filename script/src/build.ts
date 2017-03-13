@@ -1,4 +1,4 @@
-import { Data, ResourceConfig } from './';
+import { Data, ResourceConfig, GeneratedData } from './';
 import * as c from './config';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
@@ -42,11 +42,9 @@ export async function build(p: string, format: "json" | "text") {
 
     let executeFilter = async (f) => {
 
-        let config = ResourceConfig.config;
+
+        var ext = f.substr(f.lastIndexOf(".") + 1);
         merge.walk(f)
-        // var ext = f.substr(f.lastIndexOf(".") + 1);
-
-
         let type = ResourceConfig.typeSelector(f);
 
         if (type) {
@@ -67,33 +65,22 @@ export async function build(p: string, format: "json" | "text") {
     let list = await utils.walk(resourcePath, () => true, option);
     let files = await Promise.all(list.map(executeFilter));
     files.filter(a => a).forEach(element => ResourceConfig.addFile(element));
-
-    await convertResourceJson(projectRoot);
+    let config = ResourceConfig.getConfig();
+    await convertResourceJson(projectRoot, config);
     await updateResourceConfigFileContent(filename);
 
     merge.output();
 }
 
 export async function updateResourceConfigFileContent(filename: string) {
-    let content = JSON.stringify(ResourceConfig.config, null, "\t");
-    await fs.writeFileAsync(filename, content, "utf-8");
-    return content;
-    // var c = ResourceConfig.config;
-    // let content = await updateResourceConfigFileContent_2(filename, "exports.resources", c.resources);
-    // content = await updateResourceConfigFileContent_2(filename, "exports.groups", c.groups);
-    // content = await updateResourceConfigFileContent_2(filename, "exports.alias", c.alias);
-    // return content;
-}
-
-async function updateResourceConfigFileContent_2(filename, matcher, data) {
-    let content = await c.publish(filename, matcher, data);
+    let config = ResourceConfig.generateConfig();
+    let content = JSON.stringify(config, null, "\t");
     await fs.writeFileAsync(filename, content, "utf-8");
     return content;
 }
 
 
-
-export async function convertResourceJson(projectRoot: string) {
+export async function convertResourceJson(projectRoot: string, config: Data) {
 
     let filename = path.join(projectRoot, "resource/default.res.json");
     if (!fs.existsSync(filename)) {
@@ -102,7 +89,6 @@ export async function convertResourceJson(projectRoot: string) {
     if (!fs.existsSync(filename)) {
         return;
     }
-    let config = ResourceConfig.config;
     let resourceJson: original.Info = await fs.readJSONAsync(filename);
     // let resourceJson: original.Info = await fs.readJSONAsync(resourceJsonPath);
     for (let r of resourceJson.resources) {
@@ -110,7 +96,7 @@ export async function convertResourceJson(projectRoot: string) {
 
         let file = ResourceConfig.getFile(r.url);
         for (var resource_custom_key in r) {
-            if (resource_custom_key == "url" || resource_custom_key == "type" || resource_custom_key == "name") {
+            if (resource_custom_key == "url" || resource_custom_key == "name") {
                 continue;
             }
             else if (resource_custom_key == "subkeys") {
@@ -126,11 +112,9 @@ export async function convertResourceJson(projectRoot: string) {
                 if (!file) {
                     //todo warning
                 }
-                else if (typeof file != "string") {
-                    file[resource_custom_key] = r[resource_custom_key];
-                }
                 else {
-                    console.warn(`missing properties ${resource_custom_key} in ${file}`)
+                    // 包含 type 在内的自定义属性
+                    file[resource_custom_key] = r[resource_custom_key];
                 }
             }
 
@@ -140,7 +124,6 @@ export async function convertResourceJson(projectRoot: string) {
         config.groups[group.name] = group.keys.split(",");
     }
 
-    return ResourceConfig.config;
 }
 
 

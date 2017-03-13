@@ -15,13 +15,13 @@
         "mergeJson": "mergeJson"
     }
     var type = typeMap[ext];
-    if (type == "json") {
-        if (path.indexOf("sheet") >= 0) {
-            type = "sheet";
-        } else if (path.indexOf("movieclip") >= 0) {
-            type = "movieclip";
-        };
-    }
+    // if (type == "json") {
+    //     if (path.indexOf("sheet") >= 0) {
+    //         type = "sheet";
+    //     } else if (path.indexOf("movieclip") >= 0) {
+    //         type = "movieclip";
+    //     };
+    // }
     return type;
 }, path => {
     if (path.indexOf(".json") >= 0 && path.indexOf("/") >= 0) {
@@ -76,8 +76,9 @@ class Main extends egret.DisplayObjectContainer {
             });
         ;
 
-        let testGroupWithURL = () => {
-            RES.createGroup("group1", ["assets/bg.jpg"])
+        let testGroupWithURL = async () => {
+            let data = await RES.getResAsync("assets/sheet/sheet.json");
+            // RES.createGroup("group1", ["assets/bg.jpg"])
         }
 
         let testSpriteSheet = () =>

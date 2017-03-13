@@ -32,6 +32,12 @@ if (p && fs.existsSync(path.join(p, "egretProperties.json"))) {
         case "watch":
             res.watch.watch(p, format).catch(handleExceiption)
             break;
+        case "config":
+            res.config.getConfigViaDecorator(p).then((data) => {
+                let { resourceRoot, resourceConfigFileName } = data;
+                console.log({ resourceRoot, resourceConfigFileName });
+            }).catch(handleExceiption);
+            break;
         default:
             handleExceiption(`找不到指定的命令{command}`)
             break;

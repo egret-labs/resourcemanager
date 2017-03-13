@@ -37,7 +37,11 @@
 				"0.pvr": "assets/pvr/0.pvr"
 			},
 			"sheet": {
-				"sheet.json": "assets/sheet/sheet.json",
+				"sheet.json": {
+					"url": "assets/sheet/sheet.json",
+					"type": "text",
+					"name": "assets/sheet/sheet.json"
+				},
 				"sheet.png": "assets/sheet/sheet.png"
 			},
 			"sound": {

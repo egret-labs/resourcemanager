@@ -1,13 +1,18 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es6",
+        "target": "es5",
         "noImplicitAny": false,
         "sourceMap": false,
         "outDir": "out",
         "declaration": true,
         "allowUnreachableCode": true,
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "lib": [
+            "es5",
+            "webworker",
+            "es2015.promise"
+        ]
     },
     "exclude": [
         "node_modules",

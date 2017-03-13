@@ -24,24 +24,17 @@ var root: Dictionary = {};
 
 export function addFile(r: File) {
 
-    var type = r.type;
-    var filename = r.name;
-    var url = r.url;
+    let { type, name, url} = r;
     if (!type) type = "";
-    filename = normalize(filename);
-    let basefilename = basename(filename);
-    let folder = dirname(filename);
+    name = normalize(name);
+    let basefilename = basename(name);
+    let folder = dirname(name);
     if (!exists(folder)) {
         mkdir(folder);
     }
-    let d = reslove(folder);
+    let d = reslove(folder) as (Dictionary | null);
     if (d) {
-        if (!type) {
-            d[basefilename] = url;
-        }
-        else {
-            d[basefilename] = { url, type };
-        }
+        d[basefilename] = { url, type, name };
     }
 }
 
