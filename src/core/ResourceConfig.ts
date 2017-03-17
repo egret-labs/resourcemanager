@@ -31,6 +31,8 @@ type ResourceRootSelector<T extends string> = () => T;
 
 type ResourceTypeSelector = (file: string) => string;
 
+type ResourceNameSelector = (file: string) => string;
+
 type ResourceMergerSelector = (file: string) => { path: string, alias: string };
 
 
@@ -38,6 +40,14 @@ module RES {
 
 
     var resourceTypeSelector: ResourceTypeSelector;
+
+    export var resourceNameSelector: ResourceNameSelector = (p) => {
+        let index = p.lastIndexOf("/");
+        if (index >= 0) {
+            p = p.substr(index + 1);
+        }
+        return p.replace(/\./gi, "_");
+    }
     /**
    * Definition profile.
    * @param url Configuration file path (path resource.json).
@@ -253,6 +263,7 @@ module RES {
          */
         public getResource(path_or_alias: string, shouldNotBeNull: true): ResourceInfo
         public getResource(path_or_alias: string, shouldNotBeNull?: boolean): ResourceInfo | null {
+            path_or_alias = RES.resourceNameSelector(path_or_alias);
             let path = this.config.alias[path_or_alias];
             if (!path) {
                 path = path_or_alias;

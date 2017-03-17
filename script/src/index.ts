@@ -111,6 +111,14 @@ export namespace ResourceConfig {
 
     export var typeSelector: (path: string) => string;
 
+    export var nameSelector = (p: string) => {
+        let index = p.lastIndexOf("/");
+        if (index >= 0) {
+            p = p.substr(index + 1);
+        }
+        return p.replace(/\./gi, "_");
+    }
+
     export var mergeSelector: (path: string) => { path: string, alias: string } | null;
 
     var resourcePath: string;
@@ -135,4 +143,3 @@ export namespace ResourceConfig {
 
     }
 }
-

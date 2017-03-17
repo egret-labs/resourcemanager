@@ -41,13 +41,12 @@ export async function build(p: string, format: "json" | "text") {
         throw "missing typeSelector in Main.ts";
     }
 
-    let executeFilter = async (f) => {
-
-        var ext = f.substr(f.lastIndexOf(".") + 1);
-        merger.walk(f)
-        let type = ResourceConfig.typeSelector(f);
-        return { name: f, url: f, type };
-
+    let executeFilter = async (url) => {
+        var ext = url.substr(url.lastIndexOf(".") + 1);
+        merger.walk(url);
+        let type = ResourceConfig.typeSelector(url);
+        let name = ResourceConfig.nameSelector(url);
+        return { name, url, type }
     }
 
     projectRoot = p;
@@ -105,33 +104,37 @@ export async function convertResourceJson(projectRoot: string, config: Data) {
     let resourceJson: original.Info = await fs.readJSONAsync(filename);
     // let resourceJson: original.Info = await fs.readJSONAsync(resourceJsonPath);
     for (let r of resourceJson.resources) {
-        config.alias[r.name] = r.url;
-
         let file = ResourceConfig.getFile(r.url);
-        for (var resource_custom_key in r) {
-            if (resource_custom_key == "url" || resource_custom_key == "name") {
-                continue;
+        if (!file) {
+            file = ResourceConfig.getFile(r.name);
+        }
+        if (file) {
+            if (file.name != r.name) {
+                config.alias[r.name] = file.name;
             }
-            else if (resource_custom_key == "subkeys") {
-                var subkeysArr = r.subkeys.split(",");
-                for (let subkey of subkeysArr) {
-                    // if (!obj.alias[subkeysArr[i]]) {
-                    config.alias[subkey] = r.url + "#" + subkey;
-                    // }
+            for (var resource_custom_key in r) {
+                if (resource_custom_key == "url" || resource_custom_key == "name") {
+                    continue;
                 }
-            }
-            else {
-
-                if (!file) {
-                    //todo warning
+                else if (resource_custom_key == "subkeys") {
+                    var subkeysArr = r.subkeys.split(",");
+                    for (let subkey of subkeysArr) {
+                        // if (!obj.alias[subkeysArr[i]]) {
+                        config.alias[subkey] = r.name + "#" + subkey;
+                        // }
+                    }
                 }
                 else {
                     // 包含 type 在内的自定义属性
                     file[resource_custom_key] = r[resource_custom_key];
                 }
-            }
 
+            }
         }
+        else {
+            console.error(`missing file ${r.url}`)
+        }
+
     }
     for (let group of resourceJson.groups) {
         config.groups[group.name] = group.keys.split(",");

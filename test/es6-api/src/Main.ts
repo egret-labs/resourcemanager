@@ -82,11 +82,11 @@ class Main extends egret.DisplayObjectContainer {
         }
 
         let testSpriteSheet = () =>
-            RES.getResAsync("assets/sheet/sheet1.json")
+            RES.getResAsync("assets/sheet/sheet.json")
                 .then((value: egret.SpriteSheet) => {
                     var button = new egret.Bitmap();
                     this.addChild(button);
-                    let texture = RES.getRes("assets/sheet/sheet1.json#off");
+                    let texture = RES.getRes("assets/sheet/sheet.json#off");
                     console.assert(value instanceof egret.SpriteSheet, "测试SpriteSheet纹理")
                     console.assert(texture instanceof egret.Texture, "测试SpriteSheet纹理")
                     console.assert(texture === value.getTexture("off"));
@@ -168,13 +168,13 @@ class Main extends egret.DisplayObjectContainer {
             // .then(testLoadResByUrl)
             // .then(testBitmapFont)
             // .then(testNetworkDelay)
-            // .then(testSpriteSheet)
-            // .then(testGroupWithURL)
-            // .then(testSoundByUrl)
-            // .then(testAnimationByUrl)
-            // .then(testPVR)
-            // .then(testDestroy)
-            .then(testMerge)
+            .then(testSpriteSheet)
+        // .then(testGroupWithURL)
+        // .then(testSoundByUrl)
+        // .then(testAnimationByUrl)
+        // .then(testPVR)
+        // .then(testDestroy)
+        // .then(testMerge)
         // .catch((e) => {
         //     console.warn(e);
         //     console.warn(e.stack)
@@ -188,7 +188,7 @@ class Main extends egret.DisplayObjectContainer {
      * Create a game scene
      */
     private createGameScene(): void {
-        var sky: egret.Bitmap = createBitmapByName("assets/bg.jpg");
+        var sky: egret.Bitmap = createBitmapByName("bg_jpg");
         this.addChild(sky);
         var stageW = this.stage.stageWidth;
         var stageH = this.stage.stageHeight;

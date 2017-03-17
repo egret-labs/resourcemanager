@@ -140,6 +140,13 @@ var RES;
 var RES;
 (function (RES) {
     var resourceTypeSelector;
+    RES.resourceNameSelector = function (p) {
+        var index = p.lastIndexOf("/");
+        if (index >= 0) {
+            p = p.substr(index + 1);
+        }
+        return p.replace(/\./gi, "_");
+    };
     /**
    * Definition profile.
    * @param url Configuration file path (path resource.json).
@@ -259,6 +266,7 @@ var RES;
             }
         };
         ResourceConfig.prototype.getResource = function (path_or_alias, shouldNotBeNull) {
+            path_or_alias = RES.resourceNameSelector(path_or_alias);
             var path = this.config.alias[path_or_alias];
             if (!path) {
                 path = path_or_alias;

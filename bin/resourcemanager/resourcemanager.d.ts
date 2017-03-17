@@ -21,11 +21,13 @@ declare module RES {
 }
 declare type ResourceRootSelector<T extends string> = () => T;
 declare type ResourceTypeSelector = (file: string) => string;
+declare type ResourceNameSelector = (file: string) => string;
 declare type ResourceMergerSelector = (file: string) => {
     path: string;
     alias: string;
 };
 declare module RES {
+    var resourceNameSelector: ResourceNameSelector;
     /**
    * Definition profile.
    * @param url Configuration file path (path resource.json).
