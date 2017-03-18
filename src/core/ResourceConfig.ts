@@ -263,7 +263,6 @@ module RES {
          */
         public getResource(path_or_alias: string, shouldNotBeNull: true): ResourceInfo
         public getResource(path_or_alias: string, shouldNotBeNull?: boolean): ResourceInfo | null {
-            path_or_alias = RES.resourceNameSelector(path_or_alias);
             let path = this.config.alias[path_or_alias];
             if (!path) {
                 path = path_or_alias;

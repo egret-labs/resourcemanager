@@ -108,31 +108,36 @@ export async function convertResourceJson(projectRoot: string, config: Data) {
         if (!file) {
             file = ResourceConfig.getFile(r.name);
         }
-        if (file) {
-            if (file.name != r.name) {
-                config.alias[r.name] = file.name;
+        if (!file) {
+            if (await fs.existsAsync(path.join(resourceFolder, r.url))) {
+                ResourceConfig.addFile(r)
             }
-            for (var resource_custom_key in r) {
-                if (resource_custom_key == "url" || resource_custom_key == "name") {
-                    continue;
-                }
-                else if (resource_custom_key == "subkeys") {
-                    var subkeysArr = r.subkeys.split(",");
-                    for (let subkey of subkeysArr) {
-                        // if (!obj.alias[subkeysArr[i]]) {
-                        config.alias[subkey] = r.name + "#" + subkey;
-                        // }
-                    }
-                }
-                else {
-                    // 包含 type 在内的自定义属性
-                    file[resource_custom_key] = r[resource_custom_key];
-                }
+            else {
+                console.error(`missing file ${r.name} ${r.url}`)
+            }
 
-            }
+            continue;
         }
-        else {
-            console.error(`missing file ${r.url}`)
+        if (file.name != r.name) {
+            config.alias[r.name] = file.name;
+        }
+        for (var resource_custom_key in r) {
+            if (resource_custom_key == "url" || resource_custom_key == "name") {
+                continue;
+            }
+            else if (resource_custom_key == "subkeys") {
+                var subkeysArr = r.subkeys.split(",");
+                for (let subkey of subkeysArr) {
+                    // if (!obj.alias[subkeysArr[i]]) {
+                    config.alias[subkey] = r.name + "#" + subkey;
+                    // }
+                }
+            }
+            else {
+                // 包含 type 在内的自定义属性
+                file[resource_custom_key] = r[resource_custom_key];
+            }
+
         }
 
     }

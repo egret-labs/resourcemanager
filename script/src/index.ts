@@ -123,7 +123,7 @@ export namespace ResourceConfig {
 
     var resourcePath: string;
 
-    export function addFile(r) {
+    export function addFile(r: vfs.File) {
         vfs.addFile(r);
     }
 

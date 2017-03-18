@@ -52,6 +52,7 @@ var RES;
         ResourceNodeType[ResourceNodeType["DICTIONARY"] = 1] = "DICTIONARY";
     })(ResourceNodeType || (ResourceNodeType = {}));
     function getResourceInfo(path) {
+        path = RES.resourceNameSelector(path);
         return FileSystem.getFile(path);
     }
     RES.getResourceInfo = getResourceInfo;
@@ -266,7 +267,6 @@ var RES;
             }
         };
         ResourceConfig.prototype.getResource = function (path_or_alias, shouldNotBeNull) {
-            path_or_alias = RES.resourceNameSelector(path_or_alias);
             var path = this.config.alias[path_or_alias];
             if (!path) {
                 path = path_or_alias;
