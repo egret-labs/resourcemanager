@@ -145,13 +145,13 @@ var RES;
 var RES;
 (function (RES) {
     var resourceTypeSelector;
-    RES.resourceNameSelector = function (p) {
-        var index = p.lastIndexOf("/");
-        if (index >= 0) {
-            p = p.substr(index + 1);
-        }
-        return p.replace(/\./gi, "_");
-    };
+    RES.resourceNameSelector = function (p) { return p; };
+    function mapResourceName(nameSelector) {
+        return function (target) {
+            RES.resourceNameSelector = nameSelector;
+        };
+    }
+    RES.mapResourceName = mapResourceName;
     /**
    * Definition profile.
    * @param url Configuration file path (path resource.json).

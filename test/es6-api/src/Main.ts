@@ -15,13 +15,13 @@
         "mergeJson": "mergeJson"
     }
     var type = typeMap[ext];
-    // if (type == "json") {
-    //     if (path.indexOf("sheet") >= 0) {
-    //         type = "sheet";
-    //     } else if (path.indexOf("movieclip") >= 0) {
-    //         type = "movieclip";
-    //     };
-    // }
+    if (type == "json") {
+        if (path.indexOf("sheet") >= 0) {
+            type = "sheet";
+        } else if (path.indexOf("movieclip") >= 0) {
+            type = "movieclip";
+        };
+    }
     return type;
 }, path => {
     if (path.indexOf(".json") >= 0 && path.indexOf("/") >= 0) {
@@ -34,6 +34,15 @@
         return null;
     }
 })
+@RES.mapResourceName((p) => {
+    let index = p.lastIndexOf("/");
+    if (index >= 0) {
+        p = p.substr(index + 1);
+    }
+    p = p.replace(/\./gi, '_');
+    return p;
+})
+
 class Main extends egret.DisplayObjectContainer {
 
     private sky: egret.Bitmap;

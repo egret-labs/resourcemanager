@@ -111,19 +111,18 @@ export namespace ResourceConfig {
 
     export var typeSelector: (path: string) => string;
 
-    export var nameSelector = (p: string) => {
-        let index = p.lastIndexOf("/");
-        if (index >= 0) {
-            p = p.substr(index + 1);
-        }
-        return p.replace(/\./gi, "_");
-    }
+    export var nameSelector: (path: string) => string;
 
     export var mergeSelector: (path: string) => { path: string, alias: string } | null;
 
     var resourcePath: string;
 
-    export function addFile(r: vfs.File) {
+    export function addFile(r: vfs.File, flag: boolean) {
+        let a = vfs.getFile(r.name)
+        if (flag && a && a.url != r.url) {
+
+            console.warn("du:" + r.url, a.url)
+        }
         vfs.addFile(r);
     }
 

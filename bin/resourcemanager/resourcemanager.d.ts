@@ -28,6 +28,7 @@ declare type ResourceMergerSelector = (file: string) => {
 };
 declare module RES {
     var resourceNameSelector: ResourceNameSelector;
+    function mapResourceName(nameSelector: ResourceNameSelector): (target: any) => void;
     /**
    * Definition profile.
    * @param url Configuration file path (path resource.json).

@@ -1,5 +1,7 @@
 {
 	"alias": {
+		"sheet_png": "assets/sheet/sheet.png",
+		"sheet_json": "assets/sheet/sheet.json",
 		"off": "sheet_json#off",
 		"on": "sheet_json#on"
 	},
@@ -12,25 +14,35 @@
 		]
 	},
 	"resources": {
-		"111_mergeJson": "111.mergeJson",
-		"config_json": "config.json",
-		"default_res_json": "default.res.json",
-		"bg_jpg": "assets/bg.jpg",
-		"egret_icon_png": "assets/egret_icon.png",
-		"skeleton_json": "assets/armature/skeleton.json",
-		"texture_json": "assets/armature/texture.json",
-		"texture_png": "assets/armature/texture.png",
-		"font_fnt": "assets/font/font.fnt",
-		"font_png": "assets/font/font.png",
-		"movieclip_json": "assets/movieclip/movieclip.json",
-		"movieclip_png": "assets/movieclip/movieclip.png",
-		"0_pvr": "assets/pvr/0.pvr",
-		"sheet_json": {
-			"url": "assets/sheet/sheet.json",
-			"type": "sheet",
-			"name": "sheet_json"
-		},
-		"sheet_png": "assets/sheet/sheet.png",
-		"sound_go_mp3": "assets/sound/sound_go.mp3"
+		"111.mergeJson": "111.mergeJson",
+		"config.json": "config.json",
+		"default.res.json": "default.res.json",
+		"assets": {
+			"bg.jpg": "assets/bg.jpg",
+			"egret_icon.png": "assets/egret_icon.png",
+			"armature": {
+				"skeleton.json": "assets/armature/skeleton.json",
+				"texture.json": "assets/armature/texture.json",
+				"texture.png": "assets/armature/texture.png"
+			},
+			"font": {
+				"font.fnt": "assets/font/font.fnt",
+				"font.png": "assets/font/font.png"
+			},
+			"movieclip": {
+				"movieclip.json": "assets/movieclip/movieclip.json",
+				"movieclip.png": "assets/movieclip/movieclip.png"
+			},
+			"pvr": {
+				"0.pvr": "assets/pvr/0.pvr"
+			},
+			"sheet": {
+				"sheet.json": "assets/sheet/sheet.json",
+				"sheet.png": "assets/sheet/sheet.png"
+			},
+			"sound": {
+				"sound_go.mp3": "assets/sound/sound_go.mp3"
+			}
+		}
 	}
 }

@@ -41,13 +41,14 @@ module RES {
 
     var resourceTypeSelector: ResourceTypeSelector;
 
-    export var resourceNameSelector: ResourceNameSelector = (p) => {
-        let index = p.lastIndexOf("/");
-        if (index >= 0) {
-            p = p.substr(index + 1);
+    export var resourceNameSelector: ResourceNameSelector = (p) => p;
+
+    export function mapResourceName(nameSelector: ResourceNameSelector) {
+        return function (target) {
+            resourceNameSelector = nameSelector;
         }
-        return p.replace(/\./gi, "_");
     }
+
     /**
    * Definition profile.
    * @param url Configuration file path (path resource.json).

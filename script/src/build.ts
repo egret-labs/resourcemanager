@@ -37,6 +37,7 @@ export async function build(p: string, format: "json" | "text") {
 
     let result = await ResourceConfig.init(p);
     ResourceConfig.typeSelector = result.typeSelector;
+    ResourceConfig.nameSelector = result.nameSelector;
     if (!ResourceConfig.typeSelector) {
         throw "missing typeSelector in Main.ts";
     }
@@ -72,7 +73,7 @@ export async function build(p: string, format: "json" | "text") {
     // vfs.src(files.map(f => f.url), { cwd: resourceFolder, base: resourceFolder })
     //     .pipe(map(convert))
     //     .pipe(vfs.dest(outputFolder))
-    files.forEach(element => ResourceConfig.addFile(element));
+    files.forEach(element => ResourceConfig.addFile(element, true));
     let config = ResourceConfig.getConfig();
     await convertResourceJson(projectRoot, config);
     let filename = path.join(resourceFolder, result.resourceConfigFileName);
@@ -110,7 +111,7 @@ export async function convertResourceJson(projectRoot: string, config: Data) {
         }
         if (!file) {
             if (await fs.existsAsync(path.join(resourceFolder, r.url))) {
-                ResourceConfig.addFile(r)
+                ResourceConfig.addFile(r, false)
             }
             else {
                 console.error(`missing file ${r.name} ${r.url}`)
