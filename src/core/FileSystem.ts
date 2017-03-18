@@ -28,8 +28,12 @@ module RES {
     }
 
     export function getResourceInfo(path: string): File {
-        path = RES.resourceNameSelector(path);
-        return FileSystem.getFile(path);
+        let result = FileSystem.getFile(path);
+        if (!result) {
+            path = RES.resourceNameSelector(path);
+            result = FileSystem.getFile(path);
+        }
+        return result;
     }
 
     export namespace FileSystem {
