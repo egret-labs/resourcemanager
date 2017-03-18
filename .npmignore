@@ -5,3 +5,4 @@ src
 test_xxx
 test-ios
 temp.xxx
+script/src/*

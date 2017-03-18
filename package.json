@@ -1,6 +1,6 @@
 {
   "name": "egret-resource-manager",
-  "version": "4.0.4-1",
+  "version": "4.0.4-4",
   "bin": {
     "res": "script/out/cli.js"
   },
@@ -8,7 +8,6 @@
   "typings": "script/out/index.d.ts",
   "description": "",
   "scripts": {
-    "install": "tsc -p script",
     "res": "node script/out/cli.js build",
     "tsc": "tsc && uglifyjs bin/resourcemanager/resourcemanager.js > bin/resourcemanager/resourcemanager.min.js",
     "debug": "tsc -p script && tsc && egret build test/es6-api -e && npm run res test/es6-api",
