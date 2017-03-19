@@ -1,4 +1,4 @@
-import * as vfs from 'vinyl-fs';
+import * as vinylfs from 'vinyl-fs';
 import * as VinylFile from 'vinyl';
 import { Data, ResourceConfig, GeneratedData } from './';
 import * as c from './config';
@@ -33,7 +33,12 @@ namespace original {
 let projectRoot;
 let resourceFolder;
 
-export async function build(p: string, format: "json" | "text") {
+declare interface ResVinylFile extends VinylFile {
+
+    original_relative: string;
+}
+
+export async function build(p: string, format: "json" | "text", publishPath?: string) {
 
     let result = await ResourceConfig.init(p);
     ResourceConfig.typeSelector = result.typeSelector;
@@ -42,12 +47,18 @@ export async function build(p: string, format: "json" | "text") {
         throw "missing typeSelector in Main.ts";
     }
 
-    let executeFilter = async (url) => {
+    let executeFilter = async (url: string) => {
         var ext = url.substr(url.lastIndexOf(".") + 1);
         merger.walk(url);
         let type = ResourceConfig.typeSelector(url);
         let name = ResourceConfig.nameSelector(url);
-        return { name, url, type }
+        if (type) {
+            return { name, url, type }
+        }
+        else {
+            return null;
+        }
+
     }
 
     projectRoot = p;
@@ -61,27 +72,54 @@ export async function build(p: string, format: "json" | "text") {
         ignoreHiddenFile: true
     }
 
+    let init = (file: ResVinylFile, cb) => {
+        file.original_relative = file.relative;
+        cb(null, file);
+    }
 
-    let convert = (file: VinylFile, cb) => {
-        file.path = file.base + "/" + crc32(file.contents);
+
+    let convert = (file: ResVinylFile, cb) => {
+        let crc32_file_path: string = crc32(file.contents);
+        crc32_file_path = `${crc32_file_path.substr(0, 2)}/${crc32_file_path.substr(2)}${file.extname}`
+        file.path = `${file.base}${crc32_file_path}`;
         cb(null, file);
     };
 
+    let convert2 = async (file: ResVinylFile, cb) => {
+
+        let r = await executeFilter(file.original_relative);
+        if (r) {
+            r.url = file.relative;
+            ResourceConfig.addFile(r, false);
+            cb(null, file);
+        }
+        else {
+            cb(null);
+        }
+
+
+    };
+
     let list = await utils.walk(resourceFolder, () => true, option);
-    let files = (await Promise.all(list.map(executeFilter))).filter(a => a.type);
-    //  let outputFolder = path.join(projectRoot, "resource-publish");
-    // vfs.src(files.map(f => f.url), { cwd: resourceFolder, base: resourceFolder })
-    //     .pipe(map(convert))
-    //     .pipe(vfs.dest(outputFolder))
-    files.forEach(element => ResourceConfig.addFile(element, true));
-    let config = ResourceConfig.getConfig();
-    await convertResourceJson(projectRoot, config);
-    let filename = path.join(resourceFolder, result.resourceConfigFileName);
-    await updateResourceConfigFileContent(filename);
+    let outputFolder = publishPath ?
+        path.join(projectRoot, publishPath, result.resourceConfigFileName) :
+        path.join(resourceFolder, result.resourceConfigFileName)
 
-    // await updateResourceConfigFileContent(path.join(outputFolder, result.resourceConfigFileName));
-
-    merger.output();
+    let stream = vinylfs.src(`**/**.*`, { cwd: resourceFolder, base: resourceFolder })
+        .pipe(map(init))
+    if (publishPath) {
+        stream = stream.pipe(map(convert))
+    }
+    stream = stream.pipe(map(convert2).on("end", async () => {
+        let config = ResourceConfig.getConfig();
+        await convertResourceJson(projectRoot, config);
+        await updateResourceConfigFileContent(path.join(resourceFolder, result.resourceConfigFileName));
+        merger.output();
+    }))
+    if (publishPath) {
+        console.log(path.join(projectRoot, publishPath))
+        stream = stream.pipe(vinylfs.dest(path.join(projectRoot, publishPath)));
+    }
 }
 
 export async function updateResourceConfigFileContent(filename: string) {
@@ -105,10 +143,9 @@ export async function convertResourceJson(projectRoot: string, config: Data) {
     let resourceJson: original.Info = await fs.readJSONAsync(filename);
     // let resourceJson: original.Info = await fs.readJSONAsync(resourceJsonPath);
     for (let r of resourceJson.resources) {
-        let file = ResourceConfig.getFile(r.url);
-        if (!file) {
-            file = ResourceConfig.getFile(r.name);
-        }
+
+        let resourceName = ResourceConfig.nameSelector(r.url);
+        let file = ResourceConfig.getFile(resourceName);
         if (!file) {
             if (await fs.existsAsync(path.join(resourceFolder, r.url))) {
                 ResourceConfig.addFile(r, false)
@@ -116,7 +153,6 @@ export async function convertResourceJson(projectRoot: string, config: Data) {
             else {
                 console.error(`missing file ${r.name} ${r.url}`)
             }
-
             continue;
         }
         if (file.name != r.name) {

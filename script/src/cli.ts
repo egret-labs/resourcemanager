@@ -30,8 +30,11 @@ if (p && fs.existsSync(path.join(p, "egretProperties.json"))) {
             res.build(p, format).catch(handleExceiption)
             break;
         case "publish":
-            // res.pu
-            res.build(p, format).catch(handleExceiption)
+            let publishPath = process.argv[4];
+            if (!publishPath) {
+                handleExceiption('请设置发布目录');
+            }
+            res.build(p, format, publishPath).catch(handleExceiption)
             break;
         case "watch":
             res.watch(p, format).catch(handleExceiption)
