@@ -110,8 +110,7 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
     stream = stream.pipe(map(convert2).on("end", async () => {
         let config = ResourceConfig.getConfig();
         await convertResourceJson(projectRoot, config);
-        let configJson = path.join(resourceFolder, result.resourceConfigFileName)
-        await updateResourceConfigFileContent(configJson, debug);
+        await updateResourceConfigFileContent(outputFolder, debug);
         merger.output();
     }))
     if (publishPath) {
