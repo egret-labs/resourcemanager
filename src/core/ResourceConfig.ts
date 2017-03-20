@@ -49,6 +49,17 @@ module RES {
         }
     }
 
+    export function mapResourceType(typeSelector: ResourceTypeSelector) {
+        return function (target) {
+            resourceTypeSelector = typeSelector;
+        }
+    }
+
+    export function mapResourceMerger(mergerSelector: ResourceMergerSelector) {
+        return function (target) {
+        }
+    }
+
     /**
    * Definition profile.
    * @param url Configuration file path (path resource.json).
@@ -67,9 +78,13 @@ module RES {
      * @platform Web,Native
      * @language zh_CN
      */
-    export function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector: ResourceTypeSelector, mergerSelector?: ResourceMergerSelector) {
+    export function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector?: ResourceTypeSelector) {
         return function (target) {
-            let type: string = typeSelector(url);
+            if (typeSelector) {
+                mapResourceType(typeSelector)(target);
+            }
+
+            let type: string = resourceTypeSelector(url);
             if (typeof rootSelector == "string") {
                 resourceRoot = rootSelector as any as string;
             }
@@ -80,7 +95,7 @@ module RES {
                 resourceRoot = resourceRoot + "/";
             }
             configItem = { url, resourceRoot, type, name: url };
-            resourceTypeSelector = typeSelector;
+
         }
     };
 

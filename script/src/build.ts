@@ -43,9 +43,6 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
     let result = await ResourceConfig.init(p);
     ResourceConfig.typeSelector = result.typeSelector;
     ResourceConfig.nameSelector = result.nameSelector;
-    if (!ResourceConfig.typeSelector) {
-        throw "missing typeSelector in Main.ts";
-    }
 
     let executeFilter = async (url: string) => {
         var ext = url.substr(url.lastIndexOf(".") + 1);

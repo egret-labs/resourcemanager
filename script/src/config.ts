@@ -6,28 +6,52 @@ import * as fs from 'fs-extra-promise';
 export async function getConfigViaDecorator(egretRoot: string) {
 
     let decorators = await ast.findDecorator(path.join(egretRoot, "src/Main.ts"));
+
+    function getFunction<T>(name: string): T | null {
+        let result = decorators.filter(item => item.name == name);
+        if (!result || result.length == 0 || result.length > 1) {
+            return null;
+        }
+        else {
+            let decorator = result[0];
+            return decorator.paramters[0] as T;
+        }
+    }
     let mapConfigDecorator = decorators.filter(item => item.name == "RES.mapConfig");
     if (!mapConfigDecorator || mapConfigDecorator.length == 0 || mapConfigDecorator.length > 1) {
         throw 'missing decorator';
     }
     let decorator = mapConfigDecorator[0];
     let resourceConfigFileName = decorator.paramters[0];
-    let typeSelector = decorator.paramters[2];
+
     let mergeSelector = decorator.paramters[3];
     let resourceRoot = "resource/";
     let resConfigFilePath = path.join(resourceRoot, resourceConfigFileName);
 
-    let nameSelector = (p: string) => p;
 
-
-    let nameDecorator = decorators.filter(item => item.name == "RES.mapResourceName");
-    if (!nameDecorator || nameDecorator.length == 0 || nameDecorator.length > 1) {
-
+    type NameSelector = (p: string) => string;
+    let nameSelector = getFunction<NameSelector>("RES.mapResourceName");
+    if (!nameSelector) {
+        nameSelector = (p: string) => p;
     }
-    else {
-        let decorator = nameDecorator[0];
-        nameSelector = decorator.paramters[0];
+
+    type TypeSelector = (p: string) => string;
+    let typeSelector = getFunction<TypeSelector>("RES.mapResourceType");
+    if (!typeSelector) {
+        typeSelector = decorator.paramters[2] as TypeSelector;
     }
+
+    type MergerSelector = ((p: string) => string) | null;
+    let mergerSelector = getFunction<TypeSelector>("RES.mapResourceMerger");
+    if (!mergerSelector) {
+        mergerSelector = decorator.paramters[3] as MergerSelector;
+    }
+
 
     return { resourceRoot, resourceConfigFileName, typeSelector, mergeSelector, nameSelector };
+
+
+
+
 }
+

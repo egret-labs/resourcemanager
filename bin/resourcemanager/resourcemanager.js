@@ -152,6 +152,17 @@ var RES;
         };
     }
     RES.mapResourceName = mapResourceName;
+    function mapResourceType(typeSelector) {
+        return function (target) {
+            resourceTypeSelector = typeSelector;
+        };
+    }
+    RES.mapResourceType = mapResourceType;
+    function mapResourceMerger(mergerSelector) {
+        return function (target) {
+        };
+    }
+    RES.mapResourceMerger = mapResourceMerger;
     /**
    * Definition profile.
    * @param url Configuration file path (path resource.json).
@@ -170,9 +181,12 @@ var RES;
      * @platform Web,Native
      * @language zh_CN
      */
-    function mapConfig(url, rootSelector, typeSelector, mergerSelector) {
+    function mapConfig(url, rootSelector, typeSelector) {
         return function (target) {
-            var type = typeSelector(url);
+            if (typeSelector) {
+                mapResourceType(typeSelector)(target);
+            }
+            var type = resourceTypeSelector(url);
             if (typeof rootSelector == "string") {
                 RES.resourceRoot = rootSelector;
             }
@@ -183,7 +197,6 @@ var RES;
                 RES.resourceRoot = RES.resourceRoot + "/";
             }
             RES.configItem = { url: url, resourceRoot: RES.resourceRoot, type: type, name: url };
-            resourceTypeSelector = typeSelector;
         };
     }
     RES.mapConfig = mapConfig;

@@ -29,6 +29,8 @@ declare type ResourceMergerSelector = (file: string) => {
 declare module RES {
     var resourceNameSelector: ResourceNameSelector;
     function mapResourceName(nameSelector: ResourceNameSelector): (target: any) => void;
+    function mapResourceType(typeSelector: ResourceTypeSelector): (target: any) => void;
+    function mapResourceMerger(mergerSelector: ResourceMergerSelector): (target: any) => void;
     /**
    * Definition profile.
    * @param url Configuration file path (path resource.json).
@@ -47,7 +49,7 @@ declare module RES {
      * @platform Web,Native
      * @language zh_CN
      */
-    function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector: ResourceTypeSelector, mergerSelector?: ResourceMergerSelector): (target: any) => void;
+    function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector?: ResourceTypeSelector): (target: any) => void;
     var resourceRoot: string;
     interface ResourceInfo {
         url: string;

@@ -1,7 +1,8 @@
 /**
  * 新版 RES API
  */
-@RES.mapConfig("config.json", () => "resource", path => {
+@RES.mapConfig("config.json", () => "resource")
+@RES.mapResourceType(path => {
     var ext = path.substr(path.lastIndexOf(".") + 1);
     var typeMap = {
         "jpg": "image",
@@ -23,7 +24,16 @@
         };
     }
     return type;
-}, path => {
+})
+@RES.mapResourceName((p) => {
+    let index = p.lastIndexOf("/");
+    if (index >= 0) {
+        p = p.substr(index + 1);
+    }
+    p = p.replace(/\./gi, '_');
+    return p;
+})
+@RES.mapResourceMerger(path => {
     if (path.indexOf(".json") >= 0 && path.indexOf("/") >= 0) {
         return {
             "path": "111.mergeJson",
@@ -33,14 +43,6 @@
     else {
         return null;
     }
-})
-@RES.mapResourceName((p) => {
-    let index = p.lastIndexOf("/");
-    if (index >= 0) {
-        p = p.substr(index + 1);
-    }
-    p = p.replace(/\./gi, '_');
-    return p;
 })
 
 class Main extends egret.DisplayObjectContainer {
