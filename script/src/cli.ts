@@ -17,43 +17,52 @@ let handleExceiption = (e: string | Error) => {
     }
 }
 
+let getCommand = (command: string) => {
+
+}
+
 const format = process.argv.indexOf("-json") >= 0 ? "json" : "text";
 
 let command = process.argv[2];
 let p = getProjectPath(process.argv[3]);
+
 if (p && fs.existsSync(path.join(p, "egretProperties.json"))) {
+    let promise: Promise<void> | null = null;
     switch (command) {
         case "upgrade":
-            res.upgrade(p).catch(handleExceiption)
+            promise = res.upgrade(p);
             break;
         case "build":
-            res.build(p, format).catch(handleExceiption)
+            promise = res.build(p, format, undefined, true);
             break;
         case "publish":
             let publishPath = process.argv[4];
             if (!publishPath) {
                 handleExceiption('请设置发布目录');
             }
-            res.build(p, format, publishPath).catch(handleExceiption)
+            promise = res.build(p, format, publishPath);
             break;
         case "watch":
-            res.watch(p, format).catch(handleExceiption)
+            promise = res.watch(p, format)
             break;
         case "config":
-            res.getConfigViaDecorator(p).then((data) => {
+            promise = res.getConfigViaDecorator(p).then((data) => {
                 let { resourceRoot, resourceConfigFileName } = data;
-                console.log({ resourceRoot, resourceConfigFileName });
-            }).catch(handleExceiption);
+                let outputData = { resourceRoot, resourceConfigFileName };
+                console.log(JSON.stringify(outputData));
+            })
             break;
         default:
             handleExceiption(`找不到指定的命令{command}`)
             break;
     }
+    if (promise) {
+        promise.catch(handleExceiption);
+    }
 }
 else {
     handleExceiption(`${path.join(process.cwd(), p)} 不是一个有效的 Egret 项目`)
 }
-
 
 
 

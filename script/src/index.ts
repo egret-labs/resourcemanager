@@ -59,20 +59,24 @@ export namespace ResourceConfig {
         return config;
     }
 
-    export function generateConfig(): GeneratedData {
+    export function generateConfig(debug: boolean): GeneratedData {
         let loop = (r: GeneratedDictionary) => {
             for (var key in r) {
                 var f = r[key];
                 if (isFile(f)) {
-                    if (typeof (f) != "string") {
-
+                    if (typeof (f) == "string") {
+                        continue;
+                    }
+                    delete f.name;
+                    if (true) {
+                        // console.log 
                         if (ResourceConfig.typeSelector(f.url) == f.type) {
-
+                            delete f.type;
+                        }
+                        if (Object.keys(f).length == 1) {
                             r[key] = f.url;
                         }
                     }
-
-
                     // if (typeof f === 'string') {
                     //     f = { url: f, name: p };
                     //     r[key] = f;

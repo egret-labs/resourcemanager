@@ -38,7 +38,7 @@ declare interface ResVinylFile extends VinylFile {
     original_relative: string;
 }
 
-export async function build(p: string, format: "json" | "text", publishPath?: string) {
+export async function build(p: string, format: "json" | "text", publishPath?: string, debug: boolean = false) {
 
     let result = await ResourceConfig.init(p);
     ResourceConfig.typeSelector = result.typeSelector;
@@ -113,7 +113,8 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
     stream = stream.pipe(map(convert2).on("end", async () => {
         let config = ResourceConfig.getConfig();
         await convertResourceJson(projectRoot, config);
-        await updateResourceConfigFileContent(path.join(resourceFolder, result.resourceConfigFileName));
+        let configJson = path.join(resourceFolder, result.resourceConfigFileName)
+        await updateResourceConfigFileContent(configJson, debug);
         merger.output();
     }))
     if (publishPath) {
@@ -122,8 +123,8 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
     }
 }
 
-export async function updateResourceConfigFileContent(filename: string) {
-    let config = ResourceConfig.generateConfig();
+export async function updateResourceConfigFileContent(filename: string, debug: boolean) {
+    let config = ResourceConfig.generateConfig(debug);
     let content = JSON.stringify(config, null, "\t");
     await fs.mkdirpAsync(path.dirname(filename))
     await fs.writeFileAsync(filename, content, "utf-8");
