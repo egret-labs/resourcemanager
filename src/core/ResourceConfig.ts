@@ -307,6 +307,10 @@ module RES {
 
         }
 
+        // public getResourceInfos(folderName: string) {
+        //     this.config.resources[]
+        // }
+
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
          * 可以监听ResourceEvent.CONFIG_COMPLETE事件来确认配置加载完成。
@@ -378,44 +382,6 @@ module RES {
         public parseConfig(data: Data): void {
 
             this.config = data;
-
-            let resource = data.resources;
-
-
-
-
-            let loop = (r, prefix, walk: (r: ResourceInfo) => void) => {
-                for (var key in r) {
-                    let p = prefix ? prefix + "/" + key : key;
-                    var f = r[key];
-                    if (isFile(f)) {
-
-                        if (typeof f === 'string') {
-                            f = { url: f, name: p };
-                            r[key] = f;
-                        }
-                        else {
-                            f['name'] = p;
-                        }
-                        walk(f);
-                    }
-                    else {
-                        loop(f, p, walk);
-                    }
-
-                }
-            }
-
-            let isFile = (r) => {
-                return typeof r === "string" || r.url != null;
-            }
-
-            loop(resource, "", value => {
-                if (!value.type) {
-                    value.type = this.__temp__get__type__via__url(value.url);
-                }
-            })
-
             FileSystem.data = data.resources;
 
             // if (!data)

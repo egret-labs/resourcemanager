@@ -264,11 +264,12 @@ module RES.processor {
             let config;
             try {
                 config = JSON.parse(data);
-                imageUrl = getRelativePath(resource.name, config.file);
+                imageUrl = resource.name.replace("fnt", "png");
             }
             catch (e) {
                 config = data;
-                imageUrl = getTexturePath(resource.name, data);
+                // imageUrl = getTexturePath(resource.name, data);
+                imageUrl = resource.name.replace("fnt", "png");;
             }
             let r = host.resourceConfig.getResource(imageUrl);
             if (r) {
@@ -348,6 +349,53 @@ module RES.processor {
 
         onRemoveStart(host, resource): Promise<any> {
             return Promise.resolve();
+        }
+    }
+
+
+    export var ResourceConfigProcessor: Processor = {
+
+
+        async onLoadStart(host, resource) {
+            let data = await host.load(resource, JsonProcessor);
+            let resources = data.resources;
+            let loop = (r, prefix, walk: (r: ResourceInfo) => void) => {
+                for (var key in r) {
+                    let p = prefix ? prefix + "/" + key : key;
+                    var f = r[key];
+                    if (isFile(f)) {
+
+                        if (typeof f === 'string') {
+                            f = { url: f, name: p };
+                            r[key] = f;
+                        }
+                        else {
+                            f['name'] = p;
+                        }
+                        walk(f);
+                    }
+                    else {
+                        loop(f, p, walk);
+                    }
+
+                }
+            }
+
+            let isFile = (r) => {
+                return typeof r === "string" || r.url != null;
+            }
+
+            loop(resources, "", value => {
+                if (!value.type) {
+                    value.type = this.__temp__get__type__via__url(value.url);
+                }
+            })
+
+            return data;
+        },
+
+        async onRemoveStart() {
+
         }
     }
 

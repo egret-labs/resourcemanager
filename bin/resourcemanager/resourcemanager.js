@@ -307,6 +307,9 @@ var RES;
         ResourceConfig.prototype.getGroup = function (name) {
             return this.getGroupByName(name);
         };
+        // public getResourceInfos(folderName: string) {
+        //     this.config.resources[]
+        // }
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
          * 可以监听ResourceEvent.CONFIG_COMPLETE事件来确认配置加载完成。
@@ -371,36 +374,7 @@ var RES;
          * @param folder {string} 加载项的路径前缀。
          */
         ResourceConfig.prototype.parseConfig = function (data) {
-            var _this = this;
             this.config = data;
-            var resource = data.resources;
-            var loop = function (r, prefix, walk) {
-                for (var key in r) {
-                    var p = prefix ? prefix + "/" + key : key;
-                    var f = r[key];
-                    if (isFile(f)) {
-                        if (typeof f === 'string') {
-                            f = { url: f, name: p };
-                            r[key] = f;
-                        }
-                        else {
-                            f['name'] = p;
-                        }
-                        walk(f);
-                    }
-                    else {
-                        loop(f, p, walk);
-                    }
-                }
-            };
-            var isFile = function (r) {
-                return typeof r === "string" || r.url != null;
-            };
-            loop(resource, "", function (value) {
-                if (!value.type) {
-                    value.type = _this.__temp__get__type__via__url(value.url);
-                }
-            });
             RES.FileSystem.data = data.resources;
             // if (!data)
             //     return;
@@ -949,11 +923,13 @@ var RES;
                                 imageUrl = "";
                                 try {
                                     config = JSON.parse(data);
-                                    imageUrl = getRelativePath(resource.name, config.file);
+                                    imageUrl = resource.name.replace("fnt", "png");
                                 }
                                 catch (e) {
                                     config = data;
-                                    imageUrl = getTexturePath(resource.name, data);
+                                    // imageUrl = getTexturePath(resource.name, data);
+                                    imageUrl = resource.name.replace("fnt", "png");
+                                    ;
                                 }
                                 r = host.resourceConfig.getResource(imageUrl);
                                 if (!r) return [3 /*break*/, 3];
@@ -1049,6 +1025,57 @@ var RES;
             },
             onRemoveStart: function (host, resource) {
                 return Promise.resolve();
+            }
+        };
+        processor_1.ResourceConfigProcessor = {
+            onLoadStart: function (host, resource) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var _this = this;
+                    var data, resources, loop, isFile;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, host.load(resource, processor_1.JsonProcessor)];
+                            case 1:
+                                data = _a.sent();
+                                resources = data.resources;
+                                loop = function (r, prefix, walk) {
+                                    for (var key in r) {
+                                        var p = prefix ? prefix + "/" + key : key;
+                                        var f = r[key];
+                                        if (isFile(f)) {
+                                            if (typeof f === 'string') {
+                                                f = { url: f, name: p };
+                                                r[key] = f;
+                                            }
+                                            else {
+                                                f['name'] = p;
+                                            }
+                                            walk(f);
+                                        }
+                                        else {
+                                            loop(f, p, walk);
+                                        }
+                                    }
+                                };
+                                isFile = function (r) {
+                                    return typeof r === "string" || r.url != null;
+                                };
+                                loop(resources, "", function (value) {
+                                    if (!value.type) {
+                                        value.type = _this.__temp__get__type__via__url(value.url);
+                                    }
+                                });
+                                return [2 /*return*/, data];
+                        }
+                    });
+                });
+            },
+            onRemoveStart: function () {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/];
+                    });
+                });
             }
         };
         var PVRParser = (function () {

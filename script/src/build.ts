@@ -1,7 +1,6 @@
 import * as vinylfs from 'vinyl-fs';
 import * as VinylFile from 'vinyl';
 import { Data, ResourceConfig, GeneratedData, original } from './';
-import * as c from './config';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
