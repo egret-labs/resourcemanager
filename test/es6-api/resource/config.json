@@ -12,21 +12,70 @@
 		]
 	},
 	"resources": {
-		"111_mergeJson": "111.mergeJson",
-		"config_json": "config.json",
-		"default_res_json": "default.res.json",
-		"bg_jpg": "assets/bg.jpg",
-		"egret_icon_png": "assets/egret_icon.png",
-		"skeleton_json": "assets/armature/skeleton.json",
-		"texture_json": "assets/armature/texture.json",
-		"texture_png": "assets/armature/texture.png",
-		"font_fnt": "assets/font/font.fnt",
-		"font_png": "assets/font/font.png",
-		"movieclip_json": "assets/movieclip/movieclip.json",
-		"movieclip_png": "assets/movieclip/movieclip.png",
-		"0_pvr": "assets/pvr/0.pvr",
-		"sheet_json": "assets/sheet/sheet.json",
-		"sheet_png": "assets/sheet/sheet.png",
-		"sound_go_mp3": "assets/sound/sound_go.mp3"
+		"111_mergeJson": {
+			"url": "111.mergeJson",
+			"type": "mergeJson"
+		},
+		"config_json": {
+			"url": "config.json",
+			"type": "json"
+		},
+		"default_res_json": {
+			"url": "default.res.json",
+			"type": "json"
+		},
+		"bg_jpg": {
+			"url": "assets/bg.jpg",
+			"type": "image"
+		},
+		"egret_icon_png": {
+			"url": "assets/egret_icon.png",
+			"type": "image"
+		},
+		"skeleton_json": {
+			"url": "assets/armature/skeleton.json",
+			"type": "json"
+		},
+		"texture_json": {
+			"url": "assets/armature/texture.json",
+			"type": "json"
+		},
+		"texture_png": {
+			"url": "assets/armature/texture.png",
+			"type": "image"
+		},
+		"font_fnt": {
+			"url": "assets/font/font.fnt",
+			"type": "font"
+		},
+		"font_png": {
+			"url": "assets/font/font.png",
+			"type": "image"
+		},
+		"movieclip_json": {
+			"url": "assets/movieclip/movieclip.json",
+			"type": "movieclip"
+		},
+		"movieclip_png": {
+			"url": "assets/movieclip/movieclip.png",
+			"type": "image"
+		},
+		"0_pvr": {
+			"url": "assets/pvr/0.pvr",
+			"type": "pvr"
+		},
+		"sheet_json": {
+			"url": "assets/sheet/sheet.json",
+			"type": "sheet",
+			"subkeys": "off,on"
+		},
+		"sheet_png": {
+			"url": "assets/sheet/sheet.png",
+			"type": "image"
+		},
+		"sound_go_mp3": {
+			"url": "assets/sound/sound_go.mp3",
+			"type": "sound"
+		}
 	}
 }

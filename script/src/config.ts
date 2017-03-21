@@ -3,6 +3,15 @@ import * as path from 'path';
 import { Data, ResourceConfig } from './';
 import * as fs from 'fs-extra-promise';
 
+
+export async function printConfig(egretRoot) {
+    let data = await getConfigViaDecorator(egretRoot)
+    let { resourceRoot, resourceConfigFileName, typeSelector} = data;
+    let typeSelectorBody = typeSelector.toString();
+    let outputData = { resourceRoot, resourceConfigFileName, typeSelectorBody };
+    console.log(JSON.stringify(outputData));
+}
+
 export async function getConfigViaDecorator(egretRoot: string) {
 
     let decorators = await ast.findDecorator(path.join(egretRoot, "src/Main.ts"));

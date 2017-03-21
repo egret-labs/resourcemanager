@@ -1,6 +1,6 @@
 import * as vinylfs from 'vinyl-fs';
 import * as VinylFile from 'vinyl';
-import { Data, ResourceConfig, GeneratedData } from './';
+import { Data, ResourceConfig, GeneratedData, original } from './';
 import * as c from './config';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
@@ -9,26 +9,6 @@ import * as merger from './merger';
 var map = require('map-stream');
 var crc32 = require("crc32");
 
-namespace original {
-
-
-    export interface Info {
-        groups: GroupInfo[],
-        resources: ResourceInfo[],
-    }
-
-    interface GroupInfo {
-        keys: string,
-        name: string
-    }
-
-    interface ResourceInfo {
-        name: string;
-        type: string;
-        url: string;
-        subkeys: string;
-    }
-}
 
 let projectRoot;
 let resourceFolder;
@@ -70,7 +50,7 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
     }
 
     let init = (file: ResVinylFile, cb) => {
-        file.original_relative = file.relative;
+        file.original_relative = file.relative.split("\\").join("/");
         cb(null, file);
     }
 
@@ -87,7 +67,7 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
         let r = await executeFilter(file.original_relative);
         if (r) {
             r.url = file.relative;
-            ResourceConfig.addFile(r, false);
+            ResourceConfig.addFile(r, true);
             cb(null, file);
         }
         else {
@@ -98,7 +78,7 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
     };
 
     let list = await utils.walk(resourceFolder, () => true, option);
-    let outputFolder = publishPath ?
+    let outputFile = publishPath ?
         path.join(projectRoot, publishPath, result.resourceConfigFileName) :
         path.join(resourceFolder, result.resourceConfigFileName)
 
@@ -110,7 +90,8 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
     stream = stream.pipe(map(convert2).on("end", async () => {
         let config = ResourceConfig.getConfig();
         await convertResourceJson(projectRoot, config);
-        await updateResourceConfigFileContent(outputFolder, debug);
+        await updateResourceConfigFileContent(outputFile, debug);
+        await ResourceConfig.generateClassicalConfig(path.join(resourceFolder, "wing.res.json"));
         merger.output();
     }))
     if (publishPath) {
@@ -160,10 +141,11 @@ export async function convertResourceJson(projectRoot: string, config: Data) {
                 continue;
             }
             else if (resource_custom_key == "subkeys") {
-                var subkeysArr = r.subkeys.split(",");
+                var subkeysArr = r['"subkeys"'].split(",");
                 for (let subkey of subkeysArr) {
                     // if (!obj.alias[subkeysArr[i]]) {
                     config.alias[subkey] = r.name + "#" + subkey;
+                    file[resource_custom_key] = r[resource_custom_key];
                     // }
                 }
             }

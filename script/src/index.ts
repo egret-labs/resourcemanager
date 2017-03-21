@@ -9,6 +9,7 @@ export * from './watch';
 export * from './config';
 export * from './upgrade';
 export * from './build';
+export * from './version';
 
 
 
@@ -53,13 +54,77 @@ export interface GeneratedData {
 
 }
 
+export namespace original {
+
+
+    export interface Info {
+        groups: GroupInfo[],
+        resources: ResourceInfo[],
+    }
+
+    export interface GroupInfo {
+        keys: string,
+        name: string
+    }
+
+    export interface ResourceInfo {
+        name: string;
+        type: string;
+        url: string;
+        subkeys?: string
+    }
+}
+
 export namespace ResourceConfig {
+
+
+    function loop(r: vfs.Dictionary, callback: (file: vfs.File) => void) {
+        for (var key in r) {
+            var f = r[key];
+            if (isFile(f)) {
+                callback(f);
+            }
+            else {
+                loop(f, callback);
+            }
+
+        }
+    }
+
+    function isFile(r: any): r is vfs.File {
+        return r.url;
+    }
 
     export function getConfig() {
         return config;
     }
 
+    export async function generateClassicalConfig(filename: string) {
+        console.log(filename)
+        let result: original.Info = {
+            groups: [],
+            resources: []
+        }
+        let resources = config.resources;
+
+        let alias = {};
+        for (var aliasName in config.alias) {
+            alias[config.alias[aliasName]] = aliasName;
+        }
+
+        loop(resources, (f) => {
+            let r: original.ResourceInfo = f;
+            if (alias[r.name]) {
+                r.name = alias[r.name]
+            }
+            result.resources.push(r);
+            // console.log(f.name)
+        })
+        await fs.writeJSONAsync(filename, result)
+    }
+
     export function generateConfig(debug: boolean): GeneratedData {
+
         let loop = (r: GeneratedDictionary) => {
             for (var key in r) {
                 var f = r[key];
@@ -68,7 +133,7 @@ export namespace ResourceConfig {
                         continue;
                     }
                     delete f.name;
-                    if (true) {
+                    if (!debug) {
                         // console.log 
                         if (ResourceConfig.typeSelector(f.url) == f.type) {
                             delete f.type;
@@ -121,11 +186,18 @@ export namespace ResourceConfig {
 
     var resourcePath: string;
 
-    export function addFile(r: vfs.File, flag: boolean) {
-        let a = vfs.getFile(r.name)
-        if (flag && a && a.url != r.url) {
+    export function addFile(r: vfs.File, checkDuplicate: boolean) {
+        let {url, name} = r;
+        url = url.split("\\").join("/");
+        name = name.split("\\").join("/");
+        r.url = url;
+        r.name = name;
 
-            console.warn("du:" + r.url, a.url)
+        if (checkDuplicate) {
+            let a = vfs.getFile(r.name)
+            if (a && a.url != r.url) {
+                console.warn("duplicate: " + r.url + " => " + a.url)
+            }
         }
         vfs.addFile(r);
     }

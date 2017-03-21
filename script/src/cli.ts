@@ -46,11 +46,10 @@ if (p && fs.existsSync(path.join(p, "egretProperties.json"))) {
             promise = res.watch(p, format)
             break;
         case "config":
-            promise = res.getConfigViaDecorator(p).then((data) => {
-                let { resourceRoot, resourceConfigFileName } = data;
-                let outputData = { resourceRoot, resourceConfigFileName };
-                console.log(JSON.stringify(outputData));
-            })
+            promise = res.printConfig(p);
+            break;
+        case "version":
+            promise = res.version();
             break;
         default:
             handleExceiption(`找不到指定的命令{command}`)
