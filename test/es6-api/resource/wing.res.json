@@ -1,0 +1,91 @@
+{
+  "groups": [],
+  "resources": [
+    {
+      "url": "ea/ef3203.mergeJson",
+      "type": "mergeJson",
+      "name": "111_mergeJson"
+    },
+    {
+      "url": "78/c88c30.json",
+      "type": "json",
+      "name": "config_json"
+    },
+    {
+      "url": "26/dfd133.json",
+      "type": "json",
+      "name": "default_res_json"
+    },
+    {
+      "url": "15/1b2743.json",
+      "type": "json",
+      "name": "wing_res_json"
+    },
+    {
+      "url": "18/f18a5d.jpg",
+      "type": "image",
+      "name": "bg_jpg"
+    },
+    {
+      "url": "fe/420392.png",
+      "type": "image",
+      "name": "egret_icon_png"
+    },
+    {
+      "url": "ec/426b55.json",
+      "type": "json",
+      "name": "skeleton_json"
+    },
+    {
+      "url": "af/7c12f4.json",
+      "type": "json",
+      "name": "texture_json"
+    },
+    {
+      "url": "dd/df2e45.png",
+      "type": "image",
+      "name": "texture_png"
+    },
+    {
+      "url": "24/6f06dc.json",
+      "type": "movieclip",
+      "name": "movieclip_json"
+    },
+    {
+      "url": "6b/064dec.png",
+      "type": "image",
+      "name": "movieclip_png"
+    },
+    {
+      "url": "c8/8fd551.fnt",
+      "type": "font",
+      "name": "font_fnt"
+    },
+    {
+      "url": "d4/0cf4ed.png",
+      "type": "image",
+      "name": "font_png"
+    },
+    {
+      "url": "76/baa897.pvr",
+      "type": "pvr",
+      "name": "0_pvr"
+    },
+    {
+      "url": "18/1d8373.json",
+      "type": "sheet",
+      "name": "sheet_json",
+      "subkeys": "off,on"
+    },
+    {
+      "url": "1a/d6e59c.png",
+      "type": "image",
+      "name": "sheet_png"
+    },
+    {
+      "url": "41/1f25c1.mp3",
+      "type": "sound",
+      "name": "sound_go_mp3"
+    }
+  ]
+}

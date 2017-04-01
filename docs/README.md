@@ -103,7 +103,9 @@ RES.mapConfig("config.json",()=>"resource",(path)=>{
 })
 ```
 
+## 资源发布
 
+* 参见[文档](publish.md)
 
 ## 不兼容的变化
 

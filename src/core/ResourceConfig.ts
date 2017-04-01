@@ -39,7 +39,7 @@ type ResourceMergerSelector = (file: string) => { path: string, alias: string };
 module RES {
 
 
-    var resourceTypeSelector: ResourceTypeSelector;
+    export var resourceTypeSelector: ResourceTypeSelector;
 
     export var resourceNameSelector: ResourceNameSelector = (p) => p;
 
@@ -84,7 +84,7 @@ module RES {
                 mapResourceType(typeSelector)(target);
             }
 
-            let type: string = resourceTypeSelector(url);
+            let type = 'resourceConfig';
             if (typeof rootSelector == "string") {
                 resourceRoot = rootSelector as any as string;
             }

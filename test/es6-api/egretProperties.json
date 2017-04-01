@@ -3,6 +3,7 @@
 		"path_ignore": [],
 		"ios_path": "../../test-ios"
 	},
+	"resources": [],
 	"publish": {
 		"web": 0,
 		"native": 1,

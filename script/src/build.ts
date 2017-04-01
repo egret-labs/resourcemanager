@@ -5,6 +5,8 @@ import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 import * as merger from './merger';
+import * as html from './html';
+import * as config from './config';
 var map = require('map-stream');
 var crc32 = require("crc32");
 
@@ -18,6 +20,10 @@ declare interface ResVinylFile extends VinylFile {
 }
 
 export async function build(p: string, format: "json" | "text", publishPath?: string, debug: boolean = false) {
+
+    let resourcePath = publishPath ?
+        path.join(publishPath, (await config.getConfigViaDecorator(p)).resourceRoot) :
+        undefined;
 
     let result = await ResourceConfig.init(p);
     ResourceConfig.typeSelector = result.typeSelector;
@@ -77,13 +83,13 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
     };
 
     let list = await utils.walk(resourceFolder, () => true, option);
-    let outputFile = publishPath ?
-        path.join(projectRoot, publishPath, result.resourceConfigFileName) :
+    let outputFile = resourcePath ?
+        path.join(projectRoot, resourcePath, result.resourceConfigFileName) :
         path.join(resourceFolder, result.resourceConfigFileName)
 
     let stream = vinylfs.src(`**/**.*`, { cwd: resourceFolder, base: resourceFolder })
         .pipe(map(init))
-    if (publishPath) {
+    if (resourcePath) {
         stream = stream.pipe(map(convert))
     }
     stream = stream.pipe(map(convert2).on("end", async () => {
@@ -93,9 +99,10 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
         await ResourceConfig.generateClassicalConfig(path.join(resourceFolder, "wing.res.json"));
         merger.output();
     }))
-    if (publishPath) {
-        console.log(path.join(projectRoot, publishPath))
-        stream = stream.pipe(vinylfs.dest(path.join(projectRoot, publishPath)));
+    if (resourcePath) {
+        stream = stream.pipe(vinylfs.dest(path.join(projectRoot, resourcePath)).on("end", () => {
+            html.publish(publishPath as string);
+        }));
     }
 }
 

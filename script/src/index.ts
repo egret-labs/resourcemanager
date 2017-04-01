@@ -101,7 +101,6 @@ export namespace ResourceConfig {
     }
 
     export async function generateClassicalConfig(filename: string) {
-        console.log(filename)
         let result: original.Info = {
             groups: [],
             resources: []

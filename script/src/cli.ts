@@ -51,9 +51,6 @@ if (p && fs.existsSync(path.join(p, "egretProperties.json"))) {
         case "version":
             promise = res.version();
             break;
-        case "test":
-            promise = res.test();
-            break;
         default:
             handleExceiption(`找不到指定的命令{command}`)
             break;

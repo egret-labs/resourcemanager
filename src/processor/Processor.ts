@@ -387,7 +387,7 @@ module RES.processor {
 
             loop(resources, "", value => {
                 if (!value.type) {
-                    value.type = this.__temp__get__type__via__url(value.url);
+                    value.type = resourceTypeSelector(value.url);
                 }
             })
 
@@ -645,7 +645,8 @@ module RES.processor {
         "sound": SoundProcessor,
         "movieclip": MovieClipProcessor,
         "pvr": PVRProcessor,
-        "mergeJson": MergeJSONProcessor
+        "mergeJson": MergeJSONProcessor,
+        "resourceConfig": ResourceConfigProcessor
     }
 }
 

@@ -27,6 +27,7 @@ declare type ResourceMergerSelector = (file: string) => {
     alias: string;
 };
 declare module RES {
+    var resourceTypeSelector: ResourceTypeSelector;
     var resourceNameSelector: ResourceNameSelector;
     function mapResourceName(nameSelector: ResourceNameSelector): (target: any) => void;
     function mapResourceType(typeSelector: ResourceTypeSelector): (target: any) => void;

@@ -144,7 +144,6 @@ var RES;
 })(RES || (RES = {}));
 var RES;
 (function (RES) {
-    var resourceTypeSelector;
     RES.resourceNameSelector = function (p) { return p; };
     function mapResourceName(nameSelector) {
         return function (target) {
@@ -154,7 +153,7 @@ var RES;
     RES.mapResourceName = mapResourceName;
     function mapResourceType(typeSelector) {
         return function (target) {
-            resourceTypeSelector = typeSelector;
+            RES.resourceTypeSelector = typeSelector;
         };
     }
     RES.mapResourceType = mapResourceType;
@@ -186,7 +185,7 @@ var RES;
             if (typeSelector) {
                 mapResourceType(typeSelector)(target);
             }
-            var type = resourceTypeSelector(url);
+            var type = 'resourceConfig';
             if (typeof rootSelector == "string") {
                 RES.resourceRoot = rootSelector;
             }
@@ -239,8 +238,8 @@ var RES;
             if (ext) {
                 ext = ext.toLowerCase();
             }
-            if (resourceTypeSelector) {
-                var type = resourceTypeSelector(url);
+            if (RES.resourceTypeSelector) {
+                var type = RES.resourceTypeSelector(url);
                 if (!type) {
                     throw new RES.ResourceManagerError(2004, url);
                 }
@@ -1030,7 +1029,6 @@ var RES;
         processor_1.ResourceConfigProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var _this = this;
                     var data, resources, loop, isFile;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
@@ -1062,7 +1060,7 @@ var RES;
                                 };
                                 loop(resources, "", function (value) {
                                     if (!value.type) {
-                                        value.type = _this.__temp__get__type__via__url(value.url);
+                                        value.type = RES.resourceTypeSelector(value.url);
                                     }
                                 });
                                 return [2 /*return*/, data];
@@ -1287,7 +1285,8 @@ var RES;
             "sound": processor_1.SoundProcessor,
             "movieclip": processor_1.MovieClipProcessor,
             "pvr": processor_1.PVRProcessor,
-            "mergeJson": processor_1.MergeJSONProcessor
+            "mergeJson": processor_1.MergeJSONProcessor,
+            "resourceConfig": processor_1.ResourceConfigProcessor
         };
     })(processor = RES.processor || (RES.processor = {}));
 })(RES || (RES = {}));
