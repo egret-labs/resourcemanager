@@ -140,7 +140,7 @@ export async function convertResourceJson(projectRoot: string, config: Data) {
                 continue;
             }
             else if (resource_custom_key == "subkeys") {
-                var subkeysArr = r['"subkeys"'].split(",");
+                var subkeysArr = (r[resource_custom_key] as string).split(",");
                 for (let subkey of subkeysArr) {
                     // if (!obj.alias[subkeysArr[i]]) {
                     config.alias[subkey] = r.name + "#" + subkey;
