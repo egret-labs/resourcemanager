@@ -28,6 +28,7 @@ export async function publish(publishRoot: string) {
     parser.end();
     let indexCrc32 = crc32(content);
     await fs.writeFileAsync(rename(indexHTML, indexCrc32), content);
+    await fs.removeAsync(indexHTML);
 
 }
 
