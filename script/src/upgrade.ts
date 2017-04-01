@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra-promise';
 
 import * as resource from './';
+import * as config from './config';
 
 
 
@@ -33,9 +34,7 @@ export async function upgrade(projectPath) {
                 m.path = "."
             }
         }
-
-        let folder = path.resolve(__dirname, "../../")
-        let source = path.join(folder, "bin");
+        let source = config.getDist().folder;
         let target = path.join(projectPath, "bin");
 
         if (version >= 4000100) { //4.0.1.0

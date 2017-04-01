@@ -5,11 +5,28 @@ import * as fs from 'fs-extra-promise';
 
 
 export async function printConfig(egretRoot) {
-    let data = await getConfigViaDecorator(egretRoot)
+    let data = await getConfigViaDecorator(egretRoot);
+    let source = getDist();
     let { resourceRoot, resourceConfigFileName, typeSelector} = data;
     let typeSelectorBody = typeSelector.toString();
-    let outputData = { resourceRoot, resourceConfigFileName, typeSelectorBody };
+    let outputData = { resourceRoot, resourceConfigFileName, typeSelectorBody, source };
     console.log(JSON.stringify(outputData));
+}
+
+export function getDist() {
+    let folder = path.resolve(__dirname, "../../bin");
+    let bundleFiles = [
+        "resourcemanager.js"
+    ]
+    let minFiles = [
+        "resourcemanager.min.js"
+    ];
+    let declareFiles = [
+        "resourcemanager.d.ts"
+    ]
+    return {
+        folder, bundleFiles, minFiles, declareFiles
+    }
 }
 
 export async function getConfigViaDecorator(egretRoot: string) {
