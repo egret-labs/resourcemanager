@@ -10,6 +10,7 @@ export * from './config';
 export * from './upgrade';
 export * from './build';
 export * from './version';
+export * from './html';
 
 
 
