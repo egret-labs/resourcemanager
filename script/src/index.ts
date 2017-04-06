@@ -132,8 +132,9 @@ export namespace ResourceConfig {
                     if (typeof (f) == "string") {
                         continue;
                     }
-                    delete f.name;
+
                     if (!debug) {
+                        delete f.name;
                         // console.log 
                         if (ResourceConfig.typeSelector(f.url) == f.type) {
                             delete f.type;

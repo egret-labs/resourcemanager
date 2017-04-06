@@ -26,8 +26,13 @@ const format = process.argv.indexOf("-json") >= 0 ? "json" : "text";
 let command = process.argv[2];
 let p = getProjectPath(process.argv[3]);
 
-if (p && fs.existsSync(path.join(p, "egretProperties.json"))) {
-    let promise: Promise<void> | null = null;
+let promise: Promise<void> | null = null;
+if (command == 'version') {
+    promise = res.version();
+}
+
+if (!promise && p && fs.existsSync(path.join(p, "egretProperties.json"))) {
+
     switch (command) {
         case "upgrade":
             promise = res.upgrade(p);
@@ -48,22 +53,14 @@ if (p && fs.existsSync(path.join(p, "egretProperties.json"))) {
         case "config":
             promise = res.printConfig(p);
             break;
-        case "version":
-            promise = res.version();
-            break;
         default:
             handleExceiption(`找不到指定的命令{command}`)
             break;
-    }
-    if (promise) {
-        promise.catch(handleExceiption);
     }
 }
 else {
     handleExceiption(`${path.join(process.cwd(), p)} 不是一个有效的 Egret 项目`)
 }
-
-
-
-
-
+if (promise) {
+    promise.catch(handleExceiption);
+}

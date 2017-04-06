@@ -14,7 +14,7 @@ export async function printConfig(egretRoot) {
 }
 
 export function getDist() {
-    let folder = path.resolve(__dirname, "../../bin");
+    let folder = path.resolve(__dirname, "../../bin/resourcemanager");
     let bundleFiles = [
         "resourcemanager.js"
     ]

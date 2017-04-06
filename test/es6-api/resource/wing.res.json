@@ -2,90 +2,90 @@
   "groups": [],
   "resources": [
     {
-      "url": "ea/ef3203.mergeJson",
+      "url": "111.mergeJson",
       "type": "mergeJson",
-      "name": "111_mergeJson"
+      "name": "111.mergeJson"
     },
     {
-      "url": "78/c88c30.json",
+      "url": "config.json",
       "type": "json",
-      "name": "config_json"
+      "name": "config.json"
     },
     {
-      "url": "26/dfd133.json",
+      "url": "default.res.json",
       "type": "json",
-      "name": "default_res_json"
+      "name": "default.res.json"
     },
     {
-      "url": "15/1b2743.json",
+      "url": "wing.res.json",
       "type": "json",
-      "name": "wing_res_json"
+      "name": "wing.res.json"
     },
     {
-      "url": "18/f18a5d.jpg",
+      "url": "assets/bg.jpg",
       "type": "image",
-      "name": "bg_jpg"
+      "name": "assets/bg.jpg"
     },
     {
-      "url": "fe/420392.png",
+      "url": "assets/egret_icon.png",
       "type": "image",
-      "name": "egret_icon_png"
+      "name": "assets/egret_icon.png"
     },
     {
-      "url": "ec/426b55.json",
+      "url": "assets/armature/skeleton.json",
       "type": "json",
-      "name": "skeleton_json"
+      "name": "assets/armature/skeleton.json"
     },
     {
-      "url": "af/7c12f4.json",
+      "url": "assets/armature/texture.json",
       "type": "json",
-      "name": "texture_json"
+      "name": "assets/armature/texture.json"
     },
     {
-      "url": "dd/df2e45.png",
+      "url": "assets/armature/texture.png",
       "type": "image",
-      "name": "texture_png"
+      "name": "assets/armature/texture.png"
     },
     {
-      "url": "24/6f06dc.json",
-      "type": "movieclip",
-      "name": "movieclip_json"
-    },
-    {
-      "url": "6b/064dec.png",
-      "type": "image",
-      "name": "movieclip_png"
-    },
-    {
-      "url": "c8/8fd551.fnt",
+      "url": "assets/font/font.fnt",
       "type": "font",
-      "name": "font_fnt"
+      "name": "assets/font/font.fnt"
     },
     {
-      "url": "d4/0cf4ed.png",
+      "url": "assets/font/font.png",
       "type": "image",
-      "name": "font_png"
+      "name": "assets/font/font.png"
     },
     {
-      "url": "76/baa897.pvr",
+      "url": "assets/movieclip/movieclip.json",
+      "type": "movieclip",
+      "name": "assets/movieclip/movieclip.json"
+    },
+    {
+      "url": "assets/movieclip/movieclip.png",
+      "type": "image",
+      "name": "assets/movieclip/movieclip.png"
+    },
+    {
+      "url": "assets/pvr/0.pvr",
       "type": "pvr",
-      "name": "0_pvr"
+      "name": "assets/pvr/0.pvr"
     },
     {
-      "url": "18/1d8373.json",
+      "url": "assets/sheet/sheet.json",
       "type": "sheet",
       "name": "sheet_json",
       "subkeys": "off,on"
     },
     {
-      "url": "1a/d6e59c.png",
+      "url": "assets/sheet/sheet.png",
       "type": "image",
       "name": "sheet_png"
     },
     {
-      "url": "41/1f25c1.mp3",
+      "url": "assets/sound/sound_go.mp3",
       "type": "sound",
-      "name": "sound_go_mp3"
+      "name": "assets/sound/sound_go.mp3"
     }
   ]
 }

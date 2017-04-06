@@ -35,7 +35,9 @@ export async function upgrade(projectPath) {
             }
         }
         let source = config.getDist().folder;
-        let target = path.join(projectPath, "bin");
+        let target = path.join(projectPath, "bin/resourcemanager");
+
+        console.log(source, target)
 
         if (version >= 4000100) { //4.0.1.0
             for (let m of propertyData.modules) {
@@ -43,7 +45,7 @@ export async function upgrade(projectPath) {
                     m.path = "resourcemanager"
                 }
             }
-            target = projectPath;
+            target = path.join(projectPath, "resourcemanager");
         }
         await fs.writeJSONAsync(propertyFile, propertyData);
         await fs.copyAsync(source, target);

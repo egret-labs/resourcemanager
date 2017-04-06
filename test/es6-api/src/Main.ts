@@ -26,11 +26,11 @@
     return type;
 })
 @RES.mapResourceName((p) => {
-    let index = p.lastIndexOf("/");
-    if (index >= 0) {
-        p = p.substr(index + 1);
-    }
-    p = p.replace(/\./gi, '_');
+    // let index = p.lastIndexOf("/");
+    // if (index >= 0) {
+    //     p = p.substr(index + 1);
+    // }
+    // p = p.replace(/\./gi, '_');
     return p;
 })
 @RES.mapResourceMerger(path => {
@@ -177,9 +177,9 @@ class Main extends egret.DisplayObjectContainer {
             // .then(testNull)
             // .then(testCreateAndDestoryResource)
             // .then(testLoadResByUrl)
-            .then(testBitmapFont)
-        // .then(testNetworkDelay)
-        // .then(testSpriteSheet)
+            // .then(testBitmapFont)
+            // .then(testNetworkDelay)
+            .then(testSpriteSheet)
         // .then(testGroupWithURL)
         // .then(testSoundByUrl)
         // .then(testAnimationByUrl)
