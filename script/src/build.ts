@@ -1,6 +1,6 @@
 import * as vinylfs from 'vinyl-fs';
 import * as VinylFile from 'vinyl';
-import { Data, ResourceConfig, GeneratedData, original } from './';
+import { Data, ResourceConfig, GeneratedData, original, handleException } from './';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
@@ -101,7 +101,7 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
 
     if (resourcePath) {
         stream = stream.pipe(vinylfs.dest(resourcePath).on("end", () => {
-            html.publish(publishPath as string);
+            html.publish(publishPath as string).catch(e => handleException(e))
         }));
     }
 }

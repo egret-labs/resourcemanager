@@ -3,19 +3,13 @@
 import * as res from './';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
+import { handleException } from "./";
 
 function getProjectPath(p) {
     return p ? p : ".";
 }
 
-let handleExceiption = (e: string | Error) => {
-    if (typeof e == 'string') {
-        console.log(`错误:${e}`);
-    }
-    else {
-        console.log(`错误:${e.stack}`);
-    }
-}
+
 
 let getCommand = (command: string) => {
 
@@ -43,7 +37,7 @@ if (!promise && p && fs.existsSync(path.join(p, "egretProperties.json"))) {
         case "publish":
             let publishPath = process.argv[4];
             if (!publishPath) {
-                handleExceiption('请设置发布目录');
+                handleException('请设置发布目录');
             }
             promise = res.build(p, format, publishPath);
             break;
@@ -54,13 +48,13 @@ if (!promise && p && fs.existsSync(path.join(p, "egretProperties.json"))) {
             promise = res.printConfig(p);
             break;
         default:
-            handleExceiption(`找不到指定的命令{command}`)
+            handleException(`找不到指定的命令{command}`)
             break;
     }
 }
 else {
-    handleExceiption(`${path.join(process.cwd(), p)} 不是一个有效的 Egret 项目`)
+    handleException(`${path.join(process.cwd(), p)} 不是一个有效的 Egret 项目`)
 }
 if (promise) {
-    promise.catch(handleExceiption);
+    promise.catch(handleException);
 }

@@ -12,7 +12,14 @@ export * from './build';
 export * from './version';
 export * from './html';
 
-
+export let handleException = (e: string | Error) => {
+    if (typeof e == 'string') {
+        console.log(`错误:${e}`);
+    }
+    else {
+        console.log(`错误:${e.stack}`);
+    }
+}
 
 enum ResourceNodeType {
     FILE, DICTIONARY
@@ -188,7 +195,7 @@ export namespace ResourceConfig {
     var resourcePath: string;
 
     export function addFile(r: vfs.File, checkDuplicate: boolean) {
-        let {url, name} = r;
+        let { url, name } = r;
         url = url.split("\\").join("/");
         name = name.split("\\").join("/");
         r.url = url;

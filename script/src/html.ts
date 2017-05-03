@@ -8,7 +8,9 @@ export async function publish(publishRoot: string) {
     let indexHTML = path.join(publishRoot, 'index.html');
     let content = await fs.readFileAsync(indexHTML, "utf-8");
 
-    var parser = new htmlparser.Parser({
+
+
+    let handler: htmlparser.Handler = {
         // 这里不要包含异步逻辑
         onopentag: function (name, attributes) {
 
@@ -21,14 +23,17 @@ export async function publish(publishRoot: string) {
                 let javascritpOutFilePath = rename(src, javascriptCrc32);
                 fs.renameSync(javascriptFilePath, path.join(publishRoot, javascritpOutFilePath))
                 content = content.replace(src, javascritpOutFilePath);
+                manifest.initial.push(javascritpOutFilePath);
             }
         }
-    }, { decodeEntities: true });
+    }
+
+    let manifest = { initial: [] as string[] };
+
+    var parser = new htmlparser.Parser(handler, { decodeEntities: true });
     parser.parseComplete(content)
     parser.end();
-    let indexCrc32 = crc32(content);
-    await fs.writeFileAsync(rename(indexHTML, indexCrc32), content);
-    await fs.removeAsync(indexHTML);
+    console.log(manifest)
 
 }
 

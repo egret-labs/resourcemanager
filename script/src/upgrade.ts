@@ -36,9 +36,6 @@ export async function upgrade(projectPath) {
         }
         let source = config.getDist().folder;
         let target = path.join(projectPath, "bin/resourcemanager");
-
-        console.log(source, target)
-
         if (version >= 4000100) { //4.0.1.0
             for (let m of propertyData.modules) {
                 if (m.name == "resourcemanager") {
