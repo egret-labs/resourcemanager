@@ -45,7 +45,6 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
 
     projectRoot = p;
     resourceFolder = path.join(projectRoot, result.resourceRoot);
-
     merger.init(resourceFolder);
 
 
@@ -84,7 +83,7 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
 
     let list = await utils.walk(resourceFolder, () => true, option);
     let outputFile = resourcePath ?
-        path.join(projectRoot, resourcePath, result.resourceConfigFileName) :
+        path.join(resourcePath, result.resourceConfigFileName) :
         path.join(resourceFolder, result.resourceConfigFileName)
 
     let stream = vinylfs.src(`**/**.*`, { cwd: resourceFolder, base: resourceFolder })
@@ -99,8 +98,9 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
         await ResourceConfig.generateClassicalConfig(path.join(resourceFolder, "wing.res.json"));
         merger.output();
     }))
+
     if (resourcePath) {
-        stream = stream.pipe(vinylfs.dest(path.join(projectRoot, resourcePath)).on("end", () => {
+        stream = stream.pipe(vinylfs.dest(resourcePath).on("end", () => {
             html.publish(publishPath as string);
         }));
     }
