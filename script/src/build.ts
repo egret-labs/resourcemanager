@@ -101,7 +101,7 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
 
     if (resourcePath) {
         stream = stream.pipe(vinylfs.dest(resourcePath).on("end", () => {
-            html.publish(publishPath as string).catch(e => handleException(e))
+            html.publish(publishPath as string, outputFile).catch(e => handleException(e))
         }));
     }
 }

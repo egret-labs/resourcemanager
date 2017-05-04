@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra-promise';
 import * as crc32 from 'crc32';
 
-export async function publish(publishRoot: string) {
+export async function publish(publishRoot: string, resourceConfigPath: string) {
 
     let indexHTML = path.join(publishRoot, 'index.html');
     let content = await fs.readFileAsync(indexHTML, "utf-8");
@@ -28,7 +28,7 @@ export async function publish(publishRoot: string) {
     }
 
     let version = Date.now().toString();
-    let configPath = renameFile("config.json", version);
+    let configPath = renameFile(path.basename(resourceConfigPath), version);
     let manifest = { initial: [] as string[], configPath };
 
     var parser = new htmlparser.Parser(handler, { decodeEntities: true });
@@ -36,11 +36,22 @@ export async function publish(publishRoot: string) {
     parser.end();
 
     await fs.renameAsync(
-        path.join(publishRoot, 'resource/config.json'),
+        resourceConfigPath,
         path.join(publishRoot, 'resource/', configPath)
     )
     let manifestPath = path.join(publishRoot, "manifest.json");
+
+    // let manifestContent = `
+    //     var game_file_list = ${JSON.stringify(manifest.initial, null, "\t")}
+    //     RES.setConfigURL(${manifest.configPath})
+    // `
+
     let manifestContent = JSON.stringify(manifest, null, "\t");
+
+
+
+
+
     await fs.writeFileAsync(manifestPath, manifestContent, "utf-8");
     let backupManifest = path.join(publishRoot, rename("manifest.json", version, "backup"));
     await fs.mkdirpAsync(path.dirname(backupManifest));
