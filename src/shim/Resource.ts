@@ -580,7 +580,7 @@ module RES {
         @checkCancelation
         public getResAsync(key: string, compFunc?: GetResAsyncCallback, thisObject?: any): Promise<any> | void {
             var paramKey = key;
-            var {r, subkey} = manager.config.getResourceWithSubkey(key, true);
+            var { r, subkey } = manager.config.getResourceWithSubkey(key, true);
             return manager.load(r).then(value => {
                 let processor = host.isSupport(r);
                 if (processor && processor.getData && subkey) {

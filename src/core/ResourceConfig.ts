@@ -94,10 +94,13 @@ module RES {
             if (resourceRoot.lastIndexOf("/") != 0) {
                 resourceRoot = resourceRoot + "/";
             }
-            configItem = { url, resourceRoot, type, name: url };
-
+            configItem = { type, resourceRoot, url, name: url };
         }
     };
+
+    export function setConfigURL(url: string) {
+        configItem.url = url;
+    }
 
     export var resourceRoot: string;
 
@@ -182,7 +185,7 @@ module RES {
                 return null;
             }
             for (var paramKey of group) {
-                var {key, subkey} = manager.config.getResourceWithSubkey(paramKey, true);
+                var { key, subkey } = manager.config.getResourceWithSubkey(paramKey, true);
                 let r = manager.config.getResource(key, true);
                 result.push(r);
                 // if (r) {

@@ -195,11 +195,15 @@ var RES;
             if (RES.resourceRoot.lastIndexOf("/") != 0) {
                 RES.resourceRoot = RES.resourceRoot + "/";
             }
-            RES.configItem = { url: url, resourceRoot: RES.resourceRoot, type: type, name: url };
+            RES.configItem = { type: type, resourceRoot: RES.resourceRoot, url: url, name: url };
         };
     }
     RES.mapConfig = mapConfig;
     ;
+    function setConfigURL(url) {
+        RES.configItem.url = url;
+    }
+    RES.setConfigURL = setConfigURL;
     /**
      * @class RES.ResourceConfig
      * @classdesc

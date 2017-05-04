@@ -51,6 +51,7 @@ declare module RES {
      * @language zh_CN
      */
     function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector?: ResourceTypeSelector): (target: any) => void;
+    function setConfigURL(url: string): void;
     var resourceRoot: string;
     interface ResourceInfo {
         url: string;
