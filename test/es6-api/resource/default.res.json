@@ -15,7 +15,7 @@
 	"groups": [
 		{
 			"name": "preload",
-			"keys": "off,on,sheet_json,sheet_png"
+			"keys": "off,on"
 		}
 	]
 }

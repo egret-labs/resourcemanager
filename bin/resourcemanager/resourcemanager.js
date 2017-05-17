@@ -229,7 +229,9 @@ var RES;
                 var paramKey = group_1[_i];
                 var _a = RES.manager.config.getResourceWithSubkey(paramKey, true), key = _a.key, subkey = _a.subkey;
                 var r = RES.manager.config.getResource(key, true);
-                result.push(r);
+                if (result.indexOf(r) == -1) {
+                    result.push(r);
+                }
             }
             return result;
         };
@@ -885,7 +887,7 @@ var RES;
                     return data.getTexture(subkey);
                 }
                 else {
-                    console.error("missing resource :\" + " + key + "#" + subkey);
+                    console.error("missing resource : " + key + "#" + subkey);
                     return null;
                 }
             },

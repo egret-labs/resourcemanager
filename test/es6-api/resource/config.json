@@ -8,9 +8,7 @@
 	"groups": {
 		"preload": [
 			"off",
-			"on",
-			"sheet_json",
-			"sheet_png"
+			"on"
 		]
 	},
 	"resources": {

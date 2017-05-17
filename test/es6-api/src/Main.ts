@@ -93,14 +93,11 @@ class Main extends egret.DisplayObjectContainer {
         }
 
         let testSpriteSheet = () =>
-            RES.getResAsync("assets/sheet/sheet.json")
-                .then((value: egret.SpriteSheet) => {
+            RES.loadGroup("preload")
+                .then(() => {
                     var button = new egret.Bitmap();
                     this.addChild(button);
                     let texture = RES.getRes("assets/sheet/sheet.json#off");
-                    console.assert(value instanceof egret.SpriteSheet, "测试SpriteSheet纹理")
-                    console.assert(texture instanceof egret.Texture, "测试SpriteSheet纹理")
-                    console.assert(texture === value.getTexture("off"));
                     button.texture = texture;
                     button.y = 100;
                 });

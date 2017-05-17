@@ -187,10 +187,9 @@ module RES {
             for (var paramKey of group) {
                 var { key, subkey } = manager.config.getResourceWithSubkey(paramKey, true);
                 let r = manager.config.getResource(key, true);
-                result.push(r);
-                // if (r) {
-
-                // }
+                if (result.indexOf(r) == -1) {
+                    result.push(r);
+                }
             }
             return result;
         }
