@@ -293,13 +293,15 @@ var RES;
             if (!path) {
                 path = path_or_alias;
             }
-            var r = RES.getResourceInfo(path);
+            var file = RES.getResourceInfo(path);
+            var r = file;
             if (!r) {
                 if (shouldNotBeNull) {
                     throw new RES.ResourceManagerError(2006, path_or_alias);
                 }
                 return null;
             }
+            r;
             return r;
         };
         /**
@@ -495,17 +497,49 @@ var RES;
         function PromiseQueue() {
         }
         PromiseQueue.prototype.load = function (list, reporter) {
+            // let s = host.state[r.name];
+            //     if (s == 2) {
+            //         return Promise.resolve(host.get(r));
+            //     }
+            //     if (s == 1) {
+            //         return r.promise as Promise<any>
+            //     }
             var current = 0;
             var total = 1;
-            var mapper = function (r) { return RES.host.load(r)
-                .then(function (response) {
-                RES.host.save(r, response);
-                current++;
-                if (reporter && reporter.onProgress) {
-                    reporter.onProgress(current, total);
-                }
-                return response;
-            }); };
+            var mapper;
+            if (RES.FEATURE_FLAG.LOADING_STATE) {
+                mapper = function (r) {
+                    var s = RES.host.state[r.name];
+                    if (s == 2) {
+                        return Promise.resolve(RES.host.get(r));
+                    }
+                    if (s == 1) {
+                        return r.promise;
+                    }
+                    var p = RES.host.load(r)
+                        .then(function (response) {
+                        RES.host.save(r, response);
+                        current++;
+                        if (reporter && reporter.onProgress) {
+                            reporter.onProgress(current, total);
+                        }
+                        return response;
+                    });
+                    r.promise = p;
+                    return p;
+                };
+            }
+            else {
+                mapper = function (r) { return RES.host.load(r)
+                    .then(function (response) {
+                    RES.host.save(r, response);
+                    current++;
+                    if (reporter && reporter.onProgress) {
+                        reporter.onProgress(current, total);
+                    }
+                    return response;
+                }); };
+            }
             if ((list instanceof Array)) {
                 total = list.length;
                 return Promise.all(list.map(mapper));
@@ -559,6 +593,7 @@ var RES;
     }
     RES.profile = profile;
     RES.host = {
+        state: {},
         get resourceConfig() {
             return manager.config;
         },
@@ -569,7 +604,9 @@ var RES;
             if (!processor) {
                 throw new ResourceManagerError(2001, r.name, r.type);
             }
-            return processor.onLoadStart(RES.host, r);
+            RES.host.state[r.name] = 1;
+            var promise = processor.onLoadStart(RES.host, r);
+            return promise;
         },
         unload: function (r) {
             var data = RES.host.get(r);
@@ -579,6 +616,7 @@ var RES;
             }
             var processor = RES.host.isSupport(r);
             if (processor) {
+                RES.host.state[r.name] = 3;
                 return processor.onRemoveStart(RES.host, r)
                     .then(function (result) {
                     RES.host.remove(r);
@@ -590,12 +628,14 @@ var RES;
             }
         },
         save: function (resource, data) {
+            RES.host.state[resource.name] = 2;
             __tempCache[resource.url] = data;
         },
         get: function (resource) {
             return __tempCache[resource.url];
         },
         remove: function (resource) {
+            RES.host.state[resource.name] = 0;
             delete __tempCache[resource.url];
         },
         isSupport: function (resource) {
@@ -1704,6 +1744,13 @@ var RES;
                 return method.apply(this, arg);
             }
         };
+    };
+    /**
+     * 功能开关
+     *  LOADING_STATE：处理重复加载
+     */
+    RES.FEATURE_FLAG = {
+        LOADING_STATE: 0
     };
     var upgrade;
     (function (upgrade) {

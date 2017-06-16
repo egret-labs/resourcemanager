@@ -60,18 +60,6 @@
 					"name": "assets/armature/texture.png"
 				}
 			},
-			"font": {
-				"font.fnt": {
-					"url": "assets/font/font.fnt",
-					"type": "font",
-					"name": "assets/font/font.fnt"
-				},
-				"font.png": {
-					"url": "assets/font/font.png",
-					"type": "image",
-					"name": "assets/font/font.png"
-				}
-			},
 			"movieclip": {
 				"movieclip.json": {
 					"url": "assets/movieclip/movieclip.json",
@@ -82,6 +70,18 @@
 					"url": "assets/movieclip/movieclip.png",
 					"type": "image",
 					"name": "assets/movieclip/movieclip.png"
+				}
+			},
+			"font": {
+				"font.fnt": {
+					"url": "assets/font/font.fnt",
+					"type": "font",
+					"name": "assets/font/font.fnt"
+				},
+				"font.png": {
+					"url": "assets/font/font.png",
+					"type": "image",
+					"name": "assets/font/font.png"
 				}
 			},
 			"pvr": {

@@ -49,17 +49,53 @@ module RES {
 		public load(list: ResourceInfo | ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]>;
 		public load(list: ResourceInfo | ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]> {
 
+
+
+			// let s = host.state[r.name];
+			//     if (s == 2) {
+			//         return Promise.resolve(host.get(r));
+			//     }
+			//     if (s == 1) {
+			//         return r.promise as Promise<any>
+			//     }
+
 			let current = 0;
 			let total = 1;
-			let mapper = (r) => host.load(r)
-				.then(response => {
-					host.save(r, response);
-					current++;
-					if (reporter && reporter.onProgress) {
-						reporter.onProgress(current, total);
+			let mapper: (r: ResourceInfo) => Promise<any>;
+			if (RES.FEATURE_FLAG.LOADING_STATE) {
+				mapper = (r: ResourceInfo) => {
+					let s = host.state[r.name];
+					if (s == 2) {
+						return Promise.resolve(host.get(r));
 					}
-					return response;
-				})
+					if (s == 1) {
+						return r.promise as Promise<any>
+					}
+
+					let p = host.load(r)
+						.then(response => {
+							host.save(r, response);
+							current++;
+							if (reporter && reporter.onProgress) {
+								reporter.onProgress(current, total);
+							}
+							return response;
+						})
+					r.promise = p;
+					return p;
+				}
+			}
+			else {
+				mapper = (r) => host.load(r)
+					.then(response => {
+						host.save(r, response);
+						current++;
+						if (reporter && reporter.onProgress) {
+							reporter.onProgress(current, total);
+						}
+						return response;
+					})
+			}
 			if ((list instanceof Array)) {
 				total = list.length;
 				return Promise.all(list.map(mapper));

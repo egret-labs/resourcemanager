@@ -125,6 +125,8 @@ module RES {
          */
         extra?: boolean;
 
+        promise?: Promise<any>;
+
     }
 
     export interface Data {
@@ -285,7 +287,8 @@ module RES {
             if (!path) {
                 path = path_or_alias;
             }
-            let r = getResourceInfo(path);
+            let file = getResourceInfo(path)
+            let r: ResourceInfo = file;
             if (!r) {
                 if (shouldNotBeNull) {
                     throw new ResourceManagerError(2006, path_or_alias)
@@ -293,6 +296,7 @@ module RES {
                 return null;
 
             }
+            r
             return r;
         }
 

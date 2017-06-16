@@ -92,15 +92,13 @@ class Main extends egret.DisplayObjectContainer {
             // RES.createGroup("group1", ["assets/bg.jpg"])
         }
 
-        let testSpriteSheet = () =>
-            RES.loadGroup("preload")
-                .then(() => {
-                    var button = new egret.Bitmap();
-                    this.addChild(button);
-                    let texture = RES.getRes("assets/sheet/sheet.json#off");
-                    button.texture = texture;
-                    button.y = 100;
-                });
+        let testSpriteSheet = async () => {
+            RES.createGroup("group1", ["assets/sheet/sheet.json#off"]);
+            await RES.loadGroup("group1");
+            await RES.loadGroup("group1");
+            // await RES.getResAsync("assets/sheet/sheet.json#off");
+            // await RES.getResAsync("assets/sheet/sheet.json#on");
+        }
 
         let testLoadResByUrl = () =>
             RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);

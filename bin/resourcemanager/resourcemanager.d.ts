@@ -64,6 +64,7 @@ declare module RES {
          * 是否被资源管理器进行管理，默认值为 false
          */
         extra?: boolean;
+        promise?: Promise<any>;
     }
     interface Data {
         resources: Dictionary;
@@ -138,6 +139,9 @@ declare module RES {
         function destory(): void;
     }
     interface ProcessHost {
+        state: {
+            [index: string]: number;
+        };
         resourceConfig: ResourceConfig;
         load: (resource: ResourceInfo, processor?: processor.Processor) => Promise<any>;
         unload: (resource: ResourceInfo) => Promise<any>;
@@ -547,6 +551,13 @@ declare module RES {
 }
 declare module RES {
     let checkNull: MethodDecorator;
+    /**
+     * 功能开关
+     *  LOADING_STATE：处理重复加载
+     */
+    let FEATURE_FLAG: {
+        LOADING_STATE: number;
+    };
     namespace upgrade {
         function setUpgradeGuideLevel(level: "warning" | "silent"): void;
         let checkDecorator: MethodDecorator;

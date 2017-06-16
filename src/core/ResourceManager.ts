@@ -41,18 +41,22 @@ module RES {
 
     export var host: ProcessHost = {
 
+        state: {},
+
         get resourceConfig() {
             return manager.config;
         },
 
-        load: (r: ResourceInfo, processor: processor.Processor | undefined) => {
+        load: (r: ResourceInfo, processor?: processor.Processor) => {
             if (!processor) {
                 processor = host.isSupport(r);
             }
             if (!processor) {
                 throw new ResourceManagerError(2001, r.name, r.type);
             }
-            return processor.onLoadStart(host, r)
+            host.state[r.name] = 1;
+            let promise = processor.onLoadStart(host, r);
+            return promise;
         },
 
         unload(r: ResourceInfo) {
@@ -63,6 +67,7 @@ module RES {
             }
             let processor = host.isSupport(r);
             if (processor) {
+                host.state[r.name] = 3;
                 return processor.onRemoveStart(host, r)
                     .then(result => {
                         host.remove(r);
@@ -78,6 +83,7 @@ module RES {
 
 
         save(resource: ResourceInfo, data: any) {
+            host.state[resource.name] = 2;
             __tempCache[resource.url] = data;
         },
 
@@ -87,6 +93,7 @@ module RES {
         },
 
         remove(resource: ResourceInfo) {
+            host.state[resource.name] = 0;
             delete __tempCache[resource.url];
         },
 
@@ -130,6 +137,8 @@ module RES {
 
 
     export interface ProcessHost {
+
+        state: { [index: string]: number }
 
         resourceConfig: ResourceConfig;
 

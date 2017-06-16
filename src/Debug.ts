@@ -14,6 +14,14 @@ module RES {
         }
     }
 
+    /**
+     * 功能开关
+     *  LOADING_STATE：处理重复加载
+     */
+    export let FEATURE_FLAG = {
+        LOADING_STATE: 0
+    }
+
 
 
 
