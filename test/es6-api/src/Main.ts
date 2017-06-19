@@ -52,6 +52,7 @@ class Main extends egret.DisplayObjectContainer {
     public constructor() {
 
         super();
+        RES.FEATURE_FLAG.LOADING_STATE = 1;
         this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
     }
 
@@ -93,9 +94,13 @@ class Main extends egret.DisplayObjectContainer {
         }
 
         let testSpriteSheet = async () => {
-            RES.createGroup("group1", ["assets/sheet/sheet.json#off"]);
-            await RES.loadGroup("group1");
-            await RES.loadGroup("group1");
+
+            // RES.getResAsync("xxxxx")
+            RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
+            RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
+            // RES.createGroup("group1", ["assets/sheet/sheet.json#off"]);
+            // await RES.loadGroup("group1");
+            // await RES.loadGroup("group1");
             // await RES.getResAsync("assets/sheet/sheet.json#off");
             // await RES.getResAsync("assets/sheet/sheet.json#on");
         }

@@ -611,6 +611,14 @@ module RES {
                 }
                 // manager.config.addResourceData({ name: url, url: url });
                 r = { name: url, url, type, extra: true };
+                manager.config.addResourceData(r);
+                r = manager.config.getResource(url);
+                if (r) {
+                    r.extra = true;
+                }
+                else {
+                    throw 'never';
+                }
             }
             return manager.load(r).then(value => {
                 if (compFunc && r) {

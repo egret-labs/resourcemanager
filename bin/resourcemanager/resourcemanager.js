@@ -2387,6 +2387,14 @@ var RES;
                 }
                 // manager.config.addResourceData({ name: url, url: url });
                 r = { name: url, url: url, type: type, extra: true };
+                RES.manager.config.addResourceData(r);
+                r = RES.manager.config.getResource(url);
+                if (r) {
+                    r.extra = true;
+                }
+                else {
+                    throw 'never';
+                }
             }
             return RES.manager.load(r).then(function (value) {
                 if (compFunc && r) {

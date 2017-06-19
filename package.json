@@ -1,6 +1,6 @@
 {
   "name": "egret-resource-manager",
-  "version": "4.1.0",
+  "version": "4.2.0-3",
   "bin": {
     "res": "script/out/cli.js"
   },
@@ -33,6 +33,7 @@
     "vinyl": "^2.0.1"
   },
   "devDependencies": {
+    "@types/fs-extra": "2.0.0",
     "@types/fs-extra-promise": "0.0.31",
     "@types/htmlparser2": "^3.7.29",
     "@types/node": "^7.0.8",

@@ -60,18 +60,6 @@
 					"name": "assets/armature/texture.png"
 				}
 			},
-			"movieclip": {
-				"movieclip.json": {
-					"url": "assets/movieclip/movieclip.json",
-					"type": "movieclip",
-					"name": "assets/movieclip/movieclip.json"
-				},
-				"movieclip.png": {
-					"url": "assets/movieclip/movieclip.png",
-					"type": "image",
-					"name": "assets/movieclip/movieclip.png"
-				}
-			},
 			"font": {
 				"font.fnt": {
 					"url": "assets/font/font.fnt",
@@ -82,6 +70,18 @@
 					"url": "assets/font/font.png",
 					"type": "image",
 					"name": "assets/font/font.png"
+				}
+			},
+			"movieclip": {
+				"movieclip.json": {
+					"url": "assets/movieclip/movieclip.json",
+					"type": "movieclip",
+					"name": "assets/movieclip/movieclip.json"
+				},
+				"movieclip.png": {
+					"url": "assets/movieclip/movieclip.png",
+					"type": "image",
+					"name": "assets/movieclip/movieclip.png"
 				}
 			},
 			"pvr": {
