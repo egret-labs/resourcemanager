@@ -21,11 +21,8 @@ declare interface ResVinylFile extends VinylFile {
 
 export async function build(p: string, format: "json" | "text", publishPath?: string, debug: boolean = false) {
 
-    let resourcePath = publishPath ?
-        path.join(publishPath, (await config.getConfigViaDecorator(p)).resourceRoot) :
-        undefined;
-
     let result = await ResourceConfig.init(p);
+    let resourcePath = publishPath ? path.join(publishPath, result.resourceRoot) : undefined;
     ResourceConfig.typeSelector = result.typeSelector;
     ResourceConfig.nameSelector = result.nameSelector;
 
@@ -94,7 +91,7 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
     stream = stream.pipe(map(convert2).on("end", async () => {
         let config = ResourceConfig.getConfig();
         await convertResourceJson(projectRoot, config);
-        await updateResourceConfigFileContent(outputFile, debug);
+        await emitResourceConfigFile(outputFile, debug);
         await ResourceConfig.generateClassicalConfig(path.join(resourceFolder, "wing.res.json"));
         merger.output();
     }))
@@ -106,12 +103,16 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
     }
 }
 
-export async function updateResourceConfigFileContent(filename: string, debug: boolean) {
+export async function emitResourceConfigFile(filename: string, debug: boolean) {
     let config = ResourceConfig.generateConfig(debug);
     let content = JSON.stringify(config, null, "\t");
+    let file = `exports.typeSelector = ${ResourceConfig.typeSelector.toString()};
+exports.alias = ${JSON.stringify(config.alias, null, "\t")};
+exports.groups = ${JSON.stringify(config.groups, null, "\t")};
+exports.resources = ${JSON.stringify(config.resources, null, "\t")};
+`
     await fs.mkdirpAsync(path.dirname(filename))
-    await fs.writeFileAsync(filename, content, "utf-8");
-    return content;
+    await fs.writeFileAsync(filename, file, "utf-8");
 }
 
 
@@ -135,7 +136,7 @@ export async function convertResourceJson(projectRoot: string, config: Data) {
                 ResourceConfig.addFile(r, false)
             }
             else {
-                console.error(`missing file ${r.name} ${r.url}`)
+                console.error(`missing file ${r.name} ${r.url} `)
             }
             continue;
         }

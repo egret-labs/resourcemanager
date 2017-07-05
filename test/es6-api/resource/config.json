@@ -14,80 +14,85 @@
 	"resources": {
 		"111.mergeJson": {
 			"url": "111.mergeJson",
-			"type": "mergeJson",
+			"type": "111.mergeJson",
 			"name": "111.mergeJson"
 		},
 		"config.json": {
 			"url": "config.json",
-			"type": "json",
+			"type": "config.json",
 			"name": "config.json"
+		},
+		"config.ts": {
+			"url": "config.ts",
+			"type": "config.ts",
+			"name": "config.ts"
 		},
 		"default.res.json": {
 			"url": "default.res.json",
-			"type": "json",
+			"type": "default.res.json",
 			"name": "default.res.json"
 		},
 		"wing.res.json": {
 			"url": "wing.res.json",
-			"type": "json",
+			"type": "wing.res.json",
 			"name": "wing.res.json"
 		},
 		"assets": {
 			"bg.jpg": {
 				"url": "assets/bg.jpg",
-				"type": "image",
+				"type": "assets/bg.jpg",
 				"name": "assets/bg.jpg"
 			},
 			"egret_icon.png": {
 				"url": "assets/egret_icon.png",
-				"type": "image",
+				"type": "assets/egret_icon.png",
 				"name": "assets/egret_icon.png"
 			},
 			"armature": {
 				"skeleton.json": {
 					"url": "assets/armature/skeleton.json",
-					"type": "json",
+					"type": "assets/armature/skeleton.json",
 					"name": "assets/armature/skeleton.json"
 				},
 				"texture.json": {
 					"url": "assets/armature/texture.json",
-					"type": "json",
+					"type": "assets/armature/texture.json",
 					"name": "assets/armature/texture.json"
 				},
 				"texture.png": {
 					"url": "assets/armature/texture.png",
-					"type": "image",
+					"type": "assets/armature/texture.png",
 					"name": "assets/armature/texture.png"
 				}
 			},
 			"font": {
 				"font.fnt": {
 					"url": "assets/font/font.fnt",
-					"type": "font",
+					"type": "assets/font/font.fnt",
 					"name": "assets/font/font.fnt"
 				},
 				"font.png": {
 					"url": "assets/font/font.png",
-					"type": "image",
+					"type": "assets/font/font.png",
 					"name": "assets/font/font.png"
 				}
 			},
 			"movieclip": {
 				"movieclip.json": {
 					"url": "assets/movieclip/movieclip.json",
-					"type": "movieclip",
+					"type": "assets/movieclip/movieclip.json",
 					"name": "assets/movieclip/movieclip.json"
 				},
 				"movieclip.png": {
 					"url": "assets/movieclip/movieclip.png",
-					"type": "image",
+					"type": "assets/movieclip/movieclip.png",
 					"name": "assets/movieclip/movieclip.png"
 				}
 			},
 			"pvr": {
 				"0.pvr": {
 					"url": "assets/pvr/0.pvr",
-					"type": "pvr",
+					"type": "assets/pvr/0.pvr",
 					"name": "assets/pvr/0.pvr"
 				}
 			},
@@ -107,7 +112,7 @@
 			"sound": {
 				"sound_go.mp3": {
 					"url": "assets/sound/sound_go.mp3",
-					"type": "sound",
+					"type": "assets/sound/sound_go.mp3",
 					"name": "assets/sound/sound_go.mp3"
 				}
 			}

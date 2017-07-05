@@ -2,6 +2,7 @@ import * as ast from 'egret-typescript-ast';
 import * as path from 'path';
 import { Data, ResourceConfig } from './';
 import * as fs from 'fs-extra-promise';
+import * as ts from 'typescript';
 
 
 export async function printConfig(egretRoot) {
@@ -27,6 +28,27 @@ export function getDist() {
     return {
         folder, bundleFiles, minFiles, declareFiles
     }
+}
+
+export async function getConfigViaFile(fileName: string) {
+    let content = await fs.readFileAsync(fileName, 'utf-8');
+    let jsfile = ts.transpile(content, { module: ts.ModuleKind.CommonJS });
+    let f = new Function('require', 'exports', jsfile);
+    var require = function () { };
+    var exports_1: any = {};
+    try {
+        f(require, exports_1);
+    }
+    catch (e) {
+        throw 'todo:parse error'
+    }
+    let resourceRoot: string = typeof exports_1.resourceRoot == 'function' ? exports_1.resourceRoot() : exports_1.resourceRoot;
+    let resourceConfigFileName = exports_1.configPath;
+    let typeSelector: (p: string) => string = exports_1.typeSelector;
+    let mergeSelector: any;
+    let nameSelector = (p: string) => { return p };
+    return { resourceRoot, resourceConfigFileName, typeSelector, mergeSelector, nameSelector };
+
 }
 
 export async function getConfigViaDecorator(egretRoot: string) {

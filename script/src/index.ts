@@ -215,7 +215,8 @@ export namespace ResourceConfig {
     }
 
     export async function init(projectPath) {
-        let result = await _config.getConfigViaDecorator(projectPath);
+        let result = await _config.getConfigViaFile(path.join(projectPath, 'resource/config.ts'))
+        //await _config.getConfigViaDecorator(projectPath);
         typeSelector = result.typeSelector;
         mergeSelector = result.mergeSelector;
         resourcePath = path.resolve(projectPath, result.resourceRoot);

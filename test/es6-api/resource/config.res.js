@@ -1,0 +1,139 @@
+exports.typeSelector = function (path) {
+    var ext = path.substr(path.lastIndexOf(".") + 1);
+    var typeMap = {
+        "jpg": "image",
+        "png": "image",
+        "webp": "image",
+        "json": "json",
+        "fnt": "font",
+        "pvr": "pvr",
+        "mp3": "sound",
+        "zip": "zip",
+        "mergeJson": "mergeJson"
+    };
+    var type = typeMap[ext];
+    if (type == "json") {
+        if (path.indexOf("sheet") >= 0) {
+            type = "sheet";
+        }
+        else if (path.indexOf("movieclip") >= 0) {
+            type = "movieclip";
+        }
+        ;
+    }
+    return type;
+};
+exports.alias = {
+	"sheet_png": "assets/sheet/sheet.png",
+	"sheet_json": "assets/sheet/sheet.json",
+	"off": "sheet_json#off",
+	"on": "sheet_json#on"
+};
+exports.groups = {
+	"preload": [
+		"off",
+		"on"
+	]
+};
+exports.resources = {
+	"111.mergeJson": {
+		"url": "111.mergeJson",
+		"type": "mergeJson",
+		"name": "111.mergeJson"
+	},
+	"config.json": {
+		"url": "config.json",
+		"type": "json",
+		"name": "config.json"
+	},
+	"default.res.json": {
+		"url": "default.res.json",
+		"type": "json",
+		"name": "default.res.json"
+	},
+	"wing.res.json": {
+		"url": "wing.res.json",
+		"type": "json",
+		"name": "wing.res.json"
+	},
+	"assets": {
+		"bg.jpg": {
+			"url": "assets/bg.jpg",
+			"type": "image",
+			"name": "assets/bg.jpg"
+		},
+		"egret_icon.png": {
+			"url": "assets/egret_icon.png",
+			"type": "image",
+			"name": "assets/egret_icon.png"
+		},
+		"armature": {
+			"skeleton.json": {
+				"url": "assets/armature/skeleton.json",
+				"type": "json",
+				"name": "assets/armature/skeleton.json"
+			},
+			"texture.json": {
+				"url": "assets/armature/texture.json",
+				"type": "json",
+				"name": "assets/armature/texture.json"
+			},
+			"texture.png": {
+				"url": "assets/armature/texture.png",
+				"type": "image",
+				"name": "assets/armature/texture.png"
+			}
+		},
+		"font": {
+			"font.fnt": {
+				"url": "assets/font/font.fnt",
+				"type": "font",
+				"name": "assets/font/font.fnt"
+			},
+			"font.png": {
+				"url": "assets/font/font.png",
+				"type": "image",
+				"name": "assets/font/font.png"
+			}
+		},
+		"movieclip": {
+			"movieclip.json": {
+				"url": "assets/movieclip/movieclip.json",
+				"type": "movieclip",
+				"name": "assets/movieclip/movieclip.json"
+			},
+			"movieclip.png": {
+				"url": "assets/movieclip/movieclip.png",
+				"type": "image",
+				"name": "assets/movieclip/movieclip.png"
+			}
+		},
+		"pvr": {
+			"0.pvr": {
+				"url": "assets/pvr/0.pvr",
+				"type": "pvr",
+				"name": "assets/pvr/0.pvr"
+			}
+		},
+		"sheet": {
+			"sheet.json": {
+				"url": "assets/sheet/sheet.json",
+				"type": "sheet",
+				"name": "assets/sheet/sheet.json",
+				"subkeys": "off,on"
+			},
+			"sheet.png": {
+				"url": "assets/sheet/sheet.png",
+				"type": "image",
+				"name": "assets/sheet/sheet.png"
+			}
+		},
+		"sound": {
+			"sound_go.mp3": {
+				"url": "assets/sound/sound_go.mp3",
+				"type": "sound",
+				"name": "assets/sound/sound_go.mp3"
+			}
+		}
+	}
+};
