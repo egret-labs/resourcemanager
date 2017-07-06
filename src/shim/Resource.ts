@@ -579,7 +579,8 @@ module RES {
         public getResAsync(key: string, compFunc?: GetResAsyncCallback, thisObject?: any): Promise<any> | void {
             var paramKey = key;
             var { r, subkey } = config.getResourceWithSubkey(key, true);
-            return queue.load(r).then(value => {
+            return queue.loadResource(r).then(value => {
+                host.save(r, value);
                 let p = processor.isSupport(r);
                 if (p && p.getData && subkey) {
                     value = p.getData(host, r, key, subkey);
@@ -618,7 +619,7 @@ module RES {
                     throw 'never';
                 }
             }
-            return queue.load(r).then(value => {
+            return queue.loadResource(r).then(value => {
                 if (compFunc && r) {
                     compFunc.call(thisObject, value, r.url);
                 }

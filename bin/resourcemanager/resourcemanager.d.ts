@@ -190,7 +190,7 @@ declare module RES.processor {
         onRemoveStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
         getData?(host: ProcessHost, resource: ResourceInfo, key: string, subkey: string): any;
     }
-    function isSupport(resource: ResourceInfo): any;
+    function isSupport(resource: ResourceInfo): Processor;
     function map(type: string, processor: Processor): void;
     function getRelativePath(url: string, file: string): string;
     var ImageProcessor: Processor;
@@ -959,7 +959,7 @@ declare module RES {
          */
         loadGroup(name: string, priority?: number, reporter?: PromiseTaskReporter): Promise<any>;
         private _loadGroup(name, priority?, reporter?);
-        loadResources(keys: string[], reporter?: PromiseTaskReporter): Promise<ResourceInfo[]>;
+        loadResources(keys: string[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]>;
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
          * 可以监听ResourceEvent.CONFIG_COMPLETE事件来确认配置加载完成。

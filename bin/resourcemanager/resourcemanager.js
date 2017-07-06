@@ -486,16 +486,8 @@ var RES;
             var _this = this;
             var current = 0;
             var total = 1;
-            var mapper;
-            mapper = function (r) {
-                var s = RES.host.state[r.name];
-                if (s == 2) {
-                    return Promise.resolve(RES.host.get(r));
-                }
-                if (s == 1) {
-                    return r.promise;
-                }
-                var p = _this.loadResource(r)
+            var mapper = function (r) {
+                return _this.loadResource(r)
                     .then(function (response) {
                     RES.host.save(r, response);
                     current++;
@@ -504,16 +496,9 @@ var RES;
                     }
                     return response;
                 });
-                r.promise = p;
-                return p;
             };
-            if ((list instanceof Array)) {
-                total = list.length;
-                return Promise.all(list.map(mapper));
-            }
-            else {
-                return mapper(list);
-            }
+            total = list.length;
+            return Promise.all(list.map(mapper));
         };
         ;
         ResourceLoader.prototype.loadResource = function (r, p) {
@@ -2312,7 +2297,8 @@ var RES;
         Resource.prototype.getResAsync = function (key, compFunc, thisObject) {
             var paramKey = key;
             var _a = RES.config.getResourceWithSubkey(key, true), r = _a.r, subkey = _a.subkey;
-            return RES.queue.load(r).then(function (value) {
+            return RES.queue.loadResource(r).then(function (value) {
+                RES.host.save(r, value);
                 var p = RES.processor.isSupport(r);
                 if (p && p.getData && subkey) {
                     value = p.getData(RES.host, r, key, subkey);
@@ -2349,7 +2335,7 @@ var RES;
                     throw 'never';
                 }
             }
-            return RES.queue.load(r).then(function (value) {
+            return RES.queue.loadResource(r).then(function (value) {
                 if (compFunc && r) {
                     compFunc.call(thisObject, value, r.url);
                 }

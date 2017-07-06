@@ -43,24 +43,12 @@ module RES {
 	export class ResourceLoader {
 
 
-		load(list: ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo[]>;
-		load(list: ResourceInfo, reporter?: PromiseTaskReporter): Promise<ResourceInfo>;
-		load(list: ResourceInfo | ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]>;
-		load(list: ResourceInfo | ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]> {
+		load(list: ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]> {
 
 			let current = 0;
 			let total = 1;
-			let mapper: (r: ResourceInfo) => Promise<any>;
-			mapper = (r: ResourceInfo) => {
-				let s = host.state[r.name];
-				if (s == 2) {
-					return Promise.resolve(host.get(r));
-				}
-				if (s == 1) {
-					return r.promise as Promise<any>
-				}
-
-				let p = this.loadResource(r)
+			let mapper = (r: ResourceInfo) =>
+				this.loadResource(r)
 					.then(response => {
 						host.save(r, response);
 						current++;
@@ -69,16 +57,10 @@ module RES {
 						}
 						return response;
 					})
-				r.promise = p;
-				return p;
-			}
-			if ((list instanceof Array)) {
-				total = list.length;
-				return Promise.all(list.map(mapper));
-			}
-			else {
-				return mapper(list);
-			}
+
+
+			total = list.length;
+			return Promise.all(list.map(mapper));
 		};
 
 

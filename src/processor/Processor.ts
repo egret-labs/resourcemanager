@@ -633,7 +633,7 @@ module RES.processor {
         }
     }
 
-    var _map = {
+    var _map: { [index: string]: Processor } = {
         "image": ImageProcessor,
         "json": JsonProcessor,
         "text": TextProcessor,
