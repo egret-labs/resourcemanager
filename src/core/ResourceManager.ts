@@ -47,40 +47,9 @@ module RES {
             return config;
         },
 
-        load: (r: ResourceInfo, processor?: processor.Processor) => {
-            if (!processor) {
-                processor = host.isSupport(r);
-            }
-            if (!processor) {
-                throw new ResourceManagerError(2001, r.name, r.type);
-            }
-            host.state[r.name] = 1;
-            let promise = processor.onLoadStart(host, r);
-            return promise;
-        },
+        load: (r: ResourceInfo, processor?: processor.Processor) => queue.loadResource(r, processor),
 
-        unload(r: ResourceInfo) {
-            let data = host.get(r);
-            if (!data) {
-                console.warn("尝试释放不存在的资源:", r.name);
-                return Promise.resolve();
-            }
-            let processor = host.isSupport(r);
-            if (processor) {
-                host.state[r.name] = 3;
-                return processor.onRemoveStart(host, r)
-                    .then(result => {
-                        host.remove(r);
-                        return result;
-                    }
-                    )
-            }
-            else {
-                return Promise.resolve();
-            }
-        },
-
-
+        unload: (r: ResourceInfo) => queue.unloadResource(r),
 
         save(resource: ResourceInfo, data: any) {
             host.state[resource.name] = 2;
@@ -95,16 +64,12 @@ module RES {
         remove(resource: ResourceInfo) {
             host.state[resource.name] = 0;
             delete __tempCache[resource.url];
-        },
-
-        isSupport(resource: ResourceInfo) {
-            return RES.processor.isSupport(resource);
         }
     }
 
     export var config = new ResourceConfig();
 
-    export var queue = new PromiseQueue();
+    export var queue = new ResourceLoader();
 
 
     export interface ProcessHost {
@@ -123,10 +88,6 @@ module RES {
 
         remove: (resource: ResourceInfo) => void;
 
-        /**
-         * @internal
-         */
-        isSupport: (resource: ResourceInfo) => processor.Processor | undefined;
 
     }
 

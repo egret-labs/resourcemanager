@@ -1,13 +1,8 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -191,7 +186,7 @@ var RES;
         }
         ResourceConfig.prototype.init = function () {
             var _this = this;
-            return RES.host.load(configItem).then(function (data) {
+            return RES.queue.loadResource(configItem).then(function (data) {
                 return _this.parseConfig(data);
             }).catch(function (e) {
                 if (!e.__resource_manager_error__) {
@@ -484,10 +479,11 @@ var RES;
      * @private
      * @internal
      */
-    var PromiseQueue = (function () {
-        function PromiseQueue() {
+    var ResourceLoader = (function () {
+        function ResourceLoader() {
         }
-        PromiseQueue.prototype.load = function (list, reporter) {
+        ResourceLoader.prototype.load = function (list, reporter) {
+            var _this = this;
             var current = 0;
             var total = 1;
             var mapper;
@@ -499,7 +495,7 @@ var RES;
                 if (s == 1) {
                     return r.promise;
                 }
-                var p = RES.host.load(r)
+                var p = _this.loadResource(r)
                     .then(function (response) {
                     RES.host.save(r, response);
                     current++;
@@ -520,9 +516,47 @@ var RES;
             }
         };
         ;
-        return PromiseQueue;
+        ResourceLoader.prototype.loadResource = function (r, p) {
+            var s = RES.host.state[r.name];
+            if (s == 2) {
+                return Promise.resolve(RES.host.get(r));
+            }
+            if (s == 1) {
+                return r.promise;
+            }
+            if (!p) {
+                p = RES.processor.isSupport(r);
+            }
+            if (!p) {
+                throw new RES.ResourceManagerError(2001, r.name, r.type);
+            }
+            RES.host.state[r.name] = 1;
+            var promise = p.onLoadStart(RES.host, r);
+            r.promise = promise;
+            return promise;
+        };
+        ResourceLoader.prototype.unloadResource = function (r) {
+            var data = RES.host.get(r);
+            if (!data) {
+                console.warn("尝试释放不存在的资源:", r.name);
+                return Promise.resolve();
+            }
+            var p = RES.processor.isSupport(r);
+            if (p) {
+                RES.host.state[r.name] = 3;
+                return p.onRemoveStart(RES.host, r)
+                    .then(function (result) {
+                    RES.host.remove(r);
+                    return result;
+                });
+            }
+            else {
+                return Promise.resolve();
+            }
+        };
+        return ResourceLoader;
     }());
-    RES.PromiseQueue = PromiseQueue;
+    RES.ResourceLoader = ResourceLoader;
 })(RES || (RES = {}));
 var RES;
 (function (RES) {
@@ -569,36 +603,8 @@ var RES;
         get resourceConfig() {
             return RES.config;
         },
-        load: function (r, processor) {
-            if (!processor) {
-                processor = RES.host.isSupport(r);
-            }
-            if (!processor) {
-                throw new ResourceManagerError(2001, r.name, r.type);
-            }
-            RES.host.state[r.name] = 1;
-            var promise = processor.onLoadStart(RES.host, r);
-            return promise;
-        },
-        unload: function (r) {
-            var data = RES.host.get(r);
-            if (!data) {
-                console.warn("尝试释放不存在的资源:", r.name);
-                return Promise.resolve();
-            }
-            var processor = RES.host.isSupport(r);
-            if (processor) {
-                RES.host.state[r.name] = 3;
-                return processor.onRemoveStart(RES.host, r)
-                    .then(function (result) {
-                    RES.host.remove(r);
-                    return result;
-                });
-            }
-            else {
-                return Promise.resolve();
-            }
-        },
+        load: function (r, processor) { return RES.queue.loadResource(r, processor); },
+        unload: function (r) { return RES.queue.unloadResource(r); },
         save: function (resource, data) {
             RES.host.state[resource.name] = 2;
             __tempCache[resource.url] = data;
@@ -609,13 +615,10 @@ var RES;
         remove: function (resource) {
             RES.host.state[resource.name] = 0;
             delete __tempCache[resource.url];
-        },
-        isSupport: function (resource) {
-            return RES.processor.isSupport(resource);
         }
     };
     RES.config = new RES.ResourceConfig();
-    RES.queue = new RES.PromiseQueue();
+    RES.queue = new RES.ResourceLoader();
     var ResourceManagerError = (function (_super) {
         __extends(ResourceManagerError, _super);
         function ResourceManagerError(code, replacer, replacer2) {
@@ -862,14 +865,6 @@ var RES;
                                 for (subkey in frames) {
                                     config = frames[subkey];
                                     texture = spriteSheet.createTexture(subkey, config.x, config.y, config.w, config.h, config.offX, config.offY, config.sourceW, config.sourceH);
-                                    // if (config["scale9grid"]) {
-                                    //     var str: string = config["scale9grid"];
-                                    //     var list: Array<string> = str.split(",");
-                                    //     texture["scale9Grid"] = new egret.Rectangle(parseInt(list[0]), parseInt(list[1]), parseInt(list[2]), parseInt(list[3]));
-                                    // }
-                                    //     if (name) {
-                                    //         this.addSubkey(subkey, name);
-                                    //     }
                                 }
                                 return [2 /*return*/, spriteSheet];
                         }
@@ -2302,9 +2297,9 @@ var RES;
                 var r = result.r;
                 var key = result.key;
                 var subkey = result.subkey;
-                var processor_2 = RES.host.isSupport(r);
-                if (processor_2 && processor_2.getData && subkey) {
-                    return processor_2.getData(RES.host, r, key, subkey);
+                var p = RES.processor.isSupport(r);
+                if (p && p.getData && subkey) {
+                    return p.getData(RES.host, r, key, subkey);
                 }
                 else {
                     return RES.host.get(r);
@@ -2318,9 +2313,9 @@ var RES;
             var paramKey = key;
             var _a = RES.config.getResourceWithSubkey(key, true), r = _a.r, subkey = _a.subkey;
             return RES.queue.load(r).then(function (value) {
-                var processor = RES.host.isSupport(r);
-                if (processor && processor.getData && subkey) {
-                    value = processor.getData(RES.host, r, key, subkey);
+                var p = RES.processor.isSupport(r);
+                if (p && p.getData && subkey) {
+                    value = p.getData(RES.host, r, key, subkey);
                 }
                 if (compFunc) {
                     compFunc.call(thisObject, value, paramKey);
@@ -2377,7 +2372,7 @@ var RES;
                         case 0:
                             group = RES.config.getGroup(name);
                             remove = function (r) {
-                                return RES.host.unload(r);
+                                return RES.queue.unloadResource(r);
                             };
                             if (!(group && group.length > 0)) return [3 /*break*/, 5];
                             _i = 0, group_2 = group;

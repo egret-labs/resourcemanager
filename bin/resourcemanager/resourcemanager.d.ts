@@ -137,7 +137,7 @@ declare module RES {
     function profile(): void;
     var host: ProcessHost;
     var config: ResourceConfig;
-    var queue: PromiseQueue;
+    var queue: ResourceLoader;
     interface ProcessHost {
         state: {
             [index: string]: number;

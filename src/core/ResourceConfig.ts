@@ -138,7 +138,7 @@ module RES {
         }
 
         init() {
-            return host.load(configItem).then((data) => {
+            return queue.loadResource(configItem).then((data) => {
                 return this.parseConfig(data)
             }).catch(e => {
                 if (!e.__resource_manager_error__) {

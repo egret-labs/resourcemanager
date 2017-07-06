@@ -550,9 +550,9 @@ module RES {
                 let r = result.r;
                 let key = result.key;
                 let subkey = result.subkey;
-                let processor = host.isSupport(r);
-                if (processor && processor.getData && subkey) {
-                    return processor.getData(host, r, key, subkey);
+                let p = processor.isSupport(r);
+                if (p && p.getData && subkey) {
+                    return p.getData(host, r, key, subkey);
                 }
                 else {
                     return host.get(r);
@@ -580,9 +580,9 @@ module RES {
             var paramKey = key;
             var { r, subkey } = config.getResourceWithSubkey(key, true);
             return queue.load(r).then(value => {
-                let processor = host.isSupport(r);
-                if (processor && processor.getData && subkey) {
-                    value = processor.getData(host, r, key, subkey);
+                let p = processor.isSupport(r);
+                if (p && p.getData && subkey) {
+                    value = p.getData(host, r, key, subkey);
                 }
                 if (compFunc) {
                     compFunc.call(thisObject, value, paramKey);
@@ -633,10 +633,10 @@ module RES {
          * @param force {boolean} 销毁一个资源组时其他资源组有同样资源情况资源是否会被删除，默认值true
 		 * @returns {boolean}
          */
-        public async destroyRes(name: string, force: boolean = true) {
+        async destroyRes(name: string, force: boolean = true) {
             var group = config.getGroup(name);
             let remove = (r: ResourceInfo) => {
-                return host.unload(r);
+                return queue.unloadResource(r);
             }
 
             if (group && group.length > 0) {

@@ -40,7 +40,7 @@ module RES {
 	 * @private
 	 * @internal
 	 */
-	export class PromiseQueue {
+	export class ResourceLoader {
 
 
 		load(list: ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo[]>;
@@ -60,7 +60,7 @@ module RES {
 					return r.promise as Promise<any>
 				}
 
-				let p = host.load(r)
+				let p = this.loadResource(r)
 					.then(response => {
 						host.save(r, response);
 						current++;
@@ -80,5 +80,47 @@ module RES {
 				return mapper(list);
 			}
 		};
+
+
+		loadResource(r: ResourceInfo, p?: RES.processor.Processor) {
+			let s = host.state[r.name];
+			if (s == 2) {
+				return Promise.resolve(host.get(r));
+			}
+			if (s == 1) {
+				return r.promise as Promise<any>
+			}
+			if (!p) {
+				p = processor.isSupport(r);
+			}
+			if (!p) {
+				throw new ResourceManagerError(2001, r.name, r.type);
+			}
+			host.state[r.name] = 1;
+			let promise = p.onLoadStart(host, r);
+			r.promise = promise
+			return promise;
+		}
+
+		unloadResource(r: ResourceInfo) {
+			let data = host.get(r);
+			if (!data) {
+				console.warn("尝试释放不存在的资源:", r.name);
+				return Promise.resolve();
+			}
+			let p = processor.isSupport(r);
+			if (p) {
+				host.state[r.name] = 3;
+				return p.onRemoveStart(host, r)
+					.then(result => {
+						host.remove(r);
+						return result;
+					}
+					)
+			}
+			else {
+				return Promise.resolve();
+			}
+		}
 	}
 }
