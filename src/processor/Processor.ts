@@ -329,7 +329,7 @@ module RES.processor {
 
             let data = await host.load(resource, JsonProcessor);
             for (var key in data) {
-                manager.config.addSubkey(key, resource.name);
+                config.addSubkey(key, resource.name);
             }
             return data;
         },

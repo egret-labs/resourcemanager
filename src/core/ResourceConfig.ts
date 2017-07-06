@@ -79,28 +79,19 @@ module RES {
      * @language zh_CN
      */
     export function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector?: ResourceTypeSelector) {
+        console.log('deprecated');
         return function (target) {
-            if (typeSelector) {
-                mapResourceType(typeSelector)(target);
-            }
 
-            let type = 'resourceConfig';
-            if (typeof rootSelector == "string") {
-                resourceRoot = rootSelector as any as string;
-            }
-            else {
-                resourceRoot = (rootSelector as any as Function)();
-            }
-            if (resourceRoot.lastIndexOf("/") != 0) {
-                resourceRoot = resourceRoot + "/";
-            }
-            configItem = { type, resourceRoot, url, name: url };
         }
     };
 
+    var configItem: any;
+
     export function setConfigURL(url: string) {
-        configItem.url = url;
+        configItem = { type: 'commonjs', resourceRoot, url, name: url };
     }
+
+
 
     export var resourceRoot: string;
 
@@ -159,6 +150,18 @@ module RES {
             RES["configInstance"] = this;
         }
 
+        init() {
+            return host.load(configItem).then((data) => {
+                return this.parseConfig(data)
+            }).catch(e => {
+                if (!e.__resource_manager_error__) {
+                    console.error(e.stack)
+                    e = new ResourceManagerError(1002);
+                }
+                return Promise.reject(e);
+            })
+        }
+
         /**
          * 根据组名获取组加载项列表
 		 * @method RES.ResourceConfig#getGroupByName
@@ -187,8 +190,8 @@ module RES {
                 return null;
             }
             for (var paramKey of group) {
-                var { key, subkey } = manager.config.getResourceWithSubkey(paramKey, true);
-                let r = manager.config.getResource(key, true);
+                var { key, subkey } = config.getResourceWithSubkey(paramKey, true);
+                let r = config.getResource(key, true);
                 if (result.indexOf(r) == -1) {
                     result.push(r);
                 }

@@ -27,7 +27,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
-
 module RES {
 
 
@@ -452,7 +451,7 @@ module RES {
         @checkCancelation
         public loadConfig(): Promise<void> {
             native_init();
-            return manager.init().then(data => {
+            return config.init().then(data => {
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
             }, error => {
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_LOAD_ERROR);
@@ -467,7 +466,7 @@ module RES {
 		 * @returns {boolean}
          */
         public isGroupLoaded(name: string): boolean {
-            let resources = manager.config.getGroupByName(name, true);
+            let resources = config.getGroupByName(name, true);
             return resources.every(r => host.get(r) != null);
         }
         /**
@@ -477,7 +476,7 @@ module RES {
 		 * @returns {Array<egret.ResourceItem>}
          */
         getGroupByName(name: string): Array<ResourceInfo> {
-            return manager.config.getGroupByName(name, true); //这里不应该传入 true，但是为了老版本的 TypeScriptCompiler 兼容性，暂时这样做
+            return config.getGroupByName(name, true); //这里不应该传入 true，但是为了老版本的 TypeScriptCompiler 兼容性，暂时这样做
         }
 
         /**
@@ -506,12 +505,12 @@ module RES {
 
         @checkCancelation
         private _loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<any> {
-            let resources = manager.config.getGroupByName(name, true);
+            let resources = config.getGroupByName(name, true);
             return manager.load(resources, reporter);
         }
 
         loadResources(keys: string[], reporter?: PromiseTaskReporter) {
-            let resources = keys.map(key => manager.config.getResource(key, true))
+            let resources = keys.map(key => config.getResource(key, true))
             return manager.load(resources, reporter);
         }
 
@@ -525,7 +524,7 @@ module RES {
          * @returns {boolean}
          */
         public createGroup(name: string, keys: Array<string>, override: boolean = false): boolean {
-            return manager.config.createGroup(name, keys, override);
+            return config.createGroup(name, keys, override);
         }
 
         /**
@@ -536,7 +535,7 @@ module RES {
          */
         @checkNull
         public hasRes(key: string): boolean {
-            return manager.config.getResourceWithSubkey(key) != null;
+            return config.getResourceWithSubkey(key) != null;
         }
 
         /**
@@ -547,7 +546,7 @@ module RES {
          */
         @checkNull
         public getRes(resKey: string): any {
-            let result = manager.config.getResourceWithSubkey(resKey);
+            let result = config.getResourceWithSubkey(resKey);
             if (result) {
                 let r = result.r;
                 let key = result.key;
@@ -580,7 +579,7 @@ module RES {
         @checkCancelation
         public getResAsync(key: string, compFunc?: GetResAsyncCallback, thisObject?: any): Promise<any> | void {
             var paramKey = key;
-            var { r, subkey } = manager.config.getResourceWithSubkey(key, true);
+            var { r, subkey } = config.getResourceWithSubkey(key, true);
             return manager.load(r).then(value => {
                 let processor = host.isSupport(r);
                 if (processor && processor.getData && subkey) {
@@ -604,15 +603,15 @@ module RES {
         @checkNull
         @checkCancelation
         public getResByUrl(url: string, compFunc: Function, thisObject: any, type: string = ""): Promise<any> | void {
-            let r = manager.config.getResource(url);
+            let r = config.getResource(url);
             if (!r) {
                 if (!type) {
-                    type = manager.config.__temp__get__type__via__url(url);
+                    type = config.__temp__get__type__via__url(url);
                 }
                 // manager.config.addResourceData({ name: url, url: url });
                 r = { name: url, url, type, extra: true };
-                manager.config.addResourceData(r);
-                r = manager.config.getResource(url);
+                config.addResourceData(r);
+                r = config.getResource(url);
                 if (r) {
                     r.extra = true;
                 }
@@ -636,7 +635,7 @@ module RES {
 		 * @returns {boolean}
          */
         public async destroyRes(name: string, force: boolean = true) {
-            var group = manager.config.getGroup(name);
+            var group = config.getGroup(name);
             let remove = (r: ResourceInfo) => {
                 return host.unload(r);
             }
@@ -648,7 +647,7 @@ module RES {
                 return true;
             }
             else {
-                let item = manager.config.getResource(name);
+                let item = config.getResource(name);
                 if (item) {
                     await remove(item);
                     return true;
@@ -685,7 +684,7 @@ module RES {
         }
 
         public addResourceData(data: { name: string, type: string, url: string }): void {
-            manager.config.addResourceData(data);
+            config.addResourceData(data);
         }
     }
     /**
@@ -693,15 +692,8 @@ module RES {
      */
     var instance: Resource = new Resource();
 
-    //todo
-    // 类型不应该是 any
-    // 为了 decorator 引入了一个 export，但是应该是没必要的
-    export var configItem: any;
-
 
 }
-
-
 
 
 

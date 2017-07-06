@@ -44,7 +44,7 @@ module RES {
         state: {},
 
         get resourceConfig() {
-            return manager.config;
+            return config;
         },
 
         load: (r: ResourceInfo, processor?: processor.Processor) => {
@@ -102,25 +102,13 @@ module RES {
         }
     }
 
+    export var config = new ResourceConfig();
 
     export namespace manager {
 
-        export var config = new ResourceConfig();
+
 
         var queue = new PromiseQueue();
-
-        export function init(): Promise<void> {
-            return host.load(configItem).then((data) => {
-                config.parseConfig(data)
-            }).catch(e => {
-                if (!e.__resource_manager_error__) {
-                    console.error(e.stack)
-                    e = new ResourceManagerError(1002);
-
-                }
-                return Promise.reject(e);
-            })
-        }
 
         export function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<ResourceInfo[] | ResourceInfo> {
             return queue.load(resources, reporter);
@@ -131,7 +119,6 @@ module RES {
             systemPid++;
             //todo 销毁整个 ResourceManager上下文全部内容
         }
-
 
     }
 
