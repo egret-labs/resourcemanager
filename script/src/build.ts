@@ -25,6 +25,7 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
     let resourcePath = publishPath ? path.join(publishPath, result.resourceRoot) : undefined;
     ResourceConfig.typeSelector = result.typeSelector;
     ResourceConfig.nameSelector = result.nameSelector;
+    ResourceConfig.resourceRoot = result.resourceRoot;
 
     let executeFilter = async (url: string) => {
         var ext = url.substr(url.lastIndexOf(".") + 1);
@@ -107,6 +108,7 @@ export async function emitResourceConfigFile(filename: string, debug: boolean) {
     let config = ResourceConfig.generateConfig(debug);
     let content = JSON.stringify(config, null, "\t");
     let file = `exports.typeSelector = ${ResourceConfig.typeSelector.toString()};
+exports.resourceRoot = "${ResourceConfig.resourceRoot}";
 exports.alias = ${JSON.stringify(config.alias, null, "\t")};
 exports.groups = ${JSON.stringify(config.groups, null, "\t")};
 exports.resources = ${JSON.stringify(config.resources, null, "\t")};

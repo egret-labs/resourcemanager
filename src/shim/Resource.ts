@@ -447,7 +447,6 @@ module RES {
 		 * @param resourceRoot {string}
 		 * @param type {string}
          */
-        @upgrade.checkDecorator
         @checkCancelation
         public loadConfig(): Promise<void> {
             native_init();

@@ -145,23 +145,6 @@ var RES;
 var RES;
 (function (RES) {
     RES.resourceNameSelector = function (p) { return p; };
-    function mapResourceName(nameSelector) {
-        return function (target) {
-            RES.resourceNameSelector = nameSelector;
-        };
-    }
-    RES.mapResourceName = mapResourceName;
-    function mapResourceType(typeSelector) {
-        return function (target) {
-            RES.resourceTypeSelector = typeSelector;
-        };
-    }
-    RES.mapResourceType = mapResourceType;
-    function mapResourceMerger(mergerSelector) {
-        return function (target) {
-        };
-    }
-    RES.mapResourceMerger = mapResourceMerger;
     /**
    * Definition profile.
    * @param url Configuration file path (path resource.json).
@@ -181,29 +164,18 @@ var RES;
      * @language zh_CN
      */
     function mapConfig(url, rootSelector, typeSelector) {
+        console.log('deprecated');
         return function (target) {
-            if (typeSelector) {
-                mapResourceType(typeSelector)(target);
-            }
-            var type = 'resourceConfig';
-            if (typeof rootSelector == "string") {
-                RES.resourceRoot = rootSelector;
-            }
-            else {
-                RES.resourceRoot = rootSelector();
-            }
-            if (RES.resourceRoot.lastIndexOf("/") != 0) {
-                RES.resourceRoot = RES.resourceRoot + "/";
-            }
-            RES.configItem = { type: type, resourceRoot: RES.resourceRoot, url: url, name: url };
         };
     }
     RES.mapConfig = mapConfig;
     ;
+    var configItem;
     function setConfigURL(url) {
-        RES.configItem.url = url;
+        configItem = { type: 'commonjs', resourceRoot: RES.resourceRoot, url: url, name: url };
     }
     RES.setConfigURL = setConfigURL;
+    RES.resourceRoot = "";
     /**
      * @class RES.ResourceConfig
      * @classdesc
@@ -211,8 +183,19 @@ var RES;
      */
     var ResourceConfig = (function () {
         function ResourceConfig() {
-            RES["configInstance"] = this;
         }
+        ResourceConfig.prototype.init = function () {
+            var _this = this;
+            return RES.host.load(configItem).then(function (data) {
+                return _this.parseConfig(data);
+            }).catch(function (e) {
+                if (!e.__resource_manager_error__) {
+                    console.error(e.stack);
+                    e = new RES.ResourceManagerError(1002);
+                }
+                return Promise.reject(e);
+            });
+        };
         /**
          * @internal
          */
@@ -227,8 +210,8 @@ var RES;
             }
             for (var _i = 0, group_1 = group; _i < group_1.length; _i++) {
                 var paramKey = group_1[_i];
-                var _a = RES.manager.config.getResourceWithSubkey(paramKey, true), key = _a.key, subkey = _a.subkey;
-                var r = RES.manager.config.getResource(key, true);
+                var _a = RES.config.getResourceWithSubkey(paramKey, true), key = _a.key, subkey = _a.subkey;
+                var r = RES.config.getResource(key, true);
                 if (result.indexOf(r) == -1) {
                     result.push(r);
                 }
@@ -381,7 +364,9 @@ var RES;
          * @param folder {string} 加载项的路径前缀。
          */
         ResourceConfig.prototype.parseConfig = function (data) {
+            RES.resourceRoot = data.resourceRoot + "/";
             this.config = data;
+            RES.resourceTypeSelector = data.typeSelector;
             RES.FileSystem.data = data.resources;
             // if (!data)
             //     return;
@@ -449,7 +434,7 @@ var RES;
             }
         };
         ResourceConfig.prototype.destory = function () {
-            this.config = { groups: {}, alias: {}, resources: {} };
+            this.config = { groups: {}, alias: {}, resources: {}, typeSelector: function (p) { return p; }, resourceRoot: "resources" };
             RES.FileSystem.data = {};
         };
         return ResourceConfig;
@@ -595,7 +580,7 @@ var RES;
     RES.host = {
         state: {},
         get resourceConfig() {
-            return manager.config;
+            return RES.config;
         },
         load: function (r, processor) {
             if (!processor) {
@@ -642,28 +627,16 @@ var RES;
             return RES.processor.isSupport(resource);
         }
     };
+    RES.config = new RES.ResourceConfig();
     var manager;
     (function (manager) {
-        manager.config = new RES.ResourceConfig();
         var queue = new RES.PromiseQueue();
-        function init() {
-            return RES.host.load(RES.configItem).then(function (data) {
-                manager.config.parseConfig(data);
-            }).catch(function (e) {
-                if (!e.__resource_manager_error__) {
-                    console.error(e.stack);
-                    e = new ResourceManagerError(1002);
-                }
-                return Promise.reject(e);
-            });
-        }
-        manager.init = init;
         function load(resources, reporter) {
             return queue.load(resources, reporter);
         }
         manager.load = load;
         function destory() {
-            manager.config.destory();
+            RES.config.destory();
             systemPid++;
             //todo 销毁整个 ResourceManager上下文全部内容
         }
@@ -1051,7 +1024,7 @@ var RES;
                             case 1:
                                 data = _a.sent();
                                 for (key in data) {
-                                    RES.manager.config.addSubkey(key, resource.name);
+                                    RES.config.addSubkey(key, resource.name);
                                 }
                                 return [2 /*return*/, data];
                         }
@@ -1705,13 +1678,12 @@ var RES;
         ResourceItem.TYPE_SOUND = "sound";
         function convertToResItem(r) {
             var name = "";
-            var config = RES["configInstance"];
-            if (!config.config) {
+            if (!RES.config.config) {
                 name = r.url;
             }
             else {
-                for (var aliasName in config.config.alias) {
-                    if (config.config.alias[aliasName] == r.url) {
+                for (var aliasName in RES.config.config.alias) {
+                    if (RES.config.config.alias[aliasName] == r.url) {
                         name = aliasName;
                     }
                 }
@@ -1759,20 +1731,24 @@ var RES;
             _level = level;
         }
         upgrade.setUpgradeGuideLevel = setUpgradeGuideLevel;
-        upgrade.checkDecorator = function (target, propertyKey, descriptor) {
-            var method = descriptor.value;
-            descriptor.value = function () {
-                if (!RES['configItem']) {
-                    var url = "config.json";
-                    RES.resourceRoot = "resource/";
-                    RES['configItem'] = { url: url, resourceRoot: RES.resourceRoot, type: "commonjs", name: url };
-                    if (_level == "warning") {
-                        console.warn("RES.loadConfig() 不再接受参数，强制访问 resource/config.json 文件\n", "请访问以下站点了解更多细节\n", "https://github.com/egret-labs/resourcemanager/blob/master/docs/");
-                    }
-                }
-                return method.apply(this);
-            };
-        };
+        // export let checkDecorator: MethodDecorator = (target, propertyKey, descriptor) => {
+        //     const method = descriptor.value;
+        //     descriptor.value = function () {
+        //         if (!RES['configItem']) {
+        //             let url = "config.json";
+        //             resourceRoot = "resource/";
+        //             RES['configItem'] = { url, resourceRoot, type: "commonjs", name: url };
+        //             if (_level == "warning") {
+        //                 console.warn(
+        //                     "RES.loadConfig() 不再接受参数，强制访问 resource/config.json 文件\n",
+        //                     "请访问以下站点了解更多细节\n",
+        //                     "https://github.com/egret-labs/resourcemanager/blob/master/docs/"
+        //                 )
+        //             }
+        //         }
+        //         return method.apply(this);
+        //     }
+        // }
     })(upgrade = RES.upgrade || (RES.upgrade = {}));
 })(RES || (RES = {}));
 var RES;
@@ -2251,7 +2227,7 @@ var RES;
         Resource.prototype.loadConfig = function () {
             var _this = this;
             RES.native_init();
-            return RES.manager.init().then(function (data) {
+            return RES.config.init().then(function (data) {
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_COMPLETE);
             }, function (error) {
                 RES.ResourceEvent.dispatchResourceEvent(_this, RES.ResourceEvent.CONFIG_LOAD_ERROR);
@@ -2265,7 +2241,7 @@ var RES;
          * @returns {boolean}
          */
         Resource.prototype.isGroupLoaded = function (name) {
-            var resources = RES.manager.config.getGroupByName(name, true);
+            var resources = RES.config.getGroupByName(name, true);
             return resources.every(function (r) { return RES.host.get(r) != null; });
         };
         /**
@@ -2275,7 +2251,7 @@ var RES;
          * @returns {Array<egret.ResourceItem>}
          */
         Resource.prototype.getGroupByName = function (name) {
-            return RES.manager.config.getGroupByName(name, true); //这里不应该传入 true，但是为了老版本的 TypeScriptCompiler 兼容性，暂时这样做
+            return RES.config.getGroupByName(name, true); //这里不应该传入 true，但是为了老版本的 TypeScriptCompiler 兼容性，暂时这样做
         };
         /**
          * 根据组名加载一组资源
@@ -2303,11 +2279,11 @@ var RES;
         };
         Resource.prototype._loadGroup = function (name, priority, reporter) {
             if (priority === void 0) { priority = 0; }
-            var resources = RES.manager.config.getGroupByName(name, true);
+            var resources = RES.config.getGroupByName(name, true);
             return RES.manager.load(resources, reporter);
         };
         Resource.prototype.loadResources = function (keys, reporter) {
-            var resources = keys.map(function (key) { return RES.manager.config.getResource(key, true); });
+            var resources = keys.map(function (key) { return RES.config.getResource(key, true); });
             return RES.manager.load(resources, reporter);
         };
         /**
@@ -2321,7 +2297,7 @@ var RES;
          */
         Resource.prototype.createGroup = function (name, keys, override) {
             if (override === void 0) { override = false; }
-            return RES.manager.config.createGroup(name, keys, override);
+            return RES.config.createGroup(name, keys, override);
         };
         /**
          * 检查配置文件里是否含有指定的资源
@@ -2330,7 +2306,7 @@ var RES;
          * @returns {boolean}
          */
         Resource.prototype.hasRes = function (key) {
-            return RES.manager.config.getResourceWithSubkey(key) != null;
+            return RES.config.getResourceWithSubkey(key) != null;
         };
         /**
          * 通过key同步获取资源
@@ -2339,7 +2315,7 @@ var RES;
          * @returns {any}
          */
         Resource.prototype.getRes = function (resKey) {
-            var result = RES.manager.config.getResourceWithSubkey(resKey);
+            var result = RES.config.getResourceWithSubkey(resKey);
             if (result) {
                 var r = result.r;
                 var key = result.key;
@@ -2358,7 +2334,7 @@ var RES;
         };
         Resource.prototype.getResAsync = function (key, compFunc, thisObject) {
             var paramKey = key;
-            var _a = RES.manager.config.getResourceWithSubkey(key, true), r = _a.r, subkey = _a.subkey;
+            var _a = RES.config.getResourceWithSubkey(key, true), r = _a.r, subkey = _a.subkey;
             return RES.manager.load(r).then(function (value) {
                 var processor = RES.host.isSupport(r);
                 if (processor && processor.getData && subkey) {
@@ -2380,15 +2356,15 @@ var RES;
          */
         Resource.prototype.getResByUrl = function (url, compFunc, thisObject, type) {
             if (type === void 0) { type = ""; }
-            var r = RES.manager.config.getResource(url);
+            var r = RES.config.getResource(url);
             if (!r) {
                 if (!type) {
-                    type = RES.manager.config.__temp__get__type__via__url(url);
+                    type = RES.config.__temp__get__type__via__url(url);
                 }
                 // manager.config.addResourceData({ name: url, url: url });
                 r = { name: url, url: url, type: type, extra: true };
-                RES.manager.config.addResourceData(r);
-                r = RES.manager.config.getResource(url);
+                RES.config.addResourceData(r);
+                r = RES.config.getResource(url);
                 if (r) {
                     r.extra = true;
                 }
@@ -2417,7 +2393,7 @@ var RES;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            group = RES.manager.config.getGroup(name);
+                            group = RES.config.getGroup(name);
                             remove = function (r) {
                                 return RES.host.unload(r);
                             };
@@ -2436,7 +2412,7 @@ var RES;
                             return [3 /*break*/, 1];
                         case 4: return [2 /*return*/, true];
                         case 5:
-                            item = RES.manager.config.getResource(name);
+                            item = RES.config.getResource(name);
                             if (!item) return [3 /*break*/, 7];
                             return [4 /*yield*/, remove(item)];
                         case 6:
@@ -2469,12 +2445,11 @@ var RES;
             //todo
         };
         Resource.prototype.addResourceData = function (data) {
-            RES.manager.config.addResourceData(data);
+            RES.config.addResourceData(data);
         };
         return Resource;
     }(egret.EventDispatcher));
     __decorate([
-        RES.upgrade.checkDecorator,
         RES.checkCancelation
     ], Resource.prototype, "loadConfig", null);
     __decorate([

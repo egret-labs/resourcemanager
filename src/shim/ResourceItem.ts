@@ -57,7 +57,7 @@ module RES {
 		 * @platform Web,Native
 		 * @language zh_CN
 		 */
-		export const TYPE_XML:string = "xml";
+		export const TYPE_XML: string = "xml";
 		/**
 		 * Picture file.
 		 * @version Egret 2.4
@@ -70,7 +70,7 @@ module RES {
 		 * @platform Web,Native
 		 * @language zh_CN
 		 */
-		export const TYPE_IMAGE:string = "image";
+		export const TYPE_IMAGE: string = "image";
 		/**
 		 * Binary file.
 		 * @version Egret 2.4
@@ -83,7 +83,7 @@ module RES {
 		 * @platform Web
 		 * @language zh_CN
 		 */
-		export const TYPE_BIN:string = "bin";
+		export const TYPE_BIN: string = "bin";
 		/**
 		 * Text file.
 		 * @version Egret 2.4
@@ -96,7 +96,7 @@ module RES {
 		 * @platform Web,Native
 		 * @language zh_CN
 		 */
-		export const TYPE_TEXT:string = "text";
+		export const TYPE_TEXT: string = "text";
 		/**
 		 * JSON file.
 		 * @version Egret 2.4
@@ -109,7 +109,7 @@ module RES {
 		 * @platform Web,Native
 		 * @language zh_CN
 		 */
-        export const TYPE_JSON:string = "json";
+		export const TYPE_JSON: string = "json";
 		/**
 		 * SpriteSheet file.
 		 * @version Egret 2.4
@@ -122,7 +122,7 @@ module RES {
 		 * @platform Web,Native
 		 * @language zh_CN
 		 */
-        export const TYPE_SHEET:string = "sheet";
+		export const TYPE_SHEET: string = "sheet";
 		/**
 		 * BitmapTextSpriteSheet file.
 		 * @version Egret 2.4
@@ -135,7 +135,7 @@ module RES {
 		 * @platform Web,Native
 		 * @language zh_CN
 		 */
-        export const TYPE_FONT:string = "font";
+		export const TYPE_FONT: string = "font";
 		/**
 		 * Sound file.
 		 * @version Egret 2.4
@@ -148,12 +148,11 @@ module RES {
 		 * @platform Web,Native
 		 * @language zh_CN
 		 */
-        export const TYPE_SOUND:string = "sound";
+		export const TYPE_SOUND: string = "sound";
 
 		export function convertToResItem(r: ResourceInfo): ResourceItem {
 
-			let name:string = "";
-			let config: ResourceConfig = RES["configInstance"];
+			let name = "";
 			if (!config.config) {
 				name = r.url;
 			}

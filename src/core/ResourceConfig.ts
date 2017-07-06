@@ -43,22 +43,6 @@ module RES {
 
     export var resourceNameSelector: ResourceNameSelector = (p) => p;
 
-    export function mapResourceName(nameSelector: ResourceNameSelector) {
-        return function (target) {
-            resourceNameSelector = nameSelector;
-        }
-    }
-
-    export function mapResourceType(typeSelector: ResourceTypeSelector) {
-        return function (target) {
-            resourceTypeSelector = typeSelector;
-        }
-    }
-
-    export function mapResourceMerger(mergerSelector: ResourceMergerSelector) {
-        return function (target) {
-        }
-    }
 
     /**
    * Definition profile.
@@ -93,7 +77,7 @@ module RES {
 
 
 
-    export var resourceRoot: string;
+    export var resourceRoot = "";
 
 
     export interface ResourceInfo {
@@ -122,6 +106,10 @@ module RES {
 
     export interface Data {
 
+        resourceRoot: string;
+
+        typeSelector: ResourceTypeSelector;
+
         resources: Dictionary;
 
         groups: {
@@ -146,8 +134,7 @@ module RES {
 
         resourceRoot: string;
 
-        public constructor() {
-            RES["configInstance"] = this;
+        constructor() {
         }
 
         init() {
@@ -389,8 +376,9 @@ module RES {
          * @param folder {string} 加载项的路径前缀。
          */
         public parseConfig(data: Data): void {
-
+            resourceRoot = data.resourceRoot + "/";
             this.config = data;
+            resourceTypeSelector = data.typeSelector;
             FileSystem.data = data.resources;
 
             // if (!data)
@@ -467,7 +455,7 @@ module RES {
         }
 
         public destory() {
-            this.config = { groups: {}, alias: {}, resources: {} };
+            this.config = { groups: {}, alias: {}, resources: {}, typeSelector: (p) => p, resourceRoot: "resources" };
             FileSystem.data = {};
         }
     }

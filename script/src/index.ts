@@ -186,6 +186,8 @@ export namespace ResourceConfig {
 
     var config: Data;
 
+    export var resourceRoot: string;
+
     export var typeSelector: (path: string) => string;
 
     export var nameSelector: (path: string) => string;

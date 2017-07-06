@@ -29,9 +29,6 @@ declare type ResourceMergerSelector = (file: string) => {
 declare module RES {
     var resourceTypeSelector: ResourceTypeSelector;
     var resourceNameSelector: ResourceNameSelector;
-    function mapResourceName(nameSelector: ResourceNameSelector): (target: any) => void;
-    function mapResourceType(typeSelector: ResourceTypeSelector): (target: any) => void;
-    function mapResourceMerger(mergerSelector: ResourceMergerSelector): (target: any) => void;
     /**
    * Definition profile.
    * @param url Configuration file path (path resource.json).
@@ -67,6 +64,8 @@ declare module RES {
         promise?: Promise<any>;
     }
     interface Data {
+        resourceRoot: string;
+        typeSelector: ResourceTypeSelector;
         resources: Dictionary;
         groups: {
             [groupName: string]: string[];
@@ -84,6 +83,7 @@ declare module RES {
         config: Data;
         resourceRoot: string;
         constructor();
+        init(): Promise<any>;
         __temp__get__type__via__url(url_or_alias: string): string;
         getKeyByAlias(aliasName: string): string;
         /**
@@ -132,9 +132,8 @@ declare module RES {
     let checkCancelation: MethodDecorator;
     function profile(): void;
     var host: ProcessHost;
+    var config: ResourceConfig;
     namespace manager {
-        var config: ResourceConfig;
-        function init(): Promise<void>;
         function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<ResourceInfo[] | ResourceInfo>;
         function destory(): void;
     }
@@ -560,7 +559,6 @@ declare module RES {
     };
     namespace upgrade {
         function setUpgradeGuideLevel(level: "warning" | "silent"): void;
-        let checkDecorator: MethodDecorator;
     }
 }
 declare namespace RES {
@@ -1028,5 +1026,4 @@ declare module RES {
             url: string;
         }): void;
     }
-    var configItem: any;
 }

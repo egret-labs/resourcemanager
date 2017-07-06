@@ -1,49 +1,16 @@
-/**
- * 新版 RES API
- */
-@RES.mapConfig("config.json", () => "resource")
-@RES.mapResourceType(path => {
-    var ext = path.substr(path.lastIndexOf(".") + 1);
-    var typeMap = {
-        "jpg": "image",
-        "png": "image",
-        "webp": "image",
-        "json": "json",
-        "fnt": "font",
-        "pvr": "pvr",
-        "mp3": "sound",
-        "zip": "zip",
-        "mergeJson": "mergeJson"
-    }
-    var type = typeMap[ext];
-    if (type == "json") {
-        if (path.indexOf("sheet") >= 0) {
-            type = "sheet";
-        } else if (path.indexOf("movieclip") >= 0) {
-            type = "movieclip";
-        };
-    }
-    return type;
-})
-@RES.mapResourceName((p) => {
-    // let index = p.lastIndexOf("/");
-    // if (index >= 0) {
-    //     p = p.substr(index + 1);
-    // }
-    // p = p.replace(/\./gi, '_');
-    return p;
-})
-@RES.mapResourceMerger(path => {
-    if (path.indexOf(".json") >= 0 && path.indexOf("/") >= 0) {
-        return {
-            "path": "111.mergeJson",
-            "alias": path.substr(path.lastIndexOf("/") + 1).replace(".", "_")
-        }
-    }
-    else {
-        return null;
-    }
-})
+
+
+// @RES.mapResourceMerger(path => {
+//     if (path.indexOf(".json") >= 0 && path.indexOf("/") >= 0) {
+//         return {
+//             "path": "111.mergeJson",
+//             "alias": path.substr(path.lastIndexOf("/") + 1).replace(".", "_")
+//         }
+//     }
+//     else {
+//         return null;
+//     }
+// })
 
 class Main extends egret.DisplayObjectContainer {
 
@@ -96,13 +63,13 @@ class Main extends egret.DisplayObjectContainer {
         let testSpriteSheet = async () => {
 
             // RES.getResAsync("xxxxx")
-            RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
-            RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
-            // RES.createGroup("group1", ["assets/sheet/sheet.json#off"]);
-            // await RES.loadGroup("group1");
-            // await RES.loadGroup("group1");
-            // await RES.getResAsync("assets/sheet/sheet.json#off");
-            // await RES.getResAsync("assets/sheet/sheet.json#on");
+            // RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
+            // RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
+            RES.createGroup("group1", ["assets/sheet/sheet.json#off"]);
+            await RES.loadGroup("group1");
+            await RES.loadGroup("group1");
+            await RES.getResAsync("assets/sheet/sheet.json#off");
+            await RES.getResAsync("assets/sheet/sheet.json#on");
         }
 
         let testLoadResByUrl = () =>
@@ -171,7 +138,7 @@ class Main extends egret.DisplayObjectContainer {
 
 
 
-
+        RES.setConfigURL("resource/config.res.js");
         RES.loadConfig()
             // .then(testGroupIsLoaded)
             // .then(testNull)
