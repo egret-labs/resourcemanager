@@ -432,23 +432,11 @@ module RES {
     export class Resource extends egret.EventDispatcher {
 
         /**
-         * 构造函数
-		 * @method RES.constructor
-         * @private
-         */
-        public constructor() {
-            super();
-        }
-
-        /**
          * 开始加载配置
 		 * @method RES.loadConfig
-		 * @param url {string}
-		 * @param resourceRoot {string}
-		 * @param type {string}
          */
         @checkCancelation
-        public loadConfig(): Promise<void> {
+        loadConfig(): Promise<void> {
             native_init();
             return config.init().then(data => {
                 ResourceEvent.dispatchResourceEvent(this, ResourceEvent.CONFIG_COMPLETE);
@@ -462,7 +450,6 @@ module RES {
          * 检查某个资源组是否已经加载完成
 		 * @method RES.isGroupLoaded
 		 * @param name {string}
-		 * @returns {boolean}
          */
         public isGroupLoaded(name: string): boolean {
             let resources = config.getGroupByName(name, true);
@@ -472,7 +459,6 @@ module RES {
          * 根据组名获取组加载项列表
 		 * @method RES.getGroupByName
 		 * @param name {string}
-		 * @returns {Array<egret.ResourceItem>}
          */
         getGroupByName(name: string): Array<ResourceInfo> {
             return config.getGroupByName(name, true); //这里不应该传入 true，但是为了老版本的 TypeScriptCompiler 兼容性，暂时这样做
