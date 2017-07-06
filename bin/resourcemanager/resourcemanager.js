@@ -1,8 +1,13 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -434,6 +439,7 @@ var RES;
             }
         };
         ResourceConfig.prototype.destory = function () {
+            RES.systemPid++;
             this.config = { groups: {}, alias: {}, resources: {}, typeSelector: function (p) { return p; }, resourceRoot: "resources" };
             RES.FileSystem.data = {};
         };
@@ -482,40 +488,18 @@ var RES;
         function PromiseQueue() {
         }
         PromiseQueue.prototype.load = function (list, reporter) {
-            // let s = host.state[r.name];
-            //     if (s == 2) {
-            //         return Promise.resolve(host.get(r));
-            //     }
-            //     if (s == 1) {
-            //         return r.promise as Promise<any>
-            //     }
             var current = 0;
             var total = 1;
             var mapper;
-            if (RES.FEATURE_FLAG.LOADING_STATE) {
-                mapper = function (r) {
-                    var s = RES.host.state[r.name];
-                    if (s == 2) {
-                        return Promise.resolve(RES.host.get(r));
-                    }
-                    if (s == 1) {
-                        return r.promise;
-                    }
-                    var p = RES.host.load(r)
-                        .then(function (response) {
-                        RES.host.save(r, response);
-                        current++;
-                        if (reporter && reporter.onProgress) {
-                            reporter.onProgress(current, total);
-                        }
-                        return response;
-                    });
-                    r.promise = p;
-                    return p;
-                };
-            }
-            else {
-                mapper = function (r) { return RES.host.load(r)
+            mapper = function (r) {
+                var s = RES.host.state[r.name];
+                if (s == 2) {
+                    return Promise.resolve(RES.host.get(r));
+                }
+                if (s == 1) {
+                    return r.promise;
+                }
+                var p = RES.host.load(r)
                     .then(function (response) {
                     RES.host.save(r, response);
                     current++;
@@ -523,8 +507,10 @@ var RES;
                         reporter.onProgress(current, total);
                     }
                     return response;
-                }); };
-            }
+                });
+                r.promise = p;
+                return p;
+            };
             if ((list instanceof Array)) {
                 total = list.length;
                 return Promise.all(list.map(mapper));
@@ -533,6 +519,7 @@ var RES;
                 return mapper(list);
             }
         };
+        ;
         return PromiseQueue;
     }());
     RES.PromiseQueue = PromiseQueue;
@@ -543,7 +530,7 @@ var RES;
     /**
      * 整个资源加载系统的进程id，协助管理回调派发机制
      */
-    var systemPid = 0;
+    RES.systemPid = 0;
     RES.checkCancelation = function (target, propertyKey, descriptor) {
         var method = descriptor.value;
         descriptor.value = function () {
@@ -551,10 +538,10 @@ var RES;
             for (var _i = 0; _i < arguments.length; _i++) {
                 arg[_i] = arguments[_i];
             }
-            var currentPid = systemPid;
+            var currentPid = RES.systemPid;
             var result = method.apply(this, arg);
             return result.then(function (value) {
-                if (systemPid != currentPid) {
+                if (RES.systemPid != currentPid) {
                     throw new ResourceManagerError(1005, arg[0]);
                 }
                 else {
@@ -628,20 +615,7 @@ var RES;
         }
     };
     RES.config = new RES.ResourceConfig();
-    var manager;
-    (function (manager) {
-        var queue = new RES.PromiseQueue();
-        function load(resources, reporter) {
-            return queue.load(resources, reporter);
-        }
-        manager.load = load;
-        function destory() {
-            RES.config.destory();
-            systemPid++;
-            //todo 销毁整个 ResourceManager上下文全部内容
-        }
-        manager.destory = destory;
-    })(manager = RES.manager || (RES.manager = {}));
+    RES.queue = new RES.PromiseQueue();
     var ResourceManagerError = (function (_super) {
         __extends(ResourceManagerError, _super);
         function ResourceManagerError(code, replacer, replacer2) {
@@ -888,6 +862,14 @@ var RES;
                                 for (subkey in frames) {
                                     config = frames[subkey];
                                     texture = spriteSheet.createTexture(subkey, config.x, config.y, config.w, config.h, config.offX, config.offY, config.sourceW, config.sourceH);
+                                    // if (config["scale9grid"]) {
+                                    //     var str: string = config["scale9grid"];
+                                    //     var list: Array<string> = str.split(",");
+                                    //     texture["scale9Grid"] = new egret.Rectangle(parseInt(list[0]), parseInt(list[1]), parseInt(list[2]), parseInt(list[3]));
+                                    // }
+                                    //     if (name) {
+                                    //         this.addSubkey(subkey, name);
+                                    //     }
                                 }
                                 return [2 /*return*/, spriteSheet];
                         }
@@ -2280,11 +2262,11 @@ var RES;
         Resource.prototype._loadGroup = function (name, priority, reporter) {
             if (priority === void 0) { priority = 0; }
             var resources = RES.config.getGroupByName(name, true);
-            return RES.manager.load(resources, reporter);
+            return RES.queue.load(resources, reporter);
         };
         Resource.prototype.loadResources = function (keys, reporter) {
             var resources = keys.map(function (key) { return RES.config.getResource(key, true); });
-            return RES.manager.load(resources, reporter);
+            return RES.queue.load(resources, reporter);
         };
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
@@ -2335,7 +2317,7 @@ var RES;
         Resource.prototype.getResAsync = function (key, compFunc, thisObject) {
             var paramKey = key;
             var _a = RES.config.getResourceWithSubkey(key, true), r = _a.r, subkey = _a.subkey;
-            return RES.manager.load(r).then(function (value) {
+            return RES.queue.load(r).then(function (value) {
                 var processor = RES.host.isSupport(r);
                 if (processor && processor.getData && subkey) {
                     value = processor.getData(RES.host, r, key, subkey);
@@ -2372,7 +2354,7 @@ var RES;
                     throw 'never';
                 }
             }
-            return RES.manager.load(r).then(function (value) {
+            return RES.queue.load(r).then(function (value) {
                 if (compFunc && r) {
                     compFunc.call(thisObject, value, r.url);
                 }

@@ -129,14 +129,15 @@ declare module RES {
 declare module RES {
 }
 declare module RES {
+    /**
+     * 整个资源加载系统的进程id，协助管理回调派发机制
+     */
+    var systemPid: number;
     let checkCancelation: MethodDecorator;
     function profile(): void;
     var host: ProcessHost;
     var config: ResourceConfig;
-    namespace manager {
-        function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<ResourceInfo[] | ResourceInfo>;
-        function destory(): void;
-    }
+    var queue: PromiseQueue;
     interface ProcessHost {
         state: {
             [index: string]: number;
@@ -958,7 +959,7 @@ declare module RES {
          */
         loadGroup(name: string, priority?: number, reporter?: PromiseTaskReporter): Promise<any>;
         private _loadGroup(name, priority?, reporter?);
-        loadResources(keys: string[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]>;
+        loadResources(keys: string[], reporter?: PromiseTaskReporter): Promise<ResourceInfo[]>;
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
          * 可以监听ResourceEvent.CONFIG_COMPLETE事件来确认配置加载完成。

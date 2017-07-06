@@ -42,51 +42,25 @@ module RES {
 	 */
 	export class PromiseQueue {
 
-		constructor() {
-		}
-		public load(list: ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo[]>;
-		public load(list: ResourceInfo, reporter?: PromiseTaskReporter): Promise<ResourceInfo>;
-		public load(list: ResourceInfo | ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]>;
-		public load(list: ResourceInfo | ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]> {
 
-
-
-			// let s = host.state[r.name];
-			//     if (s == 2) {
-			//         return Promise.resolve(host.get(r));
-			//     }
-			//     if (s == 1) {
-			//         return r.promise as Promise<any>
-			//     }
+		load(list: ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo[]>;
+		load(list: ResourceInfo, reporter?: PromiseTaskReporter): Promise<ResourceInfo>;
+		load(list: ResourceInfo | ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]>;
+		load(list: ResourceInfo | ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]> {
 
 			let current = 0;
 			let total = 1;
 			let mapper: (r: ResourceInfo) => Promise<any>;
-			if (RES.FEATURE_FLAG.LOADING_STATE) {
-				mapper = (r: ResourceInfo) => {
-					let s = host.state[r.name];
-					if (s == 2) {
-						return Promise.resolve(host.get(r));
-					}
-					if (s == 1) {
-						return r.promise as Promise<any>
-					}
-
-					let p = host.load(r)
-						.then(response => {
-							host.save(r, response);
-							current++;
-							if (reporter && reporter.onProgress) {
-								reporter.onProgress(current, total);
-							}
-							return response;
-						})
-					r.promise = p;
-					return p;
+			mapper = (r: ResourceInfo) => {
+				let s = host.state[r.name];
+				if (s == 2) {
+					return Promise.resolve(host.get(r));
 				}
-			}
-			else {
-				mapper = (r) => host.load(r)
+				if (s == 1) {
+					return r.promise as Promise<any>
+				}
+
+				let p = host.load(r)
 					.then(response => {
 						host.save(r, response);
 						current++;
@@ -95,6 +69,8 @@ module RES {
 						}
 						return response;
 					})
+				r.promise = p;
+				return p;
 			}
 			if ((list instanceof Array)) {
 				total = list.length;
@@ -103,10 +79,6 @@ module RES {
 			else {
 				return mapper(list);
 			}
-
-
-
-
-		}
+		};
 	}
 }

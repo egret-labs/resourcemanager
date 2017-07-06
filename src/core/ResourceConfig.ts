@@ -455,6 +455,7 @@ module RES {
         }
 
         public destory() {
+            systemPid++;
             this.config = { groups: {}, alias: {}, resources: {}, typeSelector: (p) => p, resourceRoot: "resources" };
             FileSystem.data = {};
         }

@@ -5,7 +5,7 @@ module RES {
     /**
      * 整个资源加载系统的进程id，协助管理回调派发机制
      */
-    var systemPid = 0
+    export var systemPid = 0
 
     export let checkCancelation: MethodDecorator = (target, propertyKey, descriptor) => {
         const method = descriptor.value;
@@ -104,23 +104,7 @@ module RES {
 
     export var config = new ResourceConfig();
 
-    export namespace manager {
-
-
-
-        var queue = new PromiseQueue();
-
-        export function load(resources: ResourceInfo[] | ResourceInfo, reporter?: PromiseTaskReporter): Promise<ResourceInfo[] | ResourceInfo> {
-            return queue.load(resources, reporter);
-        }
-
-        export function destory() {
-            config.destory();
-            systemPid++;
-            //todo 销毁整个 ResourceManager上下文全部内容
-        }
-
-    }
+    export var queue = new PromiseQueue();
 
 
     export interface ProcessHost {

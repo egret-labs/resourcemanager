@@ -505,12 +505,12 @@ module RES {
         @checkCancelation
         private _loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<any> {
             let resources = config.getGroupByName(name, true);
-            return manager.load(resources, reporter);
+            return queue.load(resources, reporter);
         }
 
         loadResources(keys: string[], reporter?: PromiseTaskReporter) {
             let resources = keys.map(key => config.getResource(key, true))
-            return manager.load(resources, reporter);
+            return queue.load(resources, reporter);
         }
 
         /**
@@ -579,7 +579,7 @@ module RES {
         public getResAsync(key: string, compFunc?: GetResAsyncCallback, thisObject?: any): Promise<any> | void {
             var paramKey = key;
             var { r, subkey } = config.getResourceWithSubkey(key, true);
-            return manager.load(r).then(value => {
+            return queue.load(r).then(value => {
                 let processor = host.isSupport(r);
                 if (processor && processor.getData && subkey) {
                     value = processor.getData(host, r, key, subkey);
@@ -618,7 +618,7 @@ module RES {
                     throw 'never';
                 }
             }
-            return manager.load(r).then(value => {
+            return queue.load(r).then(value => {
                 if (compFunc && r) {
                     compFunc.call(thisObject, value, r.url);
                 }
