@@ -40,7 +40,12 @@ module RES.processor {
     function getURL(resource: ResourceInfo) {
         let prefix = resource.extra ? "" : resourceRoot;
         let url = prefix + resource.url;
-        return RES.getRealURL(url);
+        if (RES['getRealURL']) { //todo: shim native
+            return RES['getRealURL'](url);
+        }
+        else {
+            return url;
+        }
     }
 
 
@@ -531,7 +536,7 @@ module RES.processor {
         }
     }
 
-    if (egret && egret["web"] && egret["web"].WebGLRenderContext) {
+    if (typeof egret != 'undefined' && egret && egret["web"] && egret["web"].WebGLRenderContext) {
         // Calcualates the size of a compressed texture level in bytes
         function textureLevelSize(format, width, height) {
             switch (format) {

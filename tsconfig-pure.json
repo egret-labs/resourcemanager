@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "outFile": "bin/resourcemanager-pure/resourcemanager-pure.js",
+        "declaration": true,
+        "noImplicitAny": false,
+        "stripInternal": true,
+        "allowUnreachableCode": true,
+        "experimentalDecorators": true,
+        "strictNullChecks": true,
+        "sourceMap": false,
+        "lib": [
+            "es5",
+            "dom",
+            "es2015.promise"
+        ]
+    },
+    "files": [
+        "src/core/FileSystem.ts",
+        "src/core/ResourceConfig.ts",
+        "src/core/ResourceLoader.ts",
+        "src/core/ResourceManager.ts",
+        "src/processor/Processor.ts",
+        "src/DEBUG.ts",
+        "libs/egret.d.ts",
+        "libs/game.d.ts"
+    ]
+}

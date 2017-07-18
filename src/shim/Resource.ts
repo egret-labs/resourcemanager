@@ -72,6 +72,7 @@ module RES {
      * @language zh_CN
      */
     export function loadConfig(url?: string, resourceRoot?: string): Promise<void> {
+        instance = new Resource();
         return instance.loadConfig();
     }
     /**
@@ -676,7 +677,7 @@ module RES {
     /**
      * Resource单例
      */
-    var instance: Resource = new Resource();
+    var instance: Resource;
 
 
 }

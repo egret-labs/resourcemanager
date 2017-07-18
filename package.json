@@ -10,6 +10,7 @@
   "scripts": {
     "res": "node script/out/cli.js build",
     "tsc": "tsc && uglifyjs bin/resourcemanager/resourcemanager.js > bin/resourcemanager/resourcemanager.min.js",
+    "tsc-pure": "tsc -p tsconfig-pure.json && uglifyjs bin/resourcemanager-pure/resourcemanager-pure.js > bin/resourcemanager-pure/resourcemanager-pure.min.js",
     "debug": "tsc -p script && tsc && egret build test/es6-api -e && npm run res test/es6-api",
     "test": "egret build test/es6-api -e && res test/es6-api && egret run test/es6-api",
     "debug-classic": "tsc -p script && tsc && egret build test/classic-api -e && npm run res test/classic-api"

@@ -83,7 +83,7 @@ declare module RES {
         config: Data;
         resourceRoot: string;
         constructor();
-        init(): Promise<any>;
+        init(): Promise<void>;
         __temp__get__type__via__url(url_or_alias: string): string;
         getKeyByAlias(aliasName: string): string;
         /**
@@ -924,31 +924,20 @@ declare module RES {
      */
     class Resource extends egret.EventDispatcher {
         /**
-         * 构造函数
-         * @method RES.constructor
-         * @private
-         */
-        constructor();
-        /**
          * 开始加载配置
          * @method RES.loadConfig
-         * @param url {string}
-         * @param resourceRoot {string}
-         * @param type {string}
          */
         loadConfig(): Promise<void>;
         /**
          * 检查某个资源组是否已经加载完成
          * @method RES.isGroupLoaded
          * @param name {string}
-         * @returns {boolean}
          */
         isGroupLoaded(name: string): boolean;
         /**
          * 根据组名获取组加载项列表
          * @method RES.getGroupByName
          * @param name {string}
-         * @returns {Array<egret.ResourceItem>}
          */
         getGroupByName(name: string): Array<ResourceInfo>;
         /**
