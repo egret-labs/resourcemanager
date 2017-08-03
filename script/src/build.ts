@@ -19,10 +19,9 @@ declare interface ResVinylFile extends VinylFile {
     original_relative: string;
 }
 
-export async function build(p: string, format: "json" | "text", publishPath?: string, debug: boolean = false) {
+export async function build(p: string, format: "json" | "text", publishPath: string, debug: boolean = false) {
 
     let result = await ResourceConfig.init(p);
-    let resourcePath = publishPath ? path.join(publishPath, result.resourceRoot) : undefined;
     ResourceConfig.typeSelector = result.typeSelector;
     ResourceConfig.nameSelector = result.nameSelector;
     ResourceConfig.resourceRoot = result.resourceRoot;
@@ -80,13 +79,13 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
     };
 
     let list = await utils.walk(resourceFolder, () => true, option);
-    let outputFile = resourcePath ?
-        path.join(resourcePath, result.resourceConfigFileName) :
+    let outputFile = publishPath ?
+        path.join(publishPath, result.resourceConfigFileName) :
         path.join(resourceFolder, result.resourceConfigFileName)
 
     let stream = vinylfs.src(`**/**.*`, { cwd: resourceFolder, base: resourceFolder })
         .pipe(map(init))
-    if (resourcePath) {
+    if (publishPath) {
         stream = stream.pipe(map(convert))
     }
     stream = stream.pipe(map(convert2).on("end", async () => {
@@ -97,25 +96,27 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
         merger.output();
     }))
 
-    if (resourcePath) {
-        stream = stream.pipe(vinylfs.dest(resourcePath).on("end", () => {
-            html.publish(publishPath as string, outputFile).catch(e => handleException(e))
+    if (publishPath) {
+        stream = stream.pipe(vinylfs.dest(publishPath).on("end", () => {
+            // html.publish(publishPath_2 as string, outputFile).catch(e => handleException(e))
         }));
     }
-}
 
-export async function emitResourceConfigFile(filename: string, debug: boolean) {
-    let config = ResourceConfig.generateConfig(true);
-    let content = JSON.stringify(config, null, "\t");
-    let file = `exports.typeSelector = ${ResourceConfig.typeSelector.toString()};
-exports.resourceRoot = "${ResourceConfig.resourceRoot}";
+    async function emitResourceConfigFile(filename: string, debug: boolean) {
+        let config = ResourceConfig.generateConfig(true);
+        let content = JSON.stringify(config, null, "\t");
+        let file = `exports.typeSelector = ${ResourceConfig.typeSelector.toString()};
+exports.resourceRoot = "${publishPath}";
 exports.alias = ${JSON.stringify(config.alias, null, "\t")};
 exports.groups = ${JSON.stringify(config.groups, null, "\t")};
 exports.resources = ${JSON.stringify(config.resources, null, "\t")};
 `
-    await fs.mkdirpAsync(path.dirname(filename))
-    await fs.writeFileAsync(filename, file, "utf-8");
+        await fs.mkdirpAsync(path.dirname(filename))
+        await fs.writeFileAsync(filename, file, "utf-8");
+    }
 }
+
+
 
 
 export async function convertResourceJson(projectRoot: string, config: Data) {

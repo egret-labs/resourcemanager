@@ -10,11 +10,6 @@ function getProjectPath(p) {
 }
 
 
-
-let getCommand = (command: string) => {
-
-}
-
 const format = process.argv.indexOf("-json") >= 0 ? "json" : "text";
 
 let command = process.argv[2];
@@ -25,36 +20,46 @@ if (command == 'version') {
     promise = res.version();
 }
 
-if (!promise && p && fs.existsSync(path.join(p, "egretProperties.json"))) {
+let egretPropertiesFile = path.join(p, "egretProperties.json")
 
-    switch (command) {
-        case "upgrade":
-            promise = res.upgrade(p);
-            break;
-        case "build":
-            promise = res.build(p, format, undefined, true);
-            break;
-        case "publish":
-            let publishPath = process.argv[4];
-            if (!publishPath) {
-                handleException('请设置发布目录');
-            }
-            promise = res.build(p, format, publishPath);
-            break;
-        case "watch":
-            promise = res.watch(p, format)
-            break;
-        case "config":
-            promise = res.printConfig(p);
-            break;
-        default:
-            handleException(`找不到指定的命令{command}`)
-            break;
-    }
+if (!promise && p && fs.existsSync(egretPropertiesFile)) {
+    executeCommand(command).catch(handleException);
 }
 else {
     handleException(`${path.join(process.cwd(), p)} 不是一个有效的 Egret 项目`)
 }
-if (promise) {
-    promise.catch(handleException);
+
+async function executeCommand(command: string) {
+    let properties = await fs.readJSONAsync(egretPropertiesFile);
+    if (!properties.resourcemanager) {
+        handleException(`egretProperties.json 中不存在 resourcemanager 相关配置`);
+        return null;
+    }
+
+    let publishPath = properties.resourcemanager.resource_publish_path;
+    switch (command) {
+        case "upgrade":
+            return res.upgrade(p);
+            break;
+        case "build":
+        case "publish":
+            if (!publishPath) {
+                handleException('请设置发布目录');
+            }
+            return res.build(p, format, publishPath);
+            break;
+        case "watch":
+            if (!publishPath) {
+                handleException('请设置发布目录');
+            }
+            return res.watch(p, format, publishPath)
+            break;
+        case "config":
+            return res.printConfig(p);
+            break;
+        default:
+            handleException(`找不到指定的命令{command}`);
+            return null;
+            break;
+    }
 }

@@ -3,6 +3,9 @@
 		"path_ignore": [],
 		"ios_path": "../../test-ios"
 	},
+	"resourcemanager": {
+		"resource_publish_path": "resource-bundles"
+	},
 	"resources": [],
 	"publish": {
 		"web": 0,
