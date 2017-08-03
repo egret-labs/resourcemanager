@@ -105,7 +105,7 @@ export async function build(p: string, format: "json" | "text", publishPath?: st
 }
 
 export async function emitResourceConfigFile(filename: string, debug: boolean) {
-    let config = ResourceConfig.generateConfig(debug);
+    let config = ResourceConfig.generateConfig(true);
     let content = JSON.stringify(config, null, "\t");
     let file = `exports.typeSelector = ${ResourceConfig.typeSelector.toString()};
 exports.resourceRoot = "${ResourceConfig.resourceRoot}";

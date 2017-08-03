@@ -65,13 +65,13 @@ module RES {
 
 
 		loadResource(r: ResourceInfo, p?: RES.processor.Processor) {
-			let s = host.state[r.name];
-			if (s == 2) {
-				return Promise.resolve(host.get(r));
-			}
-			if (s == 1) {
-				return r.promise as Promise<any>
-			}
+			// let s = host.state[r.name];
+			// if (s == 2) {
+			// 	return Promise.resolve(host.get(r));
+			// }
+			// if (s == 1) {
+			// 	return r.promise as Promise<any>
+			// }
 			if (!p) {
 				p = processor.isSupport(r);
 			}

@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es5",
+        "target": "es2017",
         "outFile": "bin/resourcemanager-pure/resourcemanager-pure.js",
         "declaration": true,
         "noImplicitAny": false,
@@ -12,7 +12,7 @@
         "lib": [
             "es5",
             "dom",
-            "es2015.promise"
+            "es2015"
         ]
     },
     "files": [
