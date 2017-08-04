@@ -496,7 +496,10 @@ module RES {
         }
 
         loadResources(keys: string[], reporter?: PromiseTaskReporter) {
-            let resources = keys.map(key => config.getResource(key, true))
+            let resources = keys.map(key => {
+                let r = config.getResourceWithSubkey(key, true);
+                return r.r;
+            })
             return queue.load(resources, reporter);
         }
 

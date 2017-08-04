@@ -192,8 +192,7 @@ export namespace ResourceConfig {
 
     export var nameSelector: (path: string) => string;
 
-    export var mergeSelector: (path: string) => { path: string, alias: string } | null;
-
+    export var mergeSelector: (path: string) => string | null;
     export var resourceConfigFileName: string;
 
     var resourcePath: string;
@@ -223,6 +222,7 @@ export namespace ResourceConfig {
         typeSelector = parsedConfig.typeSelector;
         nameSelector = parsedConfig.nameSelector;
         resourceRoot = parsedConfig.resourceRoot;
+        mergeSelector = parsedConfig.mergeSelector;
         resourcePath = path.resolve(projectPath, resourceRoot);
         resourceConfigFileName = parsedConfig.resourceConfigFileName;
         config = { alias: {}, groups: {}, resources: {} };

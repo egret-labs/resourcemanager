@@ -6,7 +6,7 @@ import * as path from 'path';
 
 
 let resourcePath;
-let mergeCollection: { [mergeFile: string]: { path: string, alias: string }[] } = {};
+let mergeCollection: { [mergeFile: string]: string[] } = {};
 
 export function init(p: string) {
     resourcePath = p;
@@ -17,18 +17,16 @@ export function walk(f: string) {
 
     let mergerSelector = ResourceConfig.mergeSelector;
     if (mergerSelector) {
-        let merge = mergerSelector(f);
-        if (merge) {
-            let mergeFile = merge.path;
-            merge.path = f;
+        let mergeResult = mergerSelector(f);
+        if (mergeResult) {
             let type = ResourceConfig.typeSelector(f);
             if (!type) {
-                throw new Error(`missing merge type : ${merge.path}`);
+                throw new Error(`missing merge type : ${mergeResult}`);
             }
-            if (!mergeCollection[mergeFile]) {
-                mergeCollection[mergeFile] = [];
+            if (!mergeCollection[mergeResult]) {
+                mergeCollection[mergeResult] = [];
             }
-            mergeCollection[mergeFile].push(merge);
+            mergeCollection[mergeResult].push(f);
         }
 
     }
@@ -38,12 +36,12 @@ export function output() {
     for (let mergeFile in mergeCollection) {
         let outputJson = {};
         let sourceFiles = mergeCollection[mergeFile];
-        if (ResourceConfig.typeSelector(mergeFile) == "mergeJson") {
-            sourceFiles.map(sourceFile => {
-                let sourcePath = path.join(resourcePath, sourceFile.path);
-                let json = fs.readJSONSync(sourcePath);
-                outputJson[sourceFile.alias] = json;
-            })
+        if (ResourceConfig.typeSelector(mergeFile) == "zip") {
+            // sourceFiles.map(sourceFile => {
+            //     let sourcePath = path.join(resourcePath, sourceFile.path);
+            //     let json = fs.readJSONSync(sourcePath);
+            //     outputJson[sourceFile.alias] = json;
+            // })
         }
         fs.writeFileSync(path.join(resourcePath, mergeFile), JSON.stringify(outputJson))
     }

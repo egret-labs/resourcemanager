@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es2017",
+        "target": "es5",
         "outFile": "bin/resourcemanager-pure/resourcemanager-pure.js",
         "declaration": true,
         "noImplicitAny": false,

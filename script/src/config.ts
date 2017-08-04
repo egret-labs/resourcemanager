@@ -45,8 +45,8 @@ export async function getConfigViaFile(fileName: string) {
     let resourceRoot: string = typeof exports_1.resourceRoot == 'function' ? exports_1.resourceRoot() : exports_1.resourceRoot;
     let resourceConfigFileName = exports_1.configPath;
     let typeSelector: (p: string) => string = exports_1.typeSelector;
-    let mergeSelector: any;
     let nameSelector = (p: string) => { return p };
+    let mergeSelector = exports_1.mergeSelector;
     return { resourceRoot, resourceConfigFileName, typeSelector, mergeSelector, nameSelector };
 
 }
@@ -95,10 +95,8 @@ export async function getConfigViaDecorator(egretRoot: string) {
         mergerSelector = decorator.paramters[3] as MergerSelector;
     }
 
-    let mergeSelector2 = () => "helloworld"
 
-
-    return { resourceRoot, resourceConfigFileName, typeSelector, mergeSelector, nameSelector, mergeSelector2 };
+    return { resourceRoot, resourceConfigFileName, typeSelector, mergeSelector, nameSelector };
 
 
 
