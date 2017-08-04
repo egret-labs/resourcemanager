@@ -14,8 +14,10 @@ export function init(p: string) {
 
 
 export function walk(f: string) {
-    if (ResourceConfig.mergeSelector) {
-        let merge = ResourceConfig.mergeSelector(f);
+
+    let mergerSelector = ResourceConfig.mergeSelector;
+    if (mergerSelector) {
+        let merge = mergerSelector(f);
         if (merge) {
             let mergeFile = merge.path;
             merge.path = f;

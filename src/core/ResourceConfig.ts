@@ -36,12 +36,15 @@ type ResourceNameSelector = (file: string) => string;
 type ResourceMergerSelector = (file: string) => { path: string, alias: string };
 
 
+
 module RES {
 
 
     export var resourceTypeSelector: ResourceTypeSelector;
 
     export var resourceNameSelector: ResourceNameSelector = (p) => p;
+
+    export var resourceMergerSelector: ResourceMergerSelector | null;
 
 
     /**
@@ -109,6 +112,8 @@ module RES {
         resourceRoot: string;
 
         typeSelector: ResourceTypeSelector;
+
+        mergeSelector: ResourceMergerSelector | null;
 
         resources: Dictionary;
 
@@ -379,6 +384,7 @@ module RES {
             resourceRoot = data.resourceRoot + "/";
             this.config = data;
             resourceTypeSelector = data.typeSelector;
+            resourceMergerSelector = data.mergeSelector;
             FileSystem.data = data.resources;
 
             // if (!data)
@@ -456,7 +462,7 @@ module RES {
 
         public destory() {
             systemPid++;
-            this.config = { groups: {}, alias: {}, resources: {}, typeSelector: (p) => p, resourceRoot: "resources" };
+            this.config = { groups: {}, alias: {}, resources: {}, typeSelector: (p) => p, resourceRoot: "resources", mergeSelector: null };
             FileSystem.data = {};
         }
     }
