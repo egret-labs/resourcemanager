@@ -199,11 +199,6 @@ module RES {
                 url = url_or_alias;
             }
 
-            let ext = url.substr(url.lastIndexOf(".") + 1);
-            if (ext) {
-                ext = ext.toLowerCase();
-            }
-
             if (resourceTypeSelector) {
                 let type = resourceTypeSelector(url);
                 if (!type) {
