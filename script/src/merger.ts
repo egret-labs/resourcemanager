@@ -37,10 +37,10 @@ export function output() {
         let outputJson = {};
         let sourceFiles = mergeCollection[mergeFile];
         if (ResourceConfig.typeSelector(mergeFile) == "mergeJson") {
-            sourceFiles.map(s => {
-                let sourcePath = path.join(resourcePath, s.path);
+            sourceFiles.map(sourceFile => {
+                let sourcePath = path.join(resourcePath, sourceFile.path);
                 let json = fs.readJSONSync(sourcePath);
-                outputJson[s.alias] = json;
+                outputJson[sourceFile.alias] = json;
             })
         }
         fs.writeFileSync(path.join(resourcePath, mergeFile), JSON.stringify(outputJson))

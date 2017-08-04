@@ -194,6 +194,8 @@ export namespace ResourceConfig {
 
     export var mergeSelector: (path: string) => { path: string, alias: string } | null;
 
+    export var resourceConfigFileName: string;
+
     var resourcePath: string;
 
     export function addFile(r: vfs.File, checkDuplicate: boolean) {
@@ -217,15 +219,13 @@ export namespace ResourceConfig {
     }
 
     export async function init(projectPath) {
-        let result = await _config.getConfigViaFile(path.join(projectPath, 'resource/config.ts'))
-        //await _config.getConfigViaDecorator(projectPath);
-        typeSelector = result.typeSelector;
-        mergeSelector = result.mergeSelector;
-        resourcePath = path.resolve(projectPath, result.resourceRoot);
-        let filename = path.resolve(process.cwd(), projectPath, result.resourceRoot, result.resourceConfigFileName);;
+        let parsedConfig = await _config.getConfigViaFile(path.join(projectPath, 'resource/config.ts'))
+        typeSelector = parsedConfig.typeSelector;
+        nameSelector = parsedConfig.nameSelector;
+        resourceRoot = parsedConfig.resourceRoot;
+        resourcePath = path.resolve(projectPath, resourceRoot);
+        resourceConfigFileName = parsedConfig.resourceConfigFileName;
         config = { alias: {}, groups: {}, resources: {} };
         vfs.init(config.resources);
-        return result;
-
     }
 }

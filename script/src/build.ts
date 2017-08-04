@@ -21,10 +21,7 @@ declare interface ResVinylFile extends VinylFile {
 
 export async function build(p: string, format: "json" | "text", publishPath: string, debug: boolean = false) {
 
-    let result = await ResourceConfig.init(p);
-    ResourceConfig.typeSelector = result.typeSelector;
-    ResourceConfig.nameSelector = result.nameSelector;
-    ResourceConfig.resourceRoot = result.resourceRoot;
+    let parsedConfig = await ResourceConfig.init(p);
 
     let executeFilter = async (url: string) => {
         var ext = url.substr(url.lastIndexOf(".") + 1);
@@ -41,22 +38,19 @@ export async function build(p: string, format: "json" | "text", publishPath: str
     }
 
     projectRoot = p;
-    resourceFolder = path.join(projectRoot, result.resourceRoot);
+    resourceFolder = path.join(projectRoot, ResourceConfig.resourceRoot);
     merger.init(resourceFolder);
 
-    async function init(file: ResVinylFile, cb) {
-        file.original_relative = file.relative.split("\\").join("/");
-        cb(null, file);
-    }
 
-    async function convert(file: ResVinylFile, cb) {
+    async function convertFileName(file: ResVinylFile, cb) {
+        file.original_relative = file.relative.split("\\").join("/");
         let crc32_file_path: string = crc32(file.contents);
         crc32_file_path = `${crc32_file_path.substr(0, 2)}/${crc32_file_path.substr(2)}${file.extname}`
         file.path = `${file.base}${crc32_file_path}`;
         cb(null, file);
     };
 
-    async function convert2(file: ResVinylFile, cb) {
+    async function addFileToResourceConfig(file: ResVinylFile, cb) {
         let r = await executeFilter(file.original_relative);
         if (r) {
             r.url = file.relative;
@@ -81,12 +75,11 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
         await fs.mkdirpAsync(path.dirname(filename))
         await fs.writeFileAsync(filename, file, "utf-8");
     }
-    let outputFile = path.join(publishPath, result.resourceConfigFileName);
+    let outputFile = path.join(publishPath, ResourceConfig.resourceConfigFileName);
 
     vinylfs.src(`**/**.*`, { cwd: resourceFolder, base: resourceFolder })
-        .pipe(map(init))
-        .pipe(map(convert))
-        .pipe(map(convert2).on("end", async () => {
+        .pipe(map(convertFileName))
+        .pipe(map(addFileToResourceConfig).on("end", async () => {
             let config = ResourceConfig.getConfig();
             await convertResourceJson(projectRoot, config);
             await emitResourceConfigFile(outputFile, debug);

@@ -95,8 +95,10 @@ export async function getConfigViaDecorator(egretRoot: string) {
         mergerSelector = decorator.paramters[3] as MergerSelector;
     }
 
+    let mergeSelector2 = () => "helloworld"
 
-    return { resourceRoot, resourceConfigFileName, typeSelector, mergeSelector, nameSelector };
+
+    return { resourceRoot, resourceConfigFileName, typeSelector, mergeSelector, nameSelector, mergeSelector2 };
 
 
 
