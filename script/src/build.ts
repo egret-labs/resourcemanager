@@ -44,27 +44,19 @@ export async function build(p: string, format: "json" | "text", publishPath: str
     resourceFolder = path.join(projectRoot, result.resourceRoot);
     merger.init(resourceFolder);
 
-
-    let option: utils.walk.WalkOptions = {
-        relative: true,
-        ignoreHiddenFile: true
-    }
-
-    let init = (file: ResVinylFile, cb) => {
+    async function init(file: ResVinylFile, cb) {
         file.original_relative = file.relative.split("\\").join("/");
         cb(null, file);
     }
 
-
-    let convert = (file: ResVinylFile, cb) => {
+    async function convert(file: ResVinylFile, cb) {
         let crc32_file_path: string = crc32(file.contents);
         crc32_file_path = `${crc32_file_path.substr(0, 2)}/${crc32_file_path.substr(2)}${file.extname}`
         file.path = `${file.base}${crc32_file_path}`;
         cb(null, file);
     };
 
-    let convert2 = async (file: ResVinylFile, cb) => {
-
+    async function convert2(file: ResVinylFile, cb) {
         let r = await executeFilter(file.original_relative);
         if (r) {
             r.url = file.relative;
@@ -74,33 +66,8 @@ export async function build(p: string, format: "json" | "text", publishPath: str
         else {
             cb(null);
         }
-
-
     };
 
-    let list = await utils.walk(resourceFolder, () => true, option);
-    let outputFile = publishPath ?
-        path.join(publishPath, result.resourceConfigFileName) :
-        path.join(resourceFolder, result.resourceConfigFileName)
-
-    let stream = vinylfs.src(`**/**.*`, { cwd: resourceFolder, base: resourceFolder })
-        .pipe(map(init))
-    if (publishPath) {
-        stream = stream.pipe(map(convert))
-    }
-    stream = stream.pipe(map(convert2).on("end", async () => {
-        let config = ResourceConfig.getConfig();
-        await convertResourceJson(projectRoot, config);
-        await emitResourceConfigFile(outputFile, debug);
-        await ResourceConfig.generateClassicalConfig(path.join(resourceFolder, "wing.res.json"));
-        merger.output();
-    }))
-
-    if (publishPath) {
-        stream = stream.pipe(vinylfs.dest(publishPath).on("end", () => {
-            // html.publish(publishPath_2 as string, outputFile).catch(e => handleException(e))
-        }));
-    }
 
     async function emitResourceConfigFile(filename: string, debug: boolean) {
         let config = ResourceConfig.generateConfig(true);
@@ -114,6 +81,21 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
         await fs.mkdirpAsync(path.dirname(filename))
         await fs.writeFileAsync(filename, file, "utf-8");
     }
+    let outputFile = path.join(publishPath, result.resourceConfigFileName);
+
+    vinylfs.src(`**/**.*`, { cwd: resourceFolder, base: resourceFolder })
+        .pipe(map(init))
+        .pipe(map(convert))
+        .pipe(map(convert2).on("end", async () => {
+            let config = ResourceConfig.getConfig();
+            await convertResourceJson(projectRoot, config);
+            await emitResourceConfigFile(outputFile, debug);
+            await ResourceConfig.generateClassicalConfig(path.join(resourceFolder, "wing.res.json"));
+            merger.output();
+        }))
+        .pipe(vinylfs.dest(publishPath).on("end", () => {
+            // html.publish(publishPath_2 as string, outputFile).catch(e => handleException(e))
+        }));
 }
 
 
