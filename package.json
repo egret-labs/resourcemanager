@@ -26,6 +26,7 @@
     "egret-node-utils": "0.0.7",
     "egret-typescript-ast": "0.0.11",
     "fs-extra-promise": "0.4.1",
+    "get-stream": "^3.0.0",
     "htmlparser2": "^3.9.2",
     "map-stream": "0.0.6",
     "typescript": "2.1.6",
