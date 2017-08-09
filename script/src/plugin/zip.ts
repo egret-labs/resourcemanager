@@ -5,8 +5,14 @@ import * as getStream from 'get-stream';
 import * as Vinyl from 'vinyl';
 import * as crc32 from 'crc32';
 import * as through from 'through2'
+import { Data, ResourceConfig, GeneratedData, original, handleException } from '../';
 
-export function zip(filename: string, resourceFolder: string) {
+let mergeCollection: { [mergeFile: string]: string[] } = {};
+
+export function zip(a: string, resourceFolder: string) {
+
+    let mergerSelector = ResourceConfig.mergeSelector;
+
 
     let opts = {
         compress: true
@@ -16,6 +22,23 @@ export function zip(filename: string, resourceFolder: string) {
     const zip = new yazl.ZipFile();
 
     return through.obj((file, enc, cb) => {
+
+        if (!mergerSelector) {
+            cb();
+            return;
+        }
+        let filename = file.relative;
+        let mergeResult = mergerSelector(filename);
+        if (mergeResult) {
+            let type = ResourceConfig.typeSelector(mergeResult);
+            if (!type) {
+                throw new Error(`missing merge type : ${mergeResult}`);
+            }
+            if (!mergeCollection[mergeResult]) {
+                mergeCollection[mergeResult] = [];
+            }
+            mergeCollection[mergeResult].push(filename);
+        }
         if (!firstFile) {
             firstFile = file;
         }
@@ -55,12 +78,15 @@ export function zip(filename: string, resourceFolder: string) {
             cb();
             return;
         }
+        for (let zipFile in mergeCollection) {
+
+        }
         getStream.buffer(zip.outputStream).then(data => {
 
             let file = new Vinyl({
                 cwd: resourceFolder,
                 base: resourceFolder,
-                path: path.join(resourceFolder, filename),
+                path: path.join(resourceFolder, "sss.zip"),
                 contents: data
             })
             this.push(file);

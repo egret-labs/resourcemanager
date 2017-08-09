@@ -17,21 +17,6 @@ export function init(p: string) {
 
 export function walk(f: string) {
 
-    let mergerSelector = ResourceConfig.mergeSelector;
-    if (mergerSelector) {
-        let mergeResult = mergerSelector(f);
-        if (mergeResult) {
-            let type = ResourceConfig.typeSelector(f);
-            if (!type) {
-                throw new Error(`missing merge type : ${mergeResult}`);
-            }
-            if (!mergeCollection[mergeResult]) {
-                mergeCollection[mergeResult] = [];
-            }
-            mergeCollection[mergeResult].push(f);
-        }
-
-    }
 }
 
 
