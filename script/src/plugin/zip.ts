@@ -1,10 +1,10 @@
 
 import * as path from 'path';
-// const gutil = require('gulp-util');
-const through = require('through2');
-const Yazl = require('yazl');
-const getStream = require('get-stream');
+import * as yazl from 'yazl';
+import * as getStream from 'get-stream';
 import * as Vinyl from 'vinyl';
+import * as crc32 from 'crc32';
+import * as through from 'through2'
 
 export function zip(filename: string, resourceFolder: string) {
 
@@ -13,7 +13,7 @@ export function zip(filename: string, resourceFolder: string) {
     };
 
     let firstFile;
-    const zip = new Yazl.ZipFile();
+    const zip = new yazl.ZipFile();
 
     return through.obj((file, enc, cb) => {
         if (!firstFile) {
@@ -27,16 +27,16 @@ export function zip(filename: string, resourceFolder: string) {
             cb();
             return;
         }
-
+        let mtime = new Date(1);
         if (file.isNull() && file.stat && file.stat.isDirectory && file.stat.isDirectory()) {
             zip.addEmptyDirectory(pathname, {
-                mtime: file.stat.mtime || new Date(),
+                mtime,//file.stat.mtime || new Date(),
                 mode: file.stat.mode
             });
         } else {
             const stat = {
                 compress: opts.compress,
-                mtime: file.stat ? file.stat.mtime : new Date(),
+                mtime,//file.stat ? file.stat.mtime : new Date(),
                 mode: file.stat ? file.stat.mode : null
             };
 
@@ -55,24 +55,15 @@ export function zip(filename: string, resourceFolder: string) {
             cb();
             return;
         }
-
-
         getStream.buffer(zip.outputStream).then(data => {
 
             let file = new Vinyl({
                 cwd: resourceFolder,
-                base: resourceFolder + path.sep,
+                base: resourceFolder,
                 path: path.join(resourceFolder, filename),
                 contents: data
             })
             this.push(file);
-            // this.push(new gutil.File({
-            //     cwd: firstFile.cwd,
-            //     base: firstFile.base,
-            //     path: path.join(firstFile.base, filename),
-            //     contents: data
-            // }));
-
             cb();
         });
 

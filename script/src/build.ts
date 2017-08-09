@@ -7,13 +7,17 @@ import * as path from 'path';
 import * as merger from './merger';
 import * as html from './html';
 import * as config from './config';
-import * as zip from './zip';
+import * as zip from './plugin/zip';
+import * as profile from './plugin/profile';
 var map = require('map-stream');
 var crc32 = require("crc32");
 
 
 let projectRoot;
 let resourceFolder;
+
+const wing_res_json = "wing.res.json";
+
 
 declare interface ResVinylFile extends VinylFile {
 
@@ -25,6 +29,9 @@ export async function build(p: string, format: "json" | "text", publishPath: str
     let parsedConfig = await ResourceConfig.init(p);
 
     let executeFilter = async (url: string) => {
+        if (url == wing_res_json) {
+            return null;
+        }
         var ext = url.substr(url.lastIndexOf(".") + 1);
         merger.walk(url);
         let type = ResourceConfig.typeSelector(url);
@@ -48,26 +55,19 @@ export async function build(p: string, format: "json" | "text", publishPath: str
         let crc32_file_path: string = crc32(file.contents);
         crc32_file_path = `${crc32_file_path.substr(0, 2)}/${crc32_file_path.substr(2)}${file.extname}`
         file.path = path.join(file.base, crc32_file_path);
-        if (file.original_relative.indexOf("sss.zip") >= 0) {
-            console.log(file.path)
-            console.log(file.original_relative)
-            console.log(file.base)
-        }
-        else {
-            // console.log(file.base)
-            // console.log(file.original_relative)
-        }
         cb(null, file);
     };
 
-    async function filter(file: ResVinylFile, cb) {
-        let r = await executeFilter(file.path).catch(e => console.log(e))
-        if (r) {
-            cb(null, file);
-        }
-        else {
-            cb(null);
-        }
+    function filter(file: ResVinylFile, cb) {
+        executeFilter(file.relative).then((r) => {
+            if (r) {
+                cb(null, file);
+            }
+            else {
+                cb(null);
+            }
+        }).catch(e => console.log(e))
+
     }
 
     async function addFileToResourceConfig(file: ResVinylFile, cb) {
@@ -100,10 +100,12 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
 
     vinylfs.src(`**/**.*`, { cwd: resourceFolder, base: resourceFolder })
         .pipe(map(filter))
+        .pipe(profile.profile())
         .pipe(zip.zip("sss.zip", resourceFolder))
         .pipe(map(convertFileName)).on("end", async () => {
             // vinylfs.
         })
+        .pipe(profile.profile())
         .pipe(map(addFileToResourceConfig).on("end", async () => {
             let config = ResourceConfig.getConfig();
             await convertResourceJson(projectRoot, config);
@@ -111,6 +113,7 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
             await ResourceConfig.generateClassicalConfig(path.join(resourceFolder, "wing.res.json"));
             merger.output();
         }))
+        .pipe(profile.profile())
         .pipe(vinylfs.dest(publishPath).on("end", () => {
             // html.publish(publishPath_2 as string, outputFile).catch(e => handleException(e))
         }));

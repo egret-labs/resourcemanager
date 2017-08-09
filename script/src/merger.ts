@@ -41,17 +41,17 @@ export function output() {
         let sourceFiles = mergeCollection[mergeFile];
         if (ResourceConfig.typeSelector(mergeFile) == "zip") {
 
-            var zipfile = new yazl.ZipFile();
+            // var zipfile = new yazl.ZipFile();
 
-            sourceFiles.forEach(sourceFile => {
-                sourceFile = "resource/" + sourceFile;
-                zipfile.addFile(sourceFile, sourceFile);
-            })
-            // pipe() can be called any time after the constructor 
-            zipfile.outputStream.pipe(fs.createWriteStream("output.zip")).on("close", function () {
-                console.log("done");
-            });
-            zipfile.end();
+            // sourceFiles.forEach(sourceFile => {
+            //     sourceFile = "resource/" + sourceFile;
+            //     zipfile.addFile(sourceFile, sourceFile);
+            // })
+            // // pipe() can be called any time after the constructor 
+            // zipfile.outputStream.pipe(fs.createWriteStream("output.zip")).on("close", function () {
+            //     console.log("done");
+            // });
+            // zipfile.end();
         }
         // fs.writeFileSync(path.join(resourcePath, mergeFile), JSON.stringify(outputJson))
     }
