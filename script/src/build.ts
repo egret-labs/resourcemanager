@@ -1,6 +1,6 @@
 import * as vinylfs from 'vinyl-fs';
-import * as VinylFile from 'vinyl';
-import { Data, ResourceConfig, GeneratedData, original, handleException } from './';
+
+import { Data, ResourceConfig, GeneratedData, original, handleException, ResVinylFile } from './';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
@@ -19,10 +19,6 @@ let resourceFolder;
 const wing_res_json = "wing.res.json";
 
 
-declare interface ResVinylFile extends VinylFile {
-
-    original_relative: string;
-}
 
 export async function build(p: string, format: "json" | "text", publishPath: string, debug: boolean = false) {
 
@@ -51,7 +47,7 @@ export async function build(p: string, format: "json" | "text", publishPath: str
 
 
     async function convertFileName(file: ResVinylFile, cb) {
-        file.original_relative = file.relative.split("\\").join("/");
+
         let crc32_file_path: string = crc32(file.contents);
         crc32_file_path = `${crc32_file_path.substr(0, 2)}/${crc32_file_path.substr(2)}${file.extname}`
         file.path = path.join(file.base, crc32_file_path);
@@ -59,7 +55,8 @@ export async function build(p: string, format: "json" | "text", publishPath: str
     };
 
     function filter(file: ResVinylFile, cb) {
-        executeFilter(file.relative).then((r) => {
+        file.original_relative = file.relative.split("\\").join("/");
+        executeFilter(file.original_relative).then((r) => {
             if (r) {
                 cb(null, file);
             }

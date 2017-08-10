@@ -4,6 +4,7 @@ import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
 import * as vfs from './FileSystem';
 import * as _config from './config';
+import * as VinylFile from 'vinyl';
 
 export * from './watch';
 export * from './config';
@@ -11,6 +12,7 @@ export * from './upgrade';
 export * from './build';
 export * from './version';
 export * from './html';
+
 
 export let handleException = (e: string | Error) => {
     if (typeof e == 'string') {
@@ -20,6 +22,12 @@ export let handleException = (e: string | Error) => {
         console.log(`错误:${e.stack}`);
     }
 }
+
+export interface ResVinylFile extends VinylFile {
+
+    original_relative: string;
+}
+
 
 enum ResourceNodeType {
     FILE, DICTIONARY

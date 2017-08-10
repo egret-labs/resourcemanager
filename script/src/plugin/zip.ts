@@ -5,7 +5,7 @@ import * as getStream from 'get-stream';
 import * as Vinyl from 'vinyl';
 import * as crc32 from 'crc32';
 import * as through from 'through2'
-import { Data, ResourceConfig, GeneratedData, original, handleException } from '../';
+import { Data, ResourceConfig, GeneratedData, original, handleException, ResVinylFile } from '../';
 
 let mergeCollection: { [mergeFile: string]: yazl.ZipFile } = {};
 
@@ -18,15 +18,12 @@ export function zip(resourceFolder: string) {
         compress: true
     };
 
-    return through.obj((file, enc, cb) => {
-
-        // console.log(file.relative)
+    return through.obj((file: ResVinylFile, enc, cb) => {
         if (!mergerSelector) {
             cb();
             return;
         }
-        // console.log(file.relative)
-        let filename = file.relative;
+        let filename = file.original_relative;
         let mergeResult = mergerSelector(filename);
         if (mergeResult) {
             let type = ResourceConfig.typeSelector(mergeResult);
@@ -37,18 +34,11 @@ export function zip(resourceFolder: string) {
                 mergeCollection[mergeResult] = new yazl.ZipFile();
             }
 
-            // Because Windows...
-            const pathname = file.relative.replace(/\\/g, '/');
-
-            if (!pathname) {
-                cb();
-                return;
-            }
 
             let zip = mergeCollection[mergeResult];
             let mtime = new Date(1);
             if (file.isNull() && file.stat && file.stat.isDirectory && file.stat.isDirectory()) {
-                zip.addEmptyDirectory(pathname, {
+                zip.addEmptyDirectory(filename, {
                     mtime,//file.stat.mtime || new Date(),
                     mode: file.stat.mode
                 });
@@ -60,11 +50,11 @@ export function zip(resourceFolder: string) {
                 };
 
                 if (file.isStream()) {
-                    zip.addReadStream(file.contents, pathname, stat);
+                    zip.addReadStream(file.contents, filename, stat);
                 }
 
                 if (file.isBuffer()) {
-                    zip.addBuffer(file.contents, pathname, stat);
+                    zip.addBuffer(file.contents, filename, stat);
                 }
             }
 
