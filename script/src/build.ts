@@ -101,7 +101,7 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
     vinylfs.src(`**/**.*`, { cwd: resourceFolder, base: resourceFolder })
         .pipe(map(filter))
         .pipe(profile.profile())
-        .pipe(zip.zip("sss.zip", resourceFolder))
+        .pipe(zip.zip(resourceFolder))
         .pipe(map(convertFileName)).on("end", async () => {
             // vinylfs.
         })

@@ -7,9 +7,9 @@ import * as crc32 from 'crc32';
 import * as through from 'through2'
 import { Data, ResourceConfig, GeneratedData, original, handleException } from '../';
 
-let mergeCollection: { [mergeFile: string]: string[] } = {};
+let mergeCollection: { [mergeFile: string]: yazl.ZipFile } = {};
 
-export function zip(a: string, resourceFolder: string) {
+export function zip(resourceFolder: string) {
 
     let mergerSelector = ResourceConfig.mergeSelector;
 
@@ -18,15 +18,14 @@ export function zip(a: string, resourceFolder: string) {
         compress: true
     };
 
-    let firstFile;
-    const zip = new yazl.ZipFile();
-
     return through.obj((file, enc, cb) => {
 
+        // console.log(file.relative)
         if (!mergerSelector) {
             cb();
             return;
         }
+        // console.log(file.relative)
         let filename = file.relative;
         let mergeResult = mergerSelector(filename);
         if (mergeResult) {
@@ -35,64 +34,68 @@ export function zip(a: string, resourceFolder: string) {
                 throw new Error(`missing merge type : ${mergeResult}`);
             }
             if (!mergeCollection[mergeResult]) {
-                mergeCollection[mergeResult] = [];
-            }
-            mergeCollection[mergeResult].push(filename);
-        }
-        if (!firstFile) {
-            firstFile = file;
-        }
-
-        // Because Windows...
-        const pathname = file.relative.replace(/\\/g, '/');
-
-        if (!pathname) {
-            cb();
-            return;
-        }
-        let mtime = new Date(1);
-        if (file.isNull() && file.stat && file.stat.isDirectory && file.stat.isDirectory()) {
-            zip.addEmptyDirectory(pathname, {
-                mtime,//file.stat.mtime || new Date(),
-                mode: file.stat.mode
-            });
-        } else {
-            const stat = {
-                compress: opts.compress,
-                mtime,//file.stat ? file.stat.mtime : new Date(),
-                mode: file.stat ? file.stat.mode : null
-            };
-
-            if (file.isStream()) {
-                zip.addReadStream(file.contents, pathname, stat);
+                mergeCollection[mergeResult] = new yazl.ZipFile();
             }
 
-            if (file.isBuffer()) {
-                zip.addBuffer(file.contents, pathname, stat);
+            // Because Windows...
+            const pathname = file.relative.replace(/\\/g, '/');
+
+            if (!pathname) {
+                cb();
+                return;
             }
+
+            let zip = mergeCollection[mergeResult];
+            let mtime = new Date(1);
+            if (file.isNull() && file.stat && file.stat.isDirectory && file.stat.isDirectory()) {
+                zip.addEmptyDirectory(pathname, {
+                    mtime,//file.stat.mtime || new Date(),
+                    mode: file.stat.mode
+                });
+            } else {
+                const stat = {
+                    compress: opts.compress,
+                    mtime,//file.stat ? file.stat.mtime : new Date(),
+                    mode: file.stat ? file.stat.mode : null
+                };
+
+                if (file.isStream()) {
+                    zip.addReadStream(file.contents, pathname, stat);
+                }
+
+                if (file.isBuffer()) {
+                    zip.addBuffer(file.contents, pathname, stat);
+                }
+            }
+
+            cb(null, file);
+        }
+        else {
+            cb(null, file);
         }
 
-        cb(null, file);
     }, function (cb) {
-        if (!firstFile) {
-            cb();
-            return;
-        }
+
+        let list: yazl.ZipFile = [];
         for (let zipFile in mergeCollection) {
+            let zip = mergeCollection[zipFile];
+            zip['__path'] = zipFile
+            list.push(zip);
 
         }
-        getStream.buffer(zip.outputStream).then(data => {
+        Promise.all(list.map((zip) => {
+            zip.end();
+            return getStream.buffer(zip.outputStream).then(data => {
+                let zipFile = zip['__path'];
+                let file = new Vinyl({
+                    cwd: resourceFolder,
+                    base: resourceFolder,
+                    path: path.join(resourceFolder, zipFile),
+                    contents: data
+                })
+                this.push(file);
+            });
+        })).then(() => cb());
 
-            let file = new Vinyl({
-                cwd: resourceFolder,
-                base: resourceFolder,
-                path: path.join(resourceFolder, "sss.zip"),
-                contents: data
-            })
-            this.push(file);
-            cb();
-        });
-
-        zip.end();
     });
 };
