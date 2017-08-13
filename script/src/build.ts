@@ -25,9 +25,11 @@ export async function build(p: string, format: "json" | "text", publishPath: str
     let parsedConfig = await ResourceConfig.init(p);
 
     let executeFilter = async (url: string) => {
+
         if (url == wing_res_json) {
             return null;
         }
+        console.log(url)
         var ext = url.substr(url.lastIndexOf(".") + 1);
         merger.walk(url);
         let type = ResourceConfig.typeSelector(url);
@@ -55,6 +57,7 @@ export async function build(p: string, format: "json" | "text", publishPath: str
     };
 
     function filter(file: ResVinylFile, cb) {
+        console.log(file.relative)
         file.original_relative = file.relative.split("\\").join("/");
         executeFilter(file.original_relative).then((r) => {
             if (r) {

@@ -22,12 +22,18 @@ if (command == 'version') {
 
 let egretPropertiesFile = path.join(p, "egretProperties.json")
 
-if (!promise && p && fs.existsSync(egretPropertiesFile)) {
-    executeCommand(command).catch(handleException);
-}
-else {
-    handleException(`${path.join(process.cwd(), p)} 不是一个有效的 Egret 项目`)
-}
+import * as spritesheet from './plugin/spritesheet';
+spritesheet.generateSpriteSheet();
+
+// if (!promise && p && fs.existsSync(egretPropertiesFile)) {
+//     executeCommand(command).catch(handleException);
+// }
+// else {
+//     handleException(`${path.join(process.cwd(), p)} 不是一个有效的 Egret 项目`)
+// }
+
+
+// process.exit();
 
 async function executeCommand(command: string) {
     let properties = await fs.readJSONAsync(egretPropertiesFile);
