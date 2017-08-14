@@ -29,25 +29,7 @@ declare type ResourceMergerSelector = (file: string) => {
 declare module RES {
     var resourceTypeSelector: ResourceTypeSelector;
     var resourceNameSelector: ResourceNameSelector;
-    /**
-   * Definition profile.
-   * @param url Configuration file path (path resource.json).
-   * @param resourceRoot Resource path. All URL in the configuration is the relative value of the path. The ultimate URL is the value of the sum of the URL of the string and the resource in the configuration.
-   * @param type Configuration file format. Determine what parser to parse the configuration file. Default "json".
-   * @version Egret 3.1.5
-   * @platform Web,Native
-   * @language en_US
-   */
-    /**
-     * 定义配置文件。
-     * @param url 配置文件路径(resource.json的路径)。
-     * @param resourceRoot 资源根路径。配置中的所有url都是这个路径的相对值。最终url是这个字符串与配置里资源项的url相加的值。
-     * @param type 配置文件的格式。确定要用什么解析器来解析配置文件。默认"json"
-     * @version Egret 3.1.5
-     * @platform Web,Native
-     * @language zh_CN
-     */
-    function mapConfig<T extends string>(url: string, rootSelector: ResourceRootSelector<T>, typeSelector?: ResourceTypeSelector): (target: any) => void;
+    var resourceMergerSelector: ResourceMergerSelector | null;
     function setConfigURL(url: string): void;
     var resourceRoot: string;
     interface ResourceInfo {
@@ -66,6 +48,7 @@ declare module RES {
     interface Data {
         resourceRoot: string;
         typeSelector: ResourceTypeSelector;
+        mergeSelector: ResourceMergerSelector | null;
         resources: Dictionary;
         groups: {
             [groupName: string]: string[];
@@ -83,7 +66,7 @@ declare module RES {
         config: Data;
         resourceRoot: string;
         constructor();
-        init(): Promise<void>;
+        init(): Promise<any>;
         __temp__get__type__via__url(url_or_alias: string): string;
         getKeyByAlias(aliasName: string): string;
         /**
@@ -127,6 +110,16 @@ declare module RES {
     }
 }
 declare module RES {
+    /**
+     * @class RES.ResourceLoader
+     * @classdesc
+     * @private
+     */
+    class ResourceLoader {
+        load(list: ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]>;
+        loadResource(r: ResourceInfo, p?: RES.processor.Processor): Promise<any>;
+        unloadResource(r: ResourceInfo): Promise<any>;
+    }
 }
 declare module RES {
     /**

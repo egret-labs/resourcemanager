@@ -36,9 +36,7 @@ module RES {
 	/**
 	 * @class RES.ResourceLoader
 	 * @classdesc
-	 * @extends egret.EventDispatcher
 	 * @private
-	 * @internal
 	 */
 	export class ResourceLoader {
 

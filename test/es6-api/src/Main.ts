@@ -1,17 +1,3 @@
-
-
-// @RES.mapResourceMerger(path => {
-//     if (path.indexOf(".json") >= 0 && path.indexOf("/") >= 0) {
-//         return {
-//             "path": "111.mergeJson",
-//             "alias": path.substr(path.lastIndexOf("/") + 1).replace(".", "_")
-//         }
-//     }
-//     else {
-//         return null;
-//     }
-// })
-
 class Main extends egret.DisplayObjectContainer {
 
     private sky: egret.Bitmap;
@@ -102,15 +88,6 @@ class Main extends egret.DisplayObjectContainer {
                     this.sky.y = 1;
                     // this.sky.texture = RES.getRes("assets/bg.jpg")
                 }))
-        }
-
-        /**
-         * 关闭整个 RES 模块
-         */
-        let testDestroy = () => {
-            console.log('test destroy');
-            RES.getResAsync("assets/bg.jpg").then(() => console.error('never get here'))
-            RES.manager.destory();
         }
 
         let testAnimationByUrl = () =>

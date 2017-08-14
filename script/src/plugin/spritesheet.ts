@@ -24,6 +24,7 @@ function getTextureMergerPath() {
 }
 
 function shell(path: string, args: string[]): Promise<number> {
+
     return new Promise((resolve, reject) => {
         let cmd = `${path} ${args.join(" ")}`
         console.log(cmd)
@@ -32,8 +33,8 @@ function shell(path: string, args: string[]): Promise<number> {
         child_process.exec(cmd, { encoding: binaryEncoding }, function (err, stdout, stderr) {
             let message = iconv.decode(new Buffer(stdout.toString(), binaryEncoding), encoding)
             let message2 = iconv.decode(new Buffer(stderr.toString(), binaryEncoding), encoding);
-            console.log(message, message2);
             if (err) {
+                err = iconv.decode(new Buffer(err.toString(), binaryEncoding), encoding);
                 reject(err);
             }
             else {
