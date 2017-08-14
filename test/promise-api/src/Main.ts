@@ -46,17 +46,6 @@ class Main extends egret.DisplayObjectContainer {
             // RES.createGroup("group1", ["assets/bg.jpg"])
         }
 
-        let testSpriteSheet = async () => {
-
-            // RES.getResAsync("xxxxx")
-            // RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
-            // RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
-            RES.createGroup("group1", ["assets/sheet/sheet.json#off"]);
-            await RES.loadGroup("group1");
-            await RES.loadGroup("group1");
-            await RES.getResAsync("assets/sheet/sheet.json#off");
-            await RES.getResAsync("assets/sheet/sheet.json#on");
-        }
 
         let testLoadResByUrl = () =>
             RES.getResByUrl("resource/assets/bg.jpg", (value) => { console.log(value) }, this);
@@ -123,7 +112,8 @@ class Main extends egret.DisplayObjectContainer {
             // .then(testLoadResByUrl)
             // .then(testBitmapFont)
             // .then(testNetworkDelay)
-            .then(testSpriteSheet)
+            // .then(testSpriteSheet)
+            .then(testAutoSpriteSheet)
         // .then(testGroupWithURL)
         // .then(testSoundByUrl)
         // .then(testAnimationByUrl)

@@ -1,0 +1,15 @@
+{
+  "groups": [],
+  "resources": [
+    {
+      "url": "assets/sheet/sheet.png",
+      "type": "image",
+      "name": "sheet_png"
+    },
+    {
+      "url": "assets/sheet/sheet.json",
+      "type": "sheet",
+      "name": "sheet_json"
+    }
+  ]
+}

@@ -9,8 +9,9 @@ var game_file_list = [
 	"libs/modules/resourcemanager/resourcemanager.js",
 	"libs/modules/eui/eui.js",
 	"libs/modules/dragonBones/dragonBones.js",
-	"bin-debug/LoadingUI.js",
 	"bin-debug/Main.js",
+	"bin-debug/testcases/testNetworkDelay.js",
+	"bin-debug/testcases/testSpriteSheet.js",
 	//----auto game_file_list end----
 ];
 
