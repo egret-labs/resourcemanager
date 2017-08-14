@@ -22,8 +22,6 @@ if (command == 'version') {
 
 let egretPropertiesFile = path.join(p, "egretProperties.json")
 
-// import * as spritesheet from './plugin/spritesheet';
-// spritesheet.generateSpriteSheet();
 
 if (!promise && p && fs.existsSync(egretPropertiesFile)) {
     executeCommand(command).catch(handleException);

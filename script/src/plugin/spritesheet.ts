@@ -5,6 +5,8 @@ import * as getStream from 'get-stream';
 import * as Vinyl from 'vinyl';
 import * as crc32 from 'crc32';
 import * as through from 'through2'
+import * as os from 'os';
+import * as fs from 'fs-extra-promise';
 import { Data, ResourceConfig, GeneratedData, original, handleException, ResVinylFile } from '../';
 var iconv = require('iconv-lite');
 
@@ -12,7 +14,7 @@ export async function generateSpriteSheet(spriteSheetFileName, dirname) {
     let cmd = getTextureMergerPath();
     let folder = path.join(process.cwd(), dirname);
     let p = "\"" + folder + "\"";
-    let o = "\"" + path.join(process.cwd(), spriteSheetFileName) + "\"";
+    let o = "\"" + spriteSheetFileName + "\"";
     await shell(cmd, ["-p", p, "-o", o]);
 }
 
@@ -82,10 +84,10 @@ export function sheet(resourceFolder: string) {
             cb(null, file);
         }
 
-    }, function (cb) {
+    }, async function (cb) {
 
-
-        console.log(spriteSheetMergeCollection)
+        let tempDir = os.tmpdir();
+        let outputDir = path.join(tempDir, "aaa", Date.now().toString());
         for (let spriteSheetFile in spriteSheetMergeCollection) {
             let files = spriteSheetMergeCollection[spriteSheetFile];
             let dirname = path.dirname(files[0]);
@@ -94,9 +96,40 @@ export function sheet(resourceFolder: string) {
                 continue;
             }
             else {
-                generateSpriteSheet(path.join(resourceFolder, spriteSheetFile), path.join(resourceFolder, dirname))
+                let outputJsonFile = path.join(outputDir, spriteSheetFile);
+                await fs.mkdirpAsync(path.dirname(outputJsonFile))
+                await generateSpriteSheet(outputJsonFile, path.join(resourceFolder, dirname));
+                let outputPngFile = outputJsonFile.replace("." + path.extname(outputJsonFile), ".png");
+
+                let outputJsonContent = await fs.readFileAsync(outputJsonFile);
+                let outputPngContent = await fs.readFileAsync(outputPngFile)
+
+                let jsonFile = new Vinyl({
+                    cwd: resourceFolder,
+                    base: resourceFolder,
+                    path: spriteSheetFile,
+                    contents: outputJsonContent,
+                    original_relative: spriteSheetFile
+                })
+
+
+                let pngFilePath = spriteSheetFile.replace("." + path.extname(spriteSheetFile), ".png");
+
+                let pngFile = new Vinyl({
+                    cwd: resourceFolder,
+                    base: resourceFolder,
+                    path: pngFilePath,
+                    contents: outputPngContent,
+                    original_relative: pngFilePath
+                })
+
+
+                console.log(jsonFile.path, pngFile.path)
+                this.push(jsonFile);
+                this.push(pngFile);
             }
         }
+        cb();
         // let list: yazl.ZipFile = [];
         // for (let zipFile in spriteSheetMergeCollection) {
         //     let zip = spriteSheetMergeCollection[zipFile];
