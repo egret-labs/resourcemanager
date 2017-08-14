@@ -7,6 +7,7 @@ class Main extends egret.DisplayObjectContainer {
         super();
         RES.FEATURE_FLAG.LOADING_STATE = 1;
         this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
+
     }
 
     private onAddToStage(event: egret.Event) {
@@ -65,6 +66,7 @@ class Main extends egret.DisplayObjectContainer {
                 onProgress: (current, total) => {
                 }
             }
+
             return RES.loadGroup("preload", 0, reporter)
                 .then(() => this.createGameScene())
                 .then(() => sleep(1000))
@@ -104,7 +106,7 @@ class Main extends egret.DisplayObjectContainer {
 
 
 
-        RES.setConfigURL("resource/config.res.js");
+        RES.setConfigURL("resource-bundles/config.res.js")
         RES.loadConfig()
             // .then(testGroupIsLoaded)
             // .then(testNull)

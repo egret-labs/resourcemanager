@@ -46,104 +46,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var RES;
 (function (RES) {
-    var ResourceNodeType;
-    (function (ResourceNodeType) {
-        ResourceNodeType[ResourceNodeType["FILE"] = 0] = "FILE";
-        ResourceNodeType[ResourceNodeType["DICTIONARY"] = 1] = "DICTIONARY";
-    })(ResourceNodeType || (ResourceNodeType = {}));
-    function getResourceInfo(path) {
-        var result = FileSystem.getFile(path);
-        if (!result) {
-            path = RES.resourceNameSelector(path);
-            result = FileSystem.getFile(path);
-        }
-        return result;
-    }
-    RES.getResourceInfo = getResourceInfo;
-    var FileSystem;
-    (function (FileSystem) {
-        FileSystem.data = {};
-        function addFile(filename, type) {
-            if (!type)
-                type = "";
-            filename = normalize(filename);
-            var basefilename = basename(filename);
-            var folder = dirname(filename);
-            if (!exists(folder)) {
-                mkdir(folder);
-            }
-            var d = reslove(folder);
-            d[basefilename] = { url: filename, type: type };
-        }
-        FileSystem.addFile = addFile;
-        function getFile(filename) {
-            var result = reslove(filename);
-            if (result) {
-                result.name = filename;
-            }
-            return result;
-        }
-        FileSystem.getFile = getFile;
-        function basename(filename) {
-            return filename.substr(filename.lastIndexOf("/") + 1);
-        }
-        function normalize(filename) {
-            return filename.split("/").filter(function (d) { return !!d; }).join("/");
-        }
-        function dirname(path) {
-            return path.substr(0, path.lastIndexOf("/"));
-        }
-        function reslove(dirpath) {
-            if (dirpath == "") {
-                return FileSystem.data;
-            }
-            dirpath = normalize(dirpath);
-            var list = dirpath.split("/");
-            var current = FileSystem.data;
-            for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
-                var f = list_1[_i];
-                if (current) {
-                    current = current[f];
-                }
-                else {
-                    return current;
-                }
-            }
-            return current;
-        }
-        function mkdir(dirpath) {
-            dirpath = normalize(dirpath);
-            var list = dirpath.split("/");
-            var current = FileSystem.data;
-            for (var _i = 0, list_2 = list; _i < list_2.length; _i++) {
-                var f = list_2[_i];
-                if (!current[f]) {
-                    current[f] = {};
-                }
-                current = current[f];
-            }
-        }
-        FileSystem.mkdir = mkdir;
-        function exists(dirpath) {
-            if (dirpath == "")
-                return true;
-            dirpath = normalize(dirpath);
-            var list = dirpath.split("/");
-            var current = FileSystem.data;
-            for (var _i = 0, list_3 = list; _i < list_3.length; _i++) {
-                var f = list_3[_i];
-                if (!current[f]) {
-                    return false;
-                }
-                current = current[f];
-            }
-            return true;
-        }
-        FileSystem.exists = exists;
-    })(FileSystem = RES.FileSystem || (RES.FileSystem = {}));
-})(RES || (RES = {}));
-var RES;
-(function (RES) {
     RES.resourceNameSelector = function (p) { return p; };
     var configItem;
     function setConfigURL(url) {
@@ -512,6 +414,104 @@ var RES;
         return ResourceLoader;
     }());
     RES.ResourceLoader = ResourceLoader;
+})(RES || (RES = {}));
+var RES;
+(function (RES) {
+    var ResourceNodeType;
+    (function (ResourceNodeType) {
+        ResourceNodeType[ResourceNodeType["FILE"] = 0] = "FILE";
+        ResourceNodeType[ResourceNodeType["DICTIONARY"] = 1] = "DICTIONARY";
+    })(ResourceNodeType || (ResourceNodeType = {}));
+    function getResourceInfo(path) {
+        var result = FileSystem.getFile(path);
+        if (!result) {
+            path = RES.resourceNameSelector(path);
+            result = FileSystem.getFile(path);
+        }
+        return result;
+    }
+    RES.getResourceInfo = getResourceInfo;
+    var FileSystem;
+    (function (FileSystem) {
+        FileSystem.data = {};
+        function addFile(filename, type) {
+            if (!type)
+                type = "";
+            filename = normalize(filename);
+            var basefilename = basename(filename);
+            var folder = dirname(filename);
+            if (!exists(folder)) {
+                mkdir(folder);
+            }
+            var d = reslove(folder);
+            d[basefilename] = { url: filename, type: type };
+        }
+        FileSystem.addFile = addFile;
+        function getFile(filename) {
+            var result = reslove(filename);
+            if (result) {
+                result.name = filename;
+            }
+            return result;
+        }
+        FileSystem.getFile = getFile;
+        function basename(filename) {
+            return filename.substr(filename.lastIndexOf("/") + 1);
+        }
+        function normalize(filename) {
+            return filename.split("/").filter(function (d) { return !!d; }).join("/");
+        }
+        function dirname(path) {
+            return path.substr(0, path.lastIndexOf("/"));
+        }
+        function reslove(dirpath) {
+            if (dirpath == "") {
+                return FileSystem.data;
+            }
+            dirpath = normalize(dirpath);
+            var list = dirpath.split("/");
+            var current = FileSystem.data;
+            for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
+                var f = list_1[_i];
+                if (current) {
+                    current = current[f];
+                }
+                else {
+                    return current;
+                }
+            }
+            return current;
+        }
+        function mkdir(dirpath) {
+            dirpath = normalize(dirpath);
+            var list = dirpath.split("/");
+            var current = FileSystem.data;
+            for (var _i = 0, list_2 = list; _i < list_2.length; _i++) {
+                var f = list_2[_i];
+                if (!current[f]) {
+                    current[f] = {};
+                }
+                current = current[f];
+            }
+        }
+        FileSystem.mkdir = mkdir;
+        function exists(dirpath) {
+            if (dirpath == "")
+                return true;
+            dirpath = normalize(dirpath);
+            var list = dirpath.split("/");
+            var current = FileSystem.data;
+            for (var _i = 0, list_3 = list; _i < list_3.length; _i++) {
+                var f = list_3[_i];
+                if (!current[f]) {
+                    return false;
+                }
+                current = current[f];
+            }
+            return true;
+        }
+        FileSystem.exists = exists;
+    })(FileSystem = RES.FileSystem || (RES.FileSystem = {}));
 })(RES || (RES = {}));
 var RES;
 (function (RES) {

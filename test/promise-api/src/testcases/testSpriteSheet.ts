@@ -16,6 +16,6 @@ let testAutoSpriteSheet = async () => {
     let stage = egret.MainContext.instance.stage;
     let bitmap = new egret.Bitmap();
     bitmap.texture = texture;
-    this.addChild(bitmap);
+    stage.addChild(bitmap);
 
 }

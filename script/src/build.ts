@@ -40,7 +40,6 @@ export async function build(p: string, format: "json" | "text", publishPath: str
         else {
             return null;
         }
-
     }
 
     projectRoot = p;
@@ -95,7 +94,7 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
         await fs.mkdirpAsync(path.dirname(filename))
         await fs.writeFileAsync(filename, file, "utf-8");
     }
-    let outputFile = path.join(publishPath, ResourceConfig.resourceConfigFileName);
+    let outputFile = path.join(projectRoot, publishPath, ResourceConfig.resourceConfigFileName);
 
     vinylfs.src(`**/**.*`, { cwd: resourceFolder, base: resourceFolder })
         .pipe(map(filter))
@@ -110,11 +109,11 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
             let config = ResourceConfig.getConfig();
             await convertResourceJson(projectRoot, config);
             await emitResourceConfigFile(outputFile, debug);
-            await ResourceConfig.generateClassicalConfig(path.join(resourceFolder, "wing.res.json"));
+            await ResourceConfig.generateClassicalConfig(path.join(projectRoot, publishPath, wing_res_json));
             merger.output();
         }))
         .pipe(profile.profile())
-        .pipe(vinylfs.dest(publishPath).on("end", () => {
+        .pipe(vinylfs.dest(path.join(projectRoot, publishPath)).on("end", () => {
             // html.publish(publishPath_2 as string, outputFile).catch(e => handleException(e))
         }));
 }

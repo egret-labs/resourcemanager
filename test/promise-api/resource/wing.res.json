@@ -2,14 +2,95 @@
   "groups": [],
   "resources": [
     {
-      "url": "assets/sheet/sheet.png",
+      "url": "ea/ef3203.mergeJson",
+      "type": "mergeJson",
+      "name": "111.mergeJson"
+    },
+    {
+      "url": "6e/faaa3c.json",
+      "type": "json",
+      "name": "config.json"
+    },
+    {
+      "url": "7f/82634e.json",
+      "type": "json",
+      "name": "default.res.json"
+    },
+    {
+      "url": "bc/f9600f.json",
+      "type": "json",
+      "name": "assets/armature/skeleton.json"
+    },
+    {
+      "url": "6a/97421.json",
+      "type": "json",
+      "name": "assets/armature/texture.json"
+    },
+    {
+      "url": "dd/df2e45.png",
+      "type": "image",
+      "name": "assets/armature/texture.png"
+    },
+    {
+      "url": "18/f18a5d.jpg",
+      "type": "image",
+      "name": "assets/bitmap/bg.jpg"
+    },
+    {
+      "url": "fe/420392.png",
+      "type": "image",
+      "name": "assets/bitmap/egret_icon.png"
+    },
+    {
+      "url": "e3/8f0ed8.sheet",
+      "type": "sheet",
+      "name": "assets/bitmap/sheet.sheet"
+    },
+    {
+      "url": "f9/cc0744.png",
+      "type": "image",
+      "name": "assets/bitmap/sheet.png"
+    },
+    {
+      "url": "c8/8fd551.fnt",
+      "type": "font",
+      "name": "assets/font/font.fnt"
+    },
+    {
+      "url": "d4/0cf4ed.png",
+      "type": "image",
+      "name": "assets/font/font.png"
+    },
+    {
+      "url": "98/1b24f6.json",
+      "type": "movieclip",
+      "name": "assets/movieclip/movieclip.json"
+    },
+    {
+      "url": "6b/064dec.png",
+      "type": "image",
+      "name": "assets/movieclip/movieclip.png"
+    },
+    {
+      "url": "76/baa897.pvr",
+      "type": "pvr",
+      "name": "assets/pvr/0.pvr"
+    },
+    {
+      "url": "fe/6301dc.json",
+      "type": "sheet",
+      "name": "sheet_json",
+      "subkeys": "off,on"
+    },
+    {
+      "url": "1a/d6e59c.png",
       "type": "image",
       "name": "sheet_png"
     },
     {
-      "url": "assets/sheet/sheet.json",
-      "type": "sheet",
-      "name": "sheet_json"
+      "url": "41/1f25c1.mp3",
+      "type": "sound",
+      "name": "assets/sound/sound_go.mp3"
     }
   ]
 }

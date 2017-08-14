@@ -55,7 +55,7 @@ export function sheet(resourceFolder: string) {
 
     return through.obj((file: ResVinylFile, enc, cb) => {
         if (!mergerSelector) {
-            cb();
+            cb(null, file);
             return;
         }
         let filename = file.original_relative;
@@ -100,7 +100,7 @@ export function sheet(resourceFolder: string) {
                 let outputJsonFile = path.join(outputDir, spriteSheetFile);
                 await fs.mkdirpAsync(path.dirname(outputJsonFile))
                 await generateSpriteSheet(outputJsonFile, path.join(resourceFolder, dirname));
-                let outputPngFile = outputJsonFile.replace("." + path.extname(outputJsonFile), ".png");
+                let outputPngFile = outputJsonFile.replace(path.extname(outputJsonFile), ".png");
 
                 let outputJsonContent = await fs.readFileAsync(outputJsonFile);
                 let outputPngContent = await fs.readFileAsync(outputPngFile)
@@ -114,8 +114,7 @@ export function sheet(resourceFolder: string) {
                 })
 
 
-                let pngFilePath = spriteSheetFile.replace("." + path.extname(spriteSheetFile), ".png");
-
+                let pngFilePath = spriteSheetFile.replace(path.extname(spriteSheetFile), ".png");
                 let pngFile = new Vinyl({
                     cwd: resourceFolder,
                     base: resourceFolder,
@@ -123,9 +122,6 @@ export function sheet(resourceFolder: string) {
                     contents: outputPngContent,
                     original_relative: pngFilePath
                 })
-
-
-                console.log(jsonFile.path, pngFile.path)
                 this.push(jsonFile);
                 this.push(pngFile);
             }

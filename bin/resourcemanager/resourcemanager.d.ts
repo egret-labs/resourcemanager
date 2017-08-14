@@ -1,24 +1,3 @@
-declare module RES {
-    interface File {
-        url: string;
-        type: string;
-        crc32?: string;
-        size?: number;
-        name: string;
-        soundType?: string;
-    }
-    interface Dictionary {
-        [file: string]: File | Dictionary;
-    }
-    function getResourceInfo(path: string): File;
-    namespace FileSystem {
-        var data: Dictionary;
-        function addFile(filename: string, type?: string): void;
-        function getFile(filename: string): File;
-        function mkdir(dirpath: string): void;
-        function exists(dirpath: string): boolean;
-    }
-}
 declare type ResourceRootSelector<T extends string> = () => T;
 declare type ResourceTypeSelector = (file: string) => string;
 declare type ResourceNameSelector = (file: string) => string;
@@ -119,6 +98,27 @@ declare module RES {
         load(list: ResourceInfo[], reporter?: PromiseTaskReporter): Promise<ResourceInfo | ResourceInfo[]>;
         loadResource(r: ResourceInfo, p?: RES.processor.Processor): Promise<any>;
         unloadResource(r: ResourceInfo): Promise<any>;
+    }
+}
+declare module RES {
+    interface File {
+        url: string;
+        type: string;
+        crc32?: string;
+        size?: number;
+        name: string;
+        soundType?: string;
+    }
+    interface Dictionary {
+        [file: string]: File | Dictionary;
+    }
+    function getResourceInfo(path: string): File;
+    namespace FileSystem {
+        var data: Dictionary;
+        function addFile(filename: string, type?: string): void;
+        function getFile(filename: string): File;
+        function mkdir(dirpath: string): void;
+        function exists(dirpath: string): boolean;
     }
 }
 declare module RES {

@@ -121,6 +121,7 @@ export namespace ResourceConfig {
             resources: []
         }
         let resources = config.resources;
+        console.log(config.resources)
 
         let alias = {};
         for (var aliasName in config.alias) {

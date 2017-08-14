@@ -2,6 +2,12 @@ export const configPath = 'config.res.js';
 
 export const resourceRoot = () => "resource";
 
+export const mergeSelector = (path: string) => {
+    if (path.indexOf("assets/bitmap/") >= 0) {
+        return "assets/bitmap/sheet.sheet"
+    }
+}
+
 export const typeSelector = (path: string) => {
     var ext = path.substr(path.lastIndexOf(".") + 1);
     var typeMap = {
@@ -13,7 +19,8 @@ export const typeSelector = (path: string) => {
         "pvr": "pvr",
         "mp3": "sound",
         "zip": "zip",
-        "mergeJson": "mergeJson"
+        "mergeJson": "mergeJson",
+        "sheet": "sheet"
     }
     var type = typeMap[ext];
     if (type == "json") {

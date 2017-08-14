@@ -20,7 +20,7 @@ export function zip(resourceFolder: string) {
 
     return through.obj((file: ResVinylFile, enc, cb) => {
         if (!mergerSelector) {
-            cb();
+            cb(null, file);
             return;
         }
         let filename = file.original_relative;
