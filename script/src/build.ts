@@ -9,6 +9,7 @@ import * as html from './html';
 import * as config from './config';
 import * as zip from './plugin/zip';
 import * as profile from './plugin/profile';
+import * as spritesheet from './plugin/spritesheet';
 var map = require('map-stream');
 var crc32 = require("crc32");
 
@@ -29,7 +30,6 @@ export async function build(p: string, format: "json" | "text", publishPath: str
         if (url == wing_res_json) {
             return null;
         }
-        console.log(url)
         var ext = url.substr(url.lastIndexOf(".") + 1);
         merger.walk(url);
         let type = ResourceConfig.typeSelector(url);
@@ -57,7 +57,6 @@ export async function build(p: string, format: "json" | "text", publishPath: str
     };
 
     function filter(file: ResVinylFile, cb) {
-        console.log(file.relative)
         file.original_relative = file.relative.split("\\").join("/");
         executeFilter(file.original_relative).then((r) => {
             if (r) {
@@ -102,6 +101,7 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
         .pipe(map(filter))
         .pipe(profile.profile())
         .pipe(zip.zip(resourceFolder))
+        .pipe(spritesheet.sheet(resourceFolder))
         .pipe(map(convertFileName)).on("end", async () => {
             // vinylfs.
         })

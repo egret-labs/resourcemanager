@@ -30,6 +30,10 @@ export function zip(resourceFolder: string) {
             if (!type) {
                 throw new Error(`missing merge type : ${mergeResult}`);
             }
+            if (type != "zip") {
+                cb(null, file);
+                return;
+            }
             if (!mergeCollection[mergeResult]) {
                 mergeCollection[mergeResult] = new yazl.ZipFile();
             }
