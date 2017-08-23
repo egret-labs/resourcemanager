@@ -57,6 +57,10 @@ async function executeCommand(command: string) {
             return res.watch(p, format, userConfig)
             break;
         case "config":
+          if (!userConfig.publish_path) {
+                handleException('请设置发布目录');
+                return null;
+            }
             return res.printConfig(p);
             break;
         default:

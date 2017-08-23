@@ -16,10 +16,10 @@ export * from './html';
 
 export let handleException = (e: string | Error) => {
     if (typeof e == 'string') {
-        console.log(`错误:${e}`);
+        console.error(`错误:${e}`);
     }
     else {
-        console.log(`错误:${e.stack}`);
+        console.error(`错误:${e.stack}`);
     }
 }
 
