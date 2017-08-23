@@ -1,6 +1,6 @@
 import * as vinylfs from 'vinyl-fs';
 
-import { Data, ResourceConfig, GeneratedData, original, handleException, ResVinylFile } from './';
+import { Data, ResourceConfig, GeneratedData, original, handleException, ResVinylFile, ResourceManagerUserConfig } from './';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
@@ -21,8 +21,8 @@ const wing_res_json = "wing.res.json";
 
 
 
-export async function build(p: string, format: "json" | "text", publishPath: string, debug: boolean = false) {
-
+export async function build(p: string, format: "json" | "text", userConfig: ResourceManagerUserConfig, debug: boolean = false) {
+    let publishPath = userConfig.publish_path;
     let parsedConfig = await ResourceConfig.init(p);
 
     let executeFilter = async (url: string) => {
@@ -102,7 +102,7 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
         .pipe(map(filter))
         .pipe(profile.profile())
         .pipe(zip.zip(resourceFolder))
-        .pipe(spritesheet.sheet(resourceFolder))
+        .pipe(spritesheet.sheet(resourceFolder, userConfig))
         .pipe(map(convertFileName)).on("end", async () => {
             // vinylfs.
         })

@@ -3,7 +3,7 @@
 import * as res from './';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
-import { handleException } from "./";
+import { handleException, ResourceManagerUserConfig } from "./";
 
 function getProjectPath(p) {
     return p ? p : ".";
@@ -36,24 +36,25 @@ async function executeCommand(command: string) {
         handleException(`egretProperties.json 中不存在 resourcemanager 相关配置`);
         return null;
     }
-
-    let publishPath = properties.resourcemanager.resource_publish_path;
+    let userConfig: ResourceManagerUserConfig = properties.resourcemanager;
     switch (command) {
         case "upgrade":
             return res.upgrade(p);
             break;
         case "build":
         case "publish":
-            if (!publishPath) {
+            if (!userConfig.publish_path) {
                 handleException('请设置发布目录');
+                return null;
             }
-            return res.build(p, format, publishPath);
+            return res.build(p, format, userConfig);
             break;
         case "watch":
-            if (!publishPath) {
+            if (!userConfig.publish_path) {
                 handleException('请设置发布目录');
+                return null;
             }
-            return res.watch(p, format, publishPath)
+            return res.watch(p, format, userConfig)
             break;
         case "config":
             return res.printConfig(p);
