@@ -30,7 +30,9 @@ export interface ResVinylFile extends VinylFile {
 
 export interface ResourceManagerUserConfig {
 
-    publish_path: string
+    publish_path: string;
+
+    texture_merger_path?: string;
 
 
 

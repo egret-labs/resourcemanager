@@ -49,7 +49,12 @@ export function sheet(resourceFolder: string, userConfig: ResourceManagerUserCon
 
 
     function getTextureMergerPath() {
-        return `"C:\\Program Files\\Egret\\TextureMerger\\TextureMerger.exe"`;
+        if (userConfig.texture_merger_path) {
+            return userConfig.texture_merger_path
+        }
+        else {
+            return `"C:\\Program Files\\Egret\\TextureMerger\\TextureMerger.exe"`;
+        }
     }
 
     let mergerSelector = ResourceConfig.mergeSelector;
