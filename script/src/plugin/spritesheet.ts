@@ -127,26 +127,5 @@ export function sheet(resourceFolder: string) {
             }
         }
         cb();
-        // let list: yazl.ZipFile = [];
-        // for (let zipFile in spriteSheetMergeCollection) {
-        //     let zip = spriteSheetMergeCollection[zipFile];
-        //     zip['__path'] = zipFile
-        //     list.push(zip);
-
-        // }
-        // Promise.all(list.map((zip) => {
-        //     zip.end();
-        //     return getStream.buffer(zip.outputStream).then(data => {
-        //         let zipFile = zip['__path'];
-        //         let file = new Vinyl({
-        //             cwd: resourceFolder,
-        //             base: resourceFolder,
-        //             path: path.join(resourceFolder, zipFile),
-        //             contents: data
-        //         })
-        //         this.push(file);
-        //     });
-        // })).then(() => cb());
-
     });
 };

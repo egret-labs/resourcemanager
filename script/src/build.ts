@@ -50,7 +50,9 @@ export async function build(p: string, format: "json" | "text", publishPath: str
     async function convertFileName(file: ResVinylFile, cb) {
 
         let crc32_file_path: string = crc32(file.contents);
-        crc32_file_path = `${crc32_file_path.substr(0, 2)}/${crc32_file_path.substr(2)}${file.extname}`
+        // crc32_file_path = `${crc32_file_path.substr(0, 2)}/${crc32_file_path.substr(2)}${file.extname}`;
+        let origin_path = file.original_relative;
+        crc32_file_path = origin_path.substr(0, origin_path.length - file.extname.length) + "_" + crc32_file_path + file.extname;
         file.path = path.join(file.base, crc32_file_path);
         cb(null, file);
     };

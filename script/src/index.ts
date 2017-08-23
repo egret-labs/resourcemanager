@@ -28,6 +28,14 @@ export interface ResVinylFile extends VinylFile {
     original_relative: string;
 }
 
+export interface ResourceManagerUserConfig {
+
+    publish_path: string
+
+
+
+}
+
 
 enum ResourceNodeType {
     FILE, DICTIONARY
@@ -121,7 +129,6 @@ export namespace ResourceConfig {
             resources: []
         }
         let resources = config.resources;
-        console.log(config.resources)
 
         let alias = {};
         for (var aliasName in config.alias) {

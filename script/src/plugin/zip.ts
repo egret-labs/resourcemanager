@@ -85,6 +85,7 @@ export function zip(resourceFolder: string) {
                     cwd: resourceFolder,
                     base: resourceFolder,
                     path: path.join(resourceFolder, zipFile),
+                    original_relative: zipFile,
                     contents: data
                 })
                 this.push(file);
