@@ -62,7 +62,7 @@ export function zip(resourceFolder: string) {
                 }
             }
 
-            cb(null, file);
+            cb(null);
         }
         else {
             cb(null, file);

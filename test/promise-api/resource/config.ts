@@ -6,6 +6,9 @@ export const mergeSelector = (path: string) => {
     if (path.indexOf("assets/bitmap/") >= 0) {
         return "assets/bitmap/sheet.sheet"
     }
+    else if (path.indexOf("armature") >= 0 && path.indexOf(".json") >= 0) {
+        return "assets/armature/1.zip";
+    }
 }
 
 export const typeSelector = (path: string) => {

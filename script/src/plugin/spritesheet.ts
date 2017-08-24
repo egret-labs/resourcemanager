@@ -86,7 +86,7 @@ export function sheet(resourceFolder: string, userConfig: ResourceManagerUserCon
                 spriteSheet.push(filename)
             }
 
-            cb(null, file);
+            cb(null);
         }
         else {
             cb(null, file);
