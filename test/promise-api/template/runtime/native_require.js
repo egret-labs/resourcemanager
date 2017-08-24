@@ -10,6 +10,7 @@ var game_file_list = [
 	"libs/modules/eui/eui.js",
 	"libs/modules/dragonBones/dragonBones.js",
 	"bin-debug/Main.js",
+	"bin-debug/testcases/testLoadZip.js",
 	"bin-debug/testcases/testNetworkDelay.js",
 	"bin-debug/testcases/testSpriteSheet.js",
 	//----auto game_file_list end----

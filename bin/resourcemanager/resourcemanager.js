@@ -1597,13 +1597,26 @@ var RES;
         };
         processor_1.ZipProcessor = {
             onLoadStart: function (host, resource) {
-                console.warn(resource.url);
-                return Promise.reject(resource.url);
+                return host.load(resource, processor_1.BinaryProcessor).then(function (arraybuffer) {
+                    console.log(arraybuffer);
+                    var zip = new ZipFile(arraybuffer);
+                    return zip;
+                });
             },
             onRemoveStart: function () {
                 return Promise.resolve();
             },
-            getData: function (host, resource, subkey) {
+            getData: function (host, resource, key, subkey) {
+                var zip = host.get(resource);
+                var subResource = zip.read(subkey);
+                var text = String.fromCharCode.apply(null, new Uint16Array(subResource));
+                //todo:refactor
+                if (subkey.indexOf(".json") >= 0) {
+                    return JSON.parse(text);
+                }
+                else {
+                    return text;
+                }
             }
         };
         var _map = {
@@ -1619,7 +1632,8 @@ var RES;
             "movieclip": processor_1.MovieClipProcessor,
             "pvr": processor_1.PVRProcessor,
             "mergeJson": processor_1.MergeJSONProcessor,
-            "resourceConfig": processor_1.ResourceConfigProcessor
+            "resourceConfig": processor_1.ResourceConfigProcessor,
+            "zip": processor_1.ZipProcessor
         };
     })(processor = RES.processor || (RES.processor = {}));
 })(RES || (RES = {}));

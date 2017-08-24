@@ -642,8 +642,11 @@ module RES.processor {
     export const ZipProcessor: Processor = {
 
         onLoadStart(host, resource) {
-            console.warn(resource.url)
-            return Promise.reject(resource.url);
+            return host.load(resource, BinaryProcessor).then((arraybuffer) => {
+                console.log(arraybuffer)
+                var zip = new ZipFile(arraybuffer);
+                return zip;
+            })
         },
 
 
@@ -651,11 +654,19 @@ module RES.processor {
             return Promise.resolve();
         },
 
-        getData(host, resource, subkey) {
+        getData(host, resource, key, subkey) {
+            let zip: ZipFile = host.get(resource);
+            let subResource: ArrayBuffer = zip.read(subkey);
+            let text = String.fromCharCode.apply(null, new Uint16Array(subResource));
+            //todo:refactor
+            if (subkey.indexOf(".json") >= 0) {
+                return JSON.parse(text)
+            }
+            else {
+                return text;
+            }
 
         }
-
-
     }
 
     var _map: { [index: string]: Processor } = {
@@ -671,7 +682,8 @@ module RES.processor {
         "movieclip": MovieClipProcessor,
         "pvr": PVRProcessor,
         "mergeJson": MergeJSONProcessor,
-        "resourceConfig": ResourceConfigProcessor
+        "resourceConfig": ResourceConfigProcessor,
+        "zip": ZipProcessor
     }
 }
 
