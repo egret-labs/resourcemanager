@@ -1598,7 +1598,6 @@ var RES;
         processor_1.ZipProcessor = {
             onLoadStart: function (host, resource) {
                 return host.load(resource, processor_1.BinaryProcessor).then(function (arraybuffer) {
-                    console.log(arraybuffer);
                     var zip = new ZipFile(arraybuffer);
                     return zip;
                 });

@@ -643,7 +643,6 @@ module RES.processor {
 
         onLoadStart(host, resource) {
             return host.load(resource, BinaryProcessor).then((arraybuffer) => {
-                console.log(arraybuffer)
                 var zip = new ZipFile(arraybuffer);
                 return zip;
             })
