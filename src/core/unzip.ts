@@ -324,10 +324,10 @@ function inflate(bytes) {
     // shrink the buffer to the actual data size
     return new Uint8Array(buffer.buffer, 0, bufferLength);
 }
-}
 
 
 class ZipFile {
+    directory: any;
 
     constructor(buffer) {
         var bytes = new Uint8Array(buffer);

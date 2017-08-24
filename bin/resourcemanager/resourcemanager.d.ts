@@ -1,3 +1,36 @@
+declare function error(s: any): void;
+declare var codeLenCodeMap: Uint32Array;
+declare var lengthDecode: Uint32Array;
+declare var distDecode: Uint32Array;
+declare var fixedLitCodeTab: (number | Uint32Array)[];
+declare var fixedDistCodeTab: (number | Uint32Array)[];
+declare function inflate(bytes: any): Uint8Array;
+declare class ZipFile {
+    directory: any;
+    constructor(buffer: any);
+    read(filename: any): any;
+}
+declare module RES {
+    interface File {
+        url: string;
+        type: string;
+        crc32?: string;
+        size?: number;
+        name: string;
+        soundType?: string;
+    }
+    interface Dictionary {
+        [file: string]: File | Dictionary;
+    }
+    function getResourceInfo(path: string): File;
+    namespace FileSystem {
+        var data: Dictionary;
+        function addFile(filename: string, type?: string): void;
+        function getFile(filename: string): File;
+        function mkdir(dirpath: string): void;
+        function exists(dirpath: string): boolean;
+    }
+}
 declare type ResourceRootSelector<T extends string> = () => T;
 declare type ResourceTypeSelector = (file: string) => string;
 declare type ResourceNameSelector = (file: string) => string;
@@ -101,27 +134,6 @@ declare module RES {
     }
 }
 declare module RES {
-    interface File {
-        url: string;
-        type: string;
-        crc32?: string;
-        size?: number;
-        name: string;
-        soundType?: string;
-    }
-    interface Dictionary {
-        [file: string]: File | Dictionary;
-    }
-    function getResourceInfo(path: string): File;
-    namespace FileSystem {
-        var data: Dictionary;
-        function addFile(filename: string, type?: string): void;
-        function getFile(filename: string): File;
-        function mkdir(dirpath: string): void;
-        function exists(dirpath: string): boolean;
-    }
-}
-declare module RES {
     /**
      * 整个资源加载系统的进程id，协助管理回调派发机制
      */
@@ -199,6 +211,7 @@ declare module RES.processor {
     const MergeJSONProcessor: Processor;
     var ResourceConfigProcessor: Processor;
     var PVRProcessor: Processor;
+    const ZipProcessor: Processor;
 }
 declare module RES {
     /**

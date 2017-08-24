@@ -638,6 +638,26 @@ module RES.processor {
         }
     }
 
+
+    export const ZipProcessor: Processor = {
+
+        onLoadStart(host, resource) {
+            console.warn(resource.url)
+            return Promise.reject(resource.url);
+        },
+
+
+        onRemoveStart() {
+            return Promise.resolve();
+        },
+
+        getData(host, resource, subkey) {
+
+        }
+
+
+    }
+
     var _map: { [index: string]: Processor } = {
         "image": ImageProcessor,
         "json": JsonProcessor,

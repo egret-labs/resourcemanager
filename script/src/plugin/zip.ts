@@ -62,6 +62,8 @@ export function zip(resourceFolder: string) {
                 }
             }
 
+            let config = ResourceConfig.getConfig();
+            config.alias[filename] = `${mergeResult}#${filename}`
             cb(null);
         }
         else {
