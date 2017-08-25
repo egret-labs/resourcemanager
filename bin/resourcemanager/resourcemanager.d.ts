@@ -551,7 +551,7 @@ declare module RES {
      *  LOADING_STATE：处理重复加载
      */
     let FEATURE_FLAG: {
-        LOADING_STATE: number;
+        FIX_DUPLICATE_LOAD: number;
     };
     namespace upgrade {
         function setUpgradeGuideLevel(level: "warning" | "silent"): void;

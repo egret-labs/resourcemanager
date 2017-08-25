@@ -840,14 +840,16 @@ var RES;
         };
         ;
         ResourceLoader.prototype.loadResource = function (r, p) {
-            // let s = host.state[r.name];
-            // if (s == 2) {
-            // 	return Promise.resolve(host.get(r));
-            // }
-            // if (s == 1) {
-            // 	return r.promise as Promise<any>
-            // }
             if (!p) {
+                if (RES.FEATURE_FLAG.FIX_DUPLICATE_LOAD == 1) {
+                    var s = RES.host.state[r.name];
+                    if (s == 2) {
+                        return Promise.resolve(RES.host.get(r));
+                    }
+                    if (s == 1) {
+                        return r.promise;
+                    }
+                }
                 p = RES.processor.isSupport(r);
             }
             if (!p) {
@@ -930,6 +932,7 @@ var RES;
         unload: function (r) { return RES.queue.unloadResource(r); },
         save: function (resource, data) {
             RES.host.state[resource.name] = 2;
+            resource.promise = undefined;
             __tempCache[resource.url] = data;
         },
         get: function (resource) {
@@ -2050,7 +2053,7 @@ var RES;
      *  LOADING_STATE：处理重复加载
      */
     RES.FEATURE_FLAG = {
-        LOADING_STATE: 0
+        FIX_DUPLICATE_LOAD: 1
     };
     var upgrade;
     (function (upgrade) {
@@ -2059,24 +2062,6 @@ var RES;
             _level = level;
         }
         upgrade.setUpgradeGuideLevel = setUpgradeGuideLevel;
-        // export let checkDecorator: MethodDecorator = (target, propertyKey, descriptor) => {
-        //     const method = descriptor.value;
-        //     descriptor.value = function () {
-        //         if (!RES['configItem']) {
-        //             let url = "config.json";
-        //             resourceRoot = "resource/";
-        //             RES['configItem'] = { url, resourceRoot, type: "commonjs", name: url };
-        //             if (_level == "warning") {
-        //                 console.warn(
-        //                     "RES.loadConfig() 不再接受参数，强制访问 resource/config.json 文件\n",
-        //                     "请访问以下站点了解更多细节\n",
-        //                     "https://github.com/egret-labs/resourcemanager/blob/master/docs/"
-        //                 )
-        //             }
-        //         }
-        //         return method.apply(this);
-        //     }
-        // }
     })(upgrade = RES.upgrade || (RES.upgrade = {}));
 })(RES || (RES = {}));
 var RES;

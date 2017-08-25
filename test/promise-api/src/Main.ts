@@ -5,7 +5,7 @@ class Main extends egret.DisplayObjectContainer {
     public constructor() {
 
         super();
-        RES.FEATURE_FLAG.LOADING_STATE = 1;
+        RES.FEATURE_FLAG.FIX_DUPLICATE_LOAD = 1;
         this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
 
     }
@@ -108,7 +108,8 @@ class Main extends egret.DisplayObjectContainer {
 
         RES.setConfigURL("resource-bundles/config.res.js")
         RES.loadConfig()
-            .then(testLoadZip)
+            .then(test.spritesheet.testLoadDuplicate2)
+        // .then(testLoadZip)
         // .then(testGroupIsLoaded)
         // .then(testNull)
         // .then(testCreateAndDestoryResource)

@@ -53,6 +53,7 @@ module RES {
 
         save(resource: ResourceInfo, data: any) {
             host.state[resource.name] = 2;
+            resource.promise = undefined;
             __tempCache[resource.url] = data;
         },
 

@@ -63,14 +63,17 @@ module RES {
 
 
 		loadResource(r: ResourceInfo, p?: RES.processor.Processor) {
-			// let s = host.state[r.name];
-			// if (s == 2) {
-			// 	return Promise.resolve(host.get(r));
-			// }
-			// if (s == 1) {
-			// 	return r.promise as Promise<any>
-			// }
+
 			if (!p) {
+				if (FEATURE_FLAG.FIX_DUPLICATE_LOAD == 1) {
+					let s = host.state[r.name];
+					if (s == 2) {
+						return Promise.resolve(host.get(r));
+					}
+					if (s == 1) {
+						return r.promise as Promise<any>
+					}
+				}
 				p = processor.isSupport(r);
 			}
 			if (!p) {
