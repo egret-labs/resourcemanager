@@ -1,14 +1,4 @@
-declare function error(s: any): void;
-declare var codeLenCodeMap: Uint32Array;
-declare var lengthDecode: Uint32Array;
-declare var distDecode: Uint32Array;
-declare var fixedLitCodeTab: (number | Uint32Array)[];
-declare var fixedDistCodeTab: (number | Uint32Array)[];
-declare function inflate(bytes: any): Uint8Array;
-declare class ZipFile {
-    directory: any;
-    constructor(buffer: any);
-    read(filename: any): any;
+declare namespace RES {
 }
 declare module RES {
     interface File {
@@ -211,7 +201,6 @@ declare module RES.processor {
     const MergeJSONProcessor: Processor;
     var ResourceConfigProcessor: Processor;
     var PVRProcessor: Processor;
-    const ZipProcessor: Processor;
 }
 declare module RES {
     /**

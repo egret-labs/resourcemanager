@@ -639,34 +639,34 @@ module RES.processor {
     }
 
 
-    export const ZipProcessor: Processor = {
+    // export const ZipProcessor: Processor = {
 
-        onLoadStart(host, resource) {
-            return host.load(resource, BinaryProcessor).then((arraybuffer) => {
-                var zip = new ZipFile(arraybuffer);
-                return zip;
-            })
-        },
+    //     onLoadStart(host, resource) {
+    //         return host.load(resource, BinaryProcessor).then((arraybuffer) => {
+    //             var zip = new ZipFile(arraybuffer);
+    //             return zip;
+    //         })
+    //     },
 
 
-        onRemoveStart() {
-            return Promise.resolve();
-        },
+    //     onRemoveStart() {
+    //         return Promise.resolve();
+    //     },
 
-        getData(host, resource, key, subkey) {
-            let zip: ZipFile = host.get(resource);
-            let subResource: ArrayBuffer = zip.read(subkey);
-            let text = String.fromCharCode.apply(null, new Uint16Array(subResource));
-            //todo:refactor
-            if (subkey.indexOf(".json") >= 0) {
-                return JSON.parse(text)
-            }
-            else {
-                return text;
-            }
+    //     getData(host, resource, key, subkey) {
+    //         let zip: ZipFile = host.get(resource);
+    //         let subResource: ArrayBuffer = zip.read(subkey);
+    //         let text = String.fromCharCode.apply(null, new Uint16Array(subResource));
+    //         //todo:refactor
+    //         if (subkey.indexOf(".json") >= 0) {
+    //             return JSON.parse(text)
+    //         }
+    //         else {
+    //             return text;
+    //         }
 
-        }
-    }
+    //     }
+    // }
 
     var _map: { [index: string]: Processor } = {
         "image": ImageProcessor,
@@ -682,7 +682,7 @@ module RES.processor {
         "pvr": PVRProcessor,
         "mergeJson": MergeJSONProcessor,
         "resourceConfig": ResourceConfigProcessor,
-        "zip": ZipProcessor
+        // "zip": ZipProcessor
     }
 }
 

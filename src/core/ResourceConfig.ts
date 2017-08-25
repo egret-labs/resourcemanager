@@ -304,7 +304,7 @@ module RES {
                     group = group.concat(groupInfo);
                 }
                 else {
-                    group = group.concat(key);
+                    group.push(key)
                 }
             }
 

@@ -113,7 +113,7 @@ export async function upgrade(projectPath) {
     }
 
     await copyLibrary();
-    await createDecorator();
+    // await createDecorator();
     await modifyTypeScriptConfigFile();
 
 }
