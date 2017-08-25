@@ -81,15 +81,6 @@ class Main extends egret.DisplayObjectContainer {
                 }))
         }
 
-        let testAnimationByUrl = () =>
-            RES.getResAsync("assets/movieclip/movieclip.json").then((value) => {
-                var mcDataFactory: egret.MovieClipDataFactory = value;
-                var attack = new egret.MovieClip(mcDataFactory.generateMovieClipData("test"));
-                this.addChild(attack);
-                attack.x = 50;
-                attack.y = 150;
-                attack.gotoAndPlay(1, -1);
-            });
 
 
         let testPVR = () =>
@@ -108,19 +99,19 @@ class Main extends egret.DisplayObjectContainer {
 
         RES.setConfigURL("resource-bundles/config.res.js")
         RES.loadConfig()
-            .then(test.spritesheet.testLoadDuplicate2)
-        // .then(testLoadZip)
-        // .then(testGroupIsLoaded)
-        // .then(testNull)
-        // .then(testCreateAndDestoryResource)
-        // .then(testLoadResByUrl)
-        // .then(testBitmapFont)
-        // .then(testNetworkDelay)
-        // .then(testSpriteSheet)
-        // .then(testAutoSpriteSheet)
-        // .then(testGroupWithURL)
-        // .then(testSoundByUrl)
-        // .then(testAnimationByUrl)
+            // .then(test.spritesheet.testLoadDuplicate2)
+            // .then(testLoadZip)
+            // .then(testGroupIsLoaded)
+            // .then(testNull)
+            // .then(testCreateAndDestoryResource)
+            // .then(testLoadResByUrl)
+            // .then(testBitmapFont)
+            // .then(testNetworkDelay)
+            // .then(testSpriteSheet)
+            // .then(testAutoSpriteSheet)
+            // .then(testGroupWithURL)
+            // .then(testSoundByUrl)
+            .then(testMovieClip)
         // .then(testPVR)
         // .then(testDestroy)
         // .then(testMerge)

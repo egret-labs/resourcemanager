@@ -311,19 +311,39 @@ module RES.processor {
         }
     }
     export var MovieClipProcessor: Processor = {
-        async onLoadStart(host, resource) {
-            let mcData = await host.load(resource, JsonProcessor);
-            let jsonPath = resource.name;
-            let imagePath = jsonPath.substring(0, jsonPath.lastIndexOf(".")) + ".png";
-            let r = host.resourceConfig.getResource(imagePath);
-            if (!r) {
-                throw new ResourceManagerError(1001, imagePath);
-            }
-            var mcTexture: egret.Texture = await host.load(r);
-            var mcDataFactory = new egret.MovieClipDataFactory(mcData, mcTexture);
-            return mcDataFactory;
+
+        onLoadStart(host, resource) {
+            let mcData;
+            let imageResource: ResourceInfo;
+            return host.load(resource, JsonProcessor)
+                .then((value) => {
+                    mcData = value;
+                    let jsonPath = resource.name;
+                    let imagePath = jsonPath.substring(0, jsonPath.lastIndexOf(".")) + ".png";
+                    imageResource = host.resourceConfig.getResource(imagePath, true);
+                    if (!imageResource) {
+                        throw new ResourceManagerError(1001, imagePath);
+                    }
+                    return host.load(imageResource);
+                }).then((value) => {
+                    host.save(imageResource, value)
+                    var mcTexture: egret.Texture = value;
+                    var mcDataFactory = new egret.MovieClipDataFactory(mcData, mcTexture);
+                    return mcDataFactory;
+                })
         },
         onRemoveStart(host, resource) {
+            let mcFactory = host.get(resource) as egret.MovieClipDataFactory;
+            mcFactory.clearCache();
+            mcFactory.$spriteSheet.dispose();
+
+            // refactor
+            let jsonPath = resource.name;
+            let imagePath = jsonPath.substring(0, jsonPath.lastIndexOf(".")) + ".png";
+            let imageResource = host.resourceConfig.getResource(imagePath, true);
+            let image: egret.Texture = host.get(imageResource);
+            host.remove(imageResource);
+            image.dispose();
             return Promise.resolve();
         }
     }

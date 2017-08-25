@@ -1296,29 +1296,36 @@ var RES;
         };
         processor_1.MovieClipProcessor = {
             onLoadStart: function (host, resource) {
-                return __awaiter(this, void 0, void 0, function () {
-                    var mcData, jsonPath, imagePath, r, mcTexture, mcDataFactory;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, host.load(resource, processor_1.JsonProcessor)];
-                            case 1:
-                                mcData = _a.sent();
-                                jsonPath = resource.name;
-                                imagePath = jsonPath.substring(0, jsonPath.lastIndexOf(".")) + ".png";
-                                r = host.resourceConfig.getResource(imagePath);
-                                if (!r) {
-                                    throw new RES.ResourceManagerError(1001, imagePath);
-                                }
-                                return [4 /*yield*/, host.load(r)];
-                            case 2:
-                                mcTexture = _a.sent();
-                                mcDataFactory = new egret.MovieClipDataFactory(mcData, mcTexture);
-                                return [2 /*return*/, mcDataFactory];
-                        }
-                    });
+                var mcData;
+                var imageResource;
+                return host.load(resource, processor_1.JsonProcessor)
+                    .then(function (value) {
+                    mcData = value;
+                    var jsonPath = resource.name;
+                    var imagePath = jsonPath.substring(0, jsonPath.lastIndexOf(".")) + ".png";
+                    imageResource = host.resourceConfig.getResource(imagePath, true);
+                    if (!imageResource) {
+                        throw new RES.ResourceManagerError(1001, imagePath);
+                    }
+                    return host.load(imageResource);
+                }).then(function (value) {
+                    host.save(imageResource, value);
+                    var mcTexture = value;
+                    var mcDataFactory = new egret.MovieClipDataFactory(mcData, mcTexture);
+                    return mcDataFactory;
                 });
             },
             onRemoveStart: function (host, resource) {
+                var mcFactory = host.get(resource);
+                mcFactory.clearCache();
+                mcFactory.$spriteSheet.dispose();
+                // refactor
+                var jsonPath = resource.name;
+                var imagePath = jsonPath.substring(0, jsonPath.lastIndexOf(".")) + ".png";
+                var imageResource = host.resourceConfig.getResource(imagePath, true);
+                var image = host.get(imageResource);
+                host.remove(imageResource);
+                image.dispose();
                 return Promise.resolve();
             }
         };
