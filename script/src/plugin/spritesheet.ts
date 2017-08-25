@@ -40,7 +40,7 @@ let spriteSheetMergeCollection: { [mergeFile: string]: string[] } = {};
 export function sheet(resourceFolder: string, userConfig: ResourceManagerUserConfig) {
 
     async function generateSpriteSheet(spriteSheetFileName, dirname) {
-        let cmd = getTextureMergerPath();
+        let cmd = "\"" + getTextureMergerPath() + "\"";
         let folder = path.join(process.cwd(), dirname);
         let p = "\"" + folder + "\"";
         let o = "\"" + spriteSheetFileName + "\"";
@@ -85,7 +85,8 @@ export function sheet(resourceFolder: string, userConfig: ResourceManagerUserCon
             } else {
                 spriteSheet.push(filename)
             }
-
+            let config = ResourceConfig.getConfig();
+            config.alias[filename] = `${mergeResult}#${path.basename(filename).split(".")[0]}`
             cb(null);
         }
         else {
