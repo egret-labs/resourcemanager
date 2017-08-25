@@ -53,7 +53,7 @@ export function sheet(resourceFolder: string, userConfig: ResourceManagerUserCon
             return userConfig.texture_merger_path
         }
         else {
-            return `"C:\\Program Files\\Egret\\TextureMerger\\TextureMerger.exe"`;
+            return `C:\\Program Files\\Egret\\TextureMerger\\TextureMerger.exe`;
         }
     }
 
