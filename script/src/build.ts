@@ -4,7 +4,6 @@ import { Data, ResourceConfig, GeneratedData, original, handleException, ResViny
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
-import * as merger from './merger';
 import * as html from './html';
 import * as config from './config';
 import * as zip from './plugin/zip';
@@ -30,8 +29,6 @@ export async function build(p: string, format: "json" | "text", userConfig: Reso
         if (url == wing_res_json) {
             return null;
         }
-        var ext = url.substr(url.lastIndexOf(".") + 1);
-        merger.walk(url);
         let type = ResourceConfig.typeSelector(url);
         let name = ResourceConfig.nameSelector(url);
         if (type) {
@@ -44,7 +41,6 @@ export async function build(p: string, format: "json" | "text", userConfig: Reso
 
     projectRoot = p;
     resourceFolder = path.join(projectRoot, ResourceConfig.resourceRoot);
-    merger.init(resourceFolder);
 
 
     async function convertFileName(file: ResVinylFile, cb) {
@@ -96,28 +92,25 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
         await fs.mkdirpAsync(path.dirname(filename))
         await fs.writeFileAsync(filename, file, "utf-8");
     }
-    let outputFile = path.join(projectRoot, publishPath, ResourceConfig.resourceConfigFileName);
+    let outputDir = path.join(projectRoot, publishPath);
+    let outputFile = path.join(outputDir, ResourceConfig.resourceConfigFileName);
+
 
     vinylfs.src(`**/**.*`, { cwd: resourceFolder, base: resourceFolder })
         .pipe(map(filter))
         .pipe(profile.profile())
         .pipe(zip.zip(resourceFolder))
         .pipe(spritesheet.sheet(resourceFolder, userConfig))
-        .pipe(map(convertFileName)).on("end", async () => {
-            // vinylfs.
-        })
+        .pipe(map(convertFileName))
         .pipe(profile.profile())
         .pipe(map(addFileToResourceConfig).on("end", async () => {
             let config = ResourceConfig.getConfig();
             await convertResourceJson(projectRoot, config);
             await emitResourceConfigFile(outputFile, debug);
             await ResourceConfig.generateClassicalConfig(path.join(projectRoot, publishPath, wing_res_json));
-            merger.output();
         }))
         .pipe(profile.profile())
-        .pipe(vinylfs.dest(path.join(projectRoot, publishPath)).on("end", () => {
-            // html.publish(publishPath_2 as string, outputFile).catch(e => handleException(e))
-        }));
+        .pipe(vinylfs.dest(outputDir));
 }
 
 
