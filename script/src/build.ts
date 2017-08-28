@@ -1,5 +1,5 @@
 import * as vinylfs from 'vinyl-fs';
-
+import * as Vinyl from 'vinyl';
 import { Data, ResourceConfig, GeneratedData, original, handleException, ResVinylFile, ResourceManagerUserConfig } from './';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
@@ -89,9 +89,38 @@ exports.alias = ${JSON.stringify(config.alias, null, "\t")};
 exports.groups = ${JSON.stringify(config.groups, null, "\t")};
 exports.resources = ${JSON.stringify(config.resources, null, "\t")};
 `
-        await fs.mkdirpAsync(path.dirname(filename))
-        await fs.writeFileAsync(filename, file, "utf-8");
+        return file;
     }
+
+    function emitConfigJsonFile() {
+        const through = require('through2');
+        return through.obj((file, enc, cb) => {
+            cb(null, file)
+        }, async function (cb) {
+            let config = ResourceConfig.getConfig();
+            await convertResourceJson(projectRoot, config);
+            let configContent = await emitResourceConfigFile(outputFile, debug);
+            let configFile = new Vinyl({
+                cwd: resourceFolder,
+                base: resourceFolder,
+                path: outputFile,
+                original_relative: outputFile,
+                contents: new Buffer(configContent)
+            })
+            this.push(configFile);
+            let wingConfigContent = await ResourceConfig.generateClassicalConfig();
+            let wingConfigFile = new Vinyl({
+                cwd: resourceFolder,
+                base: resourceFolder,
+                path: path.join(resourceFolder, wing_res_json),
+                original_relative: wing_res_json,
+                contents: new Buffer(wingConfigContent)
+            })
+            this.push(wingConfigFile);
+            cb();
+        });
+    };
+
     let outputDir = path.join(projectRoot, publishPath);
     let outputFile = path.join(outputDir, ResourceConfig.resourceConfigFileName);
 
@@ -102,16 +131,12 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
         .pipe(spritesheet.sheet(resourceFolder, userConfig))
         .pipe(map(convertFileName))
         .pipe(profile.profile())
-        .pipe(map(addFileToResourceConfig).on("end", async () => {
-            let config = ResourceConfig.getConfig();
-            await convertResourceJson(projectRoot, config);
-            await emitResourceConfigFile(outputFile, debug);
-            await ResourceConfig.generateClassicalConfig(path.join(projectRoot, publishPath, wing_res_json));
-        }))
+        .pipe(map(addFileToResourceConfig))
+        .pipe(emitConfigJsonFile())
         .pipe(profile.profile())
-        .pipe(vinylfs.dest(outputDir));
-}
+        .pipe(vinylfs.dest(outputDir))
 
+}
 
 
 

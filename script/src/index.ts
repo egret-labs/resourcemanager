@@ -125,7 +125,7 @@ export namespace ResourceConfig {
         return config;
     }
 
-    export async function generateClassicalConfig(filename: string) {
+    export async function generateClassicalConfig() {
         let result: original.Info = {
             groups: [],
             resources: []
@@ -145,7 +145,7 @@ export namespace ResourceConfig {
             result.resources.push(r);
             // console.log(f.name)
         })
-        await fs.writeJSONAsync(filename, result)
+        return JSON.stringify(result, null, "\t");
     }
 
     export function generateConfig(debug: boolean): GeneratedData {

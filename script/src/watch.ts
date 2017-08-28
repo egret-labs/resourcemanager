@@ -13,13 +13,16 @@ export async function watch(p: string, userConfig: ResourceManagerUserConfig) {
                 .on("removed", (f) => compileChanged(f, "removed"))
                 .on("changed", (f) => compileChanged(f, "modified"));
         });
+
+        async function compileChanged(f: string, type: string) {
+            console.log("res-watch:file changed start");
+            console.log(f)
+            f = path.relative(root, f);
+            await build.build(p, userConfig, true, f)
+            console.log("res-watch:file changed finish");
+        }
     })
 
-    async function compileChanged(f: string, type: string) {
-        console.log("res-watch:file changed start");
-        console.log(f)
-        await build.build(p, userConfig, true, "**/**.*")
-        console.log("res-watch:file changed finish");
-    }
+
 
 }
