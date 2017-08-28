@@ -31,36 +31,19 @@ else {
 }
 
 async function executeCommand(command: string) {
-    let properties = await fs.readJSONAsync(egretPropertiesFile);
-    if (!properties.resourcemanager) {
-        handleException(`egretProperties.json 中不存在 resourcemanager 相关配置`);
-        return null;
-    }
-    let userConfig: ResourceManagerUserConfig = properties.resourcemanager;
+
     switch (command) {
         case "upgrade":
             return res.upgrade(p);
             break;
         case "build":
         case "publish":
-            if (!userConfig.publish_path) {
-                handleException('请设置发布目录');
-                return null;
-            }
             return res.build(p);
             break;
         case "watch":
-            if (!userConfig.publish_path) {
-                handleException('请设置发布目录');
-                return null;
-            }
             return res.watch(p)
             break;
         case "config":
-            if (!userConfig.publish_path) {
-                handleException('请设置发布目录');
-                return null;
-            }
             return res.printConfig(p);
             break;
         default:

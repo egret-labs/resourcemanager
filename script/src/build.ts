@@ -4,11 +4,13 @@ import { Data, ResourceConfig, GeneratedData, original, handleException, ResViny
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
-import * as html from './html';
+
 import * as config from './config';
 import * as zip from './plugin/zip';
 import * as profile from './plugin/profile';
 import * as spritesheet from './plugin/spritesheet';
+import * as html from './plugin/html';
+
 var map = require('map-stream');
 var crc32 = require("crc32");
 
@@ -67,19 +69,6 @@ export async function build(p: string, debug: boolean = false, matcher = "**/**.
 
     }
 
-    async function addFileToResourceConfig(file: ResVinylFile, cb) {
-        let r = await executeFilter(file.original_relative);
-        if (r) {
-            r.url = file.relative;
-            ResourceConfig.addFile(r, true);
-            cb(null, file);
-        }
-        else {
-            cb(null);
-        }
-    };
-
-
 
     async function emitResourceConfigFile(filename: string, debug: boolean) {
         let config = ResourceConfig.generateConfig(true);
@@ -95,8 +84,16 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
 
     function emitConfigJsonFile() {
         const through = require('through2');
-        return through.obj((file, enc, cb) => {
-            cb(null, file)
+        return through.obj(async (file: ResVinylFile, enc, cb) => {
+            let r = await executeFilter(file.original_relative);
+            if (r) {
+                r.url = file.relative;
+                ResourceConfig.addFile(r, true);
+                cb(null, file);
+            }
+            else {
+                cb(null);
+            }
         }, async function (cb) {
             let config = ResourceConfig.getConfig();
             await convertResourceJson(projectRoot, config);
@@ -104,11 +101,12 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
             let configFile = new Vinyl({
                 cwd: resourceFolder,
                 base: resourceFolder,
-                path: outputFile,
-                original_relative: outputFile,
+                path: path.join(resourceFolder, ResourceConfig.resourceConfigFileName),
+                original_relative: ResourceConfig.resourceConfigFileName,
                 contents: new Buffer(configContent)
             })
             this.push(configFile);
+
             let wingConfigContent = await ResourceConfig.generateClassicalConfig();
             let wingConfigFile = new Vinyl({
                 cwd: resourceFolder,
@@ -142,15 +140,16 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
             case "convertFileName":
                 plugin = map(convertFileName);
                 break;
+            case "html":
+                plugin = html.emitConfigJsonFile();
+                break;
         }
         if (plugin) {
             stream = stream.pipe(plugin);
         }
     }
-
     return stream
         .pipe(profile.profile())
-        .pipe(map(addFileToResourceConfig))
         .pipe(emitConfigJsonFile())
         .pipe(profile.profile())
         .pipe(vinylfs.dest(outputDir))

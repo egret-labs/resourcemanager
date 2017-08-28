@@ -11,7 +11,6 @@ export * from './config';
 export * from './upgrade';
 export * from './build';
 export * from './version';
-export * from './html';
 
 
 export let handleException = (e: string | Error) => {
@@ -238,12 +237,13 @@ export namespace ResourceConfig {
 
         publish: {
 
-            outputDir: "resource-bundles",
+            outputDir: "bin-release/web/111/resource-bundles",
 
             plugin: [
                 "zip",
                 "spritesheet",
-                "convertFileName"
+                "convertFileName",
+                // "html"
             ]
         }
     }
