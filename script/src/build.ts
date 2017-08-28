@@ -20,7 +20,7 @@ const wing_res_json = "wing.res.json";
 
 
 
-export async function build(p: string, format: "json" | "text", userConfig: ResourceManagerUserConfig, debug: boolean = false) {
+export async function build(p: string, userConfig: ResourceManagerUserConfig, debug: boolean = false, matcher = "**/**.*") {
     let publishPath = userConfig.publish_path;
     let parsedConfig = await ResourceConfig.init(p);
 
@@ -95,8 +95,7 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
     let outputDir = path.join(projectRoot, publishPath);
     let outputFile = path.join(outputDir, ResourceConfig.resourceConfigFileName);
 
-
-    vinylfs.src(`**/**.*`, { cwd: resourceFolder, base: resourceFolder })
+    return vinylfs.src(matcher, { cwd: resourceFolder, base: resourceFolder })
         .pipe(map(filter))
         .pipe(profile.profile())
         .pipe(zip.zip(resourceFolder))

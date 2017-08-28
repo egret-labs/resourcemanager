@@ -47,17 +47,17 @@ async function executeCommand(command: string) {
                 handleException('请设置发布目录');
                 return null;
             }
-            return res.build(p, format, userConfig);
+            return res.build(p, userConfig);
             break;
         case "watch":
             if (!userConfig.publish_path) {
                 handleException('请设置发布目录');
                 return null;
             }
-            return res.watch(p, format, userConfig)
+            return res.watch(p, userConfig)
             break;
         case "config":
-          if (!userConfig.publish_path) {
+            if (!userConfig.publish_path) {
                 handleException('请设置发布目录');
                 return null;
             }
