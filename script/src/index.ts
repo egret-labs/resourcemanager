@@ -213,6 +213,41 @@ export namespace ResourceConfig {
     export var mergeSelector: (path: string) => string | null;
     export var resourceConfigFileName: string;
 
+    export type UserConfig = {
+        outputDir: string,
+        plugin: string[]
+    }
+
+    export function getUserConfig() {
+        //todo
+        if (process.argv[2] == "build") {
+            return userConfig.build;
+        }
+        else {
+            return userConfig.publish;
+        }
+    }
+
+    export var userConfig: { build: UserConfig, publish: UserConfig } = {
+
+        build: {
+            outputDir: "resource",
+
+            plugin: []
+        },
+
+        publish: {
+
+            outputDir: "resource-bundles",
+
+            plugin: [
+                "zip",
+                "spritesheet",
+                "convertFileName"
+            ]
+        }
+    }
+
     var resourcePath: string;
 
     export function addFile(r: vfs.File, checkDuplicate: boolean) {

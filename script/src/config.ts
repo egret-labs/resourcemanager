@@ -46,6 +46,7 @@ export async function getConfigViaFile(fileName: string) {
     let resourceConfigFileName = exports_1.configPath;
     let typeSelector: (p: string) => string = exports_1.typeSelector;
     let nameSelector = (p: string) => { return p };
+
     let mergeSelector = exports_1.mergeSelector;
     return { resourceRoot, resourceConfigFileName, typeSelector, mergeSelector, nameSelector };
 

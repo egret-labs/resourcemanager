@@ -37,7 +37,7 @@ function shell(path: string, args: string[]): Promise<number> {
 
 let spriteSheetMergeCollection: { [mergeFile: string]: string[] } = {};
 
-export function sheet(resourceFolder: string, userConfig: ResourceManagerUserConfig) {
+export function sheet(resourceFolder: string) {
 
     async function generateSpriteSheet(spriteSheetFileName, dirname) {
         let cmd = "\"" + getTextureMergerPath() + "\"";
@@ -49,12 +49,7 @@ export function sheet(resourceFolder: string, userConfig: ResourceManagerUserCon
 
 
     function getTextureMergerPath() {
-        if (userConfig.texture_merger_path) {
-            return userConfig.texture_merger_path
-        }
-        else {
-            return `C:\\Program Files\\Egret\\TextureMerger\\TextureMerger.exe`;
-        }
+        return `C:\\Program Files\\Egret\\TextureMerger\\TextureMerger.exe`;
     }
 
     let mergerSelector = ResourceConfig.mergeSelector;

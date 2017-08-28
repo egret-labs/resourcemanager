@@ -20,9 +20,10 @@ const wing_res_json = "wing.res.json";
 
 
 
-export async function build(p: string, userConfig: ResourceManagerUserConfig, debug: boolean = false, matcher = "**/**.*") {
-    let publishPath = userConfig.publish_path;
+export async function build(p: string, debug: boolean = false, matcher = "**/**.*") {
+
     let parsedConfig = await ResourceConfig.init(p);
+    let userConfig = ResourceConfig.getUserConfig();
 
     let executeFilter = async (url: string) => {
 
@@ -84,7 +85,7 @@ export async function build(p: string, userConfig: ResourceManagerUserConfig, de
         let config = ResourceConfig.generateConfig(true);
         let content = JSON.stringify(config, null, "\t");
         let file = `exports.typeSelector = ${ResourceConfig.typeSelector.toString()};
-exports.resourceRoot = "${publishPath}";
+exports.resourceRoot = "${userConfig.outputDir}";
 exports.alias = ${JSON.stringify(config.alias, null, "\t")};
 exports.groups = ${JSON.stringify(config.groups, null, "\t")};
 exports.resources = ${JSON.stringify(config.resources, null, "\t")};
@@ -121,15 +122,33 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
         });
     };
 
-    let outputDir = path.join(projectRoot, publishPath);
+    let outputDir = path.join(projectRoot, userConfig.outputDir);
+
     let outputFile = path.join(outputDir, ResourceConfig.resourceConfigFileName);
 
-    return vinylfs.src(matcher, { cwd: resourceFolder, base: resourceFolder })
+
+    let stream = vinylfs.src(matcher, { cwd: resourceFolder, base: resourceFolder })
         .pipe(map(filter))
-        .pipe(profile.profile())
-        .pipe(zip.zip(resourceFolder))
-        .pipe(spritesheet.sheet(resourceFolder, userConfig))
-        .pipe(map(convertFileName))
+        .pipe(profile.profile());
+    for (let item of userConfig.plugin) {
+        let plugin;
+        switch (item) {
+            case "zip":
+                plugin = zip.zip(resourceFolder);
+                break;
+            case "spritesheet":
+                plugin = spritesheet.sheet(resourceFolder);
+                break;
+            case "convertFileName":
+                plugin = map(convertFileName);
+                break;
+        }
+        if (plugin) {
+            stream = stream.pipe(plugin);
+        }
+    }
+
+    return stream
         .pipe(profile.profile())
         .pipe(map(addFileToResourceConfig))
         .pipe(emitConfigJsonFile())

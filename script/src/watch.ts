@@ -4,8 +4,8 @@ import * as path from 'path';
 import * as config from './config';
 import { ResourceManagerUserConfig } from './'
 
-export async function watch(p: string, userConfig: ResourceManagerUserConfig) {
-    let result = await build.build(p, userConfig, true);
+export async function watch(p: string) {
+    let result = await build.build(p, true);
     result.on("end", () => {
         let root = path.join(p, "resource");
         w.createMonitor(root, (m) => {
@@ -18,7 +18,7 @@ export async function watch(p: string, userConfig: ResourceManagerUserConfig) {
             console.log("res-watch:file changed start");
             console.log(f)
             f = path.relative(root, f);
-            await build.build(p, userConfig, true, f)
+            await build.build(p, true, f)
             console.log("res-watch:file changed finish");
         }
     })
