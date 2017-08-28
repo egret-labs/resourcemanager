@@ -16,7 +16,8 @@ export function emitConfigJsonFile() {
 
         let indexHTML = path.resolve(outputDir, 'index.html');
         let content = await fs.readFileAsync(indexHTML, "utf-8");
-
+        console.log(indexHTML)
+        console.log(content)
 
 
         let handler: htmlparser.Handler = {
@@ -31,25 +32,25 @@ export function emitConfigJsonFile() {
                     let javascriptCrc32 = crc32(javascriptContent);
                     let javascritpOutFilePath = rename(src, javascriptCrc32, "js");
                     fs.copySync(javascriptFilePath, path.join(outputDir, javascritpOutFilePath))
-                    manifest.initial.push(javascritpOutFilePath);
+                    // manifest.initial.push(javascritpOutFilePath);
                 }
             }
         }
 
-        let version = Date.now().toString();
-        let configPath = renameFile(path.basename(resourceConfigPath), version);
-        let manifest = { initial: [] as string[], configPath };
+        // let version = Date.now().toString();
+        // let configPath = renameFile(path.basename(resourceConfigPath), version);
+        // let manifest = { initial: [] as string[], configPath };
 
-        var parser = new htmlparser.Parser(handler, { decodeEntities: true });
-        parser.parseComplete(content)
-        parser.end();
+        // var parser = new htmlparser.Parser(handler, { decodeEntities: true });
+        // parser.parseComplete(content)
+        // parser.end();
 
         // await fs.renameAsync(
         //     resourceConfigPath,
         //     path.join(outputDir, 'resource/', configPath)
         // )
-        let manifestPath = path.join(outputDir, "manifest.json");
-        let manifestContent = JSON.stringify(manifest, null, "\t");
+        // let manifestPath = path.join(outputDir, "manifest.json");
+        // let manifestContent = JSON.stringify(manifest, null, "\t");
 
 
 

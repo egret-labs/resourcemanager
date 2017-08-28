@@ -214,7 +214,7 @@ export namespace ResourceConfig {
 
     export type UserConfig = {
         outputDir: string,
-        plugin: string[]
+        plugin: ("zip" | "spritesheet" | "convertFileName" | "emitConfigFile" | "html")[]
     }
 
     export function getUserConfig() {
@@ -243,7 +243,8 @@ export namespace ResourceConfig {
                 "zip",
                 "spritesheet",
                 "convertFileName",
-                // "html"
+                "emitConfigFile",
+                "html"
             ]
         }
     }

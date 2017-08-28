@@ -70,7 +70,7 @@ export async function build(p: string, debug: boolean = false, matcher = "**/**.
     }
 
 
-    async function emitResourceConfigFile(filename: string, debug: boolean) {
+    async function emitResourceConfigFile(debug: boolean) {
         let config = ResourceConfig.generateConfig(true);
         let content = JSON.stringify(config, null, "\t");
         let file = `exports.typeSelector = ${ResourceConfig.typeSelector.toString()};
@@ -95,9 +95,10 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
                 cb(null);
             }
         }, async function (cb) {
+
             let config = ResourceConfig.getConfig();
             await convertResourceJson(projectRoot, config);
-            let configContent = await emitResourceConfigFile(outputFile, debug);
+            let configContent = await emitResourceConfigFile(debug);
             let configFile = new Vinyl({
                 cwd: resourceFolder,
                 base: resourceFolder,
@@ -122,8 +123,6 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
 
     let outputDir = path.join(projectRoot, userConfig.outputDir);
 
-    let outputFile = path.join(outputDir, ResourceConfig.resourceConfigFileName);
-
 
     let stream = vinylfs.src(matcher, { cwd: resourceFolder, base: resourceFolder })
         .pipe(map(filter))
@@ -140,6 +139,8 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
             case "convertFileName":
                 plugin = map(convertFileName);
                 break;
+            case "emitConfigFile":
+                plugin = emitConfigJsonFile();
             case "html":
                 plugin = html.emitConfigJsonFile();
                 break;
@@ -148,11 +149,7 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
             stream = stream.pipe(plugin);
         }
     }
-    return stream
-        .pipe(profile.profile())
-        .pipe(emitConfigJsonFile())
-        .pipe(profile.profile())
-        .pipe(vinylfs.dest(outputDir))
+    return stream.pipe(vinylfs.dest(outputDir))
 
 }
 
