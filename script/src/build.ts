@@ -141,8 +141,9 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
                 break;
             case "emitConfigFile":
                 plugin = emitConfigJsonFile();
+                break;
             case "html":
-                plugin = html.emitConfigJsonFile();
+                plugin = html.emitConfigJsonFile(projectRoot);
                 break;
         }
         if (plugin) {
