@@ -2,6 +2,43 @@ export const configPath = 'config.res.js';
 
 export const resourceRoot = () => "resource";
 
+export type UserConfig = {
+    outputDir: string,
+    plugin: ("zip" | "spritesheet" | "convertFileName" | "emitConfigFile" | "html")[]
+}
+
+export type UserConfigs = {
+
+    build: UserConfig,
+
+    publish: UserConfig
+}
+
+
+export var userConfigs: UserConfigs = {
+
+    build: {
+        outputDir: "resource--xx",
+
+        plugin: [
+            "emitConfigFile"
+        ]
+    },
+
+    publish: {
+
+        outputDir: "bin-release/web/upload/resource-bundles",
+
+        plugin: [
+            "zip",
+            "spritesheet",
+            "convertFileName",
+            "emitConfigFile",
+            "html"
+        ]
+    }
+}
+
 export const mergeSelector = (path: string) => {
     if (path.indexOf("assets/bitmap/") >= 0) {
         return "assets/bitmap/sheet.sheet"

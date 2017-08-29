@@ -220,34 +220,14 @@ export namespace ResourceConfig {
     export function getUserConfig() {
         //todo
         if (process.argv[2] == "build") {
-            return userConfig.build;
+            return userConfigs.build;
         }
         else {
-            return userConfig.publish;
+            return userConfigs.publish;
         }
     }
 
-    export var userConfig: { build: UserConfig, publish: UserConfig } = {
-
-        build: {
-            outputDir: "resource",
-
-            plugin: []
-        },
-
-        publish: {
-
-            outputDir: "bin-release/web/111/resource-bundles",
-
-            plugin: [
-                "zip",
-                "spritesheet",
-                "convertFileName",
-                "emitConfigFile",
-                "html"
-            ]
-        }
-    }
+    export var userConfigs: { build: UserConfig, publish: UserConfig };
 
     var resourcePath: string;
 
@@ -280,6 +260,20 @@ export namespace ResourceConfig {
         resourcePath = path.resolve(projectPath, resourceRoot);
         resourceConfigFileName = parsedConfig.resourceConfigFileName;
         config = { alias: {}, groups: {}, resources: {} };
+        userConfigs = parsedConfig.userConfigs;
+        if (!userConfigs) {
+            userConfigs = {
+                build: {
+                    outputDir: "resource",
+                    plugin: ["emitConfigFile"]
+                },
+
+                publish: {
+                    outputDir: "resource",
+                    plugin: ["emitConfigFile"]
+                }
+            }
+        }
         vfs.init(config.resources);
     }
 }
