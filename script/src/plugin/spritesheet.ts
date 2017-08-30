@@ -16,7 +16,6 @@ function shell(path: string, args: string[]): Promise<number> {
 
     return new Promise((resolve, reject) => {
         let cmd = `${path} ${args.join(" ")}`
-        console.log(cmd)
         var encoding = 'cp936';
         var binaryEncoding = 'binary';
         child_process.exec(cmd, { encoding: binaryEncoding }, function (err, stdout, stderr) {
@@ -100,6 +99,7 @@ export function sheet(resourceFolder: string) {
                 continue;
             }
             else {
+
                 let outputJsonFile = path.join(outputDir, spriteSheetFile);
                 await fs.mkdirpAsync(path.dirname(outputJsonFile))
                 await generateSpriteSheet(outputJsonFile, path.join(resourceFolder, dirname));
@@ -111,17 +111,16 @@ export function sheet(resourceFolder: string) {
                 let jsonFile = new Vinyl({
                     cwd: resourceFolder,
                     base: resourceFolder,
-                    path: spriteSheetFile,
+                    path: path.join(resourceFolder, spriteSheetFile),
                     contents: outputJsonContent,
                     original_relative: spriteSheetFile
                 })
-
 
                 let pngFilePath = spriteSheetFile.replace(path.extname(spriteSheetFile), ".png");
                 let pngFile = new Vinyl({
                     cwd: resourceFolder,
                     base: resourceFolder,
-                    path: pngFilePath,
+                    path: path.join(resourceFolder, pngFilePath),
                     contents: outputPngContent,
                     original_relative: pngFilePath
                 })
