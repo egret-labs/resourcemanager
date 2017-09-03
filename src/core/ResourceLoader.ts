@@ -94,12 +94,9 @@ module RES {
 			let p = processor.isSupport(r);
 			if (p) {
 				host.state[r.name] = 3;
-				return p.onRemoveStart(host, r)
-					.then(result => {
-						host.remove(r);
-						return result;
-					}
-					)
+				let promise = p.onRemoveStart(host, r);
+				host.remove(r);
+				return promise;
 			}
 			else {
 				return Promise.resolve();

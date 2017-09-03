@@ -1,5 +1,3 @@
-declare namespace RES {
-}
 declare module RES {
     interface File {
         url: string;
@@ -17,8 +15,6 @@ declare module RES {
         var data: Dictionary;
         function addFile(filename: string, type?: string): void;
         function getFile(filename: string): File;
-        function mkdir(dirpath: string): void;
-        function exists(dirpath: string): boolean;
     }
 }
 declare type ResourceRootSelector<T extends string> = () => T;
@@ -199,7 +195,8 @@ declare module RES.processor {
     var SoundProcessor: Processor;
     var MovieClipProcessor: Processor;
     const MergeJSONProcessor: Processor;
-    var ResourceConfigProcessor: Processor;
+    const ResourceConfigProcessor: Processor;
+    const LegacyResourceConfigProcessor: Processor;
     var PVRProcessor: Processor;
 }
 declare module RES {

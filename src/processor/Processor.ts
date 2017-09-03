@@ -336,15 +336,12 @@ module RES.processor {
             let mcFactory = host.get(resource) as egret.MovieClipDataFactory;
             mcFactory.clearCache();
             mcFactory.$spriteSheet.dispose();
-            host.remove(resource);
             // refactor
             let jsonPath = resource.name;
             let imagePath = jsonPath.substring(0, jsonPath.lastIndexOf(".")) + ".png";
             let imageResource = host.resourceConfig.getResource(imagePath, true);
-            let image: egret.Texture = host.get(imageResource);
-            host.remove(imageResource);
-            image.dispose();
-            return Promise.resolve();
+            return host.unload(imageResource);
+
         }
     }
 
@@ -378,7 +375,7 @@ module RES.processor {
     }
 
 
-    export var ResourceConfigProcessor: Processor = {
+    export const ResourceConfigProcessor: Processor = {
 
 
         async onLoadStart(host, resource) {
@@ -422,6 +419,17 @@ module RES.processor {
         async onRemoveStart() {
 
         }
+    }
+
+    export const LegacyResourceConfigProcessor: Processor = {
+
+
+        async onLoadStart() {
+
+        },
+
+        async onRemoveStart() { }
+
     }
 
 
@@ -658,37 +666,7 @@ module RES.processor {
         }
     }
 
-
-    // export const ZipProcessor: Processor = {
-
-    //     onLoadStart(host, resource) {
-    //         return host.load(resource, BinaryProcessor).then((arraybuffer) => {
-    //             var zip = new ZipFile(arraybuffer);
-    //             return zip;
-    //         })
-    //     },
-
-
-    //     onRemoveStart() {
-    //         return Promise.resolve();
-    //     },
-
-    //     getData(host, resource, key, subkey) {
-    //         let zip: ZipFile = host.get(resource);
-    //         let subResource: ArrayBuffer = zip.read(subkey);
-    //         let text = String.fromCharCode.apply(null, new Uint16Array(subResource));
-    //         //todo:refactor
-    //         if (subkey.indexOf(".json") >= 0) {
-    //             return JSON.parse(text)
-    //         }
-    //         else {
-    //             return text;
-    //         }
-
-    //     }
-    // }
-
-    var _map: { [index: string]: Processor } = {
+    const _map: { [index: string]: Processor } = {
         "image": ImageProcessor,
         "json": JsonProcessor,
         "text": TextProcessor,
@@ -702,6 +680,7 @@ module RES.processor {
         "pvr": PVRProcessor,
         "mergeJson": MergeJSONProcessor,
         "resourceConfig": ResourceConfigProcessor,
+        "legacyResourceConfig": ResourceConfigProcessor,
         // "zip": ZipProcessor
     }
 }

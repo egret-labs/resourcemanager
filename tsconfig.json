@@ -16,7 +16,6 @@
         ]
     },
     "files": [
-        "src/core/unzip.ts",
         "src/core/FileSystem.ts",
         "src/core/ResourceConfig.ts",
         "src/core/ResourceLoader.ts",

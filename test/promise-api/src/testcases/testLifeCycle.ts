@@ -7,17 +7,15 @@ let testLifeCycle = () => {
 
         RES.destroyRes(url);
 
-        // console.lo
-
         let mcFactory: egret.MovieClipDataFactory = RES.getRes(url);
 
         console.log(mcFactory)
 
-        mc = new egret.MovieClip(mcFactory.generateMovieClipData("test"));
-        stage.addChild(mc);
-        mc.x = 50;
-        mc.y = 150;
-        mc.gotoAndPlay(1, -1);
+        // mc = new egret.MovieClip(mcFactory.generateMovieClipData("test"));
+        // stage.addChild(mc);
+        // mc.x = 50;
+        // mc.y = 150;
+        // mc.gotoAndPlay(1, -1);
 
     });
 }

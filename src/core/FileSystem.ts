@@ -91,7 +91,7 @@ module RES {
             return current;
         }
 
-        export function mkdir(dirpath: string) {
+        function mkdir(dirpath: string) {
             dirpath = normalize(dirpath);
             let list = dirpath.split("/");
             let current = data;
@@ -103,7 +103,7 @@ module RES {
             }
         }
 
-        export function exists(dirpath: string) {
+        function exists(dirpath: string) {
             if (dirpath == "") return true;
             dirpath = normalize(dirpath);
             let list = dirpath.split("/");
