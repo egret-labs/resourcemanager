@@ -1319,6 +1319,7 @@ var RES;
                 var mcFactory = host.get(resource);
                 mcFactory.clearCache();
                 mcFactory.$spriteSheet.dispose();
+                host.remove(resource);
                 // refactor
                 var jsonPath = resource.name;
                 var imagePath = jsonPath.substring(0, jsonPath.lastIndexOf(".")) + ".png";

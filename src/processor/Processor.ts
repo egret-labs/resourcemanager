@@ -336,7 +336,7 @@ module RES.processor {
             let mcFactory = host.get(resource) as egret.MovieClipDataFactory;
             mcFactory.clearCache();
             mcFactory.$spriteSheet.dispose();
-
+            host.remove(resource);
             // refactor
             let jsonPath = resource.name;
             let imagePath = jsonPath.substring(0, jsonPath.lastIndexOf(".")) + ".png";

@@ -97,7 +97,7 @@ class Main extends egret.DisplayObjectContainer {
 
 
 
-        RES.setConfigURL("resource-bundles/config.res.js")
+        RES.setConfigURL("resource/config.res.js")
         RES.loadConfig()
             // .then(test.spritesheet.testLoadDuplicate2)
             // .then(testLoadZip)
@@ -111,7 +111,8 @@ class Main extends egret.DisplayObjectContainer {
             // .then(testAutoSpriteSheet)
             // .then(testGroupWithURL)
             // .then(testSoundByUrl)
-            .then(testMovieClip)
+            // .then(testMovieClip)
+            .then(testLifeCycle)
         // .then(testPVR)
         // .then(testDestroy)
         // .then(testMerge)
