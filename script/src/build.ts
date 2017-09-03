@@ -24,11 +24,21 @@ const wing_res_json = "wing.res.json";
 
 export async function build(p: string, debug: boolean = false, matcher = "**/**.*") {
 
-    let parsedConfig = await ResourceConfig.init(p);
-    let userConfig = ResourceConfig.getUserConfig();
 
-    let executeFilter = async (url: string) => {
+    /**
+     * 当写入地址为源文件夹时，防止重复写入
+     */
+    function filterDuplicateWrite(file: ResVinylFile, cb) {
 
+        if (file.isExistedInResourceFolder) {
+            cb(null);
+        }
+        else {
+            cb(null, file);
+        }
+    }
+
+    async function executeFilter(url: string) {
         if (url == wing_res_json) {
             return null;
         }
@@ -42,10 +52,6 @@ export async function build(p: string, debug: boolean = false, matcher = "**/**.
         }
     }
 
-    projectRoot = p;
-    resourceFolder = path.join(projectRoot, ResourceConfig.resourceRoot);
-
-
     async function convertFileName(file: ResVinylFile, cb) {
 
         let crc32_file_path: string = crc32(file.contents);
@@ -56,8 +62,9 @@ export async function build(p: string, debug: boolean = false, matcher = "**/**.
         cb(null, file);
     };
 
-    function filter(file: ResVinylFile, cb) {
+    function initVinylFile(file: ResVinylFile, cb) {
         file.original_relative = file.relative.split("\\").join("/");
+        file.isExistedInResourceFolder = true;
         executeFilter(file.original_relative).then((r) => {
             if (r) {
                 cb(null, file);
@@ -68,7 +75,6 @@ export async function build(p: string, debug: boolean = false, matcher = "**/**.
         }).catch(e => console.log(e))
 
     }
-
 
     async function emitResourceConfigFile(debug: boolean) {
         let config = ResourceConfig.generateConfig(true);
@@ -121,11 +127,14 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
         });
     };
 
+    let parsedConfig = await ResourceConfig.init(p);
+    let userConfig = ResourceConfig.getUserConfig();
+    projectRoot = p;
+    resourceFolder = path.join(projectRoot, ResourceConfig.resourceRoot);
+
     let outputDir = path.join(projectRoot, userConfig.outputDir);
-
-
     let stream = vinylfs.src(matcher, { cwd: resourceFolder, base: resourceFolder })
-        .pipe(map(filter))
+        .pipe(map(initVinylFile))
         .pipe(profile.profile());
     for (let item of userConfig.plugin) {
         let plugin;
@@ -149,6 +158,10 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
         if (plugin) {
             stream = stream.pipe(plugin);
         }
+    }
+
+    if (ResourceConfig.resourceRoot == userConfig.outputDir) {
+        stream = stream.pipe(map(filterDuplicateWrite));
     }
     return stream.pipe(vinylfs.dest(outputDir))
 

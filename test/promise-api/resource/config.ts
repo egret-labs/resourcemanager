@@ -18,7 +18,7 @@ export type UserConfigs = {
 export var userConfigs: UserConfigs = {
 
     build: {
-        outputDir: "resource--xx",
+        outputDir: "resource",
 
         plugin: [
             "emitConfigFile"

@@ -25,6 +25,8 @@ export let handleException = (e: string | Error) => {
 export interface ResVinylFile extends VinylFile {
 
     original_relative: string;
+
+    isExistedInResourceFolder: boolean;
 }
 
 export interface ResourceManagerUserConfig {
