@@ -10,15 +10,9 @@ function getProjectPath(p: string | null) {
 
 let command = process.argv[2];
 let p = getProjectPath(process.argv[3]);
-let egretPropertiesFile = path.join(p, "egretProperties.json")
 
 
-if ((command == "env" || command == "version") || fs.existsSync(egretPropertiesFile)) {
-    executeCommand(command).catch(handleException);
-}
-else {
-    handleException(`${path.join(process.cwd(), p)} 不是一个有效的 Egret 项目`)
-}
+executeCommand(command).catch(handleException);
 
 async function executeCommand(command: string) {
 
