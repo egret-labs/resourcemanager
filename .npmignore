@@ -1,4 +1,7 @@
+.wing
 node_modules
+tsconfig*
+docs
 test
 libs
 src
