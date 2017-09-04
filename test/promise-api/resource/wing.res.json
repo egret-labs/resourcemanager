@@ -7,11 +7,6 @@
 			"name": "111.mergeJson"
 		},
 		{
-			"url": "config.json",
-			"type": "json",
-			"name": "config.json"
-		},
-		{
 			"url": "default.res.json",
 			"type": "json",
 			"name": "default.res.json"

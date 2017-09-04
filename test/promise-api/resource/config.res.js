@@ -43,11 +43,6 @@ exports.resources = {
 		"type": "mergeJson",
 		"name": "111.mergeJson"
 	},
-	"config.json": {
-		"url": "config.json",
-		"type": "json",
-		"name": "config.json"
-	},
 	"default.res.json": {
 		"url": "default.res.json",
 		"type": "json",

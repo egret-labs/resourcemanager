@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 import * as res from './';
 import * as fs from 'fs-extra-promise';

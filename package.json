@@ -2,18 +2,17 @@
   "name": "egret-resource-manager",
   "version": "5.0.0-21",
   "bin": {
-    "res": "script/out/cli.js"
+    "res": "script/cli.js"
   },
   "main": "script/out/index.js",
   "typings": "script/out/index.d.ts",
   "description": "",
   "scripts": {
-    "res": "node script/out/cli.js build",
     "tsc": "tsc && uglifyjs bin/resourcemanager/resourcemanager.js > bin/resourcemanager/resourcemanager.min.js",
     "tsc-pure": "tsc -p tsconfig-pure.json && uglifyjs bin/resourcemanager-pure/resourcemanager-pure.js > bin/resourcemanager-pure/resourcemanager-pure.min.js",
-    "debug": "tsc -p script && tsc && egret build test/es6-api -e && npm run res test/es6-api",
     "test": "tsc && egret clean test/promise-api && res test/promise-api && egret run test/promise-api -a",
-    "debug-classic": "tsc -p script && tsc && egret build test/classic-api -e && npm run res test/classic-api"
+    "script-publish": "webpack --config script/webpack.config.js && uglifyjs script/out/cli.js > script/out/cli.min.js",
+    "script-uglify": "uglifyjs script/out/cli.js > script/out/cli.min.js"
   },
   "author": "wander",
   "license": "ISC",
@@ -45,6 +44,9 @@
     "@types/vinyl": "^2.0.0",
     "@types/vinyl-fs": "^2.4.1",
     "@types/watch": "0.0.28",
-    "uglify-js": "^3.0.28"
+    "ts-loader": "^2.3.4",
+    "uglify-es": "^3.0.28",
+    "uglify-js": "^3.0.28",
+    "webpack": "^3.5.5"
   }
 }
