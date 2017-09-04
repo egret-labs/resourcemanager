@@ -7,7 +7,7 @@ import * as crc32 from 'crc32';
 import * as through from 'through2'
 import * as os from 'os';
 import * as fs from 'fs-extra-promise';
-import { Data, ResourceConfig, GeneratedData, original, handleException, ResVinylFile, ResourceManagerUserConfig } from '../';
+import { Data, ResourceConfig, GeneratedData, original, handleException, ResVinylFile, ResourceManagerUserConfig, getEnv } from '../';
 var iconv = require('iconv-lite');
 
 
@@ -39,7 +39,8 @@ let spriteSheetMergeCollection: { [mergeFile: string]: string[] } = {};
 export function sheet(resourceFolder: string) {
 
     async function generateSpriteSheet(spriteSheetFileName, dirname) {
-        let cmd = "\"" + getTextureMergerPath() + "\"";
+        let texture_merger_path = await getTextureMergerPath()
+        let cmd = "\"" + texture_merger_path + "\"";
         let folder = path.join(process.cwd(), dirname);
         let p = "\"" + folder + "\"";
         let o = "\"" + spriteSheetFileName + "\"";
@@ -47,8 +48,12 @@ export function sheet(resourceFolder: string) {
     }
 
 
-    function getTextureMergerPath() {
-        return `C:\\Program Files\\Egret\\TextureMerger\\TextureMerger.exe`;
+    async function getTextureMergerPath() {
+        let env = await getEnv()
+        if (!env.texture_merger_path) {
+            process.stderr.write(`需要设置 texture_merger_path 变量`);
+        }
+        return env.texture_merger_path;
     }
 
     let mergerSelector = ResourceConfig.mergeSelector;

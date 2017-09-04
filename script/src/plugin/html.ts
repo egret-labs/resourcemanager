@@ -24,7 +24,7 @@ export function emitConfigJsonFile(projectRoot: string) {
         async function tagFile(filename: string) {
             let content = await fs.readFileAsync(path.join(outputDir, filename), "utf-8");
             let contentCrc32 = crc32(content);
-            let newFileName = rename(filename, contentCrc32, "");
+            let newFileName = rename(filename, contentCrc32, "js");
             await fs.copyAsync(path.join(outputDir, filename), path.join(outputDir, newFileName));
 
             return newFileName.split("\\").join("/");

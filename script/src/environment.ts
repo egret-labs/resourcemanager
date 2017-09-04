@@ -38,12 +38,16 @@ export async function getEnv() {
     const url = await getAppDataRootPath();
     const exists = await fs.existsAsync(url);
     if (!exists) {
-        console.log(2)
         await fs.mkdirpAsync(path.dirname(url));
-        console.log(3)
         await fs.writeJSONAsync(url, {});
 
     }
-    let config: Environment = await fs.readJsonAsync(url);
+    let config: Environment = {};
+    try {
+        config = await fs.readJsonAsync(url);
+    }
+    catch (e) {
+        process.stderr.write(`${url}格式解析失败`);
+    }
     return config;
 }
