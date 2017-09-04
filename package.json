@@ -1,6 +1,6 @@
 {
   "name": "egret-resource-manager",
-  "version": "5.0.0-21",
+  "version": "5.0.1-1",
   "bin": {
     "res": "script/cli.js"
   },
@@ -20,7 +20,7 @@
     "node": "^4.0.0",
     "npm": "^3.0.0"
   },
-  "dependencies": {
+  "devDependencies": {
     "crc32": "^0.2.2",
     "egret-node-utils": "0.0.7",
     "egret-typescript-ast": "0.0.11",
@@ -33,9 +33,7 @@
     "vinyl": "^2.0.1",
     "vinyl-fs": "^2.4.4",
     "watch": "^1.0.2",
-    "yazl": "^2.4.2"
-  },
-  "devDependencies": {
+    "yazl": "^2.4.2",
     "@types/bluebird": "3.5.0",
     "@types/fs-extra": "2.0.0",
     "@types/fs-extra-promise": "0.0.31",
