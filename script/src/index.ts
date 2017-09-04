@@ -11,7 +11,7 @@ export * from './config';
 export * from './upgrade';
 export * from './build';
 export * from './version';
-
+export * from './environment';
 
 export let handleException = (e: string | Error) => {
     if (typeof e == 'string') {
