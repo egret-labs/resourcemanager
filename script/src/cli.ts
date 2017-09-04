@@ -47,7 +47,7 @@ async function executeCommand(command: string) {
                 return null;
             }
             else {
-                return res.setConfig(key, value);
+                return res.setEnv(key, value);
             }
 
             break;

@@ -13,7 +13,7 @@ function getAppDataRootPath() {
             break;
     }
     if (appdata) {
-        appdata = path.join(appdata, 'Egret/resourcemanager');
+        appdata = path.join(appdata, 'Egret/resourcemanager/env.json');
     }
     else {
         throw 'missing appdata'
@@ -22,11 +22,11 @@ function getAppDataRootPath() {
     return appdata;
 }
 
-export async function setConfig(key: keyof Environment, value: string) {
-    let config = getConfig();
+export async function setEnv(key: keyof Environment, value: string) {
+    let config = await getEnv();
     config[key] = value;
-    let url = getAppDataRootPath();
-    await fs.writeFileAsync(url, config);
+    let url = await getAppDataRootPath();
+    await fs.writeJSONAsync(url, config);
 }
 
 type Environment = {
@@ -34,10 +34,15 @@ type Environment = {
     texture_merger_path?: string
 }
 
-export async function getConfig() {
-    let url = getAppDataRootPath();
-    if (await !fs.existsAsync(url)) {
+export async function getEnv() {
+    const url = await getAppDataRootPath();
+    const exists = await fs.existsAsync(url);
+    if (!exists) {
+        console.log(2)
+        await fs.mkdirpAsync(path.dirname(url));
+        console.log(3)
         await fs.writeJSONAsync(url, {});
+
     }
     let config: Environment = await fs.readJsonAsync(url);
     return config;
