@@ -26,7 +26,7 @@ module RES {
     }
 
     export function profile() {
-        console.log(FileSystem.data);
+        fileSystem.profile();
         console.log(__tempCache);
         //todo 
         let totalImageSize = 0;

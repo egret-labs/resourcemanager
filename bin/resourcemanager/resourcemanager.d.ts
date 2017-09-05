@@ -10,11 +10,13 @@ declare module RES {
     interface Dictionary {
         [file: string]: File | Dictionary;
     }
-    namespace FileSystem {
-        var data: Dictionary;
-        function addFile(filename: string, type?: string): void;
-        function getFile(filename: string): File;
+    interface FileSystem {
+        addFile(filename: string, type?: string): any;
+        getFile(filename: string): File;
+        profile(): void;
+        data: Dictionary;
     }
+    var fileSystem: FileSystem;
 }
 declare type ResourceRootSelector<T extends string> = () => T;
 declare type ResourceTypeSelector = (file: string) => string;

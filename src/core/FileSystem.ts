@@ -23,50 +23,66 @@ module RES {
 
     }
 
-    export namespace FileSystem {
+    export interface FileSystem {
+
+        addFile(filename: string, type?: string);
+
+        getFile(filename: string): File;
+
+        profile(): void;
+
+        data: Dictionary;
+
+    }
+
+    class NewFileSystem {
+
+        profile() {
+            console.log(this.data);
+        }
 
 
-        export var data: Dictionary = {};
+        data: Dictionary = {};
 
-        export function addFile(filename: string, type?: string) {
+        addFile(filename: string, type?: string) {
             if (!type) type = "";
-            filename = normalize(filename);
-            let basefilename = basename(filename);
-            let folder = dirname(filename);
-            if (!exists(folder)) {
-                mkdir(folder);
+            filename = this.normalize(filename);
+            let basefilename = this.basename(filename);
+            let folder = this.dirname(filename);
+            if (!this.exists(folder)) {
+                this.mkdir(folder);
             }
-            let d = reslove(folder);
+            let d = this.reslove(folder);
             d[basefilename] = { url: filename, type };
         }
 
-        export function getFile(filename: string): File {
-            let result = reslove(filename) as File;
+        getFile(filename: string): File {
+            let result = this.reslove(filename) as File;
             if (result) {
                 result.name = filename;
             }
             return result;
         }
 
-        function basename(filename: string) {
+        basename(filename: string) {
             return filename.substr(filename.lastIndexOf("/") + 1);
         }
 
-        function normalize(filename: string) {
+        normalize(filename: string) {
             return filename.split("/").filter(d => !!d).join("/");
         }
 
-        function dirname(path: string) {
+        dirname(path: string) {
             return path.substr(0, path.lastIndexOf("/"));
         }
 
-        function reslove(dirpath: string) {
+        reslove(dirpath: string) {
             if (dirpath == "") {
-                return data;
+                return this.data;
             }
-            dirpath = normalize(dirpath);
+            dirpath = this.normalize(dirpath);
             let list = dirpath.split("/");
-            let current: File | Dictionary = data;
+            let current: File | Dictionary = this.data;
             for (let f of list) {
                 if (current) {
                     current = current[f];
@@ -78,10 +94,10 @@ module RES {
             return current;
         }
 
-        function mkdir(dirpath: string) {
-            dirpath = normalize(dirpath);
+        mkdir(dirpath: string) {
+            dirpath = this.normalize(dirpath);
             let list = dirpath.split("/");
-            let current = data;
+            let current = this.data;
             for (let f of list) {
                 if (!current[f]) {
                     current[f] = {};
@@ -90,11 +106,11 @@ module RES {
             }
         }
 
-        function exists(dirpath: string) {
+        exists(dirpath: string) {
             if (dirpath == "") return true;
-            dirpath = normalize(dirpath);
+            dirpath = this.normalize(dirpath);
             let list = dirpath.split("/");
-            let current = data;
+            let current = this.data;
             for (let f of list) {
                 if (!current[f]) {
                     return false;
@@ -104,6 +120,9 @@ module RES {
             return true;
         }
     }
+
+    export var fileSystem: FileSystem = new NewFileSystem();
+
 }
 
 

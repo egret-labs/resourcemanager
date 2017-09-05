@@ -48,10 +48,10 @@ module RES {
 
 
     export function getResourceInfo(path: string): File {
-        let result = FileSystem.getFile(path);
+        let result = fileSystem.getFile(path);
         if (!result) {
             path = RES.resourceNameSelector(path);
-            result = FileSystem.getFile(path);
+            result = fileSystem.getFile(path);
         }
         return result;
     }
@@ -364,7 +364,7 @@ module RES {
             this.config = data;
             resourceTypeSelector = data.typeSelector;
             resourceMergerSelector = data.mergeSelector;
-            FileSystem.data = data.resources;
+            fileSystem.data = data.resources;
 
             // if (!data)
             //     return;
@@ -431,7 +431,7 @@ module RES {
             if (!data.type) {
                 data.type = this.__temp__get__type__via__url(data.url);
             }
-            FileSystem.addFile(data.url, data.type);
+            fileSystem.addFile(data.url, data.type);
             if (data.name) {
                 this.config.alias[data.name] = data.url;
             }
@@ -442,7 +442,7 @@ module RES {
         public destory() {
             systemPid++;
             this.config = { groups: {}, alias: {}, resources: {}, typeSelector: (p) => p, resourceRoot: "resources", mergeSelector: null };
-            FileSystem.data = {};
+            fileSystem.data = {};
         }
     }
 }

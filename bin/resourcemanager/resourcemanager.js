@@ -46,46 +46,48 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var RES;
 (function (RES) {
-    var FileSystem;
-    (function (FileSystem) {
-        FileSystem.data = {};
-        function addFile(filename, type) {
+    var NewFileSystem = (function () {
+        function NewFileSystem() {
+            this.data = {};
+        }
+        NewFileSystem.prototype.profile = function () {
+            console.log(this.data);
+        };
+        NewFileSystem.prototype.addFile = function (filename, type) {
             if (!type)
                 type = "";
-            filename = normalize(filename);
-            var basefilename = basename(filename);
-            var folder = dirname(filename);
-            if (!exists(folder)) {
-                mkdir(folder);
+            filename = this.normalize(filename);
+            var basefilename = this.basename(filename);
+            var folder = this.dirname(filename);
+            if (!this.exists(folder)) {
+                this.mkdir(folder);
             }
-            var d = reslove(folder);
+            var d = this.reslove(folder);
             d[basefilename] = { url: filename, type: type };
-        }
-        FileSystem.addFile = addFile;
-        function getFile(filename) {
-            var result = reslove(filename);
+        };
+        NewFileSystem.prototype.getFile = function (filename) {
+            var result = this.reslove(filename);
             if (result) {
                 result.name = filename;
             }
             return result;
-        }
-        FileSystem.getFile = getFile;
-        function basename(filename) {
+        };
+        NewFileSystem.prototype.basename = function (filename) {
             return filename.substr(filename.lastIndexOf("/") + 1);
-        }
-        function normalize(filename) {
+        };
+        NewFileSystem.prototype.normalize = function (filename) {
             return filename.split("/").filter(function (d) { return !!d; }).join("/");
-        }
-        function dirname(path) {
+        };
+        NewFileSystem.prototype.dirname = function (path) {
             return path.substr(0, path.lastIndexOf("/"));
-        }
-        function reslove(dirpath) {
+        };
+        NewFileSystem.prototype.reslove = function (dirpath) {
             if (dirpath == "") {
-                return FileSystem.data;
+                return this.data;
             }
-            dirpath = normalize(dirpath);
+            dirpath = this.normalize(dirpath);
             var list = dirpath.split("/");
-            var current = FileSystem.data;
+            var current = this.data;
             for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
                 var f = list_1[_i];
                 if (current) {
@@ -96,11 +98,11 @@ var RES;
                 }
             }
             return current;
-        }
-        function mkdir(dirpath) {
-            dirpath = normalize(dirpath);
+        };
+        NewFileSystem.prototype.mkdir = function (dirpath) {
+            dirpath = this.normalize(dirpath);
             var list = dirpath.split("/");
-            var current = FileSystem.data;
+            var current = this.data;
             for (var _i = 0, list_2 = list; _i < list_2.length; _i++) {
                 var f = list_2[_i];
                 if (!current[f]) {
@@ -108,13 +110,13 @@ var RES;
                 }
                 current = current[f];
             }
-        }
-        function exists(dirpath) {
+        };
+        NewFileSystem.prototype.exists = function (dirpath) {
             if (dirpath == "")
                 return true;
-            dirpath = normalize(dirpath);
+            dirpath = this.normalize(dirpath);
             var list = dirpath.split("/");
-            var current = FileSystem.data;
+            var current = this.data;
             for (var _i = 0, list_3 = list; _i < list_3.length; _i++) {
                 var f = list_3[_i];
                 if (!current[f]) {
@@ -123,17 +125,19 @@ var RES;
                 current = current[f];
             }
             return true;
-        }
-    })(FileSystem = RES.FileSystem || (RES.FileSystem = {}));
+        };
+        return NewFileSystem;
+    }());
+    RES.fileSystem = new NewFileSystem();
 })(RES || (RES = {}));
 var RES;
 (function (RES) {
     RES.resourceNameSelector = function (p) { return p; };
     function getResourceInfo(path) {
-        var result = RES.FileSystem.getFile(path);
+        var result = RES.fileSystem.getFile(path);
         if (!result) {
             path = RES.resourceNameSelector(path);
-            result = RES.FileSystem.getFile(path);
+            result = RES.fileSystem.getFile(path);
         }
         return result;
     }
@@ -332,7 +336,7 @@ var RES;
             this.config = data;
             RES.resourceTypeSelector = data.typeSelector;
             RES.resourceMergerSelector = data.mergeSelector;
-            RES.FileSystem.data = data.resources;
+            RES.fileSystem.data = data.resources;
             // if (!data)
             //     return;
             // var resources: Array<any> = data["resources"];
@@ -393,7 +397,7 @@ var RES;
             if (!data.type) {
                 data.type = this.__temp__get__type__via__url(data.url);
             }
-            RES.FileSystem.addFile(data.url, data.type);
+            RES.fileSystem.addFile(data.url, data.type);
             if (data.name) {
                 this.config.alias[data.name] = data.url;
             }
@@ -401,7 +405,7 @@ var RES;
         ResourceConfig.prototype.destory = function () {
             RES.systemPid++;
             this.config = { groups: {}, alias: {}, resources: {}, typeSelector: function (p) { return p; }, resourceRoot: "resources", mergeSelector: null };
-            RES.FileSystem.data = {};
+            RES.fileSystem.data = {};
         };
         return ResourceConfig;
     }());
@@ -533,7 +537,7 @@ var RES;
         };
     };
     function profile() {
-        console.log(RES.FileSystem.data);
+        RES.fileSystem.profile();
         console.log(__tempCache);
         //todo 
         var totalImageSize = 0;
