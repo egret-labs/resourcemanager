@@ -1,6 +1,6 @@
 {
   "name": "egret-resource-manager",
-  "version": "5.0.1-3",
+  "version": "5.0.1-4",
   "bin": {
     "res": "script/cli.js"
   },
@@ -12,7 +12,7 @@
     "tsc-pure": "tsc -p tsconfig-pure.json && uglifyjs bin/resourcemanager-pure/resourcemanager-pure.js > bin/resourcemanager-pure/resourcemanager-pure.min.js",
     "test": "tsc && egret clean test/promise-api && res test/promise-api && egret run test/promise-api -a",
     "script-publish": "webpack --config script/webpack.config.js && uglifyjs script/out/cli.js > script/out/cli.min.js",
-    "script-uglify": "uglifyjs script/out/cli.js > script/out/cli.min.js"
+    "script-watch": "webpack --config script/webpack.config.js --watch"
   },
   "author": "wander",
   "license": "ISC",
