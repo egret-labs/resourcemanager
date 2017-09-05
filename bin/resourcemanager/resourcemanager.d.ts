@@ -10,7 +10,6 @@ declare module RES {
     interface Dictionary {
         [file: string]: File | Dictionary;
     }
-    function getResourceInfo(path: string): File;
     namespace FileSystem {
         var data: Dictionary;
         function addFile(filename: string, type?: string): void;
@@ -28,6 +27,7 @@ declare module RES {
     var resourceTypeSelector: ResourceTypeSelector;
     var resourceNameSelector: ResourceNameSelector;
     var resourceMergerSelector: ResourceMergerSelector | null;
+    function getResourceInfo(path: string): File;
     function setConfigURL(url: string): void;
     var resourceRoot: string;
     interface ResourceInfo {

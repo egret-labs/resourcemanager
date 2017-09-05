@@ -46,20 +46,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var RES;
 (function (RES) {
-    var ResourceNodeType;
-    (function (ResourceNodeType) {
-        ResourceNodeType[ResourceNodeType["FILE"] = 0] = "FILE";
-        ResourceNodeType[ResourceNodeType["DICTIONARY"] = 1] = "DICTIONARY";
-    })(ResourceNodeType || (ResourceNodeType = {}));
-    function getResourceInfo(path) {
-        var result = FileSystem.getFile(path);
-        if (!result) {
-            path = RES.resourceNameSelector(path);
-            result = FileSystem.getFile(path);
-        }
-        return result;
-    }
-    RES.getResourceInfo = getResourceInfo;
     var FileSystem;
     (function (FileSystem) {
         FileSystem.data = {};
@@ -143,6 +129,15 @@ var RES;
 var RES;
 (function (RES) {
     RES.resourceNameSelector = function (p) { return p; };
+    function getResourceInfo(path) {
+        var result = RES.FileSystem.getFile(path);
+        if (!result) {
+            path = RES.resourceNameSelector(path);
+            result = RES.FileSystem.getFile(path);
+        }
+        return result;
+    }
+    RES.getResourceInfo = getResourceInfo;
     var configItem;
     function setConfigURL(url) {
         configItem = { type: 'commonjs', resourceRoot: RES.resourceRoot, url: url, name: url };
@@ -245,7 +240,7 @@ var RES;
             if (!path) {
                 path = path_or_alias;
             }
-            var file = RES.getResourceInfo(path);
+            var file = getResourceInfo(path);
             var r = file;
             if (!r) {
                 if (shouldNotBeNull) {

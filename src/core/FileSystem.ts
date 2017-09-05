@@ -23,19 +23,6 @@ module RES {
 
     }
 
-    enum ResourceNodeType {
-        FILE, DICTIONARY
-    }
-
-    export function getResourceInfo(path: string): File {
-        let result = FileSystem.getFile(path);
-        if (!result) {
-            path = RES.resourceNameSelector(path);
-            result = FileSystem.getFile(path);
-        }
-        return result;
-    }
-
     export namespace FileSystem {
 
 

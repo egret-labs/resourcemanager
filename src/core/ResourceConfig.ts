@@ -47,6 +47,15 @@ module RES {
     export var resourceMergerSelector: ResourceMergerSelector | null;
 
 
+    export function getResourceInfo(path: string): File {
+        let result = FileSystem.getFile(path);
+        if (!result) {
+            path = RES.resourceNameSelector(path);
+            result = FileSystem.getFile(path);
+        }
+        return result;
+    }
+
     var configItem: any;
 
     export function setConfigURL(url: string) {
