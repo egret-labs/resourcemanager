@@ -100,7 +100,8 @@ export function sheet(resourceFolder: string) {
             let files = spriteSheetMergeCollection[spriteSheetFile];
             let dirname = path.dirname(files[0]);
             if (!files.every(f => dirname == path.dirname(f))) {
-                console.log('SpriteSheet的内容必须在同一文件夹中')
+                const errorMessage = `SpriteSheet的内容必须在同一文件夹中:\n${files.join('\n')}`;
+                process.stderr.write(errorMessage);
                 continue;
             }
             else {
