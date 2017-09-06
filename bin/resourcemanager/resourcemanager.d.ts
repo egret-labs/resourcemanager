@@ -12,7 +12,7 @@ declare module RES {
     }
     interface FileSystem {
         addFile(filename: string, type?: string): any;
-        getFile(filename: string): File;
+        getFile(filename: string): File | null;
         profile(): void;
         data: Dictionary;
     }
@@ -29,7 +29,7 @@ declare module RES {
     var resourceTypeSelector: ResourceTypeSelector;
     var resourceNameSelector: ResourceNameSelector;
     var resourceMergerSelector: ResourceMergerSelector | null;
-    function getResourceInfo(path: string): File;
+    function getResourceInfo(path: string): File | null;
     function setConfigURL(url: string): void;
     var resourceRoot: string;
     interface ResourceInfo {
@@ -49,7 +49,7 @@ declare module RES {
         resourceRoot: string;
         typeSelector: ResourceTypeSelector;
         mergeSelector: ResourceMergerSelector | null;
-        resources: Dictionary;
+        fileSystem: FileSystem;
         groups: {
             [groupName: string]: string[];
         };
@@ -66,7 +66,7 @@ declare module RES {
         config: Data;
         resourceRoot: string;
         constructor();
-        init(): Promise<any>;
+        init(): Promise<void>;
         __temp__get__type__via__url(url_or_alias: string): string;
         getKeyByAlias(aliasName: string): string;
         /**

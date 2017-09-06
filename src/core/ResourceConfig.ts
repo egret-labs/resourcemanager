@@ -47,7 +47,7 @@ module RES {
     export var resourceMergerSelector: ResourceMergerSelector | null;
 
 
-    export function getResourceInfo(path: string): File {
+    export function getResourceInfo(path: string): File | null {
         let result = fileSystem.getFile(path);
         if (!result) {
             path = RES.resourceNameSelector(path);
@@ -106,7 +106,7 @@ module RES {
 
         mergeSelector: ResourceMergerSelector | null;
 
-        resources: Dictionary;
+        fileSystem: FileSystem
 
         groups: {
             [groupName: string]: string[]
@@ -268,16 +268,13 @@ module RES {
             if (!path) {
                 path = path_or_alias;
             }
-            let file = getResourceInfo(path)
-            let r: ResourceInfo = file;
+            let r = getResourceInfo(path)
             if (!r) {
                 if (shouldNotBeNull) {
                     throw new ResourceManagerError(2006, path_or_alias)
                 }
                 return null;
-
             }
-            r
             return r;
         }
 
@@ -369,9 +366,7 @@ module RES {
         public parseConfig(data: Data): void {
             resourceRoot = data.resourceRoot + "/";
             this.config = data;
-            resourceTypeSelector = data.typeSelector;
-            resourceMergerSelector = data.mergeSelector;
-            fileSystem.data = data.resources;
+            fileSystem = data.fileSystem;
 
             // if (!data)
             //     return;
@@ -448,7 +443,20 @@ module RES {
 
         public destory() {
             systemPid++;
-            this.config = { groups: {}, alias: {}, resources: {}, typeSelector: (p) => p, resourceRoot: "resources", mergeSelector: null };
+            let emptyFileSystem: FileSystem = {
+
+                data: {},
+                getFile: () => {
+                    return null;
+                },
+                addFile: () => {
+
+                },
+                profile: () => {
+
+                }
+            }
+            this.config = { groups: {}, alias: {}, fileSystem: emptyFileSystem, typeSelector: (p) => p, resourceRoot: "resources", mergeSelector: null };
             fileSystem.data = {};
         }
     }

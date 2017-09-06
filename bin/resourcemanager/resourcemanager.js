@@ -1,8 +1,13 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -12,8 +17,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t;
-    return { next: verb(0), "throw": verb(1), "return": verb(2) };
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -251,15 +256,13 @@ var RES;
             if (!path) {
                 path = path_or_alias;
             }
-            var file = getResourceInfo(path);
-            var r = file;
+            var r = getResourceInfo(path);
             if (!r) {
                 if (shouldNotBeNull) {
                     throw new RES.ResourceManagerError(2006, path_or_alias);
                 }
                 return null;
             }
-            r;
             return r;
         };
         /**
@@ -341,9 +344,7 @@ var RES;
         ResourceConfig.prototype.parseConfig = function (data) {
             RES.resourceRoot = data.resourceRoot + "/";
             this.config = data;
-            RES.resourceTypeSelector = data.typeSelector;
-            RES.resourceMergerSelector = data.mergeSelector;
-            RES.fileSystem.data = data.resources;
+            RES.fileSystem = data.fileSystem;
             // if (!data)
             //     return;
             // var resources: Array<any> = data["resources"];
@@ -411,7 +412,17 @@ var RES;
         };
         ResourceConfig.prototype.destory = function () {
             RES.systemPid++;
-            this.config = { groups: {}, alias: {}, resources: {}, typeSelector: function (p) { return p; }, resourceRoot: "resources", mergeSelector: null };
+            var emptyFileSystem = {
+                data: {},
+                getFile: function () {
+                    return null;
+                },
+                addFile: function () {
+                },
+                profile: function () {
+                }
+            };
+            this.config = { groups: {}, alias: {}, fileSystem: emptyFileSystem, typeSelector: function (p) { return p; }, resourceRoot: "resources", mergeSelector: null };
             RES.fileSystem.data = {};
         };
         return ResourceConfig;
@@ -592,19 +603,19 @@ var RES;
             _this.message = ResourceManagerError.errorMessage[code].replace("{0}", replacer).replace("{1}", replacer2);
             return _this;
         }
+        ResourceManagerError.errorMessage = {
+            1001: '文件加载失败:{0}',
+            1002: "ResourceManager 初始化失败：配置文件加载失败",
+            1005: 'ResourceManager 已被销毁，文件加载失败:{0}',
+            2001: "{0}解析失败,不支持指定解析类型:\'{1}\'，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
+            2002: "Analyzer 相关API 在 ResourceManager 中不再支持，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
+            2003: "{0}解析失败,错误原因:{1}",
+            2004: "无法找到文件类型:{0}",
+            2005: "资源配置文件中无法找到特定的资源组:{0}",
+            2006: "资源配置文件中无法找到特定的资源:{0}"
+        };
         return ResourceManagerError;
     }(Error));
-    ResourceManagerError.errorMessage = {
-        1001: '文件加载失败:{0}',
-        1002: "ResourceManager 初始化失败：配置文件加载失败",
-        1005: 'ResourceManager 已被销毁，文件加载失败:{0}',
-        2001: "{0}解析失败,不支持指定解析类型:\'{1}\'，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
-        2002: "Analyzer 相关API 在 ResourceManager 中不再支持，请编写自定义 Processor ，更多内容请参见 https://github.com/egret-labs/resourcemanager/blob/master/docs/README.md#processor",
-        2003: "{0}解析失败,错误原因:{1}",
-        2004: "无法找到文件类型:{0}",
-        2005: "资源配置文件中无法找到特定的资源组:{0}",
-        2006: "资源配置文件中无法找到特定的资源:{0}"
-    };
     RES.ResourceManagerError = ResourceManagerError;
 })(RES || (RES = {}));
 var RES;
@@ -830,6 +841,14 @@ var RES;
                                 for (subkey in frames) {
                                     config = frames[subkey];
                                     texture = spriteSheet.createTexture(subkey, config.x, config.y, config.w, config.h, config.offX, config.offY, config.sourceW, config.sourceH);
+                                    // if (config["scale9grid"]) {
+                                    //     var str: string = config["scale9grid"];
+                                    //     var list: Array<string> = str.split(",");
+                                    //     texture["scale9Grid"] = new egret.Rectangle(parseInt(list[0]), parseInt(list[1]), parseInt(list[2]), parseInt(list[3]));
+                                    // }
+                                    //     if (name) {
+                                    //         this.addSubkey(subkey, name);
+                                    //     }
                                 }
                                 return [2 /*return*/, spriteSheet];
                         }
@@ -1089,19 +1108,19 @@ var RES;
                 var bpp, format;
                 var pixelFormat = header[2];
                 switch (pixelFormat) {
-                    case 0:
+                    case 0:// PVRTC 2bpp RGB
                         bpp = 2;
                         format = PVRParser.COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
                         break;
-                    case 1:
+                    case 1:// PVRTC 2bpp RGBA
                         bpp = 2;
                         format = PVRParser.COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
                         break;
-                    case 2:
+                    case 2:// PVRTC 4bpp RGB
                         bpp = 4;
                         format = PVRParser.COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
                         break;
-                    case 3:
+                    case 3:// PVRTC 4bpp RGBA
                         bpp = 4;
                         format = PVRParser.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
                         break;
@@ -1120,12 +1139,12 @@ var RES;
                 pvrDatas.isCubemap = (pvrDatas.surfacesCount === 6);
                 callback(pvrDatas);
             };
+            PVRParser.COMPRESSED_RGB_PVRTC_4BPPV1_IMG = 0x8C00;
+            PVRParser.COMPRESSED_RGB_PVRTC_2BPPV1_IMG = 0x8C01;
+            PVRParser.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG = 0x8C02;
+            PVRParser.COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03;
             return PVRParser;
         }());
-        PVRParser.COMPRESSED_RGB_PVRTC_4BPPV1_IMG = 0x8C00;
-        PVRParser.COMPRESSED_RGB_PVRTC_2BPPV1_IMG = 0x8C01;
-        PVRParser.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG = 0x8C02;
-        PVRParser.COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03;
         if (typeof egret != 'undefined' && egret && egret["web"] && egret["web"].WebGLRenderContext) {
             // Calcualates the size of a compressed texture level in bytes
             function textureLevelSize(format, width, height) {
@@ -1379,86 +1398,86 @@ var RES;
             egret.Event.release(event);
             return result;
         };
+        /**
+         * Failure event for a load item.
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 一个加载项加载失败事件。
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        ResourceEvent.ITEM_LOAD_ERROR = "itemLoadError";
+        /**
+         * Configure file to load and parse the completion event. Note: if a configuration file is loaded, it will not be thrown out, and if you want to handle the configuration loading failure, monitor the CONFIG_LOAD_ERROR event.
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 配置文件加载并解析完成事件。注意：若有配置文件加载失败，将不会抛出此事件，若要处理配置加载失败，请同时监听 CONFIG_LOAD_ERROR 事件。
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        ResourceEvent.CONFIG_COMPLETE = "configComplete";
+        /**
+         * Configuration file failed to load.
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 配置文件加载失败事件。
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        ResourceEvent.CONFIG_LOAD_ERROR = "configLoadError";
+        /**
+         * Delay load group resource loading progress event.
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 延迟加载组资源加载进度事件。
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        ResourceEvent.GROUP_PROGRESS = "groupProgress";
+        /**
+         * Delay load group resource to complete event. Note: if you have a resource item loading failure, the event will not be thrown, if you want to handle the group load failure, please listen to the GROUP_LOAD_ERROR event.
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 延迟加载组资源加载完成事件。注意：若组内有资源项加载失败，将不会抛出此事件，若要处理组加载失败，请同时监听 GROUP_LOAD_ERROR 事件。
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        ResourceEvent.GROUP_COMPLETE = "groupComplete";
+        /**
+         * Delayed load group resource failed event.
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 延迟加载组资源加载失败事件。
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        ResourceEvent.GROUP_LOAD_ERROR = "groupLoadError";
         return ResourceEvent;
     }(egret.Event));
-    /**
-     * Failure event for a load item.
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @language en_US
-     */
-    /**
-     * 一个加载项加载失败事件。
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @language zh_CN
-     */
-    ResourceEvent.ITEM_LOAD_ERROR = "itemLoadError";
-    /**
-     * Configure file to load and parse the completion event. Note: if a configuration file is loaded, it will not be thrown out, and if you want to handle the configuration loading failure, monitor the CONFIG_LOAD_ERROR event.
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @language en_US
-     */
-    /**
-     * 配置文件加载并解析完成事件。注意：若有配置文件加载失败，将不会抛出此事件，若要处理配置加载失败，请同时监听 CONFIG_LOAD_ERROR 事件。
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @language zh_CN
-     */
-    ResourceEvent.CONFIG_COMPLETE = "configComplete";
-    /**
-     * Configuration file failed to load.
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @language en_US
-     */
-    /**
-     * 配置文件加载失败事件。
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @language zh_CN
-     */
-    ResourceEvent.CONFIG_LOAD_ERROR = "configLoadError";
-    /**
-     * Delay load group resource loading progress event.
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @language en_US
-     */
-    /**
-     * 延迟加载组资源加载进度事件。
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @language zh_CN
-     */
-    ResourceEvent.GROUP_PROGRESS = "groupProgress";
-    /**
-     * Delay load group resource to complete event. Note: if you have a resource item loading failure, the event will not be thrown, if you want to handle the group load failure, please listen to the GROUP_LOAD_ERROR event.
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @language en_US
-     */
-    /**
-     * 延迟加载组资源加载完成事件。注意：若组内有资源项加载失败，将不会抛出此事件，若要处理组加载失败，请同时监听 GROUP_LOAD_ERROR 事件。
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @language zh_CN
-     */
-    ResourceEvent.GROUP_COMPLETE = "groupComplete";
-    /**
-     * Delayed load group resource failed event.
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @language en_US
-     */
-    /**
-     * 延迟加载组资源加载失败事件。
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @language zh_CN
-     */
-    ResourceEvent.GROUP_LOAD_ERROR = "groupLoadError";
     RES.ResourceEvent = ResourceEvent;
 })(RES || (RES = {}));
 //////////////////////////////////////////////////////////////////////////////////////
@@ -2357,28 +2376,28 @@ var RES;
         Resource.prototype.addResourceData = function (data) {
             RES.config.addResourceData(data);
         };
+        __decorate([
+            RES.checkCancelation
+        ], Resource.prototype, "loadConfig", null);
+        __decorate([
+            RES.checkCancelation
+        ], Resource.prototype, "_loadGroup", null);
+        __decorate([
+            RES.checkNull
+        ], Resource.prototype, "hasRes", null);
+        __decorate([
+            RES.checkNull
+        ], Resource.prototype, "getRes", null);
+        __decorate([
+            RES.checkNull,
+            RES.checkCancelation
+        ], Resource.prototype, "getResAsync", null);
+        __decorate([
+            RES.checkNull,
+            RES.checkCancelation
+        ], Resource.prototype, "getResByUrl", null);
         return Resource;
     }(egret.EventDispatcher));
-    __decorate([
-        RES.checkCancelation
-    ], Resource.prototype, "loadConfig", null);
-    __decorate([
-        RES.checkCancelation
-    ], Resource.prototype, "_loadGroup", null);
-    __decorate([
-        RES.checkNull
-    ], Resource.prototype, "hasRes", null);
-    __decorate([
-        RES.checkNull
-    ], Resource.prototype, "getRes", null);
-    __decorate([
-        RES.checkNull,
-        RES.checkCancelation
-    ], Resource.prototype, "getResAsync", null);
-    __decorate([
-        RES.checkNull,
-        RES.checkCancelation
-    ], Resource.prototype, "getResByUrl", null);
     RES.Resource = Resource;
     /**
      * Resource单例

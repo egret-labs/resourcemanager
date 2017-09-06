@@ -1,6 +1,6 @@
 module RES {
 
-    export let checkNull: MethodDecorator = (target, propertyKey, descriptor) => {
+    export let checkNull: MethodDecorator = <Function>(target, propertyKey, descriptor) => {
         const method = descriptor.value;
         descriptor.value = function (...arg) {
             if (!arg[0]) {

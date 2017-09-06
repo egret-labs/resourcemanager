@@ -27,7 +27,7 @@ module RES {
 
         addFile(filename: string, type?: string);
 
-        getFile(filename: string): File;
+        getFile(filename: string): File | null;
 
         profile(): void;
 
@@ -56,8 +56,8 @@ module RES {
             d[basefilename] = { url: filename, type };
         }
 
-        getFile(filename: string): File {
-            let result = this.reslove(filename) as File;
+        getFile(filename: string): File | null {
+            let result = this.reslove(filename) as (File | null)
             if (result) {
                 result.name = filename;
             }
