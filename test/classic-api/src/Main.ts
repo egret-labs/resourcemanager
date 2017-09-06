@@ -14,11 +14,12 @@ class Main extends egret.DisplayObjectContainer {
 
         //初始化Resource资源加载库
         //initiate Resource loading library
+
+        // 新 API 不会处理这两个参数，改为通过 RES.mapConfig 的前两个参数进行处理
+        RES.setConfigURL("resource/default.res.json");
+        RES.loadConfig("default.res.json", "resource");
         RES.addEventListener(RES.ResourceEvent.CONFIG_COMPLETE, this.onConfigComplete, this);
         RES.addEventListener(RES.ResourceEvent.CONFIG_LOAD_ERROR, this.onConfigError, this);
-        // 新 API 不会处理这两个参数，改为通过 RES.mapConfig 的前两个参数进行处理
-        RES.setConfigURL("default.res.json");
-        RES.loadConfig("default.res.json", "resource");
     }
 
     private onConfigError(e) {

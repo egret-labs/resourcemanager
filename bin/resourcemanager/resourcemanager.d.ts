@@ -78,7 +78,7 @@ declare module RES {
         config: Data;
         resourceRoot: string;
         constructor();
-        init(): Promise<void>;
+        init(): Promise<any>;
         __temp__get__type__via__url(url_or_alias: string): string;
         getKeyByAlias(aliasName: string): string;
         /**

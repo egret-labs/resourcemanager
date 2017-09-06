@@ -428,8 +428,63 @@ module RES.processor {
     export const LegacyResourceConfigProcessor: Processor = {
 
 
-        async onLoadStart() {
+        async onLoadStart(host, resource) {
 
+            type LegacyResourceConfig = {
+                groups: GroupInfo[],
+                resources: ResourceInfo[],
+            }
+
+            type GroupInfo = {
+                keys: string,
+                name: string
+            }
+
+            type ResourceInfo = {
+                name: string;
+                type: string;
+                url: string;
+                subkeys?: string
+            }
+
+
+            let data: LegacyResourceConfig = await host.load(resource, JsonProcessor);
+            let fileSystem: FileSystem = {
+
+                getFile: (filename) => {
+                    return fsData[filename]
+                },
+
+                addFile: (filename, type) => {
+
+                },
+
+                profile: () => {
+                    console.log(fsData);
+                }
+
+            }
+            let groups = {};
+            for (let g of data.groups) {
+                groups[g.name] = g.keys.split(",");
+            }
+            let fsData: { [index: string]: ResourceInfo } = {};
+            for (let resource of data.resources) {
+                fsData[resource.name] = resource;
+                if (resource.subkeys) {
+                    // ResourceConfig.
+                }
+            }
+            let result: Data = {
+                groups,
+                resourceRoot: "resource",
+                fileSystem,
+                alias: {},
+                typeSelector: (file) => { return "unknown" },
+                mergeSelector: null
+            }
+
+            return result;
         },
 
         async onRemoveStart() { }
@@ -684,7 +739,7 @@ module RES.processor {
         "pvr": PVRProcessor,
         "mergeJson": MergeJSONProcessor,
         "resourceConfig": ResourceConfigProcessor,
-        "legacyResourceConfig": ResourceConfigProcessor,
+        "legacyResourceConfig": LegacyResourceConfigProcessor,
         // "zip": ZipProcessor
     }
 }
