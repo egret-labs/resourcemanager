@@ -379,41 +379,42 @@ module RES.processor {
 
 
         async onLoadStart(host, resource) {
-            let data = await host.load(resource, JsonProcessor);
-            let resources = data.resources;
-            let loop = (r, prefix, walk: (r: ResourceInfo) => void) => {
-                for (var key in r) {
-                    let p = prefix ? prefix + "/" + key : key;
-                    var f = r[key];
-                    if (isFile(f)) {
-
-                        if (typeof f === 'string') {
-                            f = { url: f, name: p };
-                            r[key] = f;
-                        }
-                        else {
-                            f['name'] = p;
-                        }
-                        walk(f);
-                    }
-                    else {
-                        loop(f, p, walk);
-                    }
-
-                }
-            }
-
-            let isFile = (r) => {
-                return typeof r === "string" || r.url != null;
-            }
-
-            loop(resources, "", value => {
-                if (!value.type) {
-                    value.type = resourceTypeSelector(value.url);
-                }
-            })
-
+            let data = await host.load(resource, CommonJSProcessor);
             return data;
+            // let resources = data.resources;
+            // let loop = (r, prefix, walk: (r: ResourceInfo) => void) => {
+            //     for (var key in r) {
+            //         let p = prefix ? prefix + "/" + key : key;
+            //         var f = r[key];
+            //         if (isFile(f)) {
+
+            //             if (typeof f === 'string') {
+            //                 f = { url: f, name: p };
+            //                 r[key] = f;
+            //             }
+            //             else {
+            //                 f['name'] = p;
+            //             }
+            //             walk(f);
+            //         }
+            //         else {
+            //             loop(f, p, walk);
+            //         }
+
+            //     }
+            // }
+
+            // let isFile = (r) => {
+            //     return typeof r === "string" || r.url != null;
+            // }
+
+            // loop(resources, "", value => {
+            //     if (!value.type) {
+            //         value.type = resourceTypeSelector(value.url);
+            //     }
+            // })
+
+            // return data;
         },
 
         async onRemoveStart() {

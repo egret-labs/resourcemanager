@@ -5,7 +5,6 @@ class Main extends egret.DisplayObjectContainer {
     public constructor() {
 
         super();
-        RES.FEATURE_FLAG.FIX_DUPLICATE_LOAD = 1;
         this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
 
     }

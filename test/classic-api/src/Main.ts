@@ -1,31 +1,9 @@
 /**
  * 旧版 RES API
  */
-@RES.mapConfig("config.json", () => "resource", path => {
-    var ext = path.substr(path.lastIndexOf(".") + 1);
-    var typeMap = {
-        "jpg": "image",
-        "png": "image",
-        "webp": "image",
-        "json": "json",
-        "fnt": "font",
-        "pvr": "pvr",
-        "mp3": "sound"
-    }
-    var type = typeMap[ext];
-    if (type == "json") {
-        if (path.indexOf("sheet") >= 0) {
-            type = "sheet";
-        } else if (path.indexOf("movieclip") >= 0) {
-            type = "movieclip";
-        };
-    }
-    return type;
-})
 class Main extends egret.DisplayObjectContainer {
 
     public constructor() {
-
         super();
         this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
     }
@@ -39,6 +17,7 @@ class Main extends egret.DisplayObjectContainer {
         RES.addEventListener(RES.ResourceEvent.CONFIG_COMPLETE, this.onConfigComplete, this);
         RES.addEventListener(RES.ResourceEvent.CONFIG_LOAD_ERROR, this.onConfigError, this);
         // 新 API 不会处理这两个参数，改为通过 RES.mapConfig 的前两个参数进行处理
+        RES.setConfigURL("default.res.json");
         RES.loadConfig("default.res.json", "resource");
     }
 

@@ -7,7 +7,7 @@ module RES {
      */
     export var systemPid = 0
 
-    export let checkCancelation: MethodDecorator = (target, propertyKey, descriptor) => {
+    export let checkCancelation: MethodDecorator = <Function>(target, propertyKey, descriptor) => {
         const method = descriptor.value;
         descriptor.value = function (...arg) {
             let currentPid = systemPid;

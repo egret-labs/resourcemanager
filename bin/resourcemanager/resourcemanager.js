@@ -144,7 +144,14 @@ var RES;
     RES.getResourceInfo = getResourceInfo;
     var configItem;
     function setConfigURL(url) {
-        configItem = { type: 'commonjs', resourceRoot: RES.resourceRoot, url: url, name: url };
+        var type;
+        if (url.indexOf(".json") >= 0) {
+            type = "legacyResourceConfig";
+        }
+        else {
+            type = "resourceConfig";
+        }
+        configItem = { type: type, resourceRoot: RES.resourceRoot, url: url, name: url };
     }
     RES.setConfigURL = setConfigURL;
     RES.resourceRoot = "";
@@ -987,40 +994,12 @@ var RES;
         processor_1.ResourceConfigProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var data, resources, loop, isFile;
+                    var data;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4 /*yield*/, host.load(resource, processor_1.JsonProcessor)];
+                            case 0: return [4 /*yield*/, host.load(resource, processor_1.CommonJSProcessor)];
                             case 1:
                                 data = _a.sent();
-                                resources = data.resources;
-                                loop = function (r, prefix, walk) {
-                                    for (var key in r) {
-                                        var p = prefix ? prefix + "/" + key : key;
-                                        var f = r[key];
-                                        if (isFile(f)) {
-                                            if (typeof f === 'string') {
-                                                f = { url: f, name: p };
-                                                r[key] = f;
-                                            }
-                                            else {
-                                                f['name'] = p;
-                                            }
-                                            walk(f);
-                                        }
-                                        else {
-                                            loop(f, p, walk);
-                                        }
-                                    }
-                                };
-                                isFile = function (r) {
-                                    return typeof r === "string" || r.url != null;
-                                };
-                                loop(resources, "", function (value) {
-                                    if (!value.type) {
-                                        value.type = RES.resourceTypeSelector(value.url);
-                                    }
-                                });
                                 return [2 /*return*/, data];
                         }
                     });

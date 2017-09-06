@@ -56,10 +56,17 @@ module RES {
         return result;
     }
 
-    var configItem: any;
+    var configItem: ResourceInfo & { resourceRoot: string };
 
     export function setConfigURL(url: string) {
-        configItem = { type: 'commonjs', resourceRoot, url, name: url };
+        let type;
+        if (url.indexOf(".json") >= 0) {
+            type = "legacyResourceConfig";
+        }
+        else {
+            type = "resourceConfig";
+        }
+        configItem = { type, resourceRoot, url, name: url };
     }
 
 
