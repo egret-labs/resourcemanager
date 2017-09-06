@@ -31,18 +31,17 @@ module RES {
 
         profile(): void;
 
-        data: Dictionary;
-
     }
 
-    class NewFileSystem {
+    export class NewFileSystem {
+
+        constructor(private data: Dictionary) {
+
+        }
 
         profile() {
             console.log(this.data);
         }
-
-
-        data: Dictionary = {};
 
         addFile(filename: string, type?: string) {
             if (!type) type = "";
@@ -64,19 +63,19 @@ module RES {
             return result;
         }
 
-        basename(filename: string) {
+        private basename(filename: string) {
             return filename.substr(filename.lastIndexOf("/") + 1);
         }
 
-        normalize(filename: string) {
+        private normalize(filename: string) {
             return filename.split("/").filter(d => !!d).join("/");
         }
 
-        dirname(path: string) {
+        private dirname(path: string) {
             return path.substr(0, path.lastIndexOf("/"));
         }
 
-        reslove(dirpath: string) {
+        private reslove(dirpath: string) {
             if (dirpath == "") {
                 return this.data;
             }
@@ -94,7 +93,7 @@ module RES {
             return current;
         }
 
-        mkdir(dirpath: string) {
+        private mkdir(dirpath: string) {
             dirpath = this.normalize(dirpath);
             let list = dirpath.split("/");
             let current = this.data;
@@ -106,7 +105,7 @@ module RES {
             }
         }
 
-        exists(dirpath: string) {
+        private exists(dirpath: string) {
             if (dirpath == "") return true;
             dirpath = this.normalize(dirpath);
             let list = dirpath.split("/");
@@ -121,7 +120,7 @@ module RES {
         }
     }
 
-    export var fileSystem: FileSystem = new NewFileSystem();
+    export var fileSystem: FileSystem;
 
 }
 

@@ -52,8 +52,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var RES;
 (function (RES) {
     var NewFileSystem = (function () {
-        function NewFileSystem() {
-            this.data = {};
+        function NewFileSystem(data) {
+            this.data = data;
         }
         NewFileSystem.prototype.profile = function () {
             console.log(this.data);
@@ -133,7 +133,7 @@ var RES;
         };
         return NewFileSystem;
     }());
-    RES.fileSystem = new NewFileSystem();
+    RES.NewFileSystem = NewFileSystem;
 })(RES || (RES = {}));
 var RES;
 (function (RES) {
@@ -413,7 +413,6 @@ var RES;
         ResourceConfig.prototype.destory = function () {
             RES.systemPid++;
             var emptyFileSystem = {
-                data: {},
                 getFile: function () {
                     return null;
                 },
@@ -423,7 +422,6 @@ var RES;
                 }
             };
             this.config = { groups: {}, alias: {}, fileSystem: emptyFileSystem, typeSelector: function (p) { return p; }, resourceRoot: "resources", mergeSelector: null };
-            RES.fileSystem.data = {};
         };
         return ResourceConfig;
     }());
@@ -1013,12 +1011,15 @@ var RES;
         processor_1.ResourceConfigProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var data;
+                    var data, fileSystem;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0: return [4 /*yield*/, host.load(resource, processor_1.CommonJSProcessor)];
                             case 1:
                                 data = _a.sent();
+                                fileSystem = new RES.NewFileSystem(data.resources);
+                                data.fileSystem = fileSystem;
+                                delete data.resource;
                                 return [2 /*return*/, data];
                         }
                     });

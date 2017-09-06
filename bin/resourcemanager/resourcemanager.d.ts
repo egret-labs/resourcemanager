@@ -14,7 +14,19 @@ declare module RES {
         addFile(filename: string, type?: string): any;
         getFile(filename: string): File | null;
         profile(): void;
-        data: Dictionary;
+    }
+    class NewFileSystem {
+        private data;
+        constructor(data: Dictionary);
+        profile(): void;
+        addFile(filename: string, type?: string): void;
+        getFile(filename: string): File | null;
+        private basename(filename);
+        private normalize(filename);
+        private dirname(path);
+        private reslove(dirpath);
+        private mkdir(dirpath);
+        private exists(dirpath);
     }
     var fileSystem: FileSystem;
 }

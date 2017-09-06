@@ -380,6 +380,9 @@ module RES.processor {
 
         async onLoadStart(host, resource) {
             let data = await host.load(resource, CommonJSProcessor);
+            let fileSystem = new NewFileSystem(data.resources);
+            data.fileSystem = fileSystem;
+            delete data.resource;
             return data;
             // let resources = data.resources;
             // let loop = (r, prefix, walk: (r: ResourceInfo) => void) => {

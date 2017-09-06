@@ -445,7 +445,6 @@ module RES {
             systemPid++;
             let emptyFileSystem: FileSystem = {
 
-                data: {},
                 getFile: () => {
                     return null;
                 },
@@ -457,7 +456,6 @@ module RES {
                 }
             }
             this.config = { groups: {}, alias: {}, fileSystem: emptyFileSystem, typeSelector: (p) => p, resourceRoot: "resources", mergeSelector: null };
-            fileSystem.data = {};
         }
     }
 }
