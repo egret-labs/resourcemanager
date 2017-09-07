@@ -468,10 +468,14 @@ module RES.processor {
             for (let g of data.groups) {
                 groups[g.name] = g.keys.split(",");
             }
+            let alias: { [index: string]: string } = {};
             let fsData: { [index: string]: ResourceInfo } = {};
             for (let resource of data.resources) {
                 fsData[resource.name] = resource;
                 if (resource.subkeys) {
+                    resource.subkeys.split(".").forEach(subkey => {
+                        alias[subkey] = resource.name + "#" + subkey;
+                    })
                     // ResourceConfig.
                 }
             }
@@ -743,6 +747,5 @@ module RES.processor {
         // "zip": ZipProcessor
     }
 }
-
 
 
