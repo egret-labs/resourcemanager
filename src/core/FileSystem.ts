@@ -6,14 +6,7 @@ module RES {
 
         type: string;
 
-        crc32?: string;
-
-        size?: number;
-
-        //todo remove
         name: string;
-
-        soundType?: string
 
     }
 

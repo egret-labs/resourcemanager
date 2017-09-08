@@ -234,5 +234,11 @@ module RES {
 		 */
 		data: ResourceInfo;
 
+		crc32?: string;
+
+		size?: number;
+
+		soundType?: string
+
 	}
 }
