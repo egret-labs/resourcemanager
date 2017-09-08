@@ -24,11 +24,17 @@ await RES.getResAsync("assets/icon.jpg");
 
 集成版本控制功能，无需额外配置即可支持素材热更新。可以帮助您的游戏或应用显著降低运维成本及用户的流量消耗。
 
-#### 针对不同平台发布不同的资源
+#### 自动合并文本文件与纹理集
+
+对于 HTML5 游戏而言，为了降低HTTP请求数量，提升加载效率，开发者经常需要将游戏中的文本文件进行合并压缩，零散图片合并成纹理集，ResourceManager 命令行中内置了这些模块，并在后续版本中允许开发者进行自由扩展
 
 
 
-#### 更容易开发者进行扩展的结构
+#### 更容易开发者进行扩展的结构 
+
+开发者可以自定义构建与发布环节中使用哪些功能，从而更方便的与现有的工作流进行集成以及定制自身需求。
+
+
 #### 80% 兼容旧版 API 
 除了 ```RES.Analyzer```相关 API 之外其他所有API均可向下兼容，并提供升级脚本帮助您将现有项目升级至新版本资源管理器
 
@@ -36,7 +42,7 @@ await RES.getResAsync("assets/icon.jpg");
 
 ## 运行测试项目
 
-执行 ```egret run test/es6-api``` 或者 ``` egret run test/classic-api ``` 
+执行 ```egret run test/promise-api``` 或者 ``` egret run test/classic-api ``` 
 
 ## 如何调试
 

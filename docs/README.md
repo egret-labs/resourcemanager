@@ -30,26 +30,91 @@
 
 ## 配置
 
-白鹭资源管理框架采用 ES2015 的装饰器语法进行配置。
+白鹭资源管理框架会假定开发者的项目中存在一个 ```resource``` 文件夹，并在其中存在一个名为 ```config.ts```的配置文件,以下为配置文件的示例
 
 ```typescript
-@RES.mapConfig("config.json", () => "resource", path => {
+
+export const configPath = 'config.res.js'; // 配置生成路径
+
+export const resourceRoot = () => "resource"; // 资源路径
+
+export const userConfigs: UserConfigs = { // 命令行配置
+
+    build: { // res build 命令配置
+        outputDir: "resource",
+
+        plugin: [
+            "emitConfigFile"
+        ]
+    },
+
+    publish: { // res publish 命令配置
+
+        outputDir: "resource-bundles",
+
+        plugin: [
+            "zip",
+            "spritesheet",
+            "convertFileName",
+            "emitConfigFile",
+            "html"
+        ]
+    }
+}
+
+export const mergeSelector = (path: string) => { // 将特定文件进行合并
+    if (path.indexOf("assets/bitmap/") >= 0) {
+        return "assets/bitmap/sheet.sheet"
+    }
+    else if (path.indexOf("armature") >= 0 && path.indexOf(".json") >= 0) {
+        return "assets/armature/1.zip";
+    }
+}
+
+export const typeSelector = (path: string) => { // 声明特定文件的加载类型
     var ext = path.substr(path.lastIndexOf(".") + 1);
     var typeMap = {
         "jpg": "image",
         "png": "image",
+        "webp": "image",
         "json": "json",
         "fnt": "font",
-        "mp3": "sound"
+        "pvr": "pvr",
+        "mp3": "sound",
+        "zip": "zip",
+        "sheet": "sheet"
     }
-    return typeMap[ext];
-})
+    var type = typeMap[ext];
+    if (type == "json") {
+        if (path.indexOf("sheet") >= 0) {
+            type = "sheet";
+        } else if (path.indexOf("movieclip") >= 0) {
+            type = "movieclip";
+        };
+    }
+    return type;
+}
+
+
+type UserConfig = {
+    outputDir: string,
+    plugin: ("zip" | "spritesheet" | "convertFileName" | "emitConfigFile" | "html")[]
+}
+
+type UserConfigs = {
+
+    build: UserConfig,
+
+    publish: UserConfig
+}
+
 ```
 
+
 ## 命令行的执行原理
-* 存在一个全局唯一的资源配置文件，并通过 ```res build``` 命令自动生成，生成的文件名为```RES.mapConfig```的第一个参数所对应的文件名
+* 存在一个全局唯一的资源配置文件，并通过 ```res build``` 命令自动生成。
 * 每当资源文件发生变化时，需要重新执行```res build```
-* 当 ```res build``` 命令执行后，会遍历 ```resource```文件夹，并将其中的每一个文件执行 ```RES.mapConfig```的第三个参数所指向的函数，如果该文件返回 undefined ，则此文件不会被加入到资源配置文件中。
+* 当 ```res build``` 命令执行后，会遍历 ```resource```文件夹，并将其中的每一个文件执行 ```typeSelector```如果该函数返回 undefined ，则此文件不会被加入到资源配置文件中。
 
 
 <a name="processor"></a>
@@ -93,14 +158,15 @@ var customProcessor:RES.processor.Processor = {
 ```typescript
 RES.processor.map("customType",customProcessor);
 ```
-并在 ```RES.mapConfig```的第三个参数 TypeSelector 中，将特定文件的类型设置为 ```customType```,参考代码如下:
+并在 ```config.ts```的 typeSelector中 中，将特定文件的类型设置为 ```customType```,参考代码如下:
 
 ```typescript
-RES.mapConfig("config.json",()=>"resource",(path)=>{
+
+export const typeSelector = (path:string){
     if (path == "a/custom/file/type.bin") {
         return "customType";
     }
-})
+}
 ```
 
 ## 资源发布
@@ -119,12 +185,12 @@ RES.mapConfig("config.json",()=>"resource",(path)=>{
 
 #### 老项目升级到 ResourceManager 后，所有的合并纹理都无法正常使用了
 
-请检查您的合图纹理的配置文件 ( 以下简称 sheet.json ) 在执行了 RES.mapConfig() 的第三个参数所对应的函数后，返回类型为 sheet 
+请检查您的合图纹理的配置文件 ( 以下简称 sheet.json ) 在执行了 typeSelector 后，返回类型为 sheet 
 
 一种常见的错误是，形如为 ``` assets/bigimage/image.json ``` 的 sheet 文件无法被下述逻辑解析为 json，需要将其逻辑按照注释所示进行修改
 
-```
-@RES.mapConfig("config.json", () => "resource", path => {
+```typescript
+export const typeSelector = ( path ) => {
     var ext = path.substr(path.lastIndexOf(".") + 1);
     var typeMap = {
         "jpg": "image",
