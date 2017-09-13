@@ -34,12 +34,16 @@ const config = {
         ]
     },
     entry: {
-        "cli": "cli"
+        "cli": "cli",
+        "vendor": "index"
     },
     output: {
         path: outPath,
         filename: '[name].js'
-    }
+    },
+    plugins: [
+        new webpack.optimize.CommonsChunkPlugin({ "name": "vendor", filename: "[name].js" })
+    ]
 };
 
 module.exports = config;

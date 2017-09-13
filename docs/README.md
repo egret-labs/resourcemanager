@@ -124,7 +124,7 @@ type UserConfigs = {
 {
     "exclude":["resource"]
 }
-
+```
 
 ## 命令行的执行原理
 * 存在一个全局唯一的资源配置文件，并通过 ```res build``` 命令自动生成。
