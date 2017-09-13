@@ -1,5 +1,25 @@
 # 升级指导
 
+## 从 Egret RES 升级
+
+### RES.Analyzer API 被废弃
+
+开发者应该使用 RES.processor 相关 API 代替 RES.Analyzer，具体请参见[这篇文档](README.md#processor)
+
+相比 RES.Analyzer，RES.processor 的API设计更为简洁，更方便开发者进行自由扩展
+
+### default.res.json 配置文件被废弃
+
+新版本通过命令行的方式创建名为 ```config.res.js``` 的文件以代替```default.res.json```，通过这种方式，开发者无需手动维护一个 ```default.res.json``` 文件，只需要指定一些特定的“规则”，即可自动生成配置文件
+
+| |Egret RES|ResourceManager 5.0|
+|:--:|:-----------:|:------------:|
+|维护方式|配置文件|通过设置规则，自动生成配置文件|
+|辅助工具|ResDepot / Wing | 无需其他工具 |
+|配置文件体积| 较大 | 较小 |
+
+
+
 ## 从 ResourceManager 4.0 升级
 
 
