@@ -111,6 +111,20 @@ type UserConfigs = {
 
 ```
 
+在进行完配置后，开发者请务必注意您的白鹭引擎项目的 ```tsconfig.json``` 中不要设置编译 ```resource/config.ts```，如下所示
+
+```json
+{
+    "include":["src","libs"]
+}
+```
+
+或
+```json
+{
+    "exclude":["resource"]
+}
+
 
 ## 命令行的执行原理
 * 存在一个全局唯一的资源配置文件，并通过 ```res build``` 命令自动生成。
