@@ -163,8 +163,12 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
     if (ResourceConfig.resourceRoot == userConfig.outputDir) {
         stream = stream.pipe(map(filterDuplicateWrite));
     }
-    return stream.pipe(vinylfs.dest(outputDir))
-
+    stream = stream.pipe(vinylfs.dest(outputDir));
+    return new Promise<typeof stream>((resolve, reject) => {
+        stream.on("end", () => {
+            resolve(stream);
+        })
+    })
 }
 
 

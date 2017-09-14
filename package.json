@@ -2,9 +2,9 @@
   "name": "egret-resource-manager",
   "version": "5.0.1-6",
   "bin": {
-    "res": "script/cli.js"
+    "res": "script/out/cli.js"
   },
-  "main": "script/out/index.js",
+  "main": "script/out/vendor.js",
   "typings": "script/out/index.d.ts",
   "description": "",
   "scripts": {

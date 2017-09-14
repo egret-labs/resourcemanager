@@ -10,7 +10,7 @@ function getProjectPath(p: string | null) {
 
 let command = process.argv[2];
 let projectRoot = getProjectPath(process.argv[3]);
-
+console.log('command:', command)
 
 executeCommand(command).catch(handleException);
 
