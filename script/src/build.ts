@@ -15,8 +15,8 @@ var map = require('map-stream');
 var crc32 = require("crc32");
 
 
-let projectRoot;
-let resourceFolder;
+let projectRoot: string;
+let resourceFolder: string;
 
 const wing_res_json = "wing.res.json";
 
@@ -152,7 +152,7 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
                 plugin = emitConfigJsonFile();
                 break;
             case "html":
-                plugin = html.emitConfigJsonFile(projectRoot);
+                plugin = html.emitConfigJsonFile(buildConfig);
                 break;
         }
         if (plugin) {
