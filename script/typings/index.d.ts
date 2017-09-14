@@ -68,7 +68,7 @@ export declare namespace ResourceConfig {
         outputDir: string;
         plugin: ("zip" | "spritesheet" | "convertFileName" | "emitConfigFile" | "html")[];
     };
-    function getUserConfig(): UserConfig;
+    function getUserConfig(command: "build" | "publish"): UserConfig;
     var userConfigs: {
         build: UserConfig;
         publish: UserConfig;

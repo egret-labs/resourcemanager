@@ -9,7 +9,7 @@ function getProjectPath(p: string | null) {
 }
 
 let command = process.argv[2];
-let p = getProjectPath(process.argv[3]);
+let projectRoot = getProjectPath(process.argv[3]);
 
 
 executeCommand(command).catch(handleException);
@@ -21,17 +21,17 @@ async function executeCommand(command: string) {
             return res.version();
             break;
         case "upgrade":
-            return res.upgrade(p);
+            return res.upgrade(projectRoot);
             break;
         case "build":
         case "publish":
-            return res.build(p);
+            return res.build({ projectRoot, debug: true, command });
             break;
         case "watch":
-            return res.watch(p)
+            return res.watch(projectRoot)
             break;
         case "config":
-            return res.printConfig(p);
+            return res.printConfig(projectRoot);
             break;
         case "env":
             const key = process.argv[3];

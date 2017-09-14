@@ -219,14 +219,8 @@ export namespace ResourceConfig {
         plugin: ("zip" | "spritesheet" | "convertFileName" | "emitConfigFile" | "html")[]
     }
 
-    export function getUserConfig() {
-        //todo
-        if (process.argv[2] == "build") {
-            return userConfigs.build;
-        }
-        else {
-            return userConfigs.publish;
-        }
+    export function getUserConfig(command: "build" | "publish") {
+        return userConfigs[command]
     }
 
     export var userConfigs: { build: UserConfig, publish: UserConfig };

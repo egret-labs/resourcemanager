@@ -1,1 +1,1 @@
-export declare function watch(p: string): Promise<void>;
+export declare function watch(projectRoot: string): Promise<void>;

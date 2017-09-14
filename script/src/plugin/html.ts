@@ -5,13 +5,14 @@ import * as crc32 from 'crc32';
 import { ResourceConfig } from '../';
 
 
-export function emitConfigJsonFile(projectRoot: string) {
+export function emitConfigJsonFile(buildConfig: { projectRoot: string, debug: boolean, matcher?: string, command: "build" | "publish" }) {
     const through = require('through2');
     return through.obj((file, enc, cb) => {
         cb(null, file)
     }, async function (cb) {
-        let outputDir = path.resolve(projectRoot, ResourceConfig.getUserConfig().outputDir, "../");
-        let outputDir2 = path.resolve(projectRoot, ResourceConfig.getUserConfig().outputDir);
+        let userConfig = ResourceConfig.getUserConfig(buildConfig.command)
+        let outputDir = path.resolve(buildConfig.projectRoot, userConfig.outputDir, "../");
+        let outputDir2 = path.resolve(buildConfig.projectRoot, userConfig.outputDir);
         let resourceFolder = path.relative(outputDir, outputDir2);
         let configjs = path.join(resourceFolder, ResourceConfig.resourceConfigFileName);
         let indexHTML = path.resolve(outputDir, 'index.html');

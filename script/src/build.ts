@@ -22,8 +22,7 @@ const wing_res_json = "wing.res.json";
 
 
 
-export async function build(p: string, debug: boolean = false, matcher = "**/**.*") {
-
+export async function build(buildConfig: { projectRoot: string, debug: boolean, matcher?: string, command: "build" | "publish" }) {
 
     /**
      * 当写入地址为源文件夹时，防止重复写入
@@ -104,7 +103,7 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
 
             let config = ResourceConfig.getConfig();
             await convertResourceJson(projectRoot, config);
-            let configContent = await emitResourceConfigFile(debug);
+            let configContent = await emitResourceConfigFile(buildConfig.debug);
             let configFile = new Vinyl({
                 cwd: resourceFolder,
                 base: resourceFolder,
@@ -127,12 +126,13 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
         });
     };
 
-    let parsedConfig = await ResourceConfig.init(p);
-    let userConfig = ResourceConfig.getUserConfig();
-    projectRoot = p;
+    let parsedConfig = await ResourceConfig.init(buildConfig.projectRoot);
+    let userConfig = ResourceConfig.getUserConfig(buildConfig.command);
+    projectRoot = buildConfig.projectRoot;
     resourceFolder = path.join(projectRoot, ResourceConfig.resourceRoot);
 
     let outputDir = path.join(projectRoot, userConfig.outputDir);
+    let matcher = buildConfig.matcher ? buildConfig.matcher : "**/*.*";
     let stream = vinylfs.src(matcher, { cwd: resourceFolder, base: resourceFolder })
         .pipe(map(initVinylFile))
         .pipe(profile.profile());
