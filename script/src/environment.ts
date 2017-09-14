@@ -29,7 +29,7 @@ export async function setEnv(key: keyof Environment, value: string) {
     await fs.writeJSONAsync(url, config);
 }
 
-type Environment = {
+export type Environment = {
 
     texture_merger_path?: string
 }

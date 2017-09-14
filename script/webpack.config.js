@@ -39,7 +39,9 @@ const config = {
     },
     output: {
         path: outPath,
-        filename: '[name].js'
+        filename: '[name].js',
+        library: 'vendor',
+        libraryTarget: 'umd'
     },
     plugins: [
         new webpack.optimize.CommonsChunkPlugin({ "name": "vendor", filename: "[name].js" })

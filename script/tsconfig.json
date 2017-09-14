@@ -3,6 +3,8 @@
         "module": "commonjs",
         "target": "es5",
         "noImplicitAny": false,
+        "declaration": true,
+        "declarationDir": "typings",
         "sourceMap": false,
         "outDir": "out",
         "allowUnreachableCode": true,
@@ -16,6 +18,7 @@
     },
     "exclude": [
         "node_modules",
+        "typings",
         "out"
     ]
 }
