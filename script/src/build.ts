@@ -10,6 +10,7 @@ import * as zip from './plugin/zip';
 import * as profile from './plugin/profile';
 import * as spritesheet from './plugin/spritesheet';
 import * as html from './plugin/html';
+import * as plugin1 from './plugin';
 
 var map = require('map-stream');
 var crc32 = require("crc32");
@@ -144,7 +145,7 @@ exports.resources = ${JSON.stringify(config.resources, null, "\t")};
                 plugin = spritesheet.sheet(resourceFolder);
                 break;
             case "convertFileName":
-                plugin = map(convertFileName);
+                plugin = plugin1.getPlugin(item);
                 break;
             case "emitConfigFile":
                 plugin = emitConfigJsonFile();

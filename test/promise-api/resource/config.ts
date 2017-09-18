@@ -27,7 +27,7 @@ export var userConfigs: UserConfigs = {
 
     publish: {
 
-        outputDir: "bin-release/web/upload/resource-bundles",
+        outputDir: "resource-bundles",
 
         plugin: [
             "zip",
