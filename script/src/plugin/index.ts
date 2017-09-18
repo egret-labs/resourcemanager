@@ -1,11 +1,17 @@
 const through = require('through2');
 import { ResVinylFile } from '../';
 
-type Plugin = {
-    fileOperator: (file: ResVinylFile) => {}
+export type Plugin = {
+
+    onFile: (file: ResVinylFile) => void,
+
+    onFinish: () => void
 }
 
 
-export function createPlugin() {
-    return {};
+export function createPlugin(): Plugin {
+    return {
+        onFile: (file: ResVinylFile) => { },
+        onFinish: () => { }
+    };
 }

@@ -1,6 +1,6 @@
 {
   "name": "egret-resource-manager",
-  "version": "5.0.1-8",
+  "version": "5.0.1-9",
   "bin": {
     "res": "script/out/cli.js"
   },
@@ -21,19 +21,6 @@
     "npm": "^3.0.0"
   },
   "devDependencies": {
-    "crc32": "^0.2.2",
-    "egret-node-utils": "0.0.7",
-    "egret-typescript-ast": "0.0.11",
-    "fs-extra-promise": "0.4.1",
-    "get-stream": "^3.0.0",
-    "htmlparser2": "^3.9.2",
-    "iconv-lite": "^0.4.18",
-    "map-stream": "0.0.6",
-    "typescript": "2.1.6",
-    "vinyl": "^2.0.1",
-    "vinyl-fs": "^2.4.4",
-    "watch": "^1.0.2",
-    "yazl": "^2.4.2",
     "@types/bluebird": "3.5.0",
     "@types/fs-extra": "2.0.0",
     "@types/fs-extra-promise": "0.0.31",
@@ -42,9 +29,22 @@
     "@types/vinyl": "^2.0.0",
     "@types/vinyl-fs": "^2.4.1",
     "@types/watch": "0.0.28",
+    "crc32": "^0.2.2",
+    "egret-node-utils": "0.0.7",
+    "egret-typescript-ast": "0.0.11",
+    "fs-extra-promise": "0.4.1",
+    "get-stream": "^3.0.0",
+    "htmlparser2": "^3.9.2",
+    "iconv-lite": "^0.4.18",
+    "map-stream": "0.0.6",
     "ts-loader": "^2.3.4",
+    "typescript": "2.1.6",
     "uglify-es": "^3.0.28",
     "uglify-js": "^3.0.28",
-    "webpack": "^3.5.5"
+    "vinyl": "^2.0.1",
+    "vinyl-fs": "^2.4.4",
+    "watch": "^1.0.2",
+    "webpack": "^3.5.5",
+    "yazl": "^2.4.2"
   }
 }
