@@ -5,9 +5,9 @@ export type Plugin = {
 
     name: string;
 
-    onFile: (file: ResVinylFile) => Promise<ResVinylFile> | Promise<null>,
+    onFile: (file: ResVinylFile) => Promise<ResVinylFile | null>;
 
-    onFinish: () => void
+    onFinish: (param?: { projectRoot: string, resourceFolder: string, userConfig: any }) => void | Promise<void>
 }
 
 const plugins: { [name: string]: Plugin } = {};
@@ -32,5 +32,7 @@ export function getPlugin(name: string) {
     });
 }
 
-import ConvertFileName from './convertFileName';
-createPlugin(ConvertFileName);
+import convertFileName from './convertFileName';
+import emitConfigJsonFile from './emitConfigJsonFile';
+createPlugin(convertFileName);
+createPlugin(emitConfigJsonFile);
