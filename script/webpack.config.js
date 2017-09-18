@@ -27,6 +27,9 @@ const config = {
             path.resolve(__dirname, 'src')
         ]
     },
+    node: {
+        __dirname: false
+    },
     module: {
         loaders: [
             {
