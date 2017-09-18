@@ -2,6 +2,8 @@ var webpack = require('webpack');
 var path = require('path');
 var fs = require('fs');
 
+var version = require("../package.json").version;
+
 const outPath = path.join(__dirname, 'out');
 
 const config = {
@@ -42,7 +44,12 @@ const config = {
         filename: '[name].js',
         library: 'vendor',
         libraryTarget: 'umd'
-    }
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+            __VERSION__: "\"" + version + "\""
+        }),
+    ]
 };
 
 module.exports = config;
