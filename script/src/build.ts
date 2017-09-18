@@ -20,8 +20,6 @@ let resourceFolder: string;
 
 const wing_res_json = "wing.res.json";
 
-
-
 export async function build(buildConfig: { projectRoot: string, debug: boolean, matcher?: string, command: "build" | "publish" }) {
 
     /**

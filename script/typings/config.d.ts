@@ -11,7 +11,7 @@ export declare function getConfigViaFile(fileName: string): Promise<{
     resourceConfigFileName: any;
     typeSelector: (p: string) => string;
     mergeSelector: any;
-    nameSelector: (p: string) => string;
+    nameSelector: any;
     userConfigs: {
         build: ResourceConfig.UserConfig;
         publish: ResourceConfig.UserConfig;

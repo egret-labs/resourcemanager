@@ -45,7 +45,7 @@ export async function getConfigViaFile(fileName: string) {
     let resourceRoot: string = typeof exports_1.resourceRoot == 'function' ? exports_1.resourceRoot() : exports_1.resourceRoot;
     let resourceConfigFileName = exports_1.configPath;
     let typeSelector: (p: string) => string = exports_1.typeSelector;
-    let nameSelector = (p: string) => { return p };
+    let nameSelector = exports_1.nameSelector ? exports_1.nameSelector : (p: string) => p;
     let userConfigs: { build: ResourceConfig.UserConfig, publish: ResourceConfig.UserConfig } = exports_1.userConfigs;
     let mergeSelector = exports_1.mergeSelector;
     return { resourceRoot, resourceConfigFileName, typeSelector, mergeSelector, nameSelector, userConfigs };
