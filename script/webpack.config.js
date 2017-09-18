@@ -42,10 +42,7 @@ const config = {
         filename: '[name].js',
         library: 'vendor',
         libraryTarget: 'umd'
-    },
-    plugins: [
-        new webpack.optimize.CommonsChunkPlugin({ "name": "vendor", filename: "[name].js" })
-    ]
+    }
 };
 
 module.exports = config;
