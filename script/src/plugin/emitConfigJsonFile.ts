@@ -34,7 +34,7 @@ const p: plugin.Plugin = {
             return null;
         }
     },
-    onFinish: async (param: { projectRoot: string, resourceFolder: string, userConfig: any }) => {
+    onFinish: async (pluginContext) => {
 
 
         async function convertResourceJson(projectRoot: string, config: Data) {
@@ -53,7 +53,7 @@ const p: plugin.Plugin = {
                 let resourceName = ResourceConfig.nameSelector(r.url);
                 let file = ResourceConfig.getFile(resourceName);
                 if (!file) {
-                    if (await fs.existsAsync(path.join(param.resourceFolder, r.url))) {
+                    if (await fs.existsAsync(path.join(pluginContext.resourceFolder, r.url))) {
                         ResourceConfig.addFile(r, false)
                     }
                     else {
@@ -95,7 +95,7 @@ const p: plugin.Plugin = {
             let config = ResourceConfig.generateConfig(true);
             let content = JSON.stringify(config, null, "\t");
             let file = `exports.typeSelector = ${ResourceConfig.typeSelector.toString()};
-    exports.resourceRoot = "${param.userConfig.outputDir}";
+    exports.resourceRoot = "${pluginContext.userConfig.outputDir}";
     exports.alias = ${JSON.stringify(config.alias, null, "\t")};
     exports.groups = ${JSON.stringify(config.groups, null, "\t")};
     exports.resources = ${JSON.stringify(config.resources, null, "\t")};
@@ -104,12 +104,13 @@ const p: plugin.Plugin = {
         }
 
         let config = ResourceConfig.getConfig();
-        await convertResourceJson(param.projectRoot, config);
-        let configContent = await emitResourceConfigFile(param.userConfig.debug);
+        await convertResourceJson(pluginContext.projectRoot, config);
+        let configContent = await emitResourceConfigFile(true);//pluginContext.userConfig.debug);
+        //todo
         let configFile = new Vinyl({
-            cwd: param.resourceFolder,
-            base: param.resourceFolder,
-            path: path.join(param.resourceFolder, ResourceConfig.resourceConfigFileName),
+            cwd: pluginContext.resourceFolder,
+            base: pluginContext.resourceFolder,
+            path: path.join(pluginContext.resourceFolder, ResourceConfig.resourceConfigFileName),
             original_relative: ResourceConfig.resourceConfigFileName,
             contents: new Buffer(configContent)
         })
@@ -117,9 +118,9 @@ const p: plugin.Plugin = {
 
         let wingConfigContent = await ResourceConfig.generateClassicalConfig();
         let wingConfigFile = new Vinyl({
-            cwd: param.resourceFolder,
-            base: param.resourceFolder,
-            path: path.join(param.resourceFolder, wing_res_json),
+            cwd: pluginContext.resourceFolder,
+            base: pluginContext.resourceFolder,
+            path: path.join(pluginContext.resourceFolder, wing_res_json),
             original_relative: wing_res_json,
             contents: new Buffer(wingConfigContent)
         })

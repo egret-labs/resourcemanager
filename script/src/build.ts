@@ -23,6 +23,8 @@ const wing_res_json = "wing.res.json";
 
 export async function build(buildConfig: { projectRoot: string, debug: boolean, matcher?: string, command: "build" | "publish" }) {
 
+
+
     /**
      * 当写入地址为源文件夹时，防止重复写入
      */
@@ -74,15 +76,11 @@ export async function build(buildConfig: { projectRoot: string, debug: boolean, 
 
     }
 
-
-
-
-
     let parsedConfig = await ResourceConfig.init(buildConfig.projectRoot);
     let userConfig = ResourceConfig.getUserConfig(buildConfig.command);
     projectRoot = buildConfig.projectRoot;
     resourceFolder = path.join(projectRoot, ResourceConfig.resourceRoot);
-
+    plugin1.init(buildConfig.projectRoot, resourceFolder, userConfig)
     let outputDir = path.join(projectRoot, userConfig.outputDir);
     let matcher = buildConfig.matcher ? buildConfig.matcher : "**/*.*";
     let stream = vinylfs.src(matcher, { cwd: resourceFolder, base: resourceFolder })

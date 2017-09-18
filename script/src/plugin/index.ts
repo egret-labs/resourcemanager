@@ -1,5 +1,11 @@
 const through = require('through2');
-import { ResVinylFile } from '../';
+import { ResVinylFile, ResourceConfig } from '../';
+
+export type PluginContext = {
+    projectRoot: string,
+    resourceFolder: string,
+    userConfig: ResourceConfig.UserConfig
+}
 
 export type Plugin = {
 
@@ -7,10 +13,19 @@ export type Plugin = {
 
     onFile: (file: ResVinylFile) => Promise<ResVinylFile | null>;
 
-    onFinish: (param?: { projectRoot: string, resourceFolder: string, userConfig: any }) => void | Promise<void>
+    onFinish: (param: PluginContext) => void | Promise<void>
 }
 
 const plugins: { [name: string]: Plugin } = {};
+
+let projectRoot: string;
+let resourceFolder: string;
+let userConfig: ResourceConfig.UserConfig;
+
+export function init(__projectRoot, __resourceFolder, userConfig: ResourceConfig.UserConfig) {
+    projectRoot = __projectRoot;
+    resourceFolder = __resourceFolder;
+}
 
 
 export function createPlugin(plugin: Plugin) {
@@ -29,6 +44,11 @@ export function getPlugin(name: string) {
             cb(null);
         }
     }, async function (cb) {
+
+        let context: PluginContext = {
+            resourceFolder, projectRoot, userConfig
+        }
+        await p.onFinish(context);
     });
 }
 
