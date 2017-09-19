@@ -1,0 +1,19 @@
+{
+	"initial": [
+		"libs/modules/egret/egret.js",
+		"libs/modules/egret/egret.web.js",
+		"libs/modules/game/game.js",
+		"libs/modules/tween/tween.js",
+		"libs/modules/resourcemanager/resourcemanager.js",
+		"libs/modules/eui/eui.js",
+		"libs/modules/dragonBones/dragonBones.js"
+	],
+	"game": [
+		"bin-debug/Main.js",
+		"bin-debug/testcases/testLifeCycle.js",
+		"bin-debug/testcases/testMovieClip.js",
+		"bin-debug/testcases/testNetworkDelay.js",
+		"bin-debug/testcases/testSpriteSheet.js",
+		"bin-debug/testcases/testZip.js"
+	]
+}

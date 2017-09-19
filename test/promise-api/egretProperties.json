@@ -6,13 +6,12 @@
   "resourcemanager": {
     "publish_path": "resource-bundles"
   },
-  "resources": [],
   "publish": {
     "web": 0,
     "native": 1,
     "path": "bin-release"
   },
-  "egret_version": "5.0.0",
+  "egret_version": "5.1.0",
   "modules": [
     {
       "name": "egret"
