@@ -4,15 +4,22 @@ import * as fs from 'fs-extra-promise';
 import * as crc32 from 'crc32';
 import { ResourceConfig } from '../';
 
+import * as plugin from './';
 
-export function emitConfigJsonFile(buildConfig: { projectRoot: string, debug: boolean, matcher?: string, command: "build" | "publish" }) {
-    const through = require('through2');
-    return through.obj((file, enc, cb) => {
-        cb(null, file)
-    }, async function (cb) {
-        let userConfig = ResourceConfig.getUserConfig(buildConfig.command)
-        let outputDir = path.resolve(buildConfig.projectRoot, userConfig.outputDir, "../");
-        let outputDir2 = path.resolve(buildConfig.projectRoot, userConfig.outputDir);
+
+const p: plugin.Plugin = {
+
+
+    name: "html",
+
+    onFile: async (file) => {
+        return file;
+    },
+
+    onFinish: async (pluginContext) => {
+        let userConfig = ResourceConfig.getUserConfig(pluginContext.buildConfig.command)
+        let outputDir = path.resolve(pluginContext.projectRoot, userConfig.outputDir, "../");
+        let outputDir2 = path.resolve(pluginContext.projectRoot, userConfig.outputDir);
         let resourceFolder = path.relative(outputDir, outputDir2);
         let configjs = path.join(resourceFolder, ResourceConfig.resourceConfigFileName);
         let indexHTML = path.resolve(outputDir, 'index.html');
@@ -40,23 +47,23 @@ export function emitConfigJsonFile(buildConfig: { projectRoot: string, debug: bo
             initial, game, configPath
         };
         await fs.writeJSONAsync(path.join(outputDir, 'manifest-generate.json'), newManifest)
-        cb();
-    });
-};
 
 
+        function rename(fileName: string, version: string, prefix: string) {
+            let result = path.basename(fileName)
+            if (prefix) {
+                prefix = prefix + "/";
+            }
+            return prefix + renameFile(fileName, version)
+        }
 
+        function renameFile(fileName: string, version: string) {
+            let index = fileName.indexOf(".");
+            fileName = fileName.substr(0, index) + "_" + version + fileName.substr(index);
+            return fileName;
+        }
 
-function rename(fileName: string, version: string, prefix: string) {
-    let result = path.basename(fileName)
-    if (prefix) {
-        prefix = prefix + "/";
     }
-    return prefix + renameFile(fileName, version)
 }
 
-function renameFile(fileName: string, version: string) {
-    let index = fileName.indexOf(".");
-    fileName = fileName.substr(0, index) + "_" + version + fileName.substr(index);
-    return fileName;
-}
+export default p;

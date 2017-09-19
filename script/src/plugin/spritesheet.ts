@@ -74,7 +74,6 @@ const p: plugin.Plugin = {
     },
 
     onFinish: async (pluginContext) => {
-        console.log(333)
         let tempDir = os.tmpdir();
         let outputDir = path.join(tempDir, "aaa", Date.now().toString());
         for (let spriteSheetFile in spriteSheetMergeCollection) {

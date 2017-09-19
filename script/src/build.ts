@@ -83,10 +83,8 @@ export async function build(buildConfig: { projectRoot: string, debug: boolean, 
             case "spritesheet":
             case "convertFileName":
             case "emitConfigFile":
-                plugin = plugin1.getPlugin(item);
-                break;
             case "html":
-                plugin = html.emitConfigJsonFile(buildConfig);
+                plugin = plugin1.getPlugin(item);
                 break;
         }
         if (plugin) {

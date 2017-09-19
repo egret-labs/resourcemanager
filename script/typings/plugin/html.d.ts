@@ -1,6 +1,3 @@
-export declare function emitConfigJsonFile(buildConfig: {
-    projectRoot: string;
-    debug: boolean;
-    matcher?: string;
-    command: "build" | "publish";
-}): any;
+import * as plugin from './';
+declare const p: plugin.Plugin;
+export default p;
