@@ -49,7 +49,7 @@ export function getPlugin(name: string) {
             cb(null);
         }
     }, async function (cb) {
-
+        console.log(p)
         let context: PluginContext = {
             resourceFolder, projectRoot, buildConfig, createFile: (relativePath, buffer) => {
                 let newFile = new Vinyl({
@@ -63,12 +63,15 @@ export function getPlugin(name: string) {
             }
         }
         await p.onFinish(context);
+        cb();
     });
 }
 
 import convertFileName from './convertFileName';
 import emitConfigJsonFile from './emitConfigJsonFile';
 import zip from './zip';
+import spritesheet from './spritesheet';
 createPlugin(convertFileName);
 createPlugin(emitConfigJsonFile);
 createPlugin(zip);
+createPlugin(spritesheet);

@@ -80,14 +80,8 @@ export async function build(buildConfig: { projectRoot: string, debug: boolean, 
         let plugin;
         switch (item) {
             case "zip":
-                plugin = plugin1.getPlugin(item);
-                break;
             case "spritesheet":
-                plugin = spritesheet.sheet(resourceFolder);
-                break;
             case "convertFileName":
-                plugin = plugin1.getPlugin(item);
-                break;
             case "emitConfigFile":
                 plugin = plugin1.getPlugin(item);
                 break;
