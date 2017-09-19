@@ -22,7 +22,7 @@ async function executeFilter(url: string) {
 }
 
 const p: plugin.Plugin = {
-    name: "emitConfigJsonFile",
+    name: "emitConfigFile",
     onFile: async (file) => {
         let r = await executeFilter(file.original_relative);
         if (r) {
@@ -92,10 +92,11 @@ const p: plugin.Plugin = {
         }
 
         async function emitResourceConfigFile(debug: boolean) {
+            let userConfig = ResourceConfig.getUserConfig(pluginContext.buildConfig.command)
             let config = ResourceConfig.generateConfig(true);
             let content = JSON.stringify(config, null, "\t");
             let file = `exports.typeSelector = ${ResourceConfig.typeSelector.toString()};
-    exports.resourceRoot = "${pluginContext.userConfig.outputDir}";
+    exports.resourceRoot = "${userConfig.outputDir}";
     exports.alias = ${JSON.stringify(config.alias, null, "\t")};
     exports.groups = ${JSON.stringify(config.groups, null, "\t")};
     exports.resources = ${JSON.stringify(config.resources, null, "\t")};
@@ -105,27 +106,11 @@ const p: plugin.Plugin = {
 
         let config = ResourceConfig.getConfig();
         await convertResourceJson(pluginContext.projectRoot, config);
-        let configContent = await emitResourceConfigFile(true);//pluginContext.userConfig.debug);
-        //todo
-        let configFile = new Vinyl({
-            cwd: pluginContext.resourceFolder,
-            base: pluginContext.resourceFolder,
-            path: path.join(pluginContext.resourceFolder, ResourceConfig.resourceConfigFileName),
-            original_relative: ResourceConfig.resourceConfigFileName,
-            contents: new Buffer(configContent)
-        })
-        this.push(configFile);
+        let configContent = await emitResourceConfigFile(true);
+        pluginContext.createFile(ResourceConfig.resourceConfigFileName, new Buffer(configContent));
 
         let wingConfigContent = await ResourceConfig.generateClassicalConfig();
-        let wingConfigFile = new Vinyl({
-            cwd: pluginContext.resourceFolder,
-            base: pluginContext.resourceFolder,
-            path: path.join(pluginContext.resourceFolder, wing_res_json),
-            original_relative: wing_res_json,
-            contents: new Buffer(wingConfigContent)
-        })
-        this.push(wingConfigFile);
-        // cb();
+        pluginContext.createFile(wing_res_json, new Buffer(wingConfigContent));
     }
 
 

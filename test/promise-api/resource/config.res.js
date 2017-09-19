@@ -24,20 +24,20 @@ exports.typeSelector = function (path) {
     }
     return type;
 };
-exports.resourceRoot = "resource";
-exports.alias = {
+    exports.resourceRoot = "resource";
+    exports.alias = {
 	"sheet_png": "assets/sheet/sheet.png",
 	"sheet_json": "assets/sheet/sheet.json",
 	"off": "sheet_json#off",
 	"on": "sheet_json#on"
 };
-exports.groups = {
+    exports.groups = {
 	"preload": [
 		"off",
 		"on"
 	]
 };
-exports.resources = {
+    exports.resources = {
 	"111.mergeJson": {
 		"url": "111.mergeJson",
 		"type": "mergeJson",
@@ -131,3 +131,4 @@ exports.resources = {
 		}
 	}
 };
+    

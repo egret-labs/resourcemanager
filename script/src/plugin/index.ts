@@ -1,10 +1,14 @@
 const through = require('through2');
-import { ResVinylFile, ResourceConfig } from '../';
+import * as Vinyl from 'vinyl';
+import * as path from 'path';
+import { ResVinylFile, ResourceConfig, ResourceManagerUserConfig } from '../';
 
 export type PluginContext = {
     projectRoot: string,
     resourceFolder: string,
-    userConfig: ResourceConfig.UserConfig
+    buildConfig: { command: "build" | "publish" },
+
+    createFile: (relativePath: string, content: Buffer) => void
 }
 
 export type Plugin = {
@@ -20,11 +24,12 @@ const plugins: { [name: string]: Plugin } = {};
 
 let projectRoot: string;
 let resourceFolder: string;
-let userConfig: ResourceConfig.UserConfig;
+let buildConfig: { command: "build" | "publish" };
 
-export function init(__projectRoot, __resourceFolder, userConfig: ResourceConfig.UserConfig) {
+export function init(__projectRoot, __resourceFolder, __buildConfig: { command: "build" | "publish" }) {
     projectRoot = __projectRoot;
     resourceFolder = __resourceFolder;
+    buildConfig = __buildConfig;
 }
 
 
@@ -46,7 +51,16 @@ export function getPlugin(name: string) {
     }, async function (cb) {
 
         let context: PluginContext = {
-            resourceFolder, projectRoot, userConfig
+            resourceFolder, projectRoot, buildConfig, createFile: (relativePath, buffer) => {
+                let newFile = new Vinyl({
+                    cwd: resourceFolder,
+                    base: resourceFolder,
+                    path: path.join(resourceFolder, relativePath),
+                    original_relative: relativePath,
+                    contents: buffer
+                });
+                this.push(newFile);
+            }
         }
         await p.onFinish(context);
     });
