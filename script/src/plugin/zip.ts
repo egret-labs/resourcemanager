@@ -65,6 +65,9 @@ let p: plugin.Plugin = {
             config.alias[filename] = `${mergeResult}#${filename}`;
             return null;
         }
+        else {
+            return file;
+        }
     },
 
     onFinish: async (pluginContext) => {

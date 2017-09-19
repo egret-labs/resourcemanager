@@ -4,7 +4,7 @@ var fs = require('fs');
 
 var version = require("../package.json").version;
 
-const config = {
+const config_cli = {
     target: 'node',
     context: path.join(__dirname, 'src'),
     resolve: {
@@ -41,4 +41,42 @@ const config = {
     ]
 };
 
-module.exports = config;
+const config_library = {
+    target: 'node',
+    context: path.join(__dirname, 'src'),
+    resolve: {
+        extensions: ['.ts', '.tsx', '.js', '.jsx'],
+        modules: [
+            path.resolve(__dirname, '../', 'node_modules'),
+            path.resolve(__dirname, 'src')
+        ]
+    },
+    node: {
+        __dirname: false
+    },
+    module: {
+        loaders: [
+            {
+                test: /\.ts(x?)$/,
+                loaders: ['ts-loader']
+            }
+        ]
+    },
+    entry: {
+        "vendor": "index"
+    },
+    output: {
+        path: path.join(__dirname, 'out'),
+        filename: '[name].js',
+        library: "vendor",
+        libraryTarget: "umd"
+
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+            __VERSION__: "\"" + version + "\""
+        })
+    ]
+};
+
+module.exports = [config_library, config_cli];

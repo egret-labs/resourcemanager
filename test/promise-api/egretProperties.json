@@ -7,7 +7,7 @@
     "publish_path": "resource-bundles"
   },
   "publish": {
-    "web": 0,
+    "web": 2,
     "native": 1,
     "path": "bin-release"
   },

@@ -6,7 +6,6 @@ import { ResourceConfig } from '../';
 
 import * as plugin from './';
 
-
 const p: plugin.Plugin = {
 
 
@@ -29,10 +28,13 @@ const p: plugin.Plugin = {
         let manifest = await fs.readJSONAsync(path.join(outputDir, 'manifest.json'));
 
 
-        async function tagFile(filename: string) {
+        async function tagFile(filename: string, prefix?: any) {
+            if (typeof prefix == 'number') {
+                prefix = "js";
+            }
             let content = await fs.readFileAsync(path.join(outputDir, filename), "utf-8");
             let contentCrc32 = crc32(content);
-            let newFileName = rename(filename, contentCrc32, "js");
+            let newFileName = rename(filename, contentCrc32, prefix);
             await fs.copyAsync(path.join(outputDir, filename), path.join(outputDir, newFileName));
 
             return newFileName.split("\\").join("/");
@@ -41,7 +43,7 @@ const p: plugin.Plugin = {
         let game = await Promise.all((manifest.game as string[]).map(tagFile));
 
 
-        let configPath = await tagFile(configjs)
+        let configPath = await tagFile(configjs, "");
 
         let newManifest = {
             initial, game, configPath
