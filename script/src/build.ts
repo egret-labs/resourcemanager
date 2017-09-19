@@ -52,16 +52,6 @@ export async function build(buildConfig: { projectRoot: string, debug: boolean, 
         }
     }
 
-    async function convertFileName(file: ResVinylFile, cb) {
-
-        let crc32_file_path: string = crc32(file.contents);
-        // crc32_file_path = `${crc32_file_path.substr(0, 2)}/${crc32_file_path.substr(2)}${file.extname}`;
-        let origin_path = file.original_relative;
-        crc32_file_path = origin_path.substr(0, origin_path.length - file.extname.length) + "_" + crc32_file_path + file.extname;
-        file.path = path.join(file.base, crc32_file_path);
-        cb(null, file);
-    };
-
     function initVinylFile(file: ResVinylFile, cb) {
         file.original_relative = file.relative.split("\\").join("/");
         file.isExistedInResourceFolder = true;
@@ -90,7 +80,7 @@ export async function build(buildConfig: { projectRoot: string, debug: boolean, 
         let plugin;
         switch (item) {
             case "zip":
-                plugin = zip.zip(resourceFolder);
+                plugin = plugin1.getPlugin(item);
                 break;
             case "spritesheet":
                 plugin = spritesheet.sheet(resourceFolder);

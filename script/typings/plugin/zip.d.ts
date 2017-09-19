@@ -1,1 +1,3 @@
-export declare function zip(resourceFolder: string): any;
+import * as plugin from './';
+declare let p: plugin.Plugin;
+export default p;

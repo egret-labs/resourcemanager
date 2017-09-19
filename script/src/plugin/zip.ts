@@ -6,22 +6,22 @@ import * as Vinyl from 'vinyl';
 import * as crc32 from 'crc32';
 import * as through from 'through2'
 import { Data, ResourceConfig, GeneratedData, original, handleException, ResVinylFile } from '../';
-
+import * as plugin from './';
 let mergeCollection: { [mergeFile: string]: yazl.ZipFile } = {};
 
-export function zip(resourceFolder: string) {
-
-    let mergerSelector = ResourceConfig.mergeSelector;
 
 
-    let opts = {
-        compress: true
-    };
+let p: plugin.Plugin = {
+    "name": "zip",
 
-    return through.obj((file: ResVinylFile, enc, cb) => {
+    onFile: async (file) => {
+
+        let mergerSelector = ResourceConfig.mergeSelector;
+        let opts = {
+            compress: true
+        };
         if (!mergerSelector) {
-            cb(null, file);
-            return;
+            return file;
         }
         let filename = file.original_relative;
         let mergeResult = mergerSelector(filename);
@@ -31,8 +31,7 @@ export function zip(resourceFolder: string) {
                 throw new Error(`missing merge type : ${mergeResult}`);
             }
             if (type != "zip") {
-                cb(null, file);
-                return;
+                return file;
             }
             if (!mergeCollection[mergeResult]) {
                 mergeCollection[mergeResult] = new yazl.ZipFile();
@@ -63,36 +62,27 @@ export function zip(resourceFolder: string) {
             }
 
             let config = ResourceConfig.getConfig();
-            config.alias[filename] = `${mergeResult}#${filename}`
-            cb(null);
+            config.alias[filename] = `${mergeResult}#${filename}`;
+            return null;
         }
-        else {
-            cb(null, file);
-        }
+    },
 
-    }, function (cb) {
-
+    onFinish: async (pluginContext) => {
         let list: yazl.ZipFile = [];
         for (let zipFile in mergeCollection) {
             let zip = mergeCollection[zipFile];
-            zip['__path'] = zipFile
+            zip['__path'] = zipFile;
             list.push(zip);
-
         }
-        Promise.all(list.map((zip) => {
+        await Promise.all(list.map(async (zip) => {
             zip.end();
-            return getStream.buffer(zip.outputStream).then(data => {
-                let zipFile = zip['__path'];
-                let file = new Vinyl({
-                    cwd: resourceFolder,
-                    base: resourceFolder,
-                    path: path.join(resourceFolder, zipFile),
-                    original_relative: zipFile,
-                    contents: data
-                })
-                this.push(file);
-            });
-        })).then(() => cb());
+            let data = await getStream.buffer(zip.outputStream)
+            let zipFile = zip['__path'];
+            pluginContext.createFile(zipFile, data);
+        }));
+    }
 
-    });
-};
+
+}
+
+export default p;

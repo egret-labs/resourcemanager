@@ -68,5 +68,7 @@ export function getPlugin(name: string) {
 
 import convertFileName from './convertFileName';
 import emitConfigJsonFile from './emitConfigJsonFile';
+import zip from './zip';
 createPlugin(convertFileName);
 createPlugin(emitConfigJsonFile);
+createPlugin(zip);
