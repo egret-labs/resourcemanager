@@ -1,4 +1,4 @@
-import * as child_process from 'child_process';
+
 import * as path from 'path';
 import * as yazl from 'yazl';
 import * as getStream from 'get-stream';
@@ -8,8 +8,9 @@ import * as through from 'through2'
 import * as os from 'os';
 import * as fs from 'fs-extra-promise';
 import { Data, ResourceConfig, GeneratedData, original, handleException, ResVinylFile, ResourceManagerUserConfig, getEnv } from '../';
-var iconv = require('iconv-lite');
+
 import * as plugin from './';
+import * as utils from '../utils';
 
 
 async function generateSpriteSheet(spriteSheetFileName, dirname) {
@@ -18,7 +19,7 @@ async function generateSpriteSheet(spriteSheetFileName, dirname) {
     let folder = path.join(process.cwd(), dirname);
     let p = "\"" + folder + "\"";
     let o = "\"" + spriteSheetFileName + "\"";
-    await shell(cmd, ["-p", p, "-o", o]);
+    await utils.shell(cmd, ["-p", p, "-o", o]);
 }
 
 
@@ -103,25 +104,4 @@ const p: plugin.Plugin = {
 }
 
 export default p;
-
-function shell(path: string, args: string[]): Promise<number> {
-
-    return new Promise((resolve, reject) => {
-        let cmd = `${path} ${args.join(" ")}`
-        var encoding = 'cp936';
-        var binaryEncoding = 'binary';
-        child_process.exec(cmd, { encoding: binaryEncoding }, function (err, stdout, stderr) {
-            let message = iconv.decode(new Buffer(stdout.toString(), binaryEncoding), encoding)
-            let message2 = iconv.decode(new Buffer(stderr.toString(), binaryEncoding), encoding);
-            if (err) {
-                err = iconv.decode(new Buffer(err.toString(), binaryEncoding), encoding);
-                reject(err);
-            }
-            else {
-                resolve();
-            }
-
-        });
-    })
-}
 

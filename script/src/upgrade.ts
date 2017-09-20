@@ -4,7 +4,7 @@ import * as fs from 'fs-extra-promise';
 
 import * as resource from './';
 import * as config from './config';
-
+import * as utils from './utils';
 
 
 
@@ -98,10 +98,15 @@ export async function upgrade(projectPath) {
         }
 
     }
-
+    process.stdout.write("正在拷贝库项目..." + "\n");
     await copyLibrary();
+    process.stdout.write("正在修改 tsconfig.json 文件..." + "\n");
     await modifyTypeScriptConfigFile();
+    process.stdout.write("正在拷贝 resource/config.ts 文件..." + "\n");
     await copyConfigFile();
+    process.stdout.write("正在清理项目..." + "\n");
+    await utils.shell("egret", ["clean", projectPath]);
+    process.stdout.write("升级完毕" + "\n");
 
     async function copyConfigFile() {
         let configFile = path.join(projectPath, "resource/config.ts");
