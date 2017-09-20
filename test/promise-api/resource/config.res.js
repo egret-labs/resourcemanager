@@ -1,29 +1,29 @@
 exports.typeSelector = function (path) {
-    var ext = path.substr(path.lastIndexOf(".") + 1);
-    var typeMap = {
-        "jpg": "image",
-        "png": "image",
-        "webp": "image",
-        "json": "json",
-        "fnt": "font",
-        "pvr": "pvr",
-        "mp3": "sound",
-        "zip": "zip",
-        "mergeJson": "mergeJson",
-        "sheet": "sheet"
+        var ext = path.substr(path.lastIndexOf(".") + 1);
+        var typeMap = {
+            "jpg": "image",
+            "png": "image",
+            "webp": "image",
+            "json": "json",
+            "fnt": "font",
+            "pvr": "pvr",
+            "mp3": "sound",
+            "zip": "zip",
+            "mergeJson": "mergeJson",
+            "sheet": "sheet"
+        };
+        var type = typeMap[ext];
+        if (type == "json") {
+            if (path.indexOf("sheet") >= 0) {
+                type = "sheet";
+            }
+            else if (path.indexOf("movieclip") >= 0) {
+                type = "movieclip";
+            }
+            ;
+        }
+        return type;
     };
-    var type = typeMap[ext];
-    if (type == "json") {
-        if (path.indexOf("sheet") >= 0) {
-            type = "sheet";
-        }
-        else if (path.indexOf("movieclip") >= 0) {
-            type = "movieclip";
-        }
-        ;
-    }
-    return type;
-};
     exports.resourceRoot = "resource";
     exports.alias = {
 	"sheet_png": "assets/sheet/sheet.png",

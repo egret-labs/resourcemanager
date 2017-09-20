@@ -32,16 +32,18 @@ export function getDist() {
 
 export async function getConfigViaFile(fileName: string) {
     let content = await fs.readFileAsync(fileName, 'utf-8');
-    let jsfile = ts.transpile(content, { module: ts.ModuleKind.CommonJS });
-    let f = new Function('require', 'exports', jsfile);
+    let jsfile = ts.transpile(content, { module: ts.ModuleKind.CommonJS, newLine: ts.NewLineKind.LineFeed });
+    let f = new Function('require', 'module', jsfile);
     var require = function () { };
-    var exports_1: any = {};
+
+    var module_var: any = {};
     try {
-        f(require, exports_1);
+        f(require, module_var);
     }
     catch (e) {
         throw 'todo:parse error'
     }
+    var exports_1: any = module_var.exports;
     let resourceRoot: string = typeof exports_1.resourceRoot == 'function' ? exports_1.resourceRoot() : exports_1.resourceRoot;
     let resourceConfigFileName = exports_1.configPath;
     let typeSelector: (p: string) => string = exports_1.typeSelector;
