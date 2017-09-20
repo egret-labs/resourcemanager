@@ -96,10 +96,18 @@ export async function upgrade(projectPath) {
             let contents = `{
    "compilerOptions": {
       "target": "es5",
-      "experimentalDecorators":true
+      "experimentalDecorators":true,
+      "lib":[
+          "es5",
+          "es2015.promise",
+          "dom"
+      ]
    },
    "exclude": [
-      "node_modules"
+      "node_modules",
+      "resource",
+      "bin-debug",
+      "bin-release"
    ]
 }`;
             await fs.writeFileAsync(tsconfigFile, contents, 'utf-8');
@@ -107,6 +115,27 @@ export async function upgrade(projectPath) {
         else {
             let tsconfigJson = await fs.readJSONAsync(tsconfigFile) as any;
             tsconfigJson.compilerOptions.experimentalDecorators = true;
+            let exclude: string[] | null = tsconfigJson.exclude;
+            if (exclude) {
+                let needToAdds = ["resource", "bin-debug", "bin-release"];
+                for (let needToAdd of needToAdds) {
+                    if (exclude.indexOf(needToAdd) == -1) {
+                        exclude.push(needToAdd);
+                    }
+                }
+            }
+
+            let lib: string[] | null = tsconfigJson.compilerOptions.lib;
+            if (!lib) {
+                lib = [];
+                tsconfigJson.compilerOptions.lib = lib;
+                let needToAdds = ["es5", "dom", "es2015.promise"];
+                for (let needToAdd of needToAdds) {
+                    if (lib.indexOf(needToAdd) == -1) {
+                        lib.push(needToAdd);
+                    }
+                }
+            }
             await fs.writeFileAsync(tsconfigFile, JSON.stringify(tsconfigJson, null, "\t"), 'utf-8');
         }
 
