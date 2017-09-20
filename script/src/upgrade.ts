@@ -48,48 +48,6 @@ export async function upgrade(projectPath) {
         await fs.copyAsync(source, target);
     }
 
-
-
-    async function createDecorator() {
-        var mainSourceFile = path.join(projectPath, "src/Main.ts");
-        let contents = await fs.readFileAsync(mainSourceFile, "utf-8");
-        if (contents.indexOf("RES.mapConfig") == -1) {
-            var index = contents.indexOf("class Main");
-            if (index == -1) {
-                throw new Error("无法匹配到 class Main,升级失败");
-            }
-            contents = contents.substr(0, index) + `
-// 资源配置，您可以访问
-// https://github.com/egret-labs/resourcemanager/tree/master/docs
-// 了解更多细节 
-@RES.mapConfig("config.json",()=>"resource",path => {
-    var ext = path.substr(path.lastIndexOf(".") + 1);
-    var typeMap = {
-        "jpg": "image",
-        "png": "image",
-        "webp": "image",
-        "json": "json",
-        "fnt": "font",
-        "pvr": "pvr",
-        "mp3": "sound"
-    }
-    var type = typeMap[ext];
-    if (type == "json") {
-        if (path.indexOf("sheet") >= 0) {
-            type = "sheet";
-        } else if (path.indexOf("movieclip") >= 0) {
-            type = "movieclip";
-        };
-    }
-    return type;
-})\n`
-                + contents.substr(index);
-        }
-        await fs.writeFileAsync(mainSourceFile, contents, "utf-8");
-    };
-
-
-
     async function modifyTypeScriptConfigFile() {
         let tsconfigFile = path.join(projectPath, "tsconfig.json");
         if (!await fs.existsAsync(tsconfigFile)) {
@@ -142,8 +100,154 @@ export async function upgrade(projectPath) {
     }
 
     await copyLibrary();
-    // await createDecorator();
     await modifyTypeScriptConfigFile();
+    await copyConfigFile();
+
+    async function copyConfigFile() {
+        let configFile = path.join(projectPath, "resource/config.ts");
+        let configDeclrationFile = path.join(projectPath, "resource/config.d.ts");
+        if (!(await fs.existsAsync(configFile))) {
+            await fs.writeFileAsync(configFile, config_content);
+        }
+        await fs.writeFileAsync(configDeclrationFile, config_declration_content);
+
+    }
+
 
 }
 
+const config_declration_content = `
+/**
+ * ResourceManager 配置文件
+ */
+type ResourceManagerConfig = {
+    /**
+     * 配置文件生成路径
+     */
+    configPath: string,
+    /**
+     * 资源根目录路径
+     */
+    resourceRoot: () => string,
+    /**
+     * 构建与发布配置
+     */
+    userConfigs: UserConfigs,
+    /**
+     * 设置资源类型
+     */
+    typeSelector: (path: string) => (string | null)
+    /**
+     * 设置资源的合并策略
+     */
+    mergeSelector?: (path: string) => (string | null),
+    /**
+     * 设置资源的命名策略
+     * beta 功能，请勿随意使用
+     */
+    nameSelector?: (path: string) => (string | null)
+}
+
+/**
+ * 构建与发布配置
+ */
+type UserConfigs = {
+
+    /**
+     * res build 配置
+     */
+    build: UserConfig,
+
+    /**
+     * res publish 配置
+     */
+    publish: UserConfig
+}
+
+/**
+ * 构建配置
+ */
+type UserConfig = {
+    /**
+     * 输出路径
+     */
+    outputDir: string,
+    /**
+     * 插件
+     */
+    plugin: ("zip" | "spritesheet" | "convertFileName" | "emitConfigFile" | "html")[]
+}
+`;
+
+const config_content = `
+/// 阅读 config.d.ts 查看文档
+///<reference path="config.d.ts"/>
+
+const config: ResourceManagerConfig = {
+
+    configPath: 'config.res.js',
+
+    resourceRoot: () => "resource",
+
+    userConfigs: {
+
+        build: {
+            outputDir: "resource",
+
+            plugin: [
+                "emitConfigFile"
+            ]
+        },
+
+        publish: {
+
+            outputDir: "resource-bundles",
+
+            plugin: [
+                "zip",
+                "spritesheet",
+                "convertFileName",
+                "emitConfigFile",
+                "html"
+            ]
+        }
+    },
+
+    mergeSelector: (path) => {
+        if (path.indexOf("assets/bitmap/") >= 0) {
+            return "assets/bitmap/sheet.sheet"
+        }
+        else if (path.indexOf("armature") >= 0 && path.indexOf(".json") >= 0) {
+            return "assets/armature/1.zip";
+        }
+    },
+
+    typeSelector: (path) => {
+        const ext = path.substr(path.lastIndexOf(".") + 1);
+        const typeMap = {
+            "jpg": "image",
+            "png": "image",
+            "webp": "image",
+            "json": "json",
+            "fnt": "font",
+            "pvr": "pvr",
+            "mp3": "sound",
+            "zip": "zip",
+            "mergeJson": "mergeJson",
+            "sheet": "sheet"
+        }
+        let type = typeMap[ext];
+        if (type == "json") {
+            if (path.indexOf("sheet") >= 0) {
+                type = "sheet";
+            } else if (path.indexOf("movieclip") >= 0) {
+                type = "movieclip";
+            };
+        }
+        return type;
+    }
+}
+
+
+export = config;
+`

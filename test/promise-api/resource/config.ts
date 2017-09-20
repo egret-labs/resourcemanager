@@ -1,6 +1,5 @@
 ///<reference path="config.d.ts"/>
 
-
 const config: ResourceManagerConfig = {
 
     configPath: 'config.res.js',

@@ -5,8 +5,6 @@ type UserConfigs = {
     publish: UserConfig
 }
 
-
-
 type UserConfig = {
     outputDir: string,
     plugin: ("zip" | "spritesheet" | "convertFileName" | "emitConfigFile" | "html")[]
