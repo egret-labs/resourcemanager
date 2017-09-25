@@ -2,10 +2,7 @@ declare module RES {
     interface File {
         url: string;
         type: string;
-        crc32?: string;
-        size?: number;
         name: string;
-        soundType?: string;
     }
     interface Dictionary {
         [file: string]: File | Dictionary;
@@ -553,6 +550,9 @@ declare module RES {
          * @language zh_CN
          */
         data: ResourceInfo;
+        crc32?: string;
+        size?: number;
+        soundType?: string;
     }
 }
 declare module RES {

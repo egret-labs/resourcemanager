@@ -383,6 +383,8 @@ module RES.processor {
             let fileSystem = new NewFileSystem(data.resources);
             data.fileSystem = fileSystem;
             delete data.resource;
+            resourceTypeSelector = data.typeSelector;
+            resourceNameSelector = data.nameSelector ? data.nameSelector : (p) => p;
             return data;
             // let resources = data.resources;
             // let loop = (r, prefix, walk: (r: ResourceInfo) => void) => {

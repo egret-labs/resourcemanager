@@ -11,6 +11,7 @@ var game_file_list = [
 	"libs/modules/dragonBones/dragonBones.js",
 	"bin-debug/Main.js",
 	"bin-debug/testcases/testLifeCycle.js",
+	"bin-debug/testcases/testLoadExtra.js",
 	"bin-debug/testcases/testMovieClip.js",
 	"bin-debug/testcases/testNetworkDelay.js",
 	"bin-debug/testcases/testSpriteSheet.js",

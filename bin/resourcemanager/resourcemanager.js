@@ -1007,6 +1007,8 @@ var RES;
                                 fileSystem = new RES.NewFileSystem(data.resources);
                                 data.fileSystem = fileSystem;
                                 delete data.resource;
+                                RES.resourceTypeSelector = data.typeSelector;
+                                RES.resourceNameSelector = data.nameSelector ? data.nameSelector : function (p) { return p; };
                                 return [2 /*return*/, data];
                         }
                     });
@@ -1023,7 +1025,7 @@ var RES;
         processor_1.LegacyResourceConfigProcessor = {
             onLoadStart: function (host, resource) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var data, fileSystem, groups, _i, _a, g, fsData, _b, _c, resource_1, result;
+                    var data, fileSystem, groups, _i, _a, g, alias, fsData, _loop_1, _b, _c, resource_1, result;
                     return __generator(this, function (_d) {
                         switch (_d.label) {
                             case 0: return [4 /*yield*/, host.load(resource, processor_1.JsonProcessor)];
@@ -1044,12 +1046,19 @@ var RES;
                                     g = _a[_i];
                                     groups[g.name] = g.keys.split(",");
                                 }
+                                alias = {};
                                 fsData = {};
-                                for (_b = 0, _c = data.resources; _b < _c.length; _b++) {
-                                    resource_1 = _c[_b];
+                                _loop_1 = function (resource_1) {
                                     fsData[resource_1.name] = resource_1;
                                     if (resource_1.subkeys) {
+                                        resource_1.subkeys.split(".").forEach(function (subkey) {
+                                            alias[subkey] = resource_1.name + "#" + subkey;
+                                        });
                                     }
+                                };
+                                for (_b = 0, _c = data.resources; _b < _c.length; _b++) {
+                                    resource_1 = _c[_b];
+                                    _loop_1(resource_1);
                                 }
                                 result = {
                                     groups: groups,
