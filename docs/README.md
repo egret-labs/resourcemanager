@@ -35,80 +35,75 @@
 
 ```typescript
 
-export const configPath = 'config.res.js'; // 配置生成路径
+///<reference path="config.d.ts"/>
 
-export const resourceRoot = () => "resource"; // 资源路径
+const config: ResourceManagerConfig = {
 
-export const userConfigs: UserConfigs = { // 命令行配置
+    configPath: 'config.res.js',
 
-    build: { // res build 命令配置
-        outputDir: "resource",
+    resourceRoot: () => "resource",
 
-        plugin: [
-            "emitConfigFile"
-        ]
+    userConfigs: {
+
+        build: {
+            outputDir: "resource",
+
+            plugin: [
+                "emitConfigFile"
+            ]
+        },
+
+        publish: {
+
+            outputDir: "resource-bundles",
+
+            plugin: [
+                "zip",
+                "spritesheet",
+                "convertFileName",
+                "emitConfigFile",
+                "html"
+            ]
+        }
     },
 
-    publish: { // res publish 命令配置
+    mergeSelector: (path) => {
+        if (path.indexOf("assets/bitmap/") >= 0) {
+            return "assets/bitmap/sheet.sheet"
+        }
+        else if (path.indexOf("armature") >= 0 && path.indexOf(".json") >= 0) {
+            return "assets/armature/1.zip";
+        }
+    },
 
-        outputDir: "resource-bundles",
-
-        plugin: [
-            "zip",
-            "spritesheet",
-            "convertFileName",
-            "emitConfigFile",
-            "html"
-        ]
+    typeSelector: (path) => {
+        const ext = path.substr(path.lastIndexOf(".") + 1);
+        const typeMap = {
+            "jpg": "image",
+            "png": "image",
+            "webp": "image",
+            "json": "json",
+            "fnt": "font",
+            "pvr": "pvr",
+            "mp3": "sound",
+            "zip": "zip",
+            "mergeJson": "mergeJson",
+            "sheet": "sheet"
+        }
+        let type = typeMap[ext];
+        if (type == "json") {
+            if (path.indexOf("sheet") >= 0) {
+                type = "sheet";
+            } else if (path.indexOf("movieclip") >= 0) {
+                type = "movieclip";
+            };
+        }
+        return type;
     }
 }
 
-export const mergeSelector = (path: string) => { // 将特定文件进行合并
-    if (path.indexOf("assets/bitmap/") >= 0) {
-        return "assets/bitmap/sheet.sheet"
-    }
-    else if (path.indexOf("armature") >= 0 && path.indexOf(".json") >= 0) {
-        return "assets/armature/1.zip";
-    }
-}
 
-export const typeSelector = (path: string) => { // 声明特定文件的加载类型
-    var ext = path.substr(path.lastIndexOf(".") + 1);
-    var typeMap = {
-        "jpg": "image",
-        "png": "image",
-        "webp": "image",
-        "json": "json",
-        "fnt": "font",
-        "pvr": "pvr",
-        "mp3": "sound",
-        "zip": "zip",
-        "sheet": "sheet"
-    }
-    var type = typeMap[ext];
-    if (type == "json") {
-        if (path.indexOf("sheet") >= 0) {
-            type = "sheet";
-        } else if (path.indexOf("movieclip") >= 0) {
-            type = "movieclip";
-        };
-    }
-    return type;
-}
-
-
-type UserConfig = {
-    outputDir: string,
-    plugin: ("zip" | "spritesheet" | "convertFileName" | "emitConfigFile" | "html")[]
-}
-
-type UserConfigs = {
-
-    build: UserConfig,
-
-    publish: UserConfig
-}
-
+export = config;
 ```
 
 在进行完配置后，开发者请务必注意您的白鹭引擎项目的 ```tsconfig.json``` 中不要设置编译 ```resource/config.ts```，如下所示
