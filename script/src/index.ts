@@ -12,6 +12,7 @@ export * from './upgrade';
 export * from './build';
 export * from './version';
 export * from './environment';
+export * from './plugin';
 
 export let handleException = (e: string | Error) => {
     if (typeof e == 'string') {

@@ -8,6 +8,7 @@ export * from './upgrade';
 export * from './build';
 export * from './version';
 export * from './environment';
+export * from './plugin';
 export declare let handleException: (e: string | Error) => void;
 export interface ResVinylFile extends VinylFile {
     original_relative: string;
