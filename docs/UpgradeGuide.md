@@ -35,3 +35,15 @@ RES.setConfigURL("resource/config.res.js")
 ```
 
 注意，上面这行代码必须加在 RES 的最前，包括 ```RES.loadConfig``` 、```RES.addEventListener```等任何 API 之前
+
+### 升级过程
+
+* 执行 ``` npm install egret-resource-manager@nightly -g``` 安装最新版本
+* 执行 ``` res upgrade ```，其中会在内部进行如下操作
+    * 将最新的 运行时库拷贝到项目的```resourcemanager```文件夹中
+    * 修改 ```tsconfig.json```文件中的 ```include```或者```exclude```字段
+    * 在 ```resource```文件夹中拷贝一个名为 ```config.ts```和```config.d.ts```的文件
+    * 自动执行 ``` egret clean ``` 清理项目
+* 在上述操作完毕后，您需要手动修改 Main.ts 文件，包含：
+    * 在 ```RES.loadConfig```之前，执行```RES.setConfigURL("resource/config.res.js")```
+    * 删除```RES.mapConfig```，并将原来的第三个参数中的函数拷贝到 ```config.ts```中
