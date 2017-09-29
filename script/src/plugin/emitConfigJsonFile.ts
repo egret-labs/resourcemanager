@@ -25,7 +25,6 @@ const p: plugin.Plugin = {
     name: "emitConfigFile",
     onFile: async (file) => {
         if (!file.isExistedInResourceFolder) {
-            console.log(111)
             return file;
         }
 
