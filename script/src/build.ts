@@ -53,17 +53,21 @@ export async function build(buildConfig: { projectRoot: string, debug: boolean, 
 
     function initVinylFile(file: ResVinylFile, cb) {
         file.original_relative = file.relative.split("\\").join("/");
-        file.isExistedInResourceFolder = true;
-
-        executeFilter(file.original_relative).then((r) => {
-            if (r) {
-                cb(null, file);
-            }
-            else {
-                cb(null, file);
-            }
-        }).catch(e => console.log(e))
-
+        const isExistedInResourceFolder = file.original_relative.indexOf(ResourceConfig.resourceRoot) == 0;
+        file.isExistedInResourceFolder = isExistedInResourceFolder;
+        if (!isExistedInResourceFolder) {
+            cb(null, file);
+        }
+        else {
+            executeFilter(file.original_relative).then((r) => {
+                if (r) {
+                    cb(null, file);
+                }
+                else {
+                    cb(null);
+                }
+            }).catch(e => console.log(e))
+        }
     }
 
     let parsedConfig = await ResourceConfig.init(buildConfig.projectRoot);
