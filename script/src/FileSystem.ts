@@ -13,86 +13,87 @@ export interface Dictionary {
     [file: string]: File | Dictionary
 
 }
-
-export function init(d: Dictionary) {
-    root = d;
-    return root;
-}
-
-var root: Dictionary = {};
+export class FileSystem {
 
 
-export function addFile(r: File) {
-
-    let { type, name, url} = r;
-    if (!type) type = "";
-    name = normalize(name);
-    let basefilename = basename(name);
-    let folder = dirname(name);
-    if (!exists(folder)) {
-        mkdir(folder);
+    init(d: Dictionary) {
+        this.root = d;
+        return this.root;
     }
-    let d = reslove(folder) as (Dictionary | null);
-    if (d) {
-        d[basefilename] = { url, type, name };
-    }
-}
 
-export function getFile(filename: string): File | undefined {
-    return reslove(filename) as File;
-}
+    root: Dictionary = {};
 
-function basename(filename: string) {
-    return filename.substr(filename.lastIndexOf("/") + 1);
-}
+    addFile(r: File) {
 
-function normalize(filename: string) {
-    return filename.split("/").filter(d => !!d).join("/");
-}
-
-function dirname(path: string) {
-    return path.substr(0, path.lastIndexOf("/"));
-}
-
-function reslove(dirpath: string) {
-    if (dirpath == "") {
-        return root;
-    }
-    dirpath = normalize(dirpath);
-    let list = dirpath.split("/");
-    let current: File | Dictionary = root;
-    for (let f of list) {
-        current = current[f];
-        if (!current) {
-            return null;
+        let { type, name, url } = r;
+        if (!type) type = "";
+        name = this.normalize(name);
+        let basefilename = this.basename(name);
+        let folder = this.dirname(name);
+        if (!this.exists(folder)) {
+            this.mkdir(folder);
+        }
+        let d = this.reslove(folder) as (Dictionary | null);
+        if (d) {
+            d[basefilename] = { url, type, name };
         }
     }
-    return current;
-}
 
-export function mkdir(dirpath: string) {
-    dirpath = normalize(dirpath);
-    let list = dirpath.split("/");
-    let current = root;
-    for (let f of list) {
-        if (!current[f]) {
-            current[f] = {};
+    getFile(filename: string): File | undefined {
+        return this.reslove(filename) as File;
+    }
+
+    basename(filename: string) {
+        return filename.substr(filename.lastIndexOf("/") + 1);
+    }
+
+    normalize(filename: string) {
+        return filename.split("/").filter(d => !!d).join("/");
+    }
+
+    dirname(path: string) {
+        return path.substr(0, path.lastIndexOf("/"));
+    }
+
+    reslove(dirpath: string) {
+        if (dirpath == "") {
+            return this.root;
         }
-        current = current[f] as Dictionary;
+        dirpath = this.normalize(dirpath);
+        let list = dirpath.split("/");
+        let current: File | Dictionary = this.root;
+        for (let f of list) {
+            current = current[f];
+            if (!current) {
+                return null;
+            }
+        }
+        return current;
+    }
+
+    mkdir(dirpath: string) {
+        dirpath = this.normalize(dirpath);
+        let list = dirpath.split("/");
+        let current = this.root;
+        for (let f of list) {
+            if (!current[f]) {
+                current[f] = {};
+            }
+            current = current[f] as Dictionary;
+        }
+    }
+
+    exists(dirpath: string) {
+        if (dirpath == "") return true;
+        dirpath = this.normalize(dirpath);
+        let list = dirpath.split("/");
+        let current = this.root;
+        for (let f of list) {
+            if (!current[f]) {
+                return false;
+            }
+            current = current[f] as Dictionary;
+        }
+        return true;
     }
 }
-
-export function exists(dirpath: string) {
-    if (dirpath == "") return true;
-    dirpath = normalize(dirpath);
-    let list = dirpath.split("/");
-    let current = root;
-    for (let f of list) {
-        if (!current[f]) {
-            return false;
-        }
-        current = current[f] as Dictionary;
-    }
-    return true;
-}
-

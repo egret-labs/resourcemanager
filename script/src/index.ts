@@ -14,6 +14,8 @@ export * from './version';
 export * from './environment';
 export * from './plugin';
 
+const resourceVfs = new vfs.FileSystem();
+
 export let handleException = (e: string | Error) => {
     if (typeof e == 'string') {
         console.error(`错误:${e}`);
@@ -236,20 +238,22 @@ export namespace ResourceConfig {
         r.name = name;
 
         if (checkDuplicate) {
-            let a = vfs.getFile(r.name)
+            let a = resourceVfs.getFile(r.name)
             if (a && a.url != r.url) {
                 console.warn("duplicate: " + r.url + " => " + a.url)
             }
         }
-        vfs.addFile(r);
+        resourceVfs.addFile(r);
     }
 
+
     export function getFile(filename: string): vfs.File | undefined {
-        return vfs.getFile(filename);
+        return resourceVfs.getFile(filename);
     }
 
     export async function init(projectPath) {
         let parsedConfig = await _config.getConfigViaFile(path.join(projectPath, 'scripts/config.ts'))
+
         typeSelector = parsedConfig.typeSelector;
         nameSelector = parsedConfig.nameSelector;
         resourceRoot = parsedConfig.resourceRoot;
@@ -271,6 +275,6 @@ export namespace ResourceConfig {
                 }
             }
         }
-        vfs.init(config.resources);
+        resourceVfs.init(config.resources);
     }
 }

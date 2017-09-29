@@ -6,8 +6,15 @@ export interface File {
 export interface Dictionary {
     [file: string]: File | Dictionary;
 }
-export declare function init(d: Dictionary): Dictionary;
-export declare function addFile(r: File): void;
-export declare function getFile(filename: string): File | undefined;
-export declare function mkdir(dirpath: string): void;
-export declare function exists(dirpath: string): boolean;
+export declare class FileSystem {
+    init(d: Dictionary): Dictionary;
+    root: Dictionary;
+    addFile(r: File): void;
+    getFile(filename: string): File | undefined;
+    basename(filename: string): string;
+    normalize(filename: string): string;
+    dirname(path: string): string;
+    reslove(dirpath: string): Dictionary | File | null;
+    mkdir(dirpath: string): void;
+    exists(dirpath: string): boolean;
+}
