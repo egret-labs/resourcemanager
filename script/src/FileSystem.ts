@@ -15,13 +15,16 @@ export interface Dictionary {
 }
 export class FileSystem {
 
+    root: Dictionary = {};
+    rootPath: string;
 
-    init(d: Dictionary) {
+    init(d: Dictionary, rootPath: string) {
         this.root = d;
+        this.rootPath = rootPath;
         return this.root;
     }
 
-    root: Dictionary = {};
+
 
     addFile(r: File) {
 
@@ -40,26 +43,26 @@ export class FileSystem {
     }
 
     getFile(filename: string): File | undefined {
+        filename = this.normalize(filename);
         return this.reslove(filename) as File;
     }
 
-    basename(filename: string) {
+    private basename(filename: string) {
         return filename.substr(filename.lastIndexOf("/") + 1);
     }
 
-    normalize(filename: string) {
-        return filename.split("/").filter(d => !!d).join("/");
+    private normalize(filename: string) {
+        return filename.split("/").filter(d => !!d && d != this.rootPath).join("/");
     }
 
-    dirname(path: string) {
+    private dirname(path: string) {
         return path.substr(0, path.lastIndexOf("/"));
     }
 
-    reslove(dirpath: string) {
+    private reslove(dirpath: string) {
         if (dirpath == "") {
             return this.root;
         }
-        dirpath = this.normalize(dirpath);
         let list = dirpath.split("/");
         let current: File | Dictionary = this.root;
         for (let f of list) {
@@ -71,7 +74,7 @@ export class FileSystem {
         return current;
     }
 
-    mkdir(dirpath: string) {
+    private mkdir(dirpath: string) {
         dirpath = this.normalize(dirpath);
         let list = dirpath.split("/");
         let current = this.root;
@@ -83,7 +86,7 @@ export class FileSystem {
         }
     }
 
-    exists(dirpath: string) {
+    private exists(dirpath: string) {
         if (dirpath == "") return true;
         dirpath = this.normalize(dirpath);
         let list = dirpath.split("/");

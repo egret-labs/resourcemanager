@@ -275,6 +275,6 @@ export namespace ResourceConfig {
                 }
             }
         }
-        resourceVfs.init(config.resources);
+        resourceVfs.init(config.resources, "resource");
     }
 }
