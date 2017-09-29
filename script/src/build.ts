@@ -77,18 +77,12 @@ export async function build(buildConfig: { projectRoot: string, debug: boolean, 
         .pipe(map(initVinylFile))
         .pipe(profile.profile());
     for (let item of userConfig.plugin) {
-        let plugin;
-        switch (item) {
-            case "zip":
-            case "spritesheet":
-            case "convertFileName":
-            case "emitConfigFile":
-            case "html":
-                plugin = plugin1.getPlugin(item);
-                break;
-        }
+        let plugin = plugin1.getPlugin(item);
         if (plugin) {
             stream = stream.pipe(plugin);
+        }
+        else {
+            process.stderr.write("找不到 plugin : " + item)
         }
     }
 
