@@ -29,7 +29,6 @@ export async function build(buildConfig: { projectRoot: string, debug: boolean, 
      * 当写入地址为源文件夹时，防止重复写入
      */
     function filterDuplicateWrite(file: ResVinylFile, cb) {
-
         if (file.isExistedInResourceFolder) {
             cb(null);
         }
@@ -55,12 +54,13 @@ export async function build(buildConfig: { projectRoot: string, debug: boolean, 
     function initVinylFile(file: ResVinylFile, cb) {
         file.original_relative = file.relative.split("\\").join("/");
         file.isExistedInResourceFolder = true;
+
         executeFilter(file.original_relative).then((r) => {
             if (r) {
                 cb(null, file);
             }
             else {
-                cb(null);
+                cb(null, file);
             }
         }).catch(e => console.log(e))
 
@@ -72,10 +72,11 @@ export async function build(buildConfig: { projectRoot: string, debug: boolean, 
     resourceFolder = path.join(projectRoot, ResourceConfig.resourceRoot);
     plugin1.init(buildConfig.projectRoot, resourceFolder, buildConfig)
     let outputDir = path.join(projectRoot, userConfig.outputDir);
-    let matcher = buildConfig.matcher ? buildConfig.matcher : "resource/**/*.*";
+    // let matcher = buildConfig.matcher ? buildConfig.matcher : "resource/**/*.*";
+    let matcher = ["resource/**/*.*", "index.html", "libs/**/*.js"]
     let stream = vinylfs.src(matcher, { cwd: projectRoot, base: projectRoot })
         .pipe(map(initVinylFile))
-        .pipe(profile.profile());
+
     for (let item of userConfig.plugin) {
         let plugin = plugin1.getPlugin(item);
         if (plugin) {
@@ -85,7 +86,7 @@ export async function build(buildConfig: { projectRoot: string, debug: boolean, 
             process.stderr.write("找不到 plugin : " + item)
         }
     }
-
+    stream = stream.pipe(profile.profile());
     if (ResourceConfig.resourceRoot == userConfig.outputDir) {
         stream = stream.pipe(map(filterDuplicateWrite));
     }

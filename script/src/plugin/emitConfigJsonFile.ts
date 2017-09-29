@@ -24,10 +24,14 @@ async function executeFilter(url: string) {
 const p: plugin.Plugin = {
     name: "emitConfigFile",
     onFile: async (file) => {
+        if (file.original_relative.indexOf(ResourceConfig.resourceRoot) != 0) {
+            return file;
+        }
         let r = await executeFilter(file.original_relative);
         if (r) {
             r.url = file.relative;
             ResourceConfig.addFile(r, true);
+            console.log(file.original_relative)
             return file;
         }
         else {
