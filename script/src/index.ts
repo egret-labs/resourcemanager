@@ -249,7 +249,7 @@ export namespace ResourceConfig {
     }
 
     export async function init(projectPath) {
-        let parsedConfig = await _config.getConfigViaFile(path.join(projectPath, 'resource/config.ts'))
+        let parsedConfig = await _config.getConfigViaFile(path.join(projectPath, 'scripts/config.ts'))
         typeSelector = parsedConfig.typeSelector;
         nameSelector = parsedConfig.nameSelector;
         resourceRoot = parsedConfig.resourceRoot;

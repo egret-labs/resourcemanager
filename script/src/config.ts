@@ -6,7 +6,7 @@ import * as ts from 'typescript';
 
 
 export async function printConfig(egretRoot) {
-    let data = await getConfigViaFile(path.join(egretRoot, 'resource/config.ts'));
+    let data = await getConfigViaFile(path.join(egretRoot, 'scripts/config.ts'));
     let source = getDist();
     let { resourceRoot, resourceConfigFileName, typeSelector } = data;
     let typeSelectorBody = typeSelector.toString();
