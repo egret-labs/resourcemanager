@@ -32,7 +32,6 @@ const p: plugin.Plugin = {
         if (r) {
             r.url = file.relative;
             ResourceConfig.addFile(r, true);
-            console.log(file.original_relative)
             return file;
         }
         else {
@@ -100,12 +99,13 @@ const p: plugin.Plugin = {
             let userConfig = ResourceConfig.getUserConfig(pluginContext.buildConfig.command)
             let config = ResourceConfig.generateConfig(true);
             let content = JSON.stringify(config, null, "\t");
+            // `exports.resourceRoot = "${userConfig.outputDir}"`;
             let file = `exports.typeSelector = ${ResourceConfig.typeSelector.toString()};
-    exports.resourceRoot = "${userConfig.outputDir}";
-    exports.alias = ${JSON.stringify(config.alias, null, "\t")};
-    exports.groups = ${JSON.stringify(config.groups, null, "\t")};
-    exports.resources = ${JSON.stringify(config.resources, null, "\t")};
-    `
+exports.resourceRoot = "${ResourceConfig.resourceRoot}";
+exports.alias = ${JSON.stringify(config.alias, null, "\t")};
+exports.groups = ${JSON.stringify(config.groups, null, "\t")};
+exports.resources = ${JSON.stringify(config.resources, null, "\t")};
+`
             return file;
         }
 

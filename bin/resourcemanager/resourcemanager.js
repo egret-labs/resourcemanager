@@ -144,6 +144,9 @@ var RES;
     RES.getResourceInfo = getResourceInfo;
     var configItem;
     function setConfigURL(url) {
+        if (configItem) {
+            return;
+        }
         var type;
         if (url.indexOf(".json") >= 0) {
             type = "legacyResourceConfig";

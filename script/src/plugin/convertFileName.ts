@@ -5,6 +5,9 @@ import * as crc32 from 'crc32';
 const p: plugin.Plugin = {
     name: "convertFileName",
     onFile: async (file) => {
+        if (!file.isExistedInResourceFolder) {
+            return file;
+        }
         let crc32_file_path: string = crc32(file.contents);
         // crc32_file_path = `${crc32_file_path.substr(0, 2)}/${crc32_file_path.substr(2)}${file.extname}`;
         let origin_path = file.original_relative;

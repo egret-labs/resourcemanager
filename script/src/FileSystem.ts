@@ -31,6 +31,9 @@ export class FileSystem {
         let { type, name, url } = r;
         if (!type) type = "";
         name = this.normalize(name);
+        url = this.normalize(url);
+        r.name = name;
+        r.url = url;
         let basefilename = this.basename(name);
         let folder = this.dirname(name);
         if (!this.exists(folder)) {

@@ -59,6 +59,9 @@ module RES {
     var configItem: ResourceInfo & { resourceRoot: string };
 
     export function setConfigURL(url: string) {
+        if (configItem) {
+            return;
+        }
         let type;
         if (url.indexOf(".json") >= 0) {
             type = "legacyResourceConfig";
