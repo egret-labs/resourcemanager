@@ -17,4 +17,4 @@ export declare function init(__projectRoot: any, __resourceFolder: any, __buildC
     command: "build" | "publish";
 }): void;
 export declare function createPlugin(plugin: Plugin): void;
-export declare function getPlugin(name: string): any;
+export declare function getPlugin(name: string | Plugin): any;

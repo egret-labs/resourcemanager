@@ -6,7 +6,7 @@ export declare function getDist(): {
     minFiles: string[];
     declareFiles: string[];
 };
-export declare function getConfigViaFile(fileName: string): Promise<{
+export declare function getConfigViaFile(configFileName: string): Promise<{
     resourceRoot: string;
     resourceConfigFileName: any;
     typeSelector: (p: string) => string;

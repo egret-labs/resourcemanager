@@ -37,8 +37,14 @@ export function createPlugin(plugin: Plugin) {
     plugins[plugin.name] = plugin;
 }
 
-export function getPlugin(name: string) {
-    let p = plugins[name];
+export function getPlugin(name: string | Plugin) {
+    let p: Plugin;
+    if (typeof name == 'string') {
+        p = plugins[name];
+    }
+    else {
+        p = name;
+    }
     const through = require('through2');
     return through.obj(async (file: ResVinylFile, enc, cb) => {
         let r = await p.onFile(file);

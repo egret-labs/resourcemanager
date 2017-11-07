@@ -76,6 +76,7 @@ const p: plugin.Plugin = {
 
     onFinish: async (pluginContext) => {
         let tempDir = os.tmpdir();
+
         let outputDir = path.join(tempDir, "aaa", Date.now().toString());
         for (let spriteSheetFile in spriteSheetMergeCollection) {
             let files = spriteSheetMergeCollection[spriteSheetFile];
@@ -89,7 +90,7 @@ const p: plugin.Plugin = {
 
                 let outputJsonFile = path.join(outputDir, spriteSheetFile);
                 await fs.mkdirpAsync(path.dirname(outputJsonFile))
-                await generateSpriteSheet(outputJsonFile, path.join(pluginContext.resourceFolder, dirname));
+                await generateSpriteSheet(outputJsonFile, path.join(pluginContext.projectRoot, dirname));
                 let outputPngFile = outputJsonFile.replace(path.extname(outputJsonFile), ".png");
 
                 let outputJsonContent = await fs.readFileAsync(outputJsonFile);

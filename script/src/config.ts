@@ -30,18 +30,24 @@ export function getDist() {
     }
 }
 
-export async function getConfigViaFile(fileName: string) {
-    let content = await fs.readFileAsync(fileName, 'utf-8');
+export async function getConfigViaFile(configFileName: string) {
+    let content = await fs.readFileAsync(configFileName, 'utf-8');
     let jsfile = ts.transpile(content, { module: ts.ModuleKind.CommonJS, newLine: ts.NewLineKind.LineFeed });
     let f = new Function('require', 'module', jsfile);
-    var require = function () { };
-
     var module_var: any = {};
+    function pluginRequire(filename: string) {
+        let nodeRequire = eval("require");
+        if (filename.charAt(0) == ".") {
+            filename = path.join(path.dirname(configFileName), filename);
+        }
+        return nodeRequire(filename);
+    }
     try {
-        f(require, module_var);
+        f(pluginRequire, module_var);
     }
     catch (e) {
-        throw 'todo:parse error'
+        console.log(e)
+        throw e
     }
     var exports_1: any = module_var.exports;
     let resourceRoot: string = typeof exports_1.resourceRoot == 'function' ? exports_1.resourceRoot() : exports_1.resourceRoot;
