@@ -222,11 +222,8 @@ export namespace ResourceConfig {
         plugin: ("zip" | "spritesheet" | "convertFileName" | "emitConfigFile" | "html")[]
     }
 
-    export function getUserConfig(command: "build" | "publish") {
-        return userConfigs[command]
-    }
 
-    export var userConfigs: { build: UserConfig, publish: UserConfig };
+    export var userConfig: UserConfig
 
     var resourcePath: string;
 
@@ -251,9 +248,8 @@ export namespace ResourceConfig {
         return resourceVfs.getFile(filename);
     }
 
-    export async function init(projectPath) {
-        let parsedConfig = await _config.getConfigViaFile(path.join(projectPath, 'scripts/config.ts'))
-
+    export async function init(projectPath: string, target: string, command: string) {
+        let parsedConfig = await _config.getConfigViaFile(path.join(projectPath, 'scripts/config.ts'), target, command);
         typeSelector = parsedConfig.typeSelector;
         nameSelector = parsedConfig.nameSelector;
         resourceRoot = parsedConfig.resourceRoot;
@@ -261,18 +257,11 @@ export namespace ResourceConfig {
         resourcePath = path.resolve(projectPath, resourceRoot);
         resourceConfigFileName = parsedConfig.resourceConfigFileName;
         config = { alias: {}, groups: {}, resources: {} };
-        userConfigs = parsedConfig.userConfigs;
-        if (!userConfigs) {
-            userConfigs = {
-                build: {
-                    outputDir: "resource",
-                    plugin: ["emitConfigFile"]
-                },
-
-                publish: {
-                    outputDir: "resource",
-                    plugin: ["emitConfigFile"]
-                }
+        userConfig = parsedConfig.userConfig;
+        if (!userConfig) {
+            userConfig = {
+                outputDir: "resource",
+                plugin: ["emitConfigFile"]
             }
         }
         resourceVfs.init(config.resources, "resource");

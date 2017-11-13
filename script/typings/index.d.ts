@@ -69,12 +69,8 @@ export declare namespace ResourceConfig {
         outputDir: string;
         plugin: ("zip" | "spritesheet" | "convertFileName" | "emitConfigFile" | "html")[];
     };
-    function getUserConfig(command: "build" | "publish"): UserConfig;
-    var userConfigs: {
-        build: UserConfig;
-        publish: UserConfig;
-    };
+    var userConfig: UserConfig;
     function addFile(r: vfs.File, checkDuplicate: boolean): void;
     function getFile(filename: string): vfs.File | undefined;
-    function init(projectPath: any): Promise<void>;
+    function init(projectPath: string, target: string, command: string): Promise<void>;
 }

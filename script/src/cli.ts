@@ -24,7 +24,7 @@ async function executeCommand(command: string) {
             break;
         case "build":
         case "publish":
-            return res.build({ projectRoot, debug: true, command });
+            return res.build({ projectRoot, debug: true, command, target: "web" });
             break;
         case "watch":
             return res.watch(projectRoot)

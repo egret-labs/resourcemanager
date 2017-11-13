@@ -6,7 +6,7 @@ import * as ts from 'typescript';
 
 
 export async function printConfig(egretRoot) {
-    let data = await getConfigViaFile(path.join(egretRoot, 'scripts/config.ts'));
+    let data = await getConfigViaFile(path.join(egretRoot, 'scripts/config.ts'), "web", "build");
     let source = getDist();
     let { resourceRoot, resourceConfigFileName, typeSelector } = data;
     let typeSelectorBody = typeSelector.toString();
@@ -30,7 +30,7 @@ export function getDist() {
     }
 }
 
-export async function getConfigViaFile(configFileName: string) {
+export async function getConfigViaFile(configFileName: string, target: string, command: string) {
     let content = await fs.readFileAsync(configFileName, 'utf-8');
     let jsfile = ts.transpile(content, { module: ts.ModuleKind.CommonJS, newLine: ts.NewLineKind.LineFeed });
     let f = new Function('require', 'module', jsfile);
@@ -54,8 +54,9 @@ export async function getConfigViaFile(configFileName: string) {
     let resourceConfigFileName = exports_1.configPath;
     let typeSelector: (p: string) => string = exports_1.typeSelector;
     let nameSelector = exports_1.nameSelector ? exports_1.nameSelector : (p: string) => p;
-    let userConfigs: { build: ResourceConfig.UserConfig, publish: ResourceConfig.UserConfig } = exports_1.userConfigs;
+    let buildConfigFunction: ((params: any) => ResourceConfig.UserConfig) = exports_1.buildConfig;
+    const userConfig = buildConfigFunction({ target, command });
     let mergeSelector = exports_1.mergeSelector;
-    return { resourceRoot, resourceConfigFileName, typeSelector, mergeSelector, nameSelector, userConfigs };
+    return { resourceRoot, resourceConfigFileName, typeSelector, mergeSelector, nameSelector, userConfig };
 
 }

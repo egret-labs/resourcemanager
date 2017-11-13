@@ -3,4 +3,5 @@ export declare function build(buildConfig: {
     debug: boolean;
     matcher?: string;
     command: "build" | "publish";
+    target: string;
 }): Promise<any>;

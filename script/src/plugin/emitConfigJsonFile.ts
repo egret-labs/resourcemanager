@@ -96,7 +96,7 @@ const p: plugin.Plugin = {
         }
 
         async function emitResourceConfigFile(debug: boolean) {
-            let userConfig = ResourceConfig.getUserConfig(pluginContext.buildConfig.command)
+            let userConfig = ResourceConfig.userConfig;
             let config = ResourceConfig.generateConfig(true);
             let content = JSON.stringify(config, null, "\t");
             // `exports.resourceRoot = "${userConfig.outputDir}"`;

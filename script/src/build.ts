@@ -21,7 +21,7 @@ let resourceFolder: string;
 
 const wing_res_json = "wing.res.json";
 
-export async function build(buildConfig: { projectRoot: string, debug: boolean, matcher?: string, command: "build" | "publish" }) {
+export async function build(buildConfig: { projectRoot: string, debug: boolean, matcher?: string, command: "build" | "publish", target: string }) {
 
 
 
@@ -70,8 +70,8 @@ export async function build(buildConfig: { projectRoot: string, debug: boolean, 
         }
     }
 
-    let parsedConfig = await ResourceConfig.init(buildConfig.projectRoot);
-    let userConfig = ResourceConfig.getUserConfig(buildConfig.command);
+    let parsedConfig = await ResourceConfig.init(buildConfig.projectRoot, buildConfig.target, buildConfig.command);
+    let userConfig = ResourceConfig.userConfig;
     projectRoot = buildConfig.projectRoot;
     resourceFolder = path.join(projectRoot, ResourceConfig.resourceRoot);
     plugin1.init(buildConfig.projectRoot, resourceFolder, buildConfig)

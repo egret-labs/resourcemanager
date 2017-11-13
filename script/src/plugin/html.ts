@@ -16,7 +16,7 @@ const p: plugin.Plugin = {
     },
 
     onFinish: async (pluginContext) => {
-        let userConfig = ResourceConfig.getUserConfig(pluginContext.buildConfig.command)
+        let userConfig = ResourceConfig.userConfig;
         let outputDir = path.resolve(pluginContext.projectRoot, userConfig.outputDir, "../");
         let outputDir2 = path.resolve(pluginContext.projectRoot, userConfig.outputDir);
         let resourceFolder = path.relative(outputDir, outputDir2);

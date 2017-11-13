@@ -6,14 +6,11 @@ export declare function getDist(): {
     minFiles: string[];
     declareFiles: string[];
 };
-export declare function getConfigViaFile(configFileName: string): Promise<{
+export declare function getConfigViaFile(configFileName: string, target: string, command: string): Promise<{
     resourceRoot: string;
     resourceConfigFileName: any;
     typeSelector: (p: string) => string;
     mergeSelector: any;
     nameSelector: any;
-    userConfigs: {
-        build: ResourceConfig.UserConfig;
-        publish: ResourceConfig.UserConfig;
-    };
+    userConfig: ResourceConfig.UserConfig;
 }>;
