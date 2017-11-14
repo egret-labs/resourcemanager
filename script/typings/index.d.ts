@@ -10,6 +10,13 @@ export * from './version';
 export * from './environment';
 export * from './plugin';
 export declare let handleException: (e: string | Error) => void;
+export declare type BuildConfig = {
+    projectRoot: string;
+    debug: boolean;
+    matcher?: string;
+    command: "build" | "publish";
+    target: string;
+};
 export interface ResVinylFile extends VinylFile {
     original_relative: string;
     isExistedInResourceFolder: boolean;
@@ -67,10 +74,10 @@ export declare namespace ResourceConfig {
     var resourceConfigFileName: string;
     type UserConfig = {
         outputDir: string;
-        plugin: ("zip" | "spritesheet" | "convertFileName" | "emitConfigFile" | "html")[];
+        commands: string[];
     };
     var userConfig: UserConfig;
     function addFile(r: vfs.File, checkDuplicate: boolean): void;
     function getFile(filename: string): vfs.File | undefined;
-    function init(projectPath: string, target: string, command: string): Promise<void>;
+    function init(projectPath: string, buildConfig: BuildConfig): Promise<void>;
 }

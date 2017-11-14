@@ -1,6 +1,6 @@
 import * as vinylfs from 'vinyl-fs';
 import * as Vinyl from 'vinyl';
-import { Data, ResourceConfig, GeneratedData, original, handleException, ResVinylFile, ResourceManagerUserConfig } from './';
+import { Data, ResourceConfig, GeneratedData, original, BuildConfig, handleException, ResVinylFile, ResourceManagerUserConfig } from './';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
@@ -21,7 +21,7 @@ let resourceFolder: string;
 
 const wing_res_json = "wing.res.json";
 
-export async function build(buildConfig: { projectRoot: string, debug: boolean, matcher?: string, command: "build" | "publish", target: string }) {
+export async function build(buildConfig: BuildConfig) {
 
 
 
@@ -70,7 +70,7 @@ export async function build(buildConfig: { projectRoot: string, debug: boolean, 
         }
     }
 
-    let parsedConfig = await ResourceConfig.init(buildConfig.projectRoot, buildConfig.target, buildConfig.command);
+    let parsedConfig = await ResourceConfig.init(buildConfig.projectRoot, buildConfig);
     let userConfig = ResourceConfig.userConfig;
     projectRoot = buildConfig.projectRoot;
     resourceFolder = path.join(projectRoot, ResourceConfig.resourceRoot);
@@ -81,7 +81,7 @@ export async function build(buildConfig: { projectRoot: string, debug: boolean, 
     let stream = vinylfs.src(matcher, { cwd: projectRoot, base: projectRoot })
         .pipe(map(initVinylFile))
 
-    for (let item of userConfig.plugin) {
+    for (let item of userConfig.commands) {
         let plugin = plugin1.getPlugin(item);
         if (plugin) {
             stream = stream.pipe(plugin);

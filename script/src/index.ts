@@ -25,6 +25,8 @@ export let handleException = (e: string | Error) => {
     }
 }
 
+export type BuildConfig = { projectRoot: string, debug: boolean, matcher?: string, command: "build" | "publish", target: string }
+
 export interface ResVinylFile extends VinylFile {
 
     original_relative: string;
@@ -219,7 +221,7 @@ export namespace ResourceConfig {
 
     export type UserConfig = {
         outputDir: string,
-        plugin: ("zip" | "spritesheet" | "convertFileName" | "emitConfigFile" | "html")[]
+        commands: string[]
     }
 
 
@@ -248,8 +250,8 @@ export namespace ResourceConfig {
         return resourceVfs.getFile(filename);
     }
 
-    export async function init(projectPath: string, target: string, command: string) {
-        let parsedConfig = await _config.getConfigViaFile(path.join(projectPath, 'scripts/config.ts'), target, command);
+    export async function init(projectPath: string, buildConfig: BuildConfig) {
+        let parsedConfig = await _config.getConfigViaFile(path.join(projectPath, 'scripts/config.ts'), buildConfig);
         typeSelector = parsedConfig.typeSelector;
         nameSelector = parsedConfig.nameSelector;
         resourceRoot = parsedConfig.resourceRoot;
@@ -261,7 +263,7 @@ export namespace ResourceConfig {
         if (!userConfig) {
             userConfig = {
                 outputDir: "resource",
-                plugin: ["emitConfigFile"]
+                commands: ["emitConfigFile"]
             }
         }
         resourceVfs.init(config.resources, "resource");

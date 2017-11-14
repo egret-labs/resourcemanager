@@ -1,7 +1,2 @@
-export declare function build(buildConfig: {
-    projectRoot: string;
-    debug: boolean;
-    matcher?: string;
-    command: "build" | "publish";
-    target: string;
-}): Promise<any>;
+import { BuildConfig } from './';
+export declare function build(buildConfig: BuildConfig): Promise<any>;
