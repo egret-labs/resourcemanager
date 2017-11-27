@@ -1,32 +1,34 @@
-var webpack = require('webpack');
-var path = require('path');
-var fs = require('fs');
+const webpack = require('webpack');
+const path = require('path');
+const fs = require('fs');
 
-var version = require("../package.json").version;
+const version = require("../package.json").version;
+const resolve = {
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    modules: [
+        path.resolve(__dirname, 'my_modules'),
+        path.resolve(__dirname, '../', 'node_modules'),
+    ]
+};
+const module_loader = {
+    loaders: [
+        {
+            test: /\.ts(x?)$/,
+            loaders: ['ts-loader']
+        }
+    ]
+};
 
 const config_cli = {
     target: 'node',
     context: path.join(__dirname, 'src'),
-    resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx'],
-        modules: [
-            path.resolve(__dirname, '../', 'node_modules'),
-            path.resolve(__dirname, 'src')
-        ]
-    },
+    resolve,
     node: {
         __dirname: false
     },
-    module: {
-        loaders: [
-            {
-                test: /\.ts(x?)$/,
-                loaders: ['ts-loader']
-            }
-        ]
-    },
+    module: module_loader,
     entry: {
-        "cli": "cli"
+        "cli": "./cli"
     },
     output: {
         path: path.join(__dirname, 'out'),
@@ -44,26 +46,13 @@ const config_cli = {
 const config_library = {
     target: 'node',
     context: path.join(__dirname, 'src'),
-    resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx'],
-        modules: [
-            path.resolve(__dirname, '../', 'node_modules'),
-            path.resolve(__dirname, 'src')
-        ]
-    },
+    resolve,
     node: {
         __dirname: false
     },
-    module: {
-        loaders: [
-            {
-                test: /\.ts(x?)$/,
-                loaders: ['ts-loader']
-            }
-        ]
-    },
+    module: module_loader,
     entry: {
-        "vendor": "index"
+        "vendor": "./index"
     },
     output: {
         path: path.join(__dirname, 'out'),

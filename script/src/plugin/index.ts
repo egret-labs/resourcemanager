@@ -47,13 +47,19 @@ export function getPlugin(name: string | Plugin) {
     }
     const through = require('through2');
     return through.obj(async (file: ResVinylFile, enc, cb) => {
-        let r = await p.onFile(file);
-        if (r) {
-            cb(null, file);
+        try {
+            let r = await p.onFile(file);
+            if (r) {
+                cb(null, file);
+            }
+            else {
+                cb(null);
+            }
         }
-        else {
-            cb(null);
+        catch (e) {
+            console.log(e);
         }
+
     }, async function (cb) {
         let context: PluginContext = {
             resourceFolder, projectRoot, buildConfig, createFile: (relativePath, buffer) => {
@@ -62,13 +68,19 @@ export function getPlugin(name: string | Plugin) {
                     base: resourceFolder,
                     path: path.join(resourceFolder, relativePath),
                     original_relative: relativePath,
-                    contents: buffer
+                    contents: buffer,
+                    isDirty: true
                 });
                 this.push(newFile);
             }
         }
-        await p.onFinish(context);
-        cb();
+        try {
+            await p.onFinish(context);
+            cb();
+        }
+        catch (e) {
+            console.log(e);
+        }
     });
 }
 

@@ -29,6 +29,8 @@ export type BuildConfig = { projectRoot: string, debug: boolean, matcher?: strin
 
 export interface ResVinylFile extends VinylFile {
 
+    isDirty: boolean
+
     original_relative: string;
 
     isExistedInResourceFolder: boolean;

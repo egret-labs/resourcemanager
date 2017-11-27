@@ -18,6 +18,7 @@ export declare type BuildConfig = {
     target: string;
 };
 export interface ResVinylFile extends VinylFile {
+    isDirty: boolean;
     original_relative: string;
     isExistedInResourceFolder: boolean;
 }

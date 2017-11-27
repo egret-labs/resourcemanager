@@ -29,11 +29,12 @@ export async function build(buildConfig: BuildConfig) {
      * 当写入地址为源文件夹时，防止重复写入
      */
     function filterDuplicateWrite(file: ResVinylFile, cb) {
-        if (file.isExistedInResourceFolder) {
-            cb(null);
+        if (file.isDirty) {
+            cb(null, file);
+
         }
         else {
-            cb(null, file);
+            cb(null);
         }
     }
 
@@ -91,9 +92,7 @@ export async function build(buildConfig: BuildConfig) {
         }
     }
     stream = stream.pipe(profile.profile());
-    if (ResourceConfig.resourceRoot == userConfig.outputDir) {
-        stream = stream.pipe(map(filterDuplicateWrite));
-    }
+    stream = stream.pipe(map(filterDuplicateWrite));
     stream = stream.pipe(vinylfs.dest(outputDir));
     return new Promise<typeof stream>((resolve, reject) => {
         stream.on("end", () => {
