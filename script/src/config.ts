@@ -37,10 +37,13 @@ export async function getConfigViaFile(configFileName: string, buildConfig: { pr
     let f = new Function('require', 'module', jsfile);
     var module_var: any = {};
     function pluginRequire(filename: string) {
-        let nodeRequire = eval("require");
         if (filename.charAt(0) == ".") {
             filename = path.join(path.dirname(configFileName), filename);
         }
+        else if (filename.indexOf("built-in") >= 0) {
+            filename = path.resolve(__dirname, '../../tasks/index')
+        };
+        const nodeRequire = eval("require");
         return nodeRequire(filename);
     }
     try {
@@ -57,10 +60,9 @@ export async function getConfigViaFile(configFileName: string, buildConfig: { pr
     let nameSelector = exports_1.nameSelector ? exports_1.nameSelector : (p: string) => p;
     let buildConfigFunction: ((params: any) => ResourceConfig.UserConfig) = exports_1.buildConfig;
 
-    const { projectRoot, command, target } = buildConfig;
+    const { projectRoot } = buildConfig;
     const projectName = path.basename(projectRoot);
-
-    const userConfig = buildConfigFunction({ projectName, command, target });
+    const userConfig = buildConfigFunction({ projectName, ...buildConfig });
     let mergeSelector = exports_1.mergeSelector;
     return { resourceRoot, resourceConfigFileName, typeSelector, mergeSelector, nameSelector, userConfig };
 

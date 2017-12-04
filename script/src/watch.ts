@@ -18,7 +18,8 @@ export async function watch(projectRoot: string) {
             console.log("res-watch:file changed start");
             console.log(f)
             f = path.relative(root, f);
-            await build.build({ projectRoot, debug: true, matcher: f, command: "build", target: "web" })
+
+            // await build.build({ projectRoot, debug: true, matcher: f, command: "build", target: "web" })
             console.log("res-watch:file changed finish");
         }
     })

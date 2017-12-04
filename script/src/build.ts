@@ -77,8 +77,8 @@ export async function build(buildConfig: BuildConfig) {
     resourceFolder = path.join(projectRoot, ResourceConfig.resourceRoot);
     plugin1.init(buildConfig.projectRoot, resourceFolder, buildConfig)
     let outputDir = path.join(projectRoot, userConfig.outputDir);
-    // let matcher = buildConfig.matcher ? buildConfig.matcher : "resource/**/*.*";
-    let matcher = ["resource/**/*.*"]
+    let matcher = buildConfig.matcher ? buildConfig.matcher : "resource/**/*.*";
+    // let matcher = ["resource/**/*.*"]
     let stream = vinylfs.src(matcher, { cwd: projectRoot, base: projectRoot })
         .pipe(map(initVinylFile))
 
@@ -92,7 +92,10 @@ export async function build(buildConfig: BuildConfig) {
         }
     }
     stream = stream.pipe(profile.profile());
-    stream = stream.pipe(map(filterDuplicateWrite));
+
+    if (userConfig.outputDir == ".") {
+        stream = stream.pipe(map(filterDuplicateWrite));
+    }
     stream = stream.pipe(vinylfs.dest(outputDir));
     return new Promise<typeof stream>((resolve, reject) => {
         stream.on("end", () => {
