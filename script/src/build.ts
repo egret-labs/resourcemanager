@@ -1,6 +1,6 @@
 import * as vinylfs from 'vinyl-fs';
 import * as Vinyl from 'vinyl';
-import { Data, ResourceConfig, GeneratedData, original, BuildConfig, handleException, ResVinylFile, ResourceManagerUserConfig } from './';
+import { Data, ResourceConfig, GeneratedData, legacy, BuildConfig, handleException, ResVinylFile, ResourceManagerUserConfig } from './';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
@@ -53,14 +53,14 @@ export async function build(buildConfig: BuildConfig) {
     }
 
     function initVinylFile(file: ResVinylFile, cb) {
-        file.original_relative = file.relative.split("\\").join("/");
-        const isExistedInResourceFolder = file.original_relative.indexOf(ResourceConfig.resourceRoot) == 0;
+        file.origin = file.relative.split("\\").join("/");
+        const isExistedInResourceFolder = file.origin.indexOf(ResourceConfig.resourceRoot) == 0;
         file.isExistedInResourceFolder = isExistedInResourceFolder;
         if (!isExistedInResourceFolder) {
             cb(null, file);
         }
         else {
-            executeFilter(file.original_relative).then((r) => {
+            executeFilter(file.origin).then((r) => {
                 if (r) {
                     cb(null, file);
                 }

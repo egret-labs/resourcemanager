@@ -10,7 +10,7 @@ const p: plugin.Plugin = {
         }
         let crc32_file_path: string = crc32(file.contents);
         // crc32_file_path = `${crc32_file_path.substr(0, 2)}/${crc32_file_path.substr(2)}${file.extname}`;
-        let origin_path = file.original_relative;
+        let origin_path = file.origin;
         crc32_file_path = origin_path.substr(0, origin_path.length - file.extname.length) + "_" + crc32_file_path + file.extname;
         file.path = path.join(file.base, crc32_file_path);
         return file;

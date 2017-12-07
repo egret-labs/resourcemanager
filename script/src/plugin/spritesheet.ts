@@ -7,7 +7,7 @@ import * as crc32 from 'crc32';
 import * as through from 'through2'
 import * as os from 'os';
 import * as fs from 'fs-extra-promise';
-import { Data, ResourceConfig, GeneratedData, original, handleException, ResVinylFile, ResourceManagerUserConfig, getEnv } from '../';
+import { Data, ResourceConfig, GeneratedData, legacy, handleException, ResVinylFile, ResourceManagerUserConfig, getEnv } from '../';
 
 import * as plugin from './';
 import * as utils from '../utils';
@@ -45,7 +45,7 @@ const p: plugin.Plugin = {
         if (!mergerSelector) {
             return file;
         }
-        let filename = file.original_relative;
+        let filename = file.origin;
         let mergeResult = mergerSelector(filename);
         if (mergeResult) {
             let type = ResourceConfig.typeSelector(mergeResult);

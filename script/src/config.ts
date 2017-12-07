@@ -5,6 +5,16 @@ import * as fs from 'fs-extra-promise';
 import * as ts from 'typescript';
 
 
+
+const jsLoaderWrapper = (module, filename) => {
+    console.log(filename)
+    const content = fs.readFileSync(filename, 'utf8');
+    const jsfile = ts.transpile(content, { module: ts.ModuleKind.CommonJS, newLine: ts.NewLineKind.LineFeed });
+    module._compile(jsfile, filename);
+}
+const nodeRequire = eval("require");
+nodeRequire.extensions['.ts'] = jsLoaderWrapper;
+
 export async function printConfig(projectRoot) {
     const buildConfig = { target: 'web', command: "build", projectRoot }
     let data = await getConfigViaFile(path.join(projectRoot, 'scripts/config.ts'), buildConfig);
@@ -38,12 +48,11 @@ export async function getConfigViaFile(configFileName: string, buildConfig: { pr
     var module_var: any = {};
     function pluginRequire(filename: string) {
         if (filename.charAt(0) == ".") {
-            filename = path.join(path.dirname(configFileName), filename);
+            filename = path.join(path.dirname(configFileName), filename) + '.ts';
         }
         else if (filename.indexOf("built-in") >= 0) {
             filename = path.resolve(__dirname, '../../tasks/index')
         };
-        const nodeRequire = eval("require");
         return nodeRequire(filename);
     }
     try {

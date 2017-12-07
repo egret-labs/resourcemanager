@@ -19,7 +19,7 @@ export declare type BuildConfig = {
 };
 export interface ResVinylFile extends VinylFile {
     isDirty: boolean;
-    original_relative: string;
+    origin: string;
     isExistedInResourceFolder: boolean;
 }
 export interface ResourceManagerUserConfig {
@@ -48,7 +48,7 @@ export interface GeneratedData {
         [aliasName: string]: string;
     };
 }
-export declare namespace original {
+export declare namespace legacy {
     interface Info {
         groups: GroupInfo[];
         resources: ResourceInfo[];

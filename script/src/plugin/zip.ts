@@ -5,7 +5,7 @@ import * as getStream from 'get-stream';
 import * as Vinyl from 'vinyl';
 import * as crc32 from 'crc32';
 import * as through from 'through2'
-import { Data, ResourceConfig, GeneratedData, original, handleException, ResVinylFile } from '../';
+import { Data, ResourceConfig, GeneratedData, legacy, handleException, ResVinylFile } from '../';
 import * as plugin from './';
 let mergeCollection: { [mergeFile: string]: yazl.ZipFile } = {};
 
@@ -23,7 +23,7 @@ let p: plugin.Plugin = {
         if (!mergerSelector) {
             return file;
         }
-        let filename = file.original_relative;
+        let filename = file.origin;
         let mergeResult = mergerSelector(filename);
         if (mergeResult) {
             let type = ResourceConfig.typeSelector(mergeResult);

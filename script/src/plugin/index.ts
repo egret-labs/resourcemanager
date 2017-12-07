@@ -67,7 +67,7 @@ export function getPlugin(name: string | Plugin) {
                     cwd: resourceFolder,
                     base: resourceFolder,
                     path: path.join(resourceFolder, relativePath),
-                    original_relative: relativePath,
+                    origin: relativePath,
                     contents: buffer,
                     isDirty: true
                 });

@@ -31,7 +31,7 @@ export interface ResVinylFile extends VinylFile {
 
     isDirty: boolean
 
-    original_relative: string;
+    origin: string;
 
     isExistedInResourceFolder: boolean;
 }
@@ -88,7 +88,7 @@ export interface GeneratedData {
 
 }
 
-export namespace original {
+export namespace legacy {
 
 
     export interface Info {
@@ -134,7 +134,7 @@ export namespace ResourceConfig {
     }
 
     export async function generateClassicalConfig() {
-        let result: original.Info = {
+        let result: legacy.Info = {
             groups: [],
             resources: []
         }
@@ -146,7 +146,7 @@ export namespace ResourceConfig {
         }
 
         loop(resources, (f) => {
-            let r: original.ResourceInfo = f;
+            let r: legacy.ResourceInfo = f;
             if (alias[r.name]) {
                 r.name = alias[r.name]
             }

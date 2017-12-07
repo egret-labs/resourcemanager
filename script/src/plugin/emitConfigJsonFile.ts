@@ -2,7 +2,7 @@ import * as plugin from './';
 import * as path from 'path';
 import * as crc32 from 'crc32';
 import * as fs from 'fs-extra-promise';
-import { Data, ResourceConfig, GeneratedData, original, handleException, ResVinylFile, ResourceManagerUserConfig } from '../';
+import { Data, ResourceConfig, GeneratedData, legacy, handleException, ResVinylFile, ResourceManagerUserConfig } from '../';
 import * as Vinyl from 'vinyl';
 
 const wing_res_json = "wing.res.json";
@@ -28,7 +28,7 @@ const p: plugin.Plugin = {
             return file;
         }
 
-        let r = await executeFilter(file.original_relative);
+        let r = await executeFilter(file.origin);
         if (r) {
             r.url = file.relative;
             ResourceConfig.addFile(r, true);
@@ -50,8 +50,7 @@ const p: plugin.Plugin = {
             if (!fs.existsSync(filename)) {
                 return;
             }
-            let resourceJson: original.Info = await fs.readJSONAsync(filename);
-            // let resourceJson: original.Info = await fs.readJSONAsync(resourceJsonPath);
+            let resourceJson: legacy.Info = await fs.readJSONAsync(filename);
             for (let r of resourceJson.resources) {
 
                 let resourceName = ResourceConfig.nameSelector(r.url);
