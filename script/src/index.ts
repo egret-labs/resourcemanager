@@ -1,4 +1,4 @@
-import { Data } from './index';
+import { Data, Plugin } from './index';
 import * as path from 'path';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
@@ -223,7 +223,7 @@ export namespace ResourceConfig {
 
     export type UserConfig = {
         outputDir: string,
-        commands: string[]
+        commands: Plugin[]
     }
 
 
@@ -264,8 +264,8 @@ export namespace ResourceConfig {
         userConfig = parsedConfig.userConfig;
         if (!userConfig) {
             userConfig = {
-                outputDir: "resource",
-                commands: ["emitConfigFile"]
+                outputDir: ".",
+                commands: []
             }
         }
         resourceVfs.init(config.resources, "resource");

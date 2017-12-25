@@ -13,9 +13,9 @@ export type PluginContext = {
 
 export type Plugin = {
 
-    name: string;
-
     onFile: (file: ResVinylFile) => Promise<ResVinylFile | null>;
+
+    onFileLater?: (file: ResVinylFile) => Promise<ResVinylFile | null>;
 
     onFinish: (param: PluginContext) => void | Promise<void>
 }
@@ -33,20 +33,10 @@ export function init(__projectRoot, __resourceFolder, __buildConfig: { command: 
 }
 
 
-export function createPlugin(plugin: Plugin) {
-    plugins[plugin.name] = plugin;
-}
-
-export function getPlugin(name: string | Plugin) {
-    let p: Plugin;
-    if (typeof name == 'string') {
-        p = plugins[name];
-    }
-    else {
-        p = name;
-    }
+export function createPlugin(p: Plugin) {
     const through = require('through2');
-    return through.obj(async (file: ResVinylFile, enc, cb) => {
+
+    const onFile = async (file: ResVinylFile, enc, cb) => {
         try {
             let r = await p.onFile(file);
             if (r) {
@@ -59,8 +49,9 @@ export function getPlugin(name: string | Plugin) {
         catch (e) {
             console.log(e);
         }
+    }
 
-    }, async function (cb) {
+    const onFinish = async function (cb) {
         let context: PluginContext = {
             resourceFolder, projectRoot, buildConfig, createFile: (relativePath, buffer) => {
                 let newFile = new Vinyl({
@@ -81,16 +72,6 @@ export function getPlugin(name: string | Plugin) {
         catch (e) {
             console.log(e);
         }
-    });
+    }
+    return through.obj(onFile, onFinish)
 }
-
-import convertFileName from './convertFileName';
-import emitConfigJsonFile from './emitConfigJsonFile';
-import zip from './zip';
-import spritesheet from './spritesheet';
-import html from './html';
-createPlugin(convertFileName);
-createPlugin(emitConfigJsonFile);
-createPlugin(zip);
-createPlugin(spritesheet);
-createPlugin(html);

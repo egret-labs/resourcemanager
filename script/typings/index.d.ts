@@ -1,5 +1,5 @@
 /// <reference types="vinyl" />
-import { Data } from './index';
+import { Data, Plugin } from './index';
 import * as vfs from './FileSystem';
 import * as VinylFile from 'vinyl';
 export * from './watch';
@@ -75,7 +75,7 @@ export declare namespace ResourceConfig {
     var resourceConfigFileName: string;
     type UserConfig = {
         outputDir: string;
-        commands: string[];
+        commands: Plugin[];
     };
     var userConfig: UserConfig;
     function addFile(r: vfs.File, checkDuplicate: boolean): void;

@@ -6,10 +6,8 @@ import * as fs from 'fs-extra-promise';
 import * as path from 'path';
 
 import * as config from './config';
-import * as zip from './plugin/zip';
 import * as profile from './plugin/profile';
-import * as spritesheet from './plugin/spritesheet';
-import * as html from './plugin/html';
+
 import * as plugin1 from './plugin';
 
 var map = require('map-stream');
@@ -54,21 +52,7 @@ export async function build(buildConfig: BuildConfig) {
 
     function initVinylFile(file: ResVinylFile, cb) {
         file.origin = file.relative.split("\\").join("/");
-        const isExistedInResourceFolder = file.origin.indexOf(ResourceConfig.resourceRoot) == 0;
-        file.isExistedInResourceFolder = isExistedInResourceFolder;
-        if (!isExistedInResourceFolder) {
-            cb(null, file);
-        }
-        else {
-            executeFilter(file.origin).then((r) => {
-                if (r) {
-                    cb(null, file);
-                }
-                else {
-                    cb(null);
-                }
-            }).catch(e => console.log(e))
-        }
+        cb(null, file);
     }
 
     let parsedConfig = await ResourceConfig.init(buildConfig.projectRoot, buildConfig);
@@ -82,21 +66,27 @@ export async function build(buildConfig: BuildConfig) {
     let stream = vinylfs.src(matcher, { cwd: projectRoot, base: projectRoot })
         .pipe(map(initVinylFile))
 
-    for (let item of userConfig.commands) {
-        let plugin = plugin1.getPlugin(item);
-        if (plugin) {
-            stream = stream.pipe(plugin);
-        }
-        else {
-            process.stderr.write("找不到 plugin : " + item)
-        }
-    }
-    stream = stream.pipe(profile.profile());
-
+    let plugins = userConfig.commands.map(item => plugin1.createPlugin(item));
     if (userConfig.outputDir == ".") {
-        stream = stream.pipe(map(filterDuplicateWrite));
+        plugins.push(map(filterDuplicateWrite))
     }
-    stream = stream.pipe(vinylfs.dest(outputDir));
+    plugins.push(vinylfs.dest(outputDir));
+
+
+    for (let plugin of plugins) {
+        stream = stream.pipe(plugin);
+    }
+
+    // for (let item of userConfig.commands) {
+    //     let plugin = plugin1.createPlugin(item);
+    //     stream = stream.pipe(plugin);
+    // }
+    // stream = stream.pipe(profile.profile());
+
+    // if (userConfig.outputDir == ".") {
+    //     stream = stream.pipe(map(filterDuplicateWrite));
+    // }
+    // stream = stream.pipe(vinylfs.dest(outputDir));
     return new Promise<typeof stream>((resolve, reject) => {
         stream.on("end", () => {
             resolve(stream);
