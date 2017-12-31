@@ -52,18 +52,24 @@ export function createPlugin(p: Plugin) {
     }
 
     const onFinish = async function (cb) {
+
+
+        const createFile = (relativePath: string, buffer: Buffer, options?: any) => {
+            relativePath = relativePath.split('\\').join('/')
+            let newFile = new Vinyl({
+                cwd: resourceFolder,
+                base: resourceFolder,
+                path: path.join(resourceFolder, relativePath),
+                origin: relativePath,
+                contents: buffer,
+                isDirty: true,
+                options
+            });
+            this.push(newFile);
+        }
+
         let context: PluginContext = {
-            resourceFolder, projectRoot, buildConfig, createFile: (relativePath, buffer) => {
-                let newFile = new Vinyl({
-                    cwd: resourceFolder,
-                    base: resourceFolder,
-                    path: path.join(resourceFolder, relativePath),
-                    origin: relativePath,
-                    contents: buffer,
-                    isDirty: true
-                });
-                this.push(newFile);
-            }
+            resourceFolder, projectRoot, buildConfig, createFile
         }
         try {
             await p.onFinish(context);

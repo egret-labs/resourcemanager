@@ -40,7 +40,17 @@ const config_library = {
     plugins: [
         new webpack.DefinePlugin({
             __VERSION__: "\"" + version + "\""
+        }),
+        new webpack.optimize.UglifyJsPlugin({
+            output: {
+                beautify: true,
+                comments: false,  // remove all comments
+            },
+            compress: {
+                warnings: false
+            }
         })
+
     ]
 };
 
