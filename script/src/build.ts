@@ -1,6 +1,6 @@
 import * as vinylfs from 'vinyl-fs';
 import * as Vinyl from 'vinyl';
-import { Data, ResourceConfig, GeneratedData, legacy, BuildConfig, handleException, ResVinylFile, ResourceManagerUserConfig } from './';
+import { ResourceConfig, BuildConfig, ResVinylFile } from './';
 import * as utils from 'egret-node-utils';
 import * as fs from 'fs-extra-promise';
 import * as path from 'path';
@@ -9,6 +9,7 @@ import * as config from './config';
 import * as profile from './plugin/profile';
 
 import * as plugin1 from './plugin';
+import { setImmediate } from 'timers';
 
 var map = require('map-stream');
 var crc32 = require("crc32");
@@ -17,7 +18,6 @@ var crc32 = require("crc32");
 let projectRoot: string;
 let resourceFolder: string;
 
-const wing_res_json = "wing.res.json";
 
 export async function build(buildConfig: BuildConfig) {
 
@@ -33,20 +33,6 @@ export async function build(buildConfig: BuildConfig) {
         }
         else {
             cb(null);
-        }
-    }
-
-    async function executeFilter(url: string) {
-        if (url == wing_res_json) {
-            return null;
-        }
-        let type = ResourceConfig.typeSelector(url);
-        let name = ResourceConfig.nameSelector(url);
-        if (type) {
-            return { name, url, type }
-        }
-        else {
-            return null;
         }
     }
 
@@ -73,25 +59,36 @@ export async function build(buildConfig: BuildConfig) {
     plugins.push(vinylfs.dest(outputDir));
 
 
+
+    // return new Promise<typeof stream>((reslove, reject) => {
+    //     let index = 0;
+    //     const onComplete = () => {
+    //         setImmediate(() => {
+    //             const p = plugins[index];
+    //             index++;
+    //             if (p) {
+    //                 stream.on("end", onComplete);
+    //                 // console.log (plugins)
+    //                 stream = stream.pipe(p)
+    //             }
+    //             else {
+    //                 reslove(stream);
+    //             }
+    //         })
+    //     }
+
+    //     onComplete();
+    // })
+
     for (let plugin of plugins) {
         stream = stream.pipe(plugin);
     }
-
-    // for (let item of userConfig.commands) {
-    //     let plugin = plugin1.createPlugin(item);
-    //     stream = stream.pipe(plugin);
-    // }
-    // stream = stream.pipe(profile.profile());
-
-    // if (userConfig.outputDir == ".") {
-    //     stream = stream.pipe(map(filterDuplicateWrite));
-    // }
-    // stream = stream.pipe(vinylfs.dest(outputDir));
     return new Promise<typeof stream>((resolve, reject) => {
         stream.on("end", () => {
             resolve(stream);
         })
     })
+
 }
 
 

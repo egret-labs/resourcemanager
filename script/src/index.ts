@@ -8,13 +8,9 @@ import * as VinylFile from 'vinyl';
 
 export * from './watch';
 export * from './config';
-export * from './upgrade';
 export * from './build';
-export * from './version';
-export * from './environment';
 export * from './plugin';
 
-const resourceVfs = new vfs.FileSystem();
 
 export let handleException = (e: string | Error) => {
     if (typeof e == 'string') {
@@ -231,27 +227,6 @@ export namespace ResourceConfig {
 
     var resourcePath: string;
 
-    export function addFile(r: vfs.File, checkDuplicate: boolean) {
-        let { url, name } = r;
-        url = url.split("\\").join("/");
-        name = name.split("\\").join("/");
-        r.url = url;
-        r.name = name;
-
-        if (checkDuplicate) {
-            let a = resourceVfs.getFile(r.name)
-            if (a && a.url != r.url) {
-                console.warn("duplicate: " + r.url + " => " + a.url)
-            }
-        }
-        resourceVfs.addFile(r);
-    }
-
-
-    export function getFile(filename: string): vfs.File | undefined {
-        return resourceVfs.getFile(filename);
-    }
-
     export async function init(projectPath: string, buildConfig: BuildConfig) {
         let parsedConfig = await _config.getConfigViaFile(path.join(projectPath, 'scripts/config.ts'), buildConfig);
         typeSelector = parsedConfig.typeSelector;
@@ -268,6 +243,5 @@ export namespace ResourceConfig {
                 commands: []
             }
         }
-        resourceVfs.init(config.resources, "resource");
     }
 }

@@ -19,30 +19,6 @@ const module_loader = {
     ]
 };
 
-const config_cli = {
-    target: 'node',
-    context: path.join(__dirname, 'src'),
-    resolve,
-    node: {
-        __dirname: false
-    },
-    module: module_loader,
-    entry: {
-        "cli": "./cli"
-    },
-    output: {
-        path: path.join(__dirname, 'out'),
-        filename: '[name].js',
-
-    },
-    plugins: [
-        new webpack.DefinePlugin({
-            __VERSION__: "\"" + version + "\""
-        }),
-        new webpack.BannerPlugin({ banner: "#!/usr/bin/env node", raw: true })
-    ]
-};
-
 const config_library = {
     target: 'node',
     context: path.join(__dirname, 'src'),
@@ -68,4 +44,4 @@ const config_library = {
     ]
 };
 
-module.exports = [config_library, config_cli];
+module.exports = [config_library];

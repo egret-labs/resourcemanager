@@ -4,10 +4,7 @@ import * as vfs from './FileSystem';
 import * as VinylFile from 'vinyl';
 export * from './watch';
 export * from './config';
-export * from './upgrade';
 export * from './build';
-export * from './version';
-export * from './environment';
 export * from './plugin';
 export declare let handleException: (e: string | Error) => void;
 export declare type BuildConfig = {
@@ -78,7 +75,5 @@ export declare namespace ResourceConfig {
         commands: Plugin[];
     };
     var userConfig: UserConfig;
-    function addFile(r: vfs.File, checkDuplicate: boolean): void;
-    function getFile(filename: string): vfs.File | undefined;
     function init(projectPath: string, buildConfig: BuildConfig): Promise<void>;
 }

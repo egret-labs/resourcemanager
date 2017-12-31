@@ -7,7 +7,6 @@ import * as ts from 'typescript';
 
 
 const jsLoaderWrapper = (module, filename) => {
-    console.log(filename)
     const content = fs.readFileSync(filename, 'utf8');
     const jsfile = ts.transpile(content, { module: ts.ModuleKind.CommonJS, newLine: ts.NewLineKind.LineFeed });
     module._compile(jsfile, filename);
@@ -15,31 +14,6 @@ const jsLoaderWrapper = (module, filename) => {
 const nodeRequire = eval("require");
 nodeRequire.extensions['.ts'] = jsLoaderWrapper;
 
-export async function printConfig(projectRoot) {
-    const buildConfig = { target: 'web', command: "build", projectRoot }
-    let data = await getConfigViaFile(path.join(projectRoot, 'scripts/config.ts'), buildConfig);
-    let source = getDist();
-    let { resourceRoot, resourceConfigFileName, typeSelector } = data;
-    let typeSelectorBody = typeSelector.toString();
-    let outputData = { resourceRoot, resourceConfigFileName, typeSelectorBody, source };
-    console.log(JSON.stringify(outputData));
-}
-
-export function getDist() {
-    let folder = path.resolve(__dirname, "../../bin/resourcemanager");
-    let bundleFiles = [
-        "resourcemanager.js"
-    ]
-    let minFiles = [
-        "resourcemanager.min.js"
-    ];
-    let declareFiles = [
-        "resourcemanager.d.ts"
-    ]
-    return {
-        folder, bundleFiles, minFiles, declareFiles
-    }
-}
 
 export async function getConfigViaFile(configFileName: string, buildConfig: { projectRoot: string, target: string, command: string }) {
     let content = await fs.readFileAsync(configFileName, 'utf-8');
