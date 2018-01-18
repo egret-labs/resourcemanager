@@ -2,7 +2,7 @@
 import { ResVinylFile } from '../';
 export declare type PluginContext = {
     projectRoot: string;
-    resourceFolder: string;
+    outputDir: string;
     buildConfig: {
         command: "build" | "publish";
     };
@@ -16,4 +16,4 @@ export declare type Plugin = {
 export declare function init(__projectRoot: any, __resourceFolder: any, __buildConfig: {
     command: "build" | "publish";
 }): void;
-export declare function createPlugin(p: Plugin): any;
+export declare function createPlugin(p: Plugin, outputDir: string): any;

@@ -5,7 +5,7 @@ import { ResVinylFile, ResourceConfig, ResourceManagerUserConfig } from '../';
 
 export type PluginContext = {
     projectRoot: string,
-    resourceFolder: string,
+    outputDir: string,
     buildConfig: { command: "build" | "publish" },
 
     createFile: (relativePath: string, content: Buffer) => void
@@ -33,7 +33,7 @@ export function init(__projectRoot, __resourceFolder, __buildConfig: { command: 
 }
 
 
-export function createPlugin(p: Plugin) {
+export function createPlugin(p: Plugin, outputDir: string) {
     const through = require('through2');
 
     const onFile = async (file: ResVinylFile, enc, cb) => {
@@ -68,8 +68,10 @@ export function createPlugin(p: Plugin) {
             this.push(newFile);
         }
 
+        outputDir = path.resolve(projectRoot, outputDir).split('\\').join('/');
+
         let context: PluginContext = {
-            resourceFolder, projectRoot, buildConfig, createFile
+            projectRoot, outputDir, buildConfig, createFile
         }
         try {
             await p.onFinish(context);

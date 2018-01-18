@@ -52,7 +52,7 @@ export async function build(buildConfig: BuildConfig) {
     let stream = vinylfs.src(matcher, { cwd: projectRoot, base: projectRoot })
         .pipe(map(initVinylFile))
 
-    let plugins = userConfig.commands.map(item => plugin1.createPlugin(item));
+    let plugins = userConfig.commands.map(item => plugin1.createPlugin(item, userConfig.outputDir));
     if (userConfig.outputDir == ".") {
         plugins.push(map(filterDuplicateWrite))
     }
