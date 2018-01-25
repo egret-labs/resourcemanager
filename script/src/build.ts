@@ -44,7 +44,7 @@ export async function build(buildConfig: BuildConfig) {
     let parsedConfig = await ResourceConfig.init(buildConfig.projectRoot, buildConfig);
     let userConfig = ResourceConfig.userConfig;
     projectRoot = buildConfig.projectRoot;
-    resourceFolder = path.join(projectRoot, ResourceConfig.resourceRoot);
+    resourceFolder = path.join(projectRoot, "resource/");
     plugin1.init(buildConfig.projectRoot, resourceFolder, buildConfig);
     let outputDir: string | ((file: any) => string);
     if (typeof userConfig.outputDir == 'string') {
@@ -102,4 +102,3 @@ export async function build(buildConfig: BuildConfig) {
     })
 
 }
-

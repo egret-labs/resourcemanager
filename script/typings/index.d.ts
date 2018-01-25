@@ -67,11 +67,9 @@ export declare namespace ResourceConfig {
     function getConfig(): Data;
     function generateClassicalConfig(): Promise<string>;
     function generateConfig(debug: boolean): GeneratedData;
-    var resourceRoot: string;
     var typeSelector: (path: string) => string;
     var nameSelector: (path: string) => string;
     var mergeSelector: (path: string) => string | null;
-    var resourceConfigFileName: string;
     type UserConfig = {
         outputDir: string | ((file: any) => string);
         commands: Plugin[];

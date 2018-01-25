@@ -9,6 +9,7 @@ export declare type PluginContext = {
     createFile: (relativePath: string, content: Buffer) => void;
 };
 export declare type Plugin = {
+    onStart?: (param: PluginContext) => void | Promise<void>;
     onFile: (file: ResVinylFile) => Promise<ResVinylFile | null>;
     onFileLater?: (file: ResVinylFile) => Promise<ResVinylFile | null>;
     onFinish: (param: PluginContext) => void | Promise<void>;

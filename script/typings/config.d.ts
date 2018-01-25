@@ -5,7 +5,6 @@ export declare function getConfigViaFile(configFileName: string, buildConfig: {
     command: string;
 }): Promise<{
     resourceRoot: string;
-    resourceConfigFileName: any;
     typeSelector: (p: string) => string;
     mergeSelector: any;
     nameSelector: any;

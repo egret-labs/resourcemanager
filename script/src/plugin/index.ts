@@ -13,6 +13,8 @@ export type PluginContext = {
 
 export type Plugin = {
 
+    onStart?: (param: PluginContext) => void | Promise<void>
+
     onFile: (file: ResVinylFile) => Promise<ResVinylFile | null>;
 
     onFileLater?: (file: ResVinylFile) => Promise<ResVinylFile | null>;
@@ -35,6 +37,12 @@ export function init(__projectRoot, __resourceFolder, __buildConfig: { command: 
 
 export function createPlugin(p: Plugin, outputDir: string) {
     const through = require('through2');
+
+    outputDir = path.resolve(projectRoot, outputDir).split('\\').join('/');
+
+    let context1: PluginContext = {
+        projectRoot, outputDir, buildConfig, createFile: () => { console.error('onStart 中暂不支持 createFile') }
+    }
 
     const onFile = async (file: ResVinylFile, enc, cb) => {
         try {
@@ -68,17 +76,22 @@ export function createPlugin(p: Plugin, outputDir: string) {
             this.push(newFile);
         }
 
-        outputDir = path.resolve(projectRoot, outputDir).split('\\').join('/');
 
-        let context: PluginContext = {
-            projectRoot, outputDir, buildConfig, createFile
-        }
         try {
-            await p.onFinish(context);
+            let context2: PluginContext = {
+                projectRoot, outputDir, buildConfig, createFile
+            }
+            await p.onFinish(context2);
             cb();
         }
         catch (e) {
             console.log(e);
+        }
+    }
+    if (p.onStart) {
+        let x = p.onStart(context1);
+        if (x && x.then) {
+            console.error('onStart 暂时不支持异步')
         }
     }
     return through.obj(onFile, onFinish)

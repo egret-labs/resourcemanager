@@ -42,7 +42,6 @@ export async function getConfigViaFile(configFileName: string, buildConfig: { pr
     }
     var exports_1: any = module_var.exports;
     let resourceRoot: string = typeof exports_1.resourceRoot == 'function' ? exports_1.resourceRoot() : exports_1.resourceRoot;
-    let resourceConfigFileName = exports_1.configPath;
     let typeSelector: (p: string) => string = exports_1.typeSelector;
     let nameSelector = exports_1.nameSelector ? exports_1.nameSelector : (p: string) => p;
     let buildConfigFunction: ((params: any) => ResourceConfig.UserConfig) = exports_1.buildConfig;
@@ -51,6 +50,6 @@ export async function getConfigViaFile(configFileName: string, buildConfig: { pr
     const projectName = path.basename(projectRoot);
     const userConfig = buildConfigFunction({ projectName, ...buildConfig });
     let mergeSelector = exports_1.mergeSelector;
-    return { resourceRoot, resourceConfigFileName, typeSelector, mergeSelector, nameSelector, userConfig };
+    return { resourceRoot, typeSelector, mergeSelector, nameSelector, userConfig };
 
 }

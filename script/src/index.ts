@@ -211,14 +211,12 @@ export namespace ResourceConfig {
 
     var config: Data;
 
-    export var resourceRoot: string;
 
     export var typeSelector: (path: string) => string;
 
     export var nameSelector: (path: string) => string;
 
     export var mergeSelector: (path: string) => string | null;
-    export var resourceConfigFileName: string;
 
     export type UserConfig = {
         outputDir: string | ((file: any) => string),
@@ -228,7 +226,6 @@ export namespace ResourceConfig {
 
     export var userConfig: UserConfig
 
-    var resourcePath: string;
 
     export async function init(projectPath: string, buildConfig: BuildConfig) {
         const files = [
@@ -246,10 +243,7 @@ export namespace ResourceConfig {
         let parsedConfig = await _config.getConfigViaFile(configFile, buildConfig);
         typeSelector = parsedConfig.typeSelector;
         nameSelector = parsedConfig.nameSelector;
-        resourceRoot = parsedConfig.resourceRoot;
         mergeSelector = parsedConfig.mergeSelector;
-        resourcePath = path.resolve(projectPath, resourceRoot);
-        resourceConfigFileName = parsedConfig.resourceConfigFileName;
         config = { alias: {}, groups: {}, resources: {} };
         userConfig = parsedConfig.userConfig;
         if (!userConfig) {
