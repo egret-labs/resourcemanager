@@ -6,6 +6,8 @@ export * from './watch';
 export * from './config';
 export * from './build';
 export * from './plugin';
+export declare const minimatch: any;
+export declare const glob: any;
 export declare let handleException: (e: string | Error) => void;
 export declare type BuildConfig = {
     projectRoot: string;
@@ -71,7 +73,7 @@ export declare namespace ResourceConfig {
     var mergeSelector: (path: string) => string | null;
     var resourceConfigFileName: string;
     type UserConfig = {
-        outputDir: string;
+        outputDir: string | ((file: any) => string);
         commands: Plugin[];
     };
     var userConfig: UserConfig;

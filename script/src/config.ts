@@ -7,8 +7,12 @@ import * as ts from 'typescript';
 
 
 const jsLoaderWrapper = (module, filename) => {
+
+    const builtInFilename = path.resolve(__dirname, '../../tasks/index').split('\\').join('/');
     const content = fs.readFileSync(filename, 'utf8');
-    const jsfile = ts.transpile(content, { module: ts.ModuleKind.CommonJS, newLine: ts.NewLineKind.LineFeed });
+    let jsfile = ts.transpile(content, { module: ts.ModuleKind.CommonJS, newLine: ts.NewLineKind.LineFeed });
+    let replaced = `require('${builtInFilename}')`
+    jsfile = jsfile.replace(`require("built-in")`, replaced);
     module._compile(jsfile, filename);
 }
 const nodeRequire = eval("require");

@@ -12,6 +12,9 @@ export * from './build';
 export * from './plugin';
 
 
+export const minimatch = require('minimatch');
+export const glob = require('glob')
+
 export let handleException = (e: string | Error) => {
     if (typeof e == 'string') {
         console.error(`错误:${e}`);
@@ -218,7 +221,7 @@ export namespace ResourceConfig {
     export var resourceConfigFileName: string;
 
     export type UserConfig = {
-        outputDir: string,
+        outputDir: string | ((file: any) => string),
         commands: Plugin[]
     }
 
@@ -228,7 +231,19 @@ export namespace ResourceConfig {
     var resourcePath: string;
 
     export async function init(projectPath: string, buildConfig: BuildConfig) {
-        let parsedConfig = await _config.getConfigViaFile(path.join(projectPath, 'scripts/config.ts'), buildConfig);
+        const files = [
+            path.join(projectPath, `scripts/config.${buildConfig.target}.ts`),
+            path.join(projectPath, 'scripts/config.ts')
+        ];
+        let configFile;
+        for (let file of files) {
+            if (await fs.existsAsync(file)) {
+                configFile = file;
+                break;
+            }
+        }
+
+        let parsedConfig = await _config.getConfigViaFile(configFile, buildConfig);
         typeSelector = parsedConfig.typeSelector;
         nameSelector = parsedConfig.nameSelector;
         resourceRoot = parsedConfig.resourceRoot;

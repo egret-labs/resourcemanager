@@ -45,18 +45,30 @@ export async function build(buildConfig: BuildConfig) {
     let userConfig = ResourceConfig.userConfig;
     projectRoot = buildConfig.projectRoot;
     resourceFolder = path.join(projectRoot, ResourceConfig.resourceRoot);
-    plugin1.init(buildConfig.projectRoot, resourceFolder, buildConfig)
-    let outputDir = path.join(projectRoot, userConfig.outputDir);
+    plugin1.init(buildConfig.projectRoot, resourceFolder, buildConfig);
+    let outputDir: string | ((file: any) => string);
+    if (typeof userConfig.outputDir == 'string') {
+        outputDir = path.join(projectRoot, userConfig.outputDir);
+    }
+    else {
+        let x = userConfig.outputDir;
+        outputDir = (file) => path.join(projectRoot, x(file))
+    }
+
     let matcher = buildConfig.matcher ? buildConfig.matcher : "resource/**/*.*";
     // let matcher = ["resource/**/*.*"]
     let stream = vinylfs.src(matcher, { cwd: projectRoot, base: projectRoot })
         .pipe(map(initVinylFile))
 
-    let plugins = userConfig.commands.map(item => plugin1.createPlugin(item, userConfig.outputDir));
+    let plugins = userConfig.commands.map(item => plugin1.createPlugin(item, outputDir as any as string));
     if (userConfig.outputDir == ".") {
         plugins.push(map(filterDuplicateWrite))
     }
-    plugins.push(vinylfs.dest(outputDir));
+
+
+
+
+    plugins.push(vinylfs.dest(outputDir as any as string));
 
 
 
@@ -90,6 +102,4 @@ export async function build(buildConfig: BuildConfig) {
     })
 
 }
-
-
 
