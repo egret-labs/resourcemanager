@@ -71,7 +71,7 @@ export declare namespace ResourceConfig {
     var nameSelector: (path: string) => string;
     var mergeSelector: (path: string) => string | null;
     type UserConfig = {
-        outputDir: string | ((file: any) => string);
+        outputDir: string;
         commands: Plugin[];
     };
     var userConfig: UserConfig;

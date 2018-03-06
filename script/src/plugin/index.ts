@@ -71,7 +71,8 @@ export function createPlugin(p: Plugin, outputDir: string) {
                 origin: relativePath,
                 contents: buffer,
                 isDirty: true,
-                options
+                options,
+                outputDir: options && options.outputDir ? options.outputDir : null
             });
             this.push(newFile);
         }

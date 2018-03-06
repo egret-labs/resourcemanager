@@ -19,7 +19,7 @@ let projectRoot: string;
 let resourceFolder: string;
 
 
-export async function build(buildConfig: BuildConfig) {
+export async function build(buildConfig: BuildConfig, before?: (context: { outputDir: string, buildConfig: BuildConfig }) => Promise<void>) {
 
 
 
@@ -46,13 +46,10 @@ export async function build(buildConfig: BuildConfig) {
     projectRoot = buildConfig.projectRoot;
     resourceFolder = path.join(projectRoot, "resource/");
     plugin1.init(buildConfig.projectRoot, resourceFolder, buildConfig);
-    let outputDir: string | ((file: any) => string);
-    if (typeof userConfig.outputDir == 'string') {
-        outputDir = path.join(projectRoot, userConfig.outputDir);
-    }
-    else {
-        let x = userConfig.outputDir;
-        outputDir = (file) => path.join(projectRoot, x(file))
+    let outputDir = path.join(projectRoot, userConfig.outputDir);
+
+    if (before) {
+        await before({ outputDir, buildConfig });
     }
 
     let matcher = buildConfig.matcher ? buildConfig.matcher : "resource/**/*.*";
@@ -60,7 +57,7 @@ export async function build(buildConfig: BuildConfig) {
     let stream = vinylfs.src(matcher, { cwd: projectRoot, base: projectRoot })
         .pipe(map(initVinylFile))
 
-    let plugins = userConfig.commands.map(item => plugin1.createPlugin(item, outputDir as any as string));
+    let plugins = userConfig.commands.map(item => plugin1.createPlugin(item, outputDir));
     if (userConfig.outputDir == ".") {
         plugins.push(map(filterDuplicateWrite))
     }
@@ -68,7 +65,9 @@ export async function build(buildConfig: BuildConfig) {
 
 
 
-    plugins.push(vinylfs.dest(outputDir as any as string));
+    plugins.push(vinylfs.dest((file: any) => {
+        return file.outputDir ? file.outputDir : outputDir
+    }));
 
 
 
@@ -98,6 +97,8 @@ export async function build(buildConfig: BuildConfig) {
     return new Promise<typeof stream>((resolve, reject) => {
         stream.on("end", () => {
             resolve(stream);
+        }).on("error", () => {
+            console.log('fuck')
         })
     })
 

@@ -219,7 +219,7 @@ export namespace ResourceConfig {
     export var mergeSelector: (path: string) => string | null;
 
     export type UserConfig = {
-        outputDir: string | ((file: any) => string),
+        outputDir: string,
         commands: Plugin[]
     }
 
