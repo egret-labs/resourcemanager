@@ -228,16 +228,10 @@ export namespace ResourceConfig {
 
 
     export async function init(projectPath: string, buildConfig: BuildConfig) {
-        const files = [
-            path.join(projectPath, `scripts/config.${buildConfig.target}.ts`),
-            path.join(projectPath, 'scripts/config.ts')
-        ];
-        let configFile;
-        for (let file of files) {
-            if (await fs.existsAsync(file)) {
-                configFile = file;
-                break;
-            }
+        const configFile1 = buildConfig.target == 'web' ? `scripts/config.ts` : `scripts/config.${buildConfig.target}.ts`;
+        const configFile = path.join(projectPath, configFile1);
+        if (!(await fs.existsAsync(configFile))) {
+            throw `scripts 文件夹缺少 ${configFile1}`;
         }
 
         let parsedConfig = await _config.getConfigViaFile(configFile, buildConfig);
