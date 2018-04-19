@@ -24,7 +24,7 @@ export let handleException = (e: string | Error) => {
     }
 }
 
-export type BuildConfig = { projectRoot: string, debug: boolean, matcher?: string, command: "build" | "publish", target: string }
+export type BuildConfig = { projectRoot: string, debug: boolean, command: "build" | "publish", target: string }
 
 export interface ResVinylFile extends VinylFile {
 
@@ -220,7 +220,8 @@ export namespace ResourceConfig {
 
     export type UserConfig = {
         outputDir: string,
-        commands: Plugin[]
+        commands: Plugin[],
+        matcher?: string
     }
 
 
@@ -243,7 +244,7 @@ export namespace ResourceConfig {
         if (!userConfig) {
             userConfig = {
                 outputDir: ".",
-                commands: []
+                commands: [],
             }
         }
     }

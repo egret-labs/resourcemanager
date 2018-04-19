@@ -12,7 +12,6 @@ export declare let handleException: (e: string | Error) => void;
 export declare type BuildConfig = {
     projectRoot: string;
     debug: boolean;
-    matcher?: string;
     command: "build" | "publish";
     target: string;
 };
@@ -73,6 +72,7 @@ export declare namespace ResourceConfig {
     type UserConfig = {
         outputDir: string;
         commands: Plugin[];
+        matcher?: string;
     };
     var userConfig: UserConfig;
     function init(projectPath: string, buildConfig: BuildConfig): Promise<void>;

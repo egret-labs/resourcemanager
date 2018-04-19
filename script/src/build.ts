@@ -49,9 +49,7 @@ export async function build(buildConfig: BuildConfig, before?: (context: { outpu
     if (before) {
         await before({ outputDir, buildConfig });
     }
-
-    let matcher = buildConfig.matcher ? buildConfig.matcher : "resource/**/*.*";
-    // let matcher = ["resource/**/*.*"]
+    let matcher = userConfig.matcher ? userConfig.matcher : "resource/**/*.*";
     let stream = vinylfs.src(matcher, { cwd: projectRoot, base: projectRoot })
         .pipe(map(initVinylFile))
 
