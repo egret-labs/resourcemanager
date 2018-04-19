@@ -14,7 +14,7 @@ export declare type Plugin = {
     onFileLater?: (file: ResVinylFile) => Promise<ResVinylFile | null>;
     onFinish: (param: PluginContext) => void | Promise<void>;
 };
-export declare function init(__projectRoot: any, __resourceFolder: any, __buildConfig: {
+export declare function init(__projectRoot: any, __buildConfig: {
     command: "build" | "publish";
 }): void;
 export declare function createPlugin(p: Plugin, outputDir: string): any;

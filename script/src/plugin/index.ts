@@ -28,9 +28,8 @@ let projectRoot: string;
 let resourceFolder: string;
 let buildConfig: { command: "build" | "publish" };
 
-export function init(__projectRoot, __resourceFolder, __buildConfig: { command: "build" | "publish" }) {
+export function init(__projectRoot, __buildConfig: { command: "build" | "publish" }) {
     projectRoot = __projectRoot;
-    resourceFolder = __resourceFolder;
     buildConfig = __buildConfig;
 }
 
@@ -65,9 +64,9 @@ export function createPlugin(p: Plugin, outputDir: string) {
         const createFile = (relativePath: string, buffer: Buffer, options?: any) => {
             relativePath = relativePath.split('\\').join('/')
             let newFile = new Vinyl({
-                cwd: resourceFolder,
-                base: resourceFolder,
-                path: path.join(resourceFolder, relativePath),
+                cwd: projectRoot,
+                base: projectRoot,
+                path: path.join(projectRoot, relativePath),
                 origin: relativePath,
                 contents: buffer,
                 isDirty: true,

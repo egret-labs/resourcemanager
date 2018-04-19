@@ -16,7 +16,6 @@ var crc32 = require("crc32");
 
 
 let projectRoot: string;
-let resourceFolder: string;
 
 
 export async function build(buildConfig: BuildConfig, before?: (context: { outputDir: string, buildConfig: BuildConfig }) => Promise<void>) {
@@ -44,8 +43,7 @@ export async function build(buildConfig: BuildConfig, before?: (context: { outpu
     let parsedConfig = await ResourceConfig.init(buildConfig.projectRoot, buildConfig);
     let userConfig = ResourceConfig.userConfig;
     projectRoot = buildConfig.projectRoot;
-    resourceFolder = path.join(projectRoot, "resource/");
-    plugin1.init(buildConfig.projectRoot, resourceFolder, buildConfig);
+    plugin1.init(buildConfig.projectRoot, buildConfig);
     let outputDir = path.join(projectRoot, userConfig.outputDir);
 
     if (before) {
